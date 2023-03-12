@@ -6,7 +6,7 @@ module.exports = {
       network_id: "*",
     },
   },
-  contracts_directory: './src/contracts',
+  contracts_directory: './src/contracts/',
   contracts_build_directory: './src/abis',
   compilers: {
     solc: {
