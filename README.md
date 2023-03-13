@@ -33,4 +33,16 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
+## Compile and Deploy on Smartcontract
+
+```bash
+truffle compile
+
+truffle migrate
+
+truffle migrate --reset
+
+truffle console
+```
+
 # ntest-nextjs
