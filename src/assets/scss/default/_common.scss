@@ -527,3 +527,13 @@ nav {
 .theme-color {
     color: var(--color-primary);
 }
+
+
+.modal-800px {
+    max-width: 800px !important;
+    min-height: 600px !important;
+}
+
+.modal-800px iframe {
+    height: 600px;
+}

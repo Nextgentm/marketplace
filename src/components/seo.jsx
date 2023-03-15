@@ -2,7 +2,7 @@ import Head from "next/head";
 import PropTypes from "prop-types";
 
 const SEO = ({ pageTitle }) => {
-    const title = `${pageTitle} || Nuron - NFT Marketplace Template`;
+    const title = `${pageTitle} || LootMogul - NFT Marketplace`;
     return (
         <Head>
             <title>{title}</title>
@@ -13,7 +13,7 @@ const SEO = ({ pageTitle }) => {
                 name="viewport"
                 content="width=device-width, initial-scale=1, shrink-to-fit=no"
             />
-            <link rel="icon" href="/favicon.png" />
+            <link rel="icon" href="/favicon.ico" />
         </Head>
     );
 };
