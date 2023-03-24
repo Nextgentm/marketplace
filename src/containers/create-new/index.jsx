@@ -7,6 +7,7 @@ import Button from "@ui/button";
 import ProductModal from "@components/modals/product-modal";
 import ErrorText from "@ui/error-text";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const CreateNewArea = ({ className, space }) => {
     const [showProductModal, setShowProductModal] = useState(false);
@@ -35,7 +36,45 @@ const CreateNewArea = ({ className, space }) => {
         }
     };
 
+    async function StoreData(data) {
+        
+        try {
+            console.log(data);  
+            const resp = await axios.post(
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles`,
+                {
+                    data:{
+                        name: data.name ? data.name : null,
+                        image: "String",
+                        description: data.discription ? data.discription : null,
+                        price: data.price ? Number(data.price) : null,
+                        size: data.size ? Number(data.size) : null,
+                        symbol: "String",
+                        properties: data.propertiy ? data.propertiy : null,
+                        royalty: data.royality ? Number(data.royality) : null,
+                        numberOfCopies:0,
+                        imageHash: "String",
+                        metadataHash: "String",
+                        creator:0,
+                        owner:0,
+                        collectionContractAddress: "String",
+                        putOnSale: true,
+                        instantSalePrice: true,
+                        unlockPurchased: true,
+                        slug: data.name ? data.name.toLowerCase().split(' ').join('-') : null,
+                        collection: "String"
+                    }
+                }
+            );
+            console.log(resp);    
+        } catch (error) {
+            console.log(error);  
+        }    
+    }
+
     const onSubmit = (data, e) => {
+
+        StoreData(data);
         const { target } = e;
         const submitBtn =
             target.localName === "span" ? target.parentElement : target;

@@ -7,6 +7,7 @@ import NiceSelect from "@ui/nice-select";
 import Button from "@ui/button";
 import ErrorText from "@ui/error-text";
 import { isEmpty } from "@utils/methods";
+import axios from "axios";
 
 const CreateCollectionArea = () => {
     const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -32,7 +33,42 @@ const CreateCollectionArea = () => {
 
     watch(["logoImg", "featImg", "bannerImg"]);
 
+    async function StoreData(data) {
+        console.log(data);
+        try {
+            const resp = await axios.post(
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`,
+                {
+                    data:{
+                        name: data.title ? data.title : null,
+                        logo:'Test',
+                        cover: "Test",
+                        featured: "Test",
+                        symbol: "string",
+                        url: data.url ? data.url : null,
+                        description: data.description ? data.description : null,
+                        category: category,
+                        slug: data.title.toLowerCase(),
+                        
+                        creatorEarning: data.earning ? Number(data.earning) : null,
+                        contractAddress: data.wallet ? data.wallet : null,
+                        payoutWalletAddress: data.wallet ? data.wallet : null,
+                        explicitAndSensitiveContent: data.themeSwitch,
+                        
+                    }
+                }
+            );
+            console.log(resp);    
+        } catch (error) {
+            
+        }
+        
+    }
+
     const onSubmit = (data, e) => {
+        
+        
+        
         const { target } = e;
         const submitBtn =
             target.localName === "span" ? target.parentElement : target;
@@ -44,6 +80,7 @@ const CreateCollectionArea = () => {
             setShowPreviewModal(true);
         }
         if (!isPreviewBtn) {
+            StoreData(data);
             notify();
             reset();
         }
@@ -194,20 +231,16 @@ const CreateCollectionArea = () => {
                                                     placeholder="Add Category"
                                                     options={[
                                                         {
-                                                            value: "art",
+                                                            value: "Art",
                                                             text: "Art",
                                                         },
                                                         {
-                                                            value: 2,
-                                                            text: "Collectibles",
+                                                            value: "Game",
+                                                            text: "Game",
                                                         },
                                                         {
-                                                            value: 3,
-                                                            text: "Music",
-                                                        },
-                                                        {
-                                                            value: 4,
-                                                            text: "Sports",
+                                                            value: "Metaverse",
+                                                            text: "Metaverse",
                                                         },
                                                     ]}
                                                     onChange={categoryHandler}
@@ -330,7 +363,7 @@ const CreateCollectionArea = () => {
                                                 className="mr--30"
                                                 type="submit"
                                                 data-btn="preview"
-                                                onClick={handleSubmit(onSubmit)}
+                                                //onClick={handleSubmit(onSubmit)}
                                             >
                                                 Preview
                                             </Button>
