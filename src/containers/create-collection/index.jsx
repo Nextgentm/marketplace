@@ -66,9 +66,9 @@ const CreateCollectionArea = () => {
     }
 
     const onSubmit = (data, e) => {
-        console.log(data);
         
-        StoreData(data);
+        
+        
         const { target } = e;
         const submitBtn =
             target.localName === "span" ? target.parentElement : target;
@@ -80,6 +80,7 @@ const CreateCollectionArea = () => {
             setShowPreviewModal(true);
         }
         if (!isPreviewBtn) {
+            StoreData(data);
             notify();
             reset();
         }
