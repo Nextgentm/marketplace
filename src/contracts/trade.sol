@@ -168,7 +168,6 @@ contract Trade is AccessControl {
     /**
         excuting the NFT order.
         @param order ordervalues(seller, buyer,...).
-        @param sign Sign value(v, r, f).
     */
 
     function buyAsset(Order calldata order)
@@ -206,4 +205,71 @@ contract Trade is AccessControl {
         return true;
     }
 
+    function getFees(
+        Order calldata order
+    ) internal view returns (Fee memory) {
+        address tokenCreator;
+        uint256 platformFee;
+        uint256 royaltyFee;
+        uint256 assetFee;
+        uint256 price = (order.amount * 1000) / (1000 + buyerFeePermille);
+        uint256 buyerFee = order.amount - price;
+        uint256 sellerFee = (price * sellerFeePermille) / 1000;
+        platformFee = buyerFee + sellerFee;
+        if(!order.skipRoyalty &&((order.nftType == BuyingAssetType.ERC721) || (order.nftType == BuyingAssetType.ERC1155))) {
+            (tokenCreator, royaltyFee) = IERC2981(order.nftAddress)
+                    .royaltyInfo(order.tokenId, price); 
+        }
+        assetFee = price - royaltyFee - sellerFee;
+        return Fee(platformFee, assetFee, royaltyFee, price, tokenCreator);
+    }
+
+    function tradeAsset(
+        Order calldata order,
+        Fee memory fee,
+        address buyer,
+        address seller
+    ) internal virtual {
+        if (order.nftType == BuyingAssetType.ERC721) {
+            transferProxy.erc721safeTransferFrom(
+                IERC721(order.nftAddress),
+                seller,
+                buyer,
+                order.tokenId
+            );
+        }
+        if (order.nftType == BuyingAssetType.ERC1155) {
+            transferProxy.erc1155safeTransferFrom(
+                IERC1155(order.nftAddress),
+                seller,
+                buyer,
+                order.tokenId,
+                order.qty,
+                ""
+            );
+        }
+
+        if (fee.platformFee > 0) {
+            transferProxy.erc20safeTransferFrom(
+                IERC20(order.erc20Address),
+                buyer,
+                owner,
+                fee.platformFee
+            );
+        }
+        if (fee.royaltyFee > 0 && (!order.skipRoyalty)) {
+            transferProxy.erc20safeTransferFrom(
+                IERC20(order.erc20Address),
+                buyer,
+                fee.tokenCreator,
+                fee.royaltyFee
+            );
+        }
+        transferProxy.erc20safeTransferFrom(
+            IERC20(order.erc20Address),
+            buyer,
+            seller,
+            fee.assetFee
+        );
+    }
 }
