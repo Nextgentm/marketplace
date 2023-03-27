@@ -33,56 +33,58 @@ const CreateCollectionArea = () => {
 
     watch(["logoImg", "featImg", "bannerImg"]);
 
+    async function updateImage(e) {
+        const formData = new FormData();
+        formData.append("files", getValues(e)?.[0]);
+        const resp =  await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+            method: 'post',
+            body: formData
+        })
+        .then((response) => response.json())
+        .then( (data)=>{
+            console.log(data[0]?.id);
+            if(data[0]?.id){
+                const old_id = localStorage.getItem('nft_id');
+                if(old_id){
+                    const resp =  fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:`+old_id, {
+                        method: 'delete',
+                    });    
+                }
+                localStorage.setItem('nft_id', data[0]?.id);
+                localStorage.setItem('nft_url', data[0]?.url);
+            }  
+        }).catch(()=>{
+        //Promise Failed, Do something
+        });
+                
+    }
+
     async function StoreData(data) {
         console.log(data);
-        
-        try {
-            const formData = new FormData();
-            //For single
-            /*
-            for (let i = 0 ; i < data.files.length ; i++) {
-                formData.append("files", data.files[i]);
-            }*/
-           if(data.bannerImg){
-            formData.append("files", data.bannerImg[0]);
-            //formData.append(`files.bannerImg`, data.bannerImg, data.bannerImg.name);
-           }
-           
-           /*if(data.featImg){
-            formData.append(`files.featImg`, data.featImg, data.featImg.name);
-           }
-           if(data.logoImg){
-            formData.append(`files.featImg`, data.logoImg, data.logoImg.name);
-           }*/
-
-           
-            console.log(formData);
-            /*const resp = await axios.post(
+        try {                    
+            const old_id = localStorage.getItem('nft_id');
+            const nft_url = localStorage.getItem('nft_url');
+            const resp = await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`,
                 {
                     data:{
                         name: data.title ? data.title : null,
-                        logo:'Test',
+                        logo: nft_url ? nft_url : 'Null',
+                        logoID: Number(old_id),
                         cover: "Test",
                         featured: "Test",
                         symbol: "string",
                         url: data.url ? data.url : null,
                         description: data.description ? data.description : null,
                         category: category,
-                        slug: data.title.toLowerCase(),
-                        
+                        slug: data.title.toLowerCase(),                       
                         creatorEarning: data.earning ? Number(data.earning) : null,
                         contractAddress: data.wallet ? data.wallet : null,
                         payoutWalletAddress: data.wallet ? data.wallet : null,
                         explicitAndSensitiveContent: data.themeSwitch,
-                        
                     }
                 }
-            );*/
-            const resp =  await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
-                method: 'post',
-                body: formData
-            });
+            );           
             console.log(resp);    
         } catch (error) {
             console.log(error);
@@ -91,8 +93,6 @@ const CreateCollectionArea = () => {
     }
 
     const onSubmit = (data, e) => {
-        
-        
         
         const { target } = e;
         const submitBtn =
@@ -137,7 +137,9 @@ const CreateCollectionArea = () => {
                                     preview={getValues("logoImg")?.[0]}
                                     {...register("logoImg", {
                                         required: "Upload logo image",
+                                        onChange: (e) => {updateImage('logoImg')},
                                     })}
+                                    
                                 />
 
                                 {errors.logoImg && (
@@ -160,7 +162,9 @@ const CreateCollectionArea = () => {
                                         height: 138,
                                     }}
                                     preview={getValues("featImg")?.[0]}
-                                    {...register("featImg")}
+                                    {...register("featImg",{
+                                        onChange: (e) => {updateImage('featImg')}
+                                    })}
                                 />
                                 {errors.featImg && (
                                     <ErrorText>
@@ -182,7 +186,9 @@ const CreateCollectionArea = () => {
                                         height: 60,
                                     }}
                                     preview={getValues("bannerImg")?.[0]}
-                                    {...register("bannerImg")}
+                                    {...register("bannerImg", {
+                                        onChange: (e) => {updateImage('bannerImg')}
+                                    })}
                                 />
                                 {errors.bannerImg && (
                                     <ErrorText>

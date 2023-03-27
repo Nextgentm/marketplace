@@ -36,6 +36,32 @@ const CreateNewArea = ({ className, space }) => {
         }
     };
 
+    sync function updateImage(e) {
+        const formData = new FormData();
+        formData.append("files", getValues(e)?.[0]);
+        const resp =  await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+            method: 'post',
+            body: formData
+        })
+        .then((response) => response.json())
+        .then( (data)=>{
+            console.log(data[0]?.id);
+            if(data[0]?.id){
+                const old_id = localStorage.getItem('nft_id');
+                if(old_id){
+                    const resp =  fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:`+old_id, {
+                        method: 'delete',
+                    });    
+                }
+                localStorage.setItem('nft_id', data[0]?.id);
+                localStorage.setItem('nft_url', data[0]?.url);
+            }  
+        }).catch(()=>{
+        //Promise Failed, Do something
+        });
+                
+    }
+    
     async function StoreData(data) {
         
         try {
