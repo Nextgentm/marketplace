@@ -35,8 +35,29 @@ const CreateCollectionArea = () => {
 
     async function StoreData(data) {
         console.log(data);
+        
         try {
-            const resp = await axios.post(
+            const formData = new FormData();
+            //For single
+            /*
+            for (let i = 0 ; i < data.files.length ; i++) {
+                formData.append("files", data.files[i]);
+            }*/
+           if(data.bannerImg){
+            formData.append("files", data.bannerImg[0]);
+            //formData.append(`files.bannerImg`, data.bannerImg, data.bannerImg.name);
+           }
+           
+           /*if(data.featImg){
+            formData.append(`files.featImg`, data.featImg, data.featImg.name);
+           }
+           if(data.logoImg){
+            formData.append(`files.featImg`, data.logoImg, data.logoImg.name);
+           }*/
+
+           
+            console.log(formData);
+            /*const resp = await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`,
                 {
                     data:{
@@ -57,10 +78,14 @@ const CreateCollectionArea = () => {
                         
                     }
                 }
-            );
+            );*/
+            const resp =  await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+                method: 'post',
+                body: formData
+            });
             console.log(resp);    
         } catch (error) {
-            
+            console.log(error);
         }
         
     }
@@ -90,7 +115,7 @@ const CreateCollectionArea = () => {
         <>
             <div className="creat-collection-area pt--80">
                 <div className="container">
-                    <form className="row g-5" onSubmit={handleSubmit(onSubmit)}>
+                    <form className="row g-5" encType="multipart/form-data" onSubmit={handleSubmit(onSubmit)}>
                         <div className="col-lg-3 offset-1 ml_md--0 ml_sm--0">
                             <div className="collection-single-wized banner">
                                 <label
@@ -99,6 +124,7 @@ const CreateCollectionArea = () => {
                                 >
                                     Logo image
                                 </label>
+                               
 
                                 <ImageUpload
                                     className="logo-image"
