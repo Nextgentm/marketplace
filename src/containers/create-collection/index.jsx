@@ -59,21 +59,81 @@ const CreateCollectionArea = () => {
                 
     }
 
+    async function updateImage2(e) {
+        const formData = new FormData();
+        formData.append("files", getValues(e)?.[0]);
+        const resp =  await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+            method: 'post',
+            body: formData
+        })
+        .then((response) => response.json())
+        .then( (data)=>{
+            console.log(data[0]?.id);
+            if(data[0]?.id){
+                const old_id = localStorage.getItem('nft_id_2');
+                if(old_id){
+                    const resp =  fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:`+old_id, {
+                        method: 'delete',
+                    });    
+                }
+                localStorage.setItem('nft_id_2', data[0]?.id);
+                localStorage.setItem('nft_url_2', data[0]?.url);
+            }  
+        }).catch(()=>{
+        //Promise Failed, Do something
+        });
+                
+    }
+
+    async function updateImage3(e) {
+        const formData = new FormData();
+        formData.append("files", getValues(e)?.[0]);
+        const resp =  await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+            method: 'post',
+            body: formData
+        })
+        .then((response) => response.json())
+        .then( (data)=>{
+            console.log(data[0]?.id);
+            if(data[0]?.id){
+                const old_id = localStorage.getItem('nft_id_3');
+                if(old_id){
+                    const resp =  fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:`+old_id, {
+                        method: 'delete',
+                    });    
+                }
+                localStorage.setItem('nft_id_3', data[0]?.id);
+                localStorage.setItem('nft_url_3', data[0]?.url);
+            }  
+        }).catch(()=>{
+        //Promise Failed, Do something
+        });
+                
+    }
+
     async function StoreData(data) {
         console.log(data);
         try {                    
-            const old_id = localStorage.getItem('nft_id');
+            const nft_id = localStorage.getItem('nft_id');
             const nft_url = localStorage.getItem('nft_url');
+            
+            const nft_id_2 = localStorage.getItem('nft_id_2');
+            const nft_url_2 = localStorage.getItem('nft_url_2');
+
+            const nft_id_3 = localStorage.getItem('nft_id_3');
+            const nft_url_3 = localStorage.getItem('nft_url_3');
+
             const resp = await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`,
                 {
                     data:{
                         name: data.title ? data.title : null,
                         logo: nft_url ? nft_url : 'Null',
-                        logoID: Number(old_id),
-                        cover: "Test",
-                        featured: "Test",
-                        symbol: "string",
+                        logoID: Number(nft_id),
+                        cover: nft_url_3 ? nft_url_3 : 'Null',
+                        coverID: Number(nft_id_3),
+                        featured: nft_url_2 ? nft_url_2 : 'Null',
+                        symbol: Number(nft_id_2),
                         url: data.url ? data.url : null,
                         description: data.description ? data.description : null,
                         category: category,
@@ -163,7 +223,7 @@ const CreateCollectionArea = () => {
                                     }}
                                     preview={getValues("featImg")?.[0]}
                                     {...register("featImg",{
-                                        onChange: (e) => {updateImage('featImg')}
+                                        onChange: (e) => {updateImage2('featImg')}
                                     })}
                                 />
                                 {errors.featImg && (
@@ -187,7 +247,7 @@ const CreateCollectionArea = () => {
                                     }}
                                     preview={getValues("bannerImg")?.[0]}
                                     {...register("bannerImg", {
-                                        onChange: (e) => {updateImage('bannerImg')}
+                                        onChange: (e) => {updateImage3('bannerImg')}
                                     })}
                                 />
                                 {errors.bannerImg && (
@@ -249,7 +309,7 @@ const CreateCollectionArea = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-lg-12">
+                                    <div className="col-lg-6">
                                         <div className="collection-single-wized">
                                             <label
                                                 htmlFor="category"
@@ -267,13 +327,71 @@ const CreateCollectionArea = () => {
                                                             text: "Art",
                                                         },
                                                         {
-                                                            value: "Game",
-                                                            text: "Game",
+                                                            value: "Domain Names",
+                                                            text: "Domain Names",
                                                         },
                                                         {
-                                                            value: "Metaverse",
-                                                            text: "Metaverse",
+                                                            value: "Memberships",
+                                                            text: "Memberships",
                                                         },
+                                                        {
+                                                            value: "Music",
+                                                            text: "Music",
+                                                        },
+                                                        {
+                                                            value: "PFPs",
+                                                            text: "PFPs",
+                                                        },
+                                                        {
+                                                            value: "Photography",
+                                                            text: "Photography",
+                                                        },
+                                                        {
+                                                            value: "Sports Collectibles",
+                                                            text: "Sports Collectibles",
+                                                        },
+                                                        {
+                                                            value: "Virtual World",
+                                                            text: "Virtual World",
+                                                        },
+                                                        {
+                                                            value: "No category",
+                                                            text: "No category",
+                                                        },
+                                                    ]}
+                                                    onChange={categoryHandler}
+                                                />
+                                                {((!category &&
+                                                    !isEmpty(errors)) ||
+                                                    hasCatError) && (
+                                                    <ErrorText>
+                                                        Select a category
+                                                    </ErrorText>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-6">
+                                        <div className="collection-single-wized">
+                                            <label
+                                                htmlFor="category"
+                                                className="title required"
+                                            >
+                                                Blockchain
+                                            </label>
+                                            <div className="create-collection-input">
+                                                <NiceSelect
+                                                    name="blockchain"
+                                                    placeholder="Add Blockchain"
+                                                    options={[
+                                                        {
+                                                            value: "Ethereum",
+                                                            text: "Ethereum",
+                                                        },
+                                                        {
+                                                            value: "Polygon",
+                                                            text: "Polygon",
+                                                        }
                                                     ]}
                                                     onChange={categoryHandler}
                                                 />

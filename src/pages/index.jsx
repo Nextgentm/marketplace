@@ -2,20 +2,23 @@ import SEO from "@components/seo";
 import Wrapper from "@layout/wrapper";
 import Header from "@layout/header/header-01";
 import Footer from "@layout/footer/footer-01";
-import HeroArea from "@containers/hero/layout-01";
-import LiveExploreArea from "@containers/live-explore/layout-01";
-import ServiceArea from "@containers/services/layout-01";
-import NewestItmesArea from "@containers/product/layout-04";
-import TopSellerArea from "@containers/top-seller/layout-01";
-import ExploreProductArea from "@containers/explore-product/layout-01";
+import HeroArea from "@containers/hero/layout-06";
 import CollectionArea from "@containers/collection/layout-01";
+import ExploreProductArea from "@containers/explore-product/layout-02";
+import CreatorArea from "@containers/creator/layout-01";
+import ServiceArea from "@containers/services/layout-01";
 import { normalizedData } from "@utils/methods";
 
-// Demo Data
-import homepageData from "../data/homepages/home-01.json";
-import productData from "../data/products.json";
+// Demo data
+import homepageData from "../data/homepages/home-06.json";
 import sellerData from "../data/sellers.json";
+import productData from "../data/products.json";
 import collectionsData from "../data/collections.json";
+
+import { useState,useEffect  } from "react";
+import axios from "axios";
+
+
 
 export async function getStaticProps() {
     return { props: { className: "template-color-1" } };
@@ -23,41 +26,24 @@ export async function getStaticProps() {
 
 const Home = () => {
     const content = normalizedData(homepageData?.content || []);
-    const liveAuctionData = productData.filter(
-        (prod) =>
-            prod?.auction_date && new Date() <= new Date(prod?.auction_date)
-    );
-    const newestData = productData
-        .sort(
-            (a, b) =>
-                Number(new Date(b.published_at)) -
-                Number(new Date(a.published_at))
-        )
-        .slice(0, 5);
-
+    const [dataCollection, setDataCollection] = useState(null);
+    useEffect(() => {
+        axios.get( `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections?populate=*`).then((response) => {
+            setDataCollection(response.data.data);
+            
+        });
+    }, []);
+    console.log(dataCollection);
     return (
         <Wrapper>
-            <SEO pageTitle="NFT Markerplace" />
+            <SEO pageTitle="Home Six" />
             <Header />
             <main id="main-content">
                 <HeroArea data={content["hero-section"]} />
-                <LiveExploreArea
-                    data={{
-                        ...content["live-explore-section"],
-                        products: liveAuctionData,
-                    }}
-                />
-                <ServiceArea data={content["service-section"]} />
-                <NewestItmesArea
-                    data={{
-                        ...content["newest-section"],
-                        products: newestData,
-                    }}
-                />
-                <TopSellerArea
-                    data={{
-                        ...content["top-sller-section"],
-                        sellers: sellerData,
+                <CollectionArea
+                    data={dataCollection && {
+                        ...content["collection-section"],
+                        collections: dataCollection.slice(0,4),
                     }}
                 />
                 <ExploreProductArea
@@ -66,12 +52,13 @@ const Home = () => {
                         products: productData,
                     }}
                 />
-                <CollectionArea
+                <CreatorArea
                     data={{
-                        ...content["collection-section"],
-                        collections: collectionsData.slice(0, 4),
+                        ...content["top-sller-section"],
+                        creators: sellerData,
                     }}
                 />
+                <ServiceArea data={content["service-section"]} />
             </main>
             <Footer />
         </Wrapper>
