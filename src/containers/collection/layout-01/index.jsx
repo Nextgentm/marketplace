@@ -41,7 +41,7 @@ const TopCollectionArea = ({ className, id, space, data }) => (
             </div>
             {data?.collections && (
                 <div className="row g-5">
-                    {JSON.stringify(data.collections)}
+                    {/*JSON.stringify(data.collections)*/}
                     {data.collections.map((collection) => (
                         <div
                             key={collection.id}
@@ -51,12 +51,12 @@ const TopCollectionArea = ({ className, id, space, data }) => (
                             className="col-lg-4 col-xl-3 col-md-6 col-sm-6 col-12"
                         >
                             <Collection
-                                title={collection.name}
+                                title={collection.title}
                                 total_item={collection.total_item}
                                 path={collection.slug}
-                                image={collection.cover.data}
-                                thumbnails={collection.featured.data}
-                                profile_image={collection.logo.data}
+                                image={collection.image}
+                                thumbnails={collection.thumbnails}
+                                profile_image={collection.profile_image}
                             />
                         </div>
                     ))}

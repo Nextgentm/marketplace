@@ -41,9 +41,9 @@ const Home = () => {
             <main id="main-content">
                 <HeroArea data={content["hero-section"]} />
                 <CollectionArea
-                    data={dataCollection && {
+                    data={{
                         ...content["collection-section"],
-                        collections: dataCollection.slice(0,4),
+                        collections: collectionsData.slice(0,4),
                     }}
                 />
                 <ExploreProductArea

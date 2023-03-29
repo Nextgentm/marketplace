@@ -62,7 +62,7 @@ const CreateNewArea = ({ className, space }) => {
                     });    
                 }
                 localStorage.setItem('nft_id_4', data[0]?.id);
-                localStorage.setItem('nft_url_4', data[0]?.url);
+                localStorage.setItem('nft_url_4', JSON.stringify(data[0]));
             }  
         }).catch(()=>{
         //Promise Failed, Do something
@@ -74,12 +74,16 @@ const CreateNewArea = ({ className, space }) => {
         
         try {
             console.log(data);  
+            const nft_id_4 = localStorage.getItem('nft_id_4');
+            const nft_url_4 = JSON.parse(localStorage.getItem('nft_url_4'));
+
             const resp = await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles`,
                 {
                     data:{
                         name: data.name ? data.name : null,
-                        image: "String",
+                        image: nft_url_4 ? nft_url_4 : "String",
+                        imageID: nft_id_4 ? nft_id_4 : 0,
                         description: data.discription ? data.discription : null,
                         price: data.price ? Number(data.price) : null,
                         size: data.size ? Number(data.size) : null,

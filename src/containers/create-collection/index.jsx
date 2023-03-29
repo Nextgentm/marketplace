@@ -51,7 +51,7 @@ const CreateCollectionArea = () => {
                     });    
                 }
                 localStorage.setItem('nft_id', data[0]?.id);
-                localStorage.setItem('nft_url', data[0]?.url);
+                localStorage.setItem('nft_url', JSON.stringify(data[0]));
             }  
         }).catch(()=>{
         //Promise Failed, Do something
@@ -77,7 +77,7 @@ const CreateCollectionArea = () => {
                     });    
                 }
                 localStorage.setItem('nft_id_2', data[0]?.id);
-                localStorage.setItem('nft_url_2', data[0]?.url);
+                localStorage.setItem('nft_url_2', JSON.stringify(data[0]));
             }  
         }).catch(()=>{
         //Promise Failed, Do something
@@ -103,7 +103,7 @@ const CreateCollectionArea = () => {
                     });    
                 }
                 localStorage.setItem('nft_id_3', data[0]?.id);
-                localStorage.setItem('nft_url_3', data[0]?.url);
+                localStorage.setItem('nft_url_3', JSON.stringify(data[0]));
             }  
         }).catch(()=>{
         //Promise Failed, Do something
@@ -115,13 +115,13 @@ const CreateCollectionArea = () => {
         console.log(data);
         try {                    
             const nft_id = localStorage.getItem('nft_id');
-            const nft_url = localStorage.getItem('nft_url');
+            const nft_url = JSON.parse(localStorage.getItem('nft_url'));
             
             const nft_id_2 = localStorage.getItem('nft_id_2');
-            const nft_url_2 = localStorage.getItem('nft_url_2');
+            const nft_url_2 = JSON.parse(localStorage.getItem('nft_url_2'));
 
             const nft_id_3 = localStorage.getItem('nft_id_3');
-            const nft_url_3 = localStorage.getItem('nft_url_3');
+            const nft_url_3 = JSON.parse(localStorage.getItem('nft_url_3'));
 
             const resp = await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`,
@@ -133,7 +133,8 @@ const CreateCollectionArea = () => {
                         cover: nft_url_3 ? nft_url_3 : 'Null',
                         coverID: Number(nft_id_3),
                         featured: nft_url_2 ? nft_url_2 : 'Null',
-                        symbol: Number(nft_id_2),
+                        featuredID: Number(nft_id_2),
+                        symbol: "String",
                         url: data.url ? data.url : null,
                         description: data.description ? data.description : null,
                         category: category,
@@ -217,7 +218,7 @@ const CreateCollectionArea = () => {
                                     className="feature-image"
                                     id="featImg"
                                     placeholder={{
-                                        src: "/images/profile/cover-04.png",
+                                        src: "/images/profile/cover-04.jpg",
                                         width: 277,
                                         height: 138,
                                     }}
