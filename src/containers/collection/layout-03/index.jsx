@@ -35,18 +35,21 @@ const CollectionArea = ({ className, space, id, data }) => {
         >
             <div className="container">
                 <div className="row g-5">
+                
                     {collections.map((collection) => (
+                        
                         <div
                             key={collection.id}
                             className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12"
                         >
                             <Collection
-                                title={collection.title}
+                                title={collection.name}
                                 total_item={collection.total_item}
                                 path={collection.slug}
-                                image={collection.image}
-                                thumbnails={collection.thumbnails}
-                                profile_image={collection.profile_image}
+                                image={collection.cover.data}
+                                thumbnails={collection.featured.data}
+                                profile_image={collection.logo.data}
+                                
                             />
                         </div>
                     ))}

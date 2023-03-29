@@ -12,32 +12,32 @@ const Collection = ({
 }) => (
     <Anchor path={path} className="rn-collection-inner-one">
         <div className="collection-wrapper">
-            {image?.src && (
+            {image?.url && (
                 <div className="collection-big-thumbnail">
                     <Image
-                        src={image.src}
+                        src={image.url}
                         alt={image?.alt || "Nft_Profile"}
                         width={507}
                         height={339}
                     />
                 </div>
             )}
-            <div className="collenction-small-thumbnail">
-                {thumbnails?.map((thumb) => (
-                    <div key={thumb?.src}>
+            
+            {thumbnails?.url && (
+                     <div className="collenction-small-thumbnail">
                         <Image
-                            src={thumb?.src}
-                            alt={thumb?.alt || "Nft_Profile"}
-                            width={164}
-                            height={110}
+                            src={thumbnails?.url}
+                            alt={thumbnails?.alt || "Nft_Profile"}
+                            width={300}
+                            height={65}    
                         />
                     </div>
-                ))}
-            </div>
-            {profile_image?.src && (
+            )}
+
+            {profile_image?.url && (
                 <div className="collection-profile">
                     <Image
-                        src={profile_image.src}
+                        src={profile_image.url}
                         alt={profile_image?.alt || "Nft_Profile"}
                         width={80}
                         height={80}

@@ -33,41 +33,127 @@ const CreateCollectionArea = () => {
 
     watch(["logoImg", "featImg", "bannerImg"]);
 
+    async function updateImage(e) {
+        const formData = new FormData();
+        formData.append("files", getValues(e)?.[0]);
+        const resp =  await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+            method: 'post',
+            body: formData
+        })
+        .then((response) => response.json())
+        .then( (data)=>{
+            console.log(data[0]?.id);
+            if(data[0]?.id){
+                const old_id = localStorage.getItem('nft_id');
+                if(old_id){
+                    const resp =  fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:`+old_id, {
+                        method: 'delete',
+                    });    
+                }
+                localStorage.setItem('nft_id', data[0]?.id);
+                localStorage.setItem('nft_url', JSON.stringify(data[0]));
+            }  
+        }).catch(()=>{
+        //Promise Failed, Do something
+        });
+                
+    }
+
+    async function updateImage2(e) {
+        const formData = new FormData();
+        formData.append("files", getValues(e)?.[0]);
+        const resp =  await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+            method: 'post',
+            body: formData
+        })
+        .then((response) => response.json())
+        .then( (data)=>{
+            console.log(data[0]?.id);
+            if(data[0]?.id){
+                const old_id = localStorage.getItem('nft_id_2');
+                if(old_id){
+                    const resp =  fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:`+old_id, {
+                        method: 'delete',
+                    });    
+                }
+                localStorage.setItem('nft_id_2', data[0]?.id);
+                localStorage.setItem('nft_url_2', JSON.stringify(data[0]));
+            }  
+        }).catch(()=>{
+        //Promise Failed, Do something
+        });
+                
+    }
+
+    async function updateImage3(e) {
+        const formData = new FormData();
+        formData.append("files", getValues(e)?.[0]);
+        const resp =  await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+            method: 'post',
+            body: formData
+        })
+        .then((response) => response.json())
+        .then( (data)=>{
+            console.log(data[0]?.id);
+            if(data[0]?.id){
+                const old_id = localStorage.getItem('nft_id_3');
+                if(old_id){
+                    const resp =  fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:`+old_id, {
+                        method: 'delete',
+                    });    
+                }
+                localStorage.setItem('nft_id_3', data[0]?.id);
+                localStorage.setItem('nft_url_3', JSON.stringify(data[0]));
+            }  
+        }).catch(()=>{
+        //Promise Failed, Do something
+        });
+                
+    }
+
     async function StoreData(data) {
         console.log(data);
-        try {
+        try {                    
+            const nft_id = localStorage.getItem('nft_id');
+            const nft_url = JSON.parse(localStorage.getItem('nft_url'));
+            
+            const nft_id_2 = localStorage.getItem('nft_id_2');
+            const nft_url_2 = JSON.parse(localStorage.getItem('nft_url_2'));
+
+            const nft_id_3 = localStorage.getItem('nft_id_3');
+            const nft_url_3 = JSON.parse(localStorage.getItem('nft_url_3'));
+
             const resp = await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`,
                 {
                     data:{
                         name: data.title ? data.title : null,
-                        logo:'Test',
-                        cover: "Test",
-                        featured: "Test",
-                        symbol: "string",
+                        logo: nft_url ? nft_url : 'Null',
+                        logoID: Number(nft_id),
+                        cover: nft_url_3 ? nft_url_3 : 'Null',
+                        coverID: Number(nft_id_3),
+                        featured: nft_url_2 ? nft_url_2 : 'Null',
+                        featuredID: Number(nft_id_2),
+                        symbol: "String",
                         url: data.url ? data.url : null,
                         description: data.description ? data.description : null,
                         category: category,
-                        slug: data.title.toLowerCase(),
-                        
+                        slug: data.title.toLowerCase(),                       
                         creatorEarning: data.earning ? Number(data.earning) : null,
                         contractAddress: data.wallet ? data.wallet : null,
                         payoutWalletAddress: data.wallet ? data.wallet : null,
                         explicitAndSensitiveContent: data.themeSwitch,
-                        
                     }
                 }
-            );
+            );           
             console.log(resp);    
         } catch (error) {
-            
+            console.log(error);
         }
         
     }
 
     const onSubmit = (data, e) => {
-        
-        
         
         const { target } = e;
         const submitBtn =
@@ -90,7 +176,7 @@ const CreateCollectionArea = () => {
         <>
             <div className="creat-collection-area pt--80">
                 <div className="container">
-                    <form className="row g-5" onSubmit={handleSubmit(onSubmit)}>
+                    <form className="row g-5" encType="multipart/form-data" onSubmit={handleSubmit(onSubmit)}>
                         <div className="col-lg-3 offset-1 ml_md--0 ml_sm--0">
                             <div className="collection-single-wized banner">
                                 <label
@@ -99,6 +185,7 @@ const CreateCollectionArea = () => {
                                 >
                                     Logo image
                                 </label>
+                               
 
                                 <ImageUpload
                                     className="logo-image"
@@ -111,7 +198,9 @@ const CreateCollectionArea = () => {
                                     preview={getValues("logoImg")?.[0]}
                                     {...register("logoImg", {
                                         required: "Upload logo image",
+                                        onChange: (e) => {updateImage('logoImg')},
                                     })}
+                                    
                                 />
 
                                 {errors.logoImg && (
@@ -129,12 +218,14 @@ const CreateCollectionArea = () => {
                                     className="feature-image"
                                     id="featImg"
                                     placeholder={{
-                                        src: "/images/profile/cover-04.png",
+                                        src: "/images/profile/cover-04.jpg",
                                         width: 277,
                                         height: 138,
                                     }}
                                     preview={getValues("featImg")?.[0]}
-                                    {...register("featImg")}
+                                    {...register("featImg",{
+                                        onChange: (e) => {updateImage2('featImg')}
+                                    })}
                                 />
                                 {errors.featImg && (
                                     <ErrorText>
@@ -156,7 +247,9 @@ const CreateCollectionArea = () => {
                                         height: 60,
                                     }}
                                     preview={getValues("bannerImg")?.[0]}
-                                    {...register("bannerImg")}
+                                    {...register("bannerImg", {
+                                        onChange: (e) => {updateImage3('bannerImg')}
+                                    })}
                                 />
                                 {errors.bannerImg && (
                                     <ErrorText>
@@ -217,7 +310,7 @@ const CreateCollectionArea = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-lg-12">
+                                    <div className="col-lg-6">
                                         <div className="collection-single-wized">
                                             <label
                                                 htmlFor="category"
@@ -235,13 +328,71 @@ const CreateCollectionArea = () => {
                                                             text: "Art",
                                                         },
                                                         {
-                                                            value: "Game",
-                                                            text: "Game",
+                                                            value: "Domain Names",
+                                                            text: "Domain Names",
                                                         },
                                                         {
-                                                            value: "Metaverse",
-                                                            text: "Metaverse",
+                                                            value: "Memberships",
+                                                            text: "Memberships",
                                                         },
+                                                        {
+                                                            value: "Music",
+                                                            text: "Music",
+                                                        },
+                                                        {
+                                                            value: "PFPs",
+                                                            text: "PFPs",
+                                                        },
+                                                        {
+                                                            value: "Photography",
+                                                            text: "Photography",
+                                                        },
+                                                        {
+                                                            value: "Sports Collectibles",
+                                                            text: "Sports Collectibles",
+                                                        },
+                                                        {
+                                                            value: "Virtual World",
+                                                            text: "Virtual World",
+                                                        },
+                                                        {
+                                                            value: "No category",
+                                                            text: "No category",
+                                                        },
+                                                    ]}
+                                                    onChange={categoryHandler}
+                                                />
+                                                {((!category &&
+                                                    !isEmpty(errors)) ||
+                                                    hasCatError) && (
+                                                    <ErrorText>
+                                                        Select a category
+                                                    </ErrorText>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-6">
+                                        <div className="collection-single-wized">
+                                            <label
+                                                htmlFor="category"
+                                                className="title required"
+                                            >
+                                                Blockchain
+                                            </label>
+                                            <div className="create-collection-input">
+                                                <NiceSelect
+                                                    name="blockchain"
+                                                    placeholder="Add Blockchain"
+                                                    options={[
+                                                        {
+                                                            value: "Ethereum",
+                                                            text: "Ethereum",
+                                                        },
+                                                        {
+                                                            value: "Polygon",
+                                                            text: "Polygon",
+                                                        }
                                                     ]}
                                                     onChange={categoryHandler}
                                                 />
