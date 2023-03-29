@@ -21,7 +21,6 @@
     },
     "editor.codeActionsOnSave": { "source.fixAll.eslint": true },
     "eslint.validate": ["react", "html", "javascript", "typescript"],
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "files.associations": {
         "*.jsx": "javascriptreact"
     }

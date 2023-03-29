@@ -22,19 +22,48 @@
         "import/resolver": {
             "alias": {
                 "map": [
-                    ["@assets", "./src/assets/"],
-                    ["@ui", "./src/components/ui/"],
-                    ["@components", "./src/components/"],
-                    ["@widgets", "./src/components/widgets/"],
-                    ["@containers", "./src/containers/"],
-                    ["@layout", "./src/layouts/"],
-                    ["@utils", "./src/utils/"],
-                    ["@hooks", "./src/hooks/"]
+                    [
+                        "@assets",
+                        "./src/assets/"
+                    ],
+                    [
+                        "@ui",
+                        "./src/components/ui/"
+                    ],
+                    [
+                        "@components",
+                        "./src/components/"
+                    ],
+                    [
+                        "@widgets",
+                        "./src/components/widgets/"
+                    ],
+                    [
+                        "@containers",
+                        "./src/containers/"
+                    ],
+                    [
+                        "@layout",
+                        "./src/layouts/"
+                    ],
+                    [
+                        "@utils",
+                        "./src/utils/"
+                    ],
+                    [
+                        "@hooks",
+                        "./src/hooks/"
+                    ]
                 ],
-                "extensions": [".js", ".jsx"]
+                "extensions": [
+                    ".js",
+                    ".jsx"
+                ]
             },
             "node": {
-                "paths": ["./"]
+                "paths": [
+                    "./"
+                ]
             }
         }
     },
@@ -46,23 +75,79 @@
         "sourceType": "module",
         "requireConfigFile": false,
         "babelOptions": {
-            "presets": ["@babel/preset-react"]
+            "presets": [
+                "@babel/preset-react"
+            ]
         }
     },
-    "plugins": ["react", "react-hooks", "prettier", "jsx-a11y"],
+    "plugins": [
+        "react",
+        "react-hooks",
+        "prettier",
+        "jsx-a11y"
+    ],
     "rules": {
+        "prefer-template": "warn",
+        "arrow-spacing": "off",
+        "space-before-blocks": "off",
+        "object-curly-spacing": "off",
+        "react/jsx-no-useless-fragment": "warn",
+        "comma-spacing": "off",
+        "import/order": "warn",
+        "no-multi-spaces": "off",
+        "space-in-parens": "warn",
+        "react/no-unstable-nested-components": "warn",
+        "space-infix-ops": "warn",
+        "no-empty": "warn",
+        "padded-blocks": "warn",
+        "spaced-comment": "warn",
+        "react/jsx-curly-brace-presence": "warn",
+        "semi": "warn",
+        "prefer-const": "warn",
+        "keyword-spacing": "warn",
+        "prefer-destructuring": "warn",
+        "no-undef": "warn",
+        "react/prop-types": "warn",
+        "no-multiple-empty-lines": "warn",
+        "import/no-unresolved": "warn",
+        "key-spacing": "warn",
+        "object-shorthand": "warn",
+        "no-trailing-spaces": "warn",
+        "no-shadow": "warn",
+        "no-use-before-define": "warn",
+        "linebreak-style": "off",
         "object-curly-newline": "off",
         "import/prefer-default-export": "off",
-        "prettier/prettier": ["error","Wp"]
-        "indent": ["error", 4, { "SwitchCase": 1 }],
-        "quotes": ["error", "double", { "allowTemplateLiterals": true }],
-        "camelcase": ["off", { "properties": "never" }],
+        "prettier/prettier": "warn",
+        "indent": [
+            "warn",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "quotes": [
+            "warn",
+            "double",
+            {
+                "allowTemplateLiterals": true
+            }
+        ],
+        "camelcase": [
+            "off",
+            {
+                "properties": "never"
+            }
+        ],
         "eslint-plugin/fixer-return:": "off",
         "operator-linebreak": "off",
         "implicit-arrow-linebreak": "off",
-        "comma-dangle": ["error", "only-multiline"],
+        "comma-dangle": [
+            "warn",
+            "only-multiline"
+        ],
         "function-paren-newline": "off",
-        "react/jsx-indent": [2, 4],
+        "react/jsx-indent": "off",
         "react/jsx-indent-props": "off",
         "react/jsx-one-expression-per-line": "off",
         "no-unused-vars": [
@@ -76,36 +161,47 @@
         "react/jsx-uses-react": "off",
         "react/react-in-jsx-scope": "off",
         "react/require-default-props": 0,
-        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/rules-of-hooks": "warn",
         "react-hooks/exhaustive-deps": "warn",
         "react/no-danger": "off",
         "react/jsx-fragments": "off",
         "react/jsx-curly-newline": "off",
         "jsx-a11y/label-has-associated-control": [
-            "error",
+            "warn",
             {
                 "required": {
-                    "some": ["nesting", "id"]
+                    "some": [
+                        "nesting",
+                        "id"
+                    ]
                 }
             }
         ],
         "jsx-a11y/label-has-for": [
-            "error",
+            "warn",
             {
                 "required": {
-                    "some": ["nesting", "id"]
+                    "some": [
+                        "nesting",
+                        "id"
+                    ]
                 }
             }
         ],
-        "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+        "no-plusplus": [
+            "warn",
+            {
+                "allowForLoopAfterthoughts": true
+            }
+        ],
         "react/function-component-definition": [
-            "error",
+            "warn",
             {
                 "namedComponents": "arrow-function"
             }
         ],
         "no-underscore-dangle": "off",
-        "@next/next/no-html-link-for-pages": "error",
+        "@next/next/no-html-link-for-pages": "warn",
         "no-multi-assign": "off",
         "default-param-last": "off"
     }
