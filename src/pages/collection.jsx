@@ -12,16 +12,35 @@ export async function getStaticProps() {
     return { props: { className: "template-color-1" } };
 }
 
-const Collection = () => (
-    <Wrapper>
-        <SEO pageTitle="Collection" />
-        <Header />
-        <main id="main-content">
-            <Breadcrumb pageTitle="Our Collection" currentPage="Collection" />
-            <CollectionArea data={{ collections: collectionsData }} />
-        </main>
-        <Footer />
-    </Wrapper>
-);
+import { useState,useEffect  } from "react";
+import axios from "axios";
+
+const Collection = () => { 
+    const [dataCollection, setDataCollection] = useState(null);
+    useEffect(() => {
+        axios.get( `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections?populate=*`).then((response) => {
+            setDataCollection(response.data.data);
+            
+        });
+    }, []);
+    console.log(dataCollection);
+    return (
+        <Wrapper>
+            <SEO pageTitle="Collection" />
+            <Header />
+            <main id="main-content">
+                <Breadcrumb pageTitle="Our Collection" currentPage="Collection" />
+                {
+                dataCollection && (
+                    <>
+                    <CollectionArea data={(dataCollection ? {collections: dataCollection} : {collections: collectionsData} )} />
+                    </>
+                )
+                }
+            </main>
+            <Footer />
+        </Wrapper>
+    )
+};
 
 export default Collection;

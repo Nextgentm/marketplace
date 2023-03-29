@@ -12,10 +12,10 @@ const Collection = ({
 }) => (
     <Anchor path={path} className="rn-collection-inner-one">
         <div className="collection-wrapper">
-            {image?.src && (
+            {image?.url && (
                 <div className="collection-big-thumbnail">
                     <Image
-                        src={image.src}
+                        src={image.url}
                         alt={image?.alt || "Nft_Profile"}
                         width={507}
                         height={339}
@@ -23,10 +23,21 @@ const Collection = ({
                 </div>
             )}
             
-            {profile_image?.src && (
+            {thumbnails?.url && (
+                     <div className="collenction-small-thumbnail">
+                        <Image
+                            src={thumbnails?.url}
+                            alt={thumbnails?.alt || "Nft_Profile"}
+                            width={300}
+                            height={65}    
+                        />
+                    </div>
+            )}
+
+            {profile_image?.url && (
                 <div className="collection-profile">
                     <Image
-                        src={profile_image.src}
+                        src={profile_image.url}
                         alt={profile_image?.alt || "Nft_Profile"}
                         width={80}
                         height={80}

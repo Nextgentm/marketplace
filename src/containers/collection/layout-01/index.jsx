@@ -45,18 +45,19 @@ const TopCollectionArea = ({ className, id, space, data }) => (
                     {data.collections.map((collection) => (
                         <div
                             key={collection.id}
-                            data-sal="slide-up"
+                            
                             data-sal-delay="150"
                             data-sal-duration="800"
                             className="col-lg-4 col-xl-3 col-md-6 col-sm-6 col-12"
                         >
                             <Collection
-                                title={collection.title}
+                                title={collection.name}
                                 total_item={collection.total_item}
                                 path={collection.slug}
-                                image={collection.image}
-                                thumbnails={collection.thumbnails}
-                                profile_image={collection.profile_image}
+                                image={collection.cover.data}
+                                thumbnails={collection.featured.data}
+                                profile_image={collection.logo.data}
+                                
                             />
                         </div>
                     ))}

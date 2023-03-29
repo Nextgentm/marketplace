@@ -33,17 +33,18 @@ const Home = () => {
             
         });
     }, []);
-    console.log(dataCollection);
+    
     return (
         <Wrapper>
-            <SEO pageTitle="Home Six" />
+            <SEO pageTitle="NFT Marketplace" />
             <Header />
             <main id="main-content">
                 <HeroArea data={content["hero-section"]} />
+                
                 <CollectionArea
-                    data={{
+                    data={dataCollection && {
                         ...content["collection-section"],
-                        collections: collectionsData.slice(0,4),
+                        collections: dataCollection.slice(0,4),
                     }}
                 />
                 <ExploreProductArea
