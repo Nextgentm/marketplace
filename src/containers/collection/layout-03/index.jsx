@@ -34,26 +34,25 @@ const CollectionArea = ({ className, space, id, data }) => {
             id={id}
         >
             <div className="container">
-                <div className="row g-5">
-                
-                    {collections.map((collection) => (
-                        
-                        <div
-                            key={collection.id}
-                            className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12"
-                        >
-                            <Collection
-                                title={collection.name}
-                                total_item={collection.total_item}
-                                path={collection.slug}
-                                image={collection.cover.data}
-                                thumbnails={collection.featured.data}
-                                profile_image={collection.logo.data}
-                                
-                            />
-                        </div>
-                    ))}
-                </div>
+                {collections && (
+                    <div className="row g-5">
+                        {collections.map((collection) => (
+                            <div
+                                key={collection.id}
+                                className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12"
+                            >
+                                <Collection
+                                    title={collection.name}
+                                    total_item={collection.total_item}
+                                    path={collection.slug}
+                                    image={collection.cover.data}
+                                    thumbnails={collection.featured.data}
+                                    profile_image={collection.logo.data}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
                 <div className="row">
                     <div
                         className="col-lg-12"

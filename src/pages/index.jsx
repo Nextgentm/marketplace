@@ -10,15 +10,12 @@ import ServiceArea from "@containers/services/layout-01";
 import { normalizedData } from "@utils/methods";
 
 // Demo data
+import { useState, useEffect } from "react";
+import axios from "axios";
 import homepageData from "../data/homepages/home-06.json";
 import sellerData from "../data/sellers.json";
 import productData from "../data/products.json";
 import collectionsData from "../data/collections.json";
-
-import { useState,useEffect  } from "react";
-import axios from "axios";
-
-
 
 export async function getStaticProps() {
     return { props: { className: "template-color-1" } };
@@ -28,24 +25,28 @@ const Home = () => {
     const content = normalizedData(homepageData?.content || []);
     const [dataCollection, setDataCollection] = useState(null);
     useEffect(() => {
-        axios.get( `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections?populate=*`).then((response) => {
-            setDataCollection(response.data.data);
-            
-        });
+        axios
+            .get(
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections?populate=*`
+            )
+            .then((response) => {
+                setDataCollection(response.data.data);
+            });
     }, []);
-    
     return (
         <Wrapper>
             <SEO pageTitle="NFT Marketplace" />
             <Header />
             <main id="main-content">
                 <HeroArea data={content["hero-section"]} />
-                
+
                 <CollectionArea
-                    data={dataCollection && {
-                        ...content["collection-section"],
-                        collections: dataCollection.slice(0,4),
-                    }}
+                    data={
+                        dataCollection && {
+                            ...content["collection-section"],
+                            collections: dataCollection.slice(0, 4),
+                        }
+                    }
                 />
                 <ExploreProductArea
                     data={{

@@ -17,7 +17,6 @@ const TopCollectionArea = ({ className, id, space, data }) => (
         <div className="container">
             <div className="row mb--50 align-items-center">
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
-                
                     {data?.section_title && (
                         <SectionTitle
                             className="mb--0"
@@ -41,11 +40,10 @@ const TopCollectionArea = ({ className, id, space, data }) => (
             </div>
             {data?.collections && (
                 <div className="row g-5">
-                    {/*JSON.stringify(data.collections)*/}
+                    {/* JSON.stringify(data.collections) */}
                     {data.collections.map((collection) => (
                         <div
                             key={collection.id}
-                            
                             data-sal-delay="150"
                             data-sal-duration="800"
                             className="col-lg-4 col-xl-3 col-md-6 col-sm-6 col-12"
@@ -57,7 +55,6 @@ const TopCollectionArea = ({ className, id, space, data }) => (
                                 image={collection.cover.data}
                                 thumbnails={collection.featured.data}
                                 profile_image={collection.logo.data}
-                                
                             />
                         </div>
                     ))}
