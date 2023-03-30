@@ -59,7 +59,7 @@ contract Trade is AccessControl {
         address tokenCreator;
     }
 
-    
+
     /** Order Params
         @param seller address of user,who's selling the NFT.
         @param buyer address of user, who's buying the NFT.
@@ -96,8 +96,7 @@ contract Trade is AccessControl {
         sellerFeePermille = _sellerFee;
         transferProxy = _transferProxy;
         owner = msg.sender;
-        signer = msg.sender;
-        _setupRole(ADMIN_ROLE, msg.sender);
+
     }
 
     /**
@@ -116,55 +115,6 @@ contract Trade is AccessControl {
         return sellerFeePermille;
     }
 
-    /** 
-        @param _buyerFee  value for buyerservice in multiply of 1000.
-    */
-
-    function setBuyerServiceFee(uint8 _buyerFee)
-        external
-        onlyRole(ADMIN_ROLE)
-        returns (bool)
-    {
-        buyerFeePermille = _buyerFee;
-        emit BuyerFee(buyerFeePermille);
-        return true;
-    }
-
-    /** 
-        @param _sellerFee  value for buyerservice in multiply of 1000.
-    */
-
-    function setSellerServiceFee(uint8 _sellerFee)
-        external
-        onlyRole(ADMIN_ROLE)
-        returns (bool)
-    {
-        sellerFeePermille = _sellerFee;
-        emit SellerFee(sellerFeePermille);
-        return true;
-    }
-
-    /**
-        transfers the contract ownership to newowner address.    
-        @param newOwner address of newOwner
-     */
-
-    function transferOwnership(address newOwner)
-        external
-        onlyRole(ADMIN_ROLE)
-        returns (bool)
-    {
-        require(
-            newOwner != address(0),
-            "Ownable: new owner is the zero address"
-        );
-        _revokeRole(ADMIN_ROLE, owner);
-        emit OwnershipTransferred(owner, newOwner);
-        owner = newOwner;
-        _setupRole(ADMIN_ROLE, newOwner);
-        return true;
-    }
-
     /**
         excuting the NFT order.
         @param order ordervalues(seller, buyer,...).
@@ -174,6 +124,7 @@ contract Trade is AccessControl {
         external
         returns (bool)
     {
+
         Fee memory fee = getFees(
             order
         );
@@ -186,11 +137,6 @@ contract Trade is AccessControl {
         emit BuyAsset(order.seller, order.tokenId, order.qty, msg.sender);
         return true;
     }
-
-    /**
-        excuting the NFT order.
-        @param order ordervalues(seller, buyer,...).
-    */
 
     function executeBid(Order calldata order)
         external
@@ -205,9 +151,11 @@ contract Trade is AccessControl {
         return true;
     }
 
+
+
     function getFees(
         Order calldata order
-    ) internal view returns (Fee memory) {
+    ) public view returns (Fee memory) {
         address tokenCreator;
         uint256 platformFee;
         uint256 royaltyFee;
@@ -223,6 +171,12 @@ contract Trade is AccessControl {
         assetFee = price - royaltyFee - sellerFee;
         return Fee(platformFee, assetFee, royaltyFee, price, tokenCreator);
     }
+
+    /** 
+        transfers the NFTs and tokens...
+        @param order ordervalues(seller, buyer,...).
+        @param fee Feevalues(platformFee, assetFee,...).
+    */
 
     function tradeAsset(
         Order calldata order,
