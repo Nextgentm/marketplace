@@ -24,6 +24,7 @@ const Product = ({
     slug,
     latestBid,
     price,
+    symbol,
     likeCount,
     auction_date,
     image,
@@ -46,10 +47,10 @@ const Product = ({
                 )}
             >
                 <div className="card-thumbnail">
-                    {image?.src && (
+                    {image && (
                         <Anchor path={`/product/${slug}`}>
                             <Image
-                                src={image.src}
+                                src={image?.src ? image.src : image}
                                 alt={image?.alt || "NFT_portfolio"}
                                 width={533}
                                 height={533}
@@ -86,7 +87,11 @@ const Product = ({
                     <span className="product-name">{title}</span>
                 </Anchor>
                 <span className="latest-bid">Highest bid {latestBid}</span>
-                <ProductBid price={price} likeCount={likeCount} />
+                <ProductBid
+                    symbol={symbol}
+                    price={price}
+                    likeCount={likeCount}
+                />
             </div>
             <PlaceBidModal show={showBidModal} handleModal={handleBidModal} />
         </>

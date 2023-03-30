@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
@@ -15,6 +15,7 @@ const CreateNewArea = ({ className, space }) => {
     const [selectedImage, setSelectedImage] = useState();
     const [hasImageError, setHasImageError] = useState(false);
     const [previewData, setPreviewData] = useState({});
+    const [dataCollection, setDataCollection] = useState(null);
 
     const {
         register,
@@ -22,7 +23,7 @@ const CreateNewArea = ({ className, space }) => {
         formState: { errors },
         reset,
         getValues,
-        watch
+        watch,
     } = useForm({
         mode: "onChange",
     });
@@ -42,78 +43,86 @@ const CreateNewArea = ({ className, space }) => {
     };
 
     async function updateImage(e) {
-        //console.log(getValues(e));
+        // console.log(getValues(e));
         if (getValues(e) && getValues(e)?.length > 0) {
             setSelectedImage(getValues(e)?.[0]);
         }
         const formData = new FormData();
         formData.append("files", getValues(e)?.[0]);
-        const resp = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
-            method: 'post',
-            body: formData
-        })
+        const resp = await fetch(
+            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`,
+            {
+                method: "post",
+                body: formData,
+            }
+        )
             .then((response) => response.json())
             .then((data) => {
-                console.log(data[0]?.id);
                 if (data[0]?.id) {
-                    const old_id = localStorage.getItem('nft_id_4');
+                    const old_id = localStorage.getItem("nft_id_4");
                     if (old_id) {
-                        const resp = fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:` + old_id, {
-                            method: 'delete',
-                        });
+                        fetch(
+                            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:${old_id}`,
+                            {
+                                method: "delete",
+                            }
+                        );
                     }
-                    localStorage.setItem('nft_id_4', data[0]?.id);
-                    localStorage.setItem('nft_url_4', JSON.stringify(data[0]));
+                    localStorage.setItem("nft_id_4", data[0]?.id);
+                    localStorage.setItem("nft_url_4", JSON.stringify(data[0]));
                 }
-            }).catch(() => {
-                //Promise Failed, Do something
+            })
+            .catch(() => {
+                // Promise Failed, Do something
             });
-
     }
 
     async function StoreData(data) {
-
         try {
-            console.log(data);
-            const nft_id_4 = localStorage.getItem('nft_id_4');
-            const nft_url_4 = JSON.parse(localStorage.getItem('nft_url_4'));
+            const nft_id_4 = localStorage.getItem("nft_id_4");
+            const nft_url_4 = JSON.parse(localStorage.getItem("nft_url_4"));
 
-            const resp = await axios.post(
+            await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles`,
                 {
                     data: {
                         name: data.name ? data.name : null,
-                        image: nft_url_4 ? nft_url_4 : "String",
-                        imageID: nft_id_4 ? nft_id_4 : 0,
+                        image: nft_url_4 || "ImagePath",
+                        imageID: nft_id_4 || 0,
                         description: data.discription ? data.discription : null,
                         price: data.price ? Number(data.price) : null,
                         size: data.size ? Number(data.size) : null,
-                        symbol: "String",
+                        symbol: "wETH",
                         properties: data.propertiy ? data.propertiy : null,
                         royalty: data.royality ? Number(data.royality) : null,
-                        numberOfCopies: 0,
+                        numberOfCopies: data.numberOfCopies
+                            ? Number(data.numberOfCopies)
+                            : null,
                         imageHash: "String",
                         metadataHash: "String",
                         creator: 0,
                         owner: 0,
-                        collectionContractAddress: "String",
-                        putOnSale: true,
-                        instantSalePrice: true,
-                        unlockPurchased: true,
-                        slug: data.name ? data.name.toLowerCase().split(' ').join('-') : null,
-                        collection: "String"
-                    }
+                        collectionContractAddress:
+                            data.collectionContractAddress
+                                ? data.collectionContractAddress
+                                : null,
+                        putOnSale: data.putonsale,
+                        instantSalePrice: data.instantsaleprice,
+                        unlockPurchased: data.unlockpurchased,
+                        slug: data.name
+                            ? data.name.toLowerCase().split(" ").join("-")
+                            : null,
+                        collection: "String",
+                    },
                 }
             );
-            console.log(resp);
         } catch (error) {
             console.log(error);
         }
     }
 
     const onSubmit = (data, e) => {
-
-        StoreData(data);
+        console.log(data);
         const { target } = e;
         const submitBtn =
             target.localName === "span" ? target.parentElement : target;
@@ -127,6 +136,7 @@ const CreateNewArea = ({ className, space }) => {
             notify();
             reset();
             setSelectedImage();
+            StoreData(data);
         }
     };
 
@@ -145,6 +155,15 @@ const CreateNewArea = ({ className, space }) => {
         let receipt = await transaction.wait();
     }
 
+    useEffect(() => {
+        axios
+            .get(
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections?populate=*`
+            )
+            .then((response) => {
+                setDataCollection(response.data.data);
+            });
+    }, []);
     return (
         <>
             <div
@@ -281,6 +300,40 @@ const CreateNewArea = ({ className, space }) => {
                                             </div>
                                         </div>
 
+                                        <div className="col-md-6">
+                                            <div className="input-box pb--20">
+                                                <label
+                                                    htmlFor="Collection"
+                                                    className="form-label"
+                                                >
+                                                    Collection
+                                                </label>
+                                                <input
+                                                    id="collection"
+                                                    placeholder="Collection"
+                                                    {...register("collection")}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="col-md-6">
+                                            <div className="input-box pb--20">
+                                                <label
+                                                    htmlFor="Collection Contract Address"
+                                                    className="form-label"
+                                                >
+                                                    Collection Contract Address
+                                                </label>
+                                                <input
+                                                    id="collectionContractAddress"
+                                                    placeholder="Collection Contract Address"
+                                                    {...register(
+                                                        "collectionContractAddress"
+                                                    )}
+                                                />
+                                            </div>
+                                        </div>
+
                                         <div className="col-md-4">
                                             <div className="input-box pb--20">
                                                 <label
@@ -322,6 +375,11 @@ const CreateNewArea = ({ className, space }) => {
                                                     id="size"
                                                     placeholder="e. g. `Size`"
                                                     {...register("size", {
+                                                        pattern: {
+                                                            value: /^[0-9]+$/,
+                                                            message:
+                                                                "Please enter a number",
+                                                        },
                                                         required:
                                                             "Size is required",
                                                     })}
@@ -373,6 +431,11 @@ const CreateNewArea = ({ className, space }) => {
                                                     id="royality"
                                                     placeholder="e. g. `20%`"
                                                     {...register("royality", {
+                                                        pattern: {
+                                                            value: /^[0-9]+$/,
+                                                            message:
+                                                                "Please enter a number",
+                                                        },
                                                         required:
                                                             "Royality is required",
                                                     })}
@@ -388,12 +451,53 @@ const CreateNewArea = ({ className, space }) => {
                                             </div>
                                         </div>
 
+                                        <div className="col-md-6">
+                                            <div className="input-box pb--20">
+                                                <label
+                                                    htmlFor="External URL"
+                                                    className="form-label"
+                                                >
+                                                    External URL
+                                                </label>
+                                                <input
+                                                    id="external_url"
+                                                    placeholder="External URL"
+                                                    {...register("externalurl")}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="input-box pb--20">
+                                                <label
+                                                    htmlFor="Number Of Copies"
+                                                    className="form-label"
+                                                >
+                                                    Number Of Copies
+                                                </label>
+                                                <input
+                                                    id="numberOfCopies"
+                                                    placeholder="e. g. `1-100`"
+                                                    {...register(
+                                                        "numberOfCopies",
+                                                        {
+                                                            pattern: {
+                                                                value: /^[0-9]+$/,
+                                                                message:
+                                                                    "Please enter a number",
+                                                            },
+                                                        }
+                                                    )}
+                                                />
+                                            </div>
+                                        </div>
+
                                         <div className="col-md-4 col-sm-4">
                                             <div className="input-box pb--20 rn-check-box">
                                                 <input
                                                     className="rn-check-box-input"
                                                     type="checkbox"
                                                     id="putonsale"
+                                                    {...register("putonsale")}
                                                 />
                                                 <label
                                                     className="rn-check-box-label"
@@ -410,6 +514,9 @@ const CreateNewArea = ({ className, space }) => {
                                                     className="rn-check-box-input"
                                                     type="checkbox"
                                                     id="instantsaleprice"
+                                                    {...register(
+                                                        "instantsaleprice"
+                                                    )}
                                                 />
                                                 <label
                                                     className="rn-check-box-label"
@@ -426,6 +533,9 @@ const CreateNewArea = ({ className, space }) => {
                                                     className="rn-check-box-input"
                                                     type="checkbox"
                                                     id="unlockpurchased"
+                                                    {...register(
+                                                        "unlockpurchased"
+                                                    )}
                                                 />
                                                 <label
                                                     className="rn-check-box-label"
