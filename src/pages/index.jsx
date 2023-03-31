@@ -15,7 +15,6 @@ import axios from "axios";
 import homepageData from "../data/homepages/home-06.json";
 import sellerData from "../data/sellers.json";
 import productData from "../data/products.json";
-import collectionsData from "../data/collections.json";
 
 export async function getStaticProps() {
     return { props: { className: "template-color-1" } };
