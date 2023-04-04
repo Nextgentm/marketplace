@@ -8,6 +8,7 @@ import ProductModal from "@components/modals/product-modal";
 import ErrorText from "@ui/error-text";
 import { toast } from "react-toastify";
 import axios from "axios";
+import CreateNFT from "src/CollectionNFT";
 
 const CreateNewArea = ({ className, space }) => {
     const [showProductModal, setShowProductModal] = useState(false);
@@ -34,7 +35,7 @@ const CreateNewArea = ({ className, space }) => {
     };
 
     // This function will be triggered when the file field change
-    const  imageChange = (e) => {
+    const imageChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
             setSelectedImage(e.target.files[0]);
         }
@@ -47,40 +48,40 @@ const CreateNewArea = ({ className, space }) => {
         }
         const formData = new FormData();
         formData.append("files", getValues(e)?.[0]);
-        const resp =  await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+        const resp = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
             method: 'post',
             body: formData
         })
-        .then((response) => response.json())
-        .then( (data)=>{
-            console.log(data[0]?.id);
-            if(data[0]?.id){
-                const old_id = localStorage.getItem('nft_id_4');
-                if(old_id){
-                    const resp =  fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:`+old_id, {
-                        method: 'delete',
-                    });    
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data[0]?.id);
+                if (data[0]?.id) {
+                    const old_id = localStorage.getItem('nft_id_4');
+                    if (old_id) {
+                        const resp = fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:` + old_id, {
+                            method: 'delete',
+                        });
+                    }
+                    localStorage.setItem('nft_id_4', data[0]?.id);
+                    localStorage.setItem('nft_url_4', JSON.stringify(data[0]));
                 }
-                localStorage.setItem('nft_id_4', data[0]?.id);
-                localStorage.setItem('nft_url_4', JSON.stringify(data[0]));
-            }  
-        }).catch(()=>{
-        //Promise Failed, Do something
-        });
-                
+            }).catch(() => {
+                //Promise Failed, Do something
+            });
+
     }
-    
+
     async function StoreData(data) {
-        
+
         try {
-            console.log(data);  
+            console.log(data);
             const nft_id_4 = localStorage.getItem('nft_id_4');
             const nft_url_4 = JSON.parse(localStorage.getItem('nft_url_4'));
 
             const resp = await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles`,
                 {
-                    data:{
+                    data: {
                         name: data.name ? data.name : null,
                         image: nft_url_4 ? nft_url_4 : "String",
                         imageID: nft_id_4 ? nft_id_4 : 0,
@@ -90,11 +91,11 @@ const CreateNewArea = ({ className, space }) => {
                         symbol: "String",
                         properties: data.propertiy ? data.propertiy : null,
                         royalty: data.royality ? Number(data.royality) : null,
-                        numberOfCopies:0,
+                        numberOfCopies: 0,
                         imageHash: "String",
                         metadataHash: "String",
-                        creator:0,
-                        owner:0,
+                        creator: 0,
+                        owner: 0,
                         collectionContractAddress: "String",
                         putOnSale: true,
                         instantSalePrice: true,
@@ -104,10 +105,10 @@ const CreateNewArea = ({ className, space }) => {
                     }
                 }
             );
-            console.log(resp);    
+            console.log(resp);
         } catch (error) {
-            console.log(error);  
-        }    
+            console.log(error);
+        }
     }
 
     const onSubmit = (data, e) => {
@@ -128,6 +129,22 @@ const CreateNewArea = ({ className, space }) => {
             setSelectedImage();
         }
     };
+
+    async function MintNFT() {
+        const ethers = require("ethers");
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const utils = ethers.utils;
+        const bytes = utils.formatBytes32String(signer);
+        let contract = new ethers.Contract(
+            CreateNFT.address,
+            CreateNFT.abi,
+            signer
+        );
+        let transaction = await contract.mint();
+        let receipt = await transaction.wait();
+    }
+
     return (
         <>
             <div
@@ -159,7 +176,7 @@ const CreateNewArea = ({ className, space }) => {
                                             multiple
                                             {...register("file", {
                                                 required: "Upload logo image",
-                                                onChange: (e) => {updateImage('file')},
+                                                onChange: (e) => { updateImage('file') },
                                             })}
                                         />
                                         {selectedImage && (
