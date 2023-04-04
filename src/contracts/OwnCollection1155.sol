@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.14;
 
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
@@ -16,6 +16,7 @@ contract LootmogulUser1155Token is
     ERC2981,
     AccessControl
 {
+
     using Counters for Counters.Counter;
     using Strings for uint256;
     Counters.Counter private _tokenIdTracker;
@@ -58,7 +59,8 @@ contract LootmogulUser1155Token is
     }
 
     /** @dev change the Ownership from current owner to newOwner address
-        @param newOwner : newOwner address */
+        @param newOwner : newOwner address 
+    */
 
     function transferOwnership(address newOwner)
         external

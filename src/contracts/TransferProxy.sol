@@ -79,6 +79,28 @@ contract TransferProxy is AccessControl, ITransferProxy {
         token.safeTransferFrom(from, to, tokenId, value, data);
     }
 
+    function mintAndSafe1155Transfer(
+        ILazyMint token,
+        address from,
+        address to,
+        string memory _tokenURI,
+        uint96 _royaltyFee,
+        uint256 supply,
+        uint256 qty
+    ) external override onlyRole(OPERATOR_ROLE)  {
+        token.mintAndTransfer(from, to, _tokenURI, _royaltyFee, supply, qty);
+    }
+
+    function mintAndSafe721Transfer(
+        ILazyMint token,
+        address from,
+        address to,
+        string memory _tokenURI,
+        uint96 _royaltyFee
+    ) external override onlyRole(OPERATOR_ROLE) {
+        token.mintAndTransfer(from, to, _tokenURI, _royaltyFee);
+    }
+
     function erc20safeTransferFrom(
         IERC20 token,
         address from,
