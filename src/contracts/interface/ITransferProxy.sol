@@ -1,8 +1,7 @@
 // SPDX-License-Identifier:UNLICENSED
 pragma solidity 0.8.14;
-import "@openzeppelin/contracts/interfaces/IERC721.sol";
-import "@openzeppelin/contracts/interfaces/IERC1155.sol";
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
+
+import "./ILazyMint.sol";
 
 /**
  * @dev Wrappers over Solidity's arithmetic operations with added overflow
@@ -35,6 +34,23 @@ interface ITransferProxy {
         bytes calldata data
     ) external;
     
+    function mintAndSafe1155Transfer(
+        ILazyMint nftAddress,
+        address from,
+        address to,
+        string memory _tokenURI,
+        uint96 _royaltyFee,
+        uint256 supply,
+        uint256 qty
+    ) external ;
+
+    function mintAndSafe721Transfer(
+        ILazyMint nftAddress,
+        address from,
+        address to,
+        string memory _tokenURI,
+        uint96 _royaltyFee
+    ) external ;
 
     function erc20safeTransferFrom(
         IERC20 token,
