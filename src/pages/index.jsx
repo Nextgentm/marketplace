@@ -23,6 +23,8 @@ export async function getStaticProps() {
 const Home = () => {
     const content = normalizedData(homepageData?.content || []);
     const [dataCollection, setDataCollection] = useState(null);
+    const [dataCollectibles, setDataCollectibles] = useState(null);
+
     useEffect(() => {
         axios
             .get(
@@ -32,6 +34,19 @@ const Home = () => {
                 setDataCollection(response.data.data);
             });
     }, []);
+
+    useEffect(() => {
+        axios
+            .get(
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?populate=*`
+            )
+            .then((response) => {
+                setDataCollectibles(response.data.data);
+            });
+    }, []);
+
+    console.log(dataCollectibles);
+
     return (
         <Wrapper>
             <SEO pageTitle="NFT Marketplace" />
@@ -48,10 +63,12 @@ const Home = () => {
                     }
                 />
                 <ExploreProductArea
-                    data={{
-                        ...content["explore-product-section"],
-                        products: productData,
-                    }}
+                    data={
+                        dataCollectibles && {
+                            ...content["explore-product-section"],
+                            products: dataCollectibles,
+                        }
+                    }
                 />
                 <CreatorArea
                     data={{

@@ -20,6 +20,7 @@ const TopCollectionArea = ({ className, id, space, data }) => (
                     {data?.section_title && (
                         <SectionTitle
                             className="mb--0"
+                            disableAnimation="true"
                             {...data.section_title}
                         />
                     )}

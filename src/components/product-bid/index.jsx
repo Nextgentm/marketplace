@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 
-const ProductBid = ({ price, likeCount }) => (
+const ProductBid = ({ price, symbol, likeCount }) => (
     <div className="bid-react-area">
         <div className="last-bid">
-            {price.amount}
-            {price.currency}
+            {price.amount ? price.amount : price}
+            {price.currency ? price.currency : symbol}
         </div>
         <div className="react-area">
             <svg
@@ -31,6 +31,7 @@ ProductBid.propTypes = {
         currency: PropTypes.string.isRequired,
     }).isRequired,
     likeCount: PropTypes.number.isRequired,
+    symbol: PropTypes.string,
 };
 
 export default ProductBid;

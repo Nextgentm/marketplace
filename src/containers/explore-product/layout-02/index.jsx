@@ -11,7 +11,9 @@ import { SectionTitleType, ProductType } from "@utils/types";
 const ExploreProductArea = ({ className, space, data }) => {
     const filters = [
         ...new Set(
-            flatDeep(data?.products.map((item) => item.categories) || [])
+            flatDeep(
+                data?.products.map((item) => item.collection.data?.name) || []
+            )
         ),
     ];
     const [products, setProducts] = useState([]);
@@ -26,7 +28,7 @@ const ExploreProductArea = ({ className, space, data }) => {
             return;
         }
         const filterProds = prods.filter((prod) =>
-            prod.categories.includes(filterKey)
+            prod.collection.data?.name.includes(filterKey)
         );
         setProducts(filterProds);
     };
@@ -66,12 +68,19 @@ const ExploreProductArea = ({ className, space, data }) => {
                             >
                                 <Product
                                     placeBid={!!data.placeBid}
-                                    title={prod.title}
-                                    slug={prod.slug}
-                                    latestBid={prod.latestBid}
-                                    price={prod.price}
-                                    likeCount={prod.likeCount}
-                                    image={prod.images?.[0]}
+                                    title={prod.name ? prod.name : "Demo NFT"}
+                                    slug={prod.slug ? prod.slug : "#"}
+                                    latestBid={
+                                        prod.latestBid ? prod.latestBid : "6/30"
+                                    }
+                                    price={prod.price ? prod.price : "0"}
+                                    symbol={prod.symbol ? prod.symbol : "BTC"}
+                                    likeCount={500}
+                                    image={
+                                        prod.image.data
+                                            ? prod.image.data.url
+                                            : "/images/portfolio/lg/portfolio-01.jpg"
+                                    }
                                     authors={prod.authors}
                                     bitCount={prod.bitCount}
                                 />
