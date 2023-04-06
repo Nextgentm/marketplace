@@ -8,7 +8,9 @@ import ProductModal from "@components/modals/product-modal";
 import ErrorText from "@ui/error-text";
 import { toast } from "react-toastify";
 import axios from "axios";
-import CreateNFT from "src/CollectionNFT";
+import NiceSelect from "@ui/nice-select";
+// import CreateNFT from "src/CollectionNFT";
+import { useRouter } from "next/router";
 
 const CreateNewArea = ({ className, space }) => {
     const [showProductModal, setShowProductModal] = useState(false);
@@ -17,6 +19,9 @@ const CreateNewArea = ({ className, space }) => {
     const [previewData, setPreviewData] = useState({});
     const [dataCollection, setDataCollection] = useState(null);
 
+    const router = useRouter();
+    const data = router.query;
+    // console.log(data.type);
     const {
         register,
         handleSubmit,
@@ -33,6 +38,10 @@ const CreateNewArea = ({ className, space }) => {
     const notify = () => toast("Your product has submitted");
     const handleProductModal = () => {
         setShowProductModal(false);
+    };
+    const [category, setCategory] = useState("");
+    const categoryHandler = (item) => {
+        setCategory(item.value);
     };
 
     // This function will be triggered when the file field change
@@ -140,20 +149,20 @@ const CreateNewArea = ({ className, space }) => {
         }
     };
 
-    async function MintNFT() {
+    /* async function MintNFT() {
         const ethers = require("ethers");
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const utils = ethers.utils;
+        const { utils } = ethers;
         const bytes = utils.formatBytes32String(signer);
-        let contract = new ethers.Contract(
+        const contract = new ethers.Contract(
             CreateNFT.address,
             CreateNFT.abi,
             signer
         );
-        let transaction = await contract.mint();
-        let receipt = await transaction.wait();
-    }
+        const transaction = await contract.mint();
+        const receipt = await transaction.wait();
+    } */
 
     useEffect(() => {
         axios
@@ -161,9 +170,20 @@ const CreateNewArea = ({ className, space }) => {
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections?populate=*`
             )
             .then((response) => {
-                setDataCollection(response.data.data);
+                // setDataCollection(response.data.data);
+
+                const results = [];
+                response.data.data.map((data) =>
+                    results.push({
+                        value: data.name,
+                        text: data.name,
+                    })
+                );
+                console.log(results);
+                setDataCollection(results);
             });
     }, []);
+    // console.log(dataCollection);
     return (
         <>
             <div
@@ -195,7 +215,9 @@ const CreateNewArea = ({ className, space }) => {
                                             multiple
                                             {...register("file", {
                                                 required: "Upload logo image",
-                                                onChange: (e) => { updateImage('file') },
+                                                onChange: () => {
+                                                    updateImage("file");
+                                                },
                                             })}
                                         />
                                         {selectedImage && (
@@ -229,6 +251,12 @@ const CreateNewArea = ({ className, space }) => {
                                 </div>
 
                                 <div className="mt--100 mt_sm--30 mt_md--30 d-none d-lg-block">
+                                    {data?.type && (
+                                        <h5>
+                                            Selected Variants:{" "}
+                                            {data?.type.toUpperCase()}
+                                        </h5>
+                                    )}
                                     <h5> Note: </h5>
                                     <span>
                                         {" "}
@@ -245,7 +273,7 @@ const CreateNewArea = ({ className, space }) => {
                             <div className="col-lg-7">
                                 <div className="form-wrapper-one">
                                     <div className="row">
-                                        <div className="col-md-12">
+                                        <div className="col-md-6">
                                             <div className="input-box pb--20">
                                                 <label
                                                     htmlFor="name"
@@ -268,6 +296,25 @@ const CreateNewArea = ({ className, space }) => {
                                                 )}
                                             </div>
                                         </div>
+                                        {data?.type && (
+                                            <div className="col-md-6">
+                                                <div className="input-box pb--20">
+                                                    <label
+                                                        htmlFor="type"
+                                                        className="form-label"
+                                                    >
+                                                        Type
+                                                    </label>
+                                                    <input
+                                                        id="type"
+                                                        placeholder="Type"
+                                                        value={data?.type.toUpperCase()}
+                                                        readOnly
+                                                        {...register("type")}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
 
                                         <div className="col-md-12">
                                             <div className="input-box pb--20">
@@ -299,20 +346,28 @@ const CreateNewArea = ({ className, space }) => {
                                                 )}
                                             </div>
                                         </div>
-
-                                        <div className="col-md-6">
-                                            <div className="input-box pb--20">
+                                        <div className="col-lg-6">
+                                            <div className="collection-single-wized">
                                                 <label
-                                                    htmlFor="Collection"
-                                                    className="form-label"
+                                                    htmlFor="category"
+                                                    className="title required"
                                                 >
-                                                    Collection
+                                                    Category
                                                 </label>
-                                                <input
-                                                    id="collection"
-                                                    placeholder="Collection"
-                                                    {...register("collection")}
-                                                />
+                                                <div className="create-collection-input">
+                                                    {dataCollection && (
+                                                        <NiceSelect
+                                                            name="category"
+                                                            placeholder="Add Category"
+                                                            options={
+                                                                dataCollection
+                                                            }
+                                                            onChange={
+                                                                categoryHandler
+                                                            }
+                                                        />
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 
@@ -571,19 +626,19 @@ const CreateNewArea = ({ className, space }) => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="mt--100 mt_sm--30 mt_md--30 d-block d-lg-none">
-                                <h5> Note: </h5>
-                                <span>
-                                    {" "}
-                                    Service fee : <strong>2.5%</strong>{" "}
-                                </span>{" "}
-                                <br />
-                                <span>
-                                    {" "}
-                                    You will receive :{" "}
-                                    <strong>25.00 ETH $50,000</strong>
-                                </span>
+                                <div className="mt--100 mt_sm--30 mt_md--30 d-block d-lg-none">
+                                    <h5> Note: </h5>
+                                    <span>
+                                        {" "}
+                                        Service fee : <strong>2.5%</strong>{" "}
+                                    </span>{" "}
+                                    <br />
+                                    <span>
+                                        {" "}
+                                        You will receive :{" "}
+                                        <strong>25.00 ETH $50,000</strong>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
