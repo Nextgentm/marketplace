@@ -10,9 +10,7 @@ contract Factory721 {
         addr = address(
             new NFTMarketplace()
         );
-        NFTMarketplace token = NFTMarketplace(address(addr));
-        token.transferOwnership(msg.sender);
+       NFTMarketplace(address(addr));
         emit Deployed(msg.sender, addr);
     }
-
 }
