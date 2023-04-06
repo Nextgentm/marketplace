@@ -15,7 +15,7 @@ const Home = () => (
         <Header />
         <main id="main-content">
             <Breadcrumb pageTitle="Upload Variants" />
-            <UploadVariants pageType="create" />
+            <UploadVariants pageType="create-collection" />
         </main>
         <Footer />
     </Wrapper>
