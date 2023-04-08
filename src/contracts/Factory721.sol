@@ -6,11 +6,16 @@ import "./OwnCollection721.sol";
 contract Factory721 {
     event Deployed(address owner, address contractAddress);
 
-    function deploy() external returns (address addr) {
+    function deploy(
+        bytes32 _salt,
+        string memory name,
+        string memory symbol,
+        string memory tokenURIPrefix
+    ) external returns (address addr) {
         addr = address(
             new NFTMarketplace()
         );
-       NFTMarketplace(address(addr));
+        NFTMarketplace token = NFTMarketplace(address(addr));
         emit Deployed(msg.sender, addr);
     }
 }
