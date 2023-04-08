@@ -8,7 +8,9 @@ import "./interface/ITransferProxy.sol";
 contract Trade is AccessControl {
     enum BuyingAssetType {
         ERC1155,
-        ERC721
+        ERC721,
+        LazyERC1155,
+        LazyERC721
     }
 
     event OwnershipTransferred(
@@ -59,7 +61,13 @@ contract Trade is AccessControl {
         address tokenCreator;
     }
 
-
+    /* An ECDSA signature. */
+    struct Sign {
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+        uint256 nonce;
+    }
     /** Order Params
         @param seller address of user,who's selling the NFT.
         @param buyer address of user, who's buying the NFT.
@@ -96,7 +104,8 @@ contract Trade is AccessControl {
         sellerFeePermille = _sellerFee;
         transferProxy = _transferProxy;
         owner = msg.sender;
-
+        signer = msg.sender;
+        _setupRole(ADMIN_ROLE, msg.sender);
     }
 
     /**
@@ -115,16 +124,67 @@ contract Trade is AccessControl {
         return sellerFeePermille;
     }
 
+    /** 
+        @param _buyerFee  value for buyerservice in multiply of 1000.
+    */
+
+    function setBuyerServiceFee(uint8 _buyerFee)
+        external
+        onlyRole(ADMIN_ROLE)
+        returns (bool)
+    {
+        buyerFeePermille = _buyerFee;
+        emit BuyerFee(buyerFeePermille);
+        return true;
+    }
+
+    /** 
+        @param _sellerFee  value for buyerservice in multiply of 1000.
+    */
+
+    function setSellerServiceFee(uint8 _sellerFee)
+        external
+        onlyRole(ADMIN_ROLE)
+        returns (bool)
+    {
+        sellerFeePermille = _sellerFee;
+        emit SellerFee(sellerFeePermille);
+        return true;
+    }
+
+    /**
+        transfers the contract ownership to newowner address.    
+        @param newOwner address of newOwner
+     */
+
+    function transferOwnership(address newOwner)
+        external
+        onlyRole(ADMIN_ROLE)
+        returns (bool)
+    {
+        require(
+            newOwner != address(0),
+            "Ownable: new owner is the zero address"
+        );
+        _revokeRole(ADMIN_ROLE, owner);
+        emit OwnershipTransferred(owner, newOwner);
+        owner = newOwner;
+        _setupRole(ADMIN_ROLE, newOwner);
+        return true;
+    }
+
     /**
         excuting the NFT order.
         @param order ordervalues(seller, buyer,...).
+        @param sign Sign value(v, r, f).
     */
 
-    function buyAsset(Order calldata order)
+    function buyAsset(Order calldata order, Sign calldata sign)
         external
         returns (bool)
     {
-
+        require(!usedNonce[sign.nonce], "Nonce : Invalid Nonce");
+        usedNonce[sign.nonce] = true;
         Fee memory fee = getFees(
             order
         );
@@ -132,18 +192,43 @@ contract Trade is AccessControl {
             (fee.price >= order.unitPrice * order.qty),
             "Paid invalid amount"
         );
+        verifySellerSign(
+            order.seller,
+            order.tokenId,
+            order.unitPrice,
+            order.erc20Address,
+            order.nftAddress,
+            sign
+        );
         address buyer = msg.sender;
         tradeAsset(order, fee, buyer, order.seller);
         emit BuyAsset(order.seller, order.tokenId, order.qty, msg.sender);
         return true;
     }
 
-    function executeBid(Order calldata order)
+    /**
+        excuting the NFT order.
+        @param order ordervalues(seller, buyer,...).
+        @param sign Sign value(v, r, f).
+    */
+
+    function executeBid(Order calldata order, Sign calldata sign)
         external
         returns (bool)
     {
+        require(!usedNonce[sign.nonce], "Nonce : Invalid Nonce");
+        usedNonce[sign.nonce] = true;
         Fee memory fee = getFees(
             order
+        );
+        verifyBuyerSign(
+            order.buyer,
+            order.tokenId,
+            order.amount,
+            order.erc20Address,
+            order.nftAddress,
+            order.qty,
+            sign
         );
         address seller = msg.sender;
         tradeAsset(order, fee, order.buyer, seller);
@@ -151,11 +236,176 @@ contract Trade is AccessControl {
         return true;
     }
 
+        /**
+        excuting the NFT order.
+        @param order ordervalues(seller, buyer,...).
+        @param sign Sign value(v, r, f).
+    */
 
+    function mintAndBuyAsset(Order calldata order, Sign calldata sign, Sign calldata ownerSign)
+        external
+        returns (bool)
+    {
+        require(!usedNonce[sign.nonce], "Nonce : Invalid Nonce");
+        usedNonce[sign.nonce] = true;
+        Fee memory fee = getFees(
+            order
+        );
+        require(
+            (fee.price >= order.unitPrice * order.qty),
+            "Paid invalid amount"
+        );
+        verifyOwnerSign(
+            order.seller,
+            order.tokenURI,
+            order.nftAddress,
+            ownerSign
+        );
+        verifySellerSign(
+            order.seller,
+            order.tokenId,
+            order.unitPrice,
+            order.erc20Address,
+            order.nftAddress,
+            sign
+        );
+        address buyer = msg.sender;
+        tradeAsset(order, fee, buyer, order.seller);
+        emit BuyAsset(order.seller, order.tokenId, order.qty, msg.sender);
+        return true;
+    }
+
+    /**
+        excuting the NFT order.
+        @param order ordervalues(seller, buyer,...).
+        @param sign Sign value(v, r, f).
+    */
+
+    function mintAndExecuteBid(Order calldata order, Sign calldata sign, Sign calldata ownerSign)
+        external
+        returns (bool)
+    {
+        require(!usedNonce[sign.nonce], "Nonce : Invalid Nonce");
+        usedNonce[sign.nonce] = true;
+        Fee memory fee = getFees(
+            order
+        );
+        verifyOwnerSign(
+            order.seller,
+            order.tokenURI,
+            order.nftAddress,
+            ownerSign
+        );
+        verifyBuyerSign(
+            order.buyer,
+            order.tokenId,
+            order.amount,
+            order.erc20Address,
+            order.nftAddress,
+            order.qty,
+            sign
+        );
+        address seller = msg.sender;
+        tradeAsset(order, fee, order.buyer, seller);
+        emit ExecuteBid(msg.sender, order.tokenId, order.qty, order.buyer);
+        return true;
+    }
+
+    /**
+        returns the signer of given signature.
+     */
+    function getSigner(bytes32 hash, Sign memory sign)
+        internal
+        pure
+        returns (address)
+    {
+        return
+            ecrecover(
+                keccak256(
+                    abi.encodePacked("\x19Ethereum Signed Message:\n32", hash)
+                ),
+                sign.v,
+                sign.r,
+                sign.s
+            );
+    }
+
+    function verifySellerSign(
+        address seller,
+        uint256 tokenId,
+        uint256 amount,
+        address paymentAssetAddress,
+        address assetAddress,
+        Sign memory sign
+    ) internal pure {
+        bytes32 hash = keccak256(
+            abi.encodePacked(
+                assetAddress,
+                tokenId,
+                paymentAssetAddress,
+                amount,
+                sign.nonce
+            )
+        );
+        require(
+            seller == getSigner(hash, sign),
+            "seller sign verification failed"
+        );
+    }
+
+    function verifyOwnerSign(
+        address seller,
+        string memory tokenURI,
+        address assetAddress,
+        Sign memory sign
+    ) internal view {
+        bytes32 hash = keccak256(
+            abi.encodePacked(
+                this,
+                assetAddress,
+                seller,
+                tokenURI,
+                sign.nonce
+            )
+        );
+        require(
+            signer == getSigner(hash, sign),
+            "owner sign verification failed"
+        );
+    }
+
+    function verifyBuyerSign(
+        address buyer,
+        uint256 tokenId,
+        uint256 amount,
+        address paymentAssetAddress,
+        address assetAddress,
+        uint256 qty,
+        Sign memory sign
+    ) internal pure {
+        bytes32 hash = keccak256(
+            abi.encodePacked(
+                assetAddress,
+                tokenId,
+                paymentAssetAddress,
+                amount,
+                qty,
+                sign.nonce
+            )
+        );
+        require(
+            buyer == getSigner(hash, sign),
+            "buyer sign verification failed"
+        );
+    }
+
+    /**
+        it retuns platformFee, assetFee, royaltyFee, price and tokencreator.
+     */
 
     function getFees(
         Order calldata order
-    ) public view returns (Fee memory) {
+    ) internal view returns (Fee memory) {
         address tokenCreator;
         uint256 platformFee;
         uint256 royaltyFee;
@@ -167,6 +417,9 @@ contract Trade is AccessControl {
         if(!order.skipRoyalty &&((order.nftType == BuyingAssetType.ERC721) || (order.nftType == BuyingAssetType.ERC1155))) {
             (tokenCreator, royaltyFee) = IERC2981(order.nftAddress)
                     .royaltyInfo(order.tokenId, price); 
+        }
+        if(!order.skipRoyalty &&((order.nftType == BuyingAssetType.LazyERC721) || (order.nftType == BuyingAssetType.LazyERC1155))) {
+            (tokenCreator, royaltyFee) = (order.seller, order.royaltyFee);
         }
         assetFee = price - royaltyFee - sellerFee;
         return Fee(platformFee, assetFee, royaltyFee, price, tokenCreator);
@@ -200,6 +453,27 @@ contract Trade is AccessControl {
                 order.tokenId,
                 order.qty,
                 ""
+            );
+        }
+
+        if (order.nftType == BuyingAssetType.LazyERC721) {
+            transferProxy.mintAndSafe721Transfer(
+                ILazyMint(order.nftAddress),
+                seller,
+                buyer,
+                order.tokenURI,
+                order.royaltyFee
+            );
+        }
+        if (order.nftType == BuyingAssetType.LazyERC1155) {
+            transferProxy.mintAndSafe1155Transfer(
+                ILazyMint(order.nftAddress),
+                seller,
+                buyer,
+                order.tokenURI,
+                order.royaltyFee,
+                order.supply,
+                order.qty
             );
         }
 
