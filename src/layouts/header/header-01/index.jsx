@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import Web3 from "web3";
@@ -14,6 +14,8 @@ import BurgerButton from "@ui/burger-button";
 import Anchor from "@ui/anchor";
 import Button from "@ui/button";
 import { useOffcanvas, useSticky, useFlyoutSearch } from "@hooks";
+import { WalletData } from "src/context/wallet-context";
+import { ethers } from "ethers";
 import headerData from "../../../data/general/header-01.json";
 import menuData from "../../../data/general/menu-01.json";
 
@@ -23,6 +25,40 @@ const Header = ({ className }) => {
     const { search, searchHandler } = useFlyoutSearch();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [ethBalance, setEthBalance] = useState("");
+
+    const { walletData, setWalletData } = useContext(WalletData);
+
+    useEffect(() => {
+        /* code for runtime metamask events */
+        /* const handleAccountsChanged = (accounts) => {
+            console.log("accountsChanged", accounts);
+            if (accounts) setAccount(accounts[0]);
+        };
+
+        const handleChainChanged = (_hexChainId) => {
+            setChainId(_hexChainId);
+        };
+
+        const handleDisconnect = () => {
+            console.log("disconnect", error);
+            disconnect();
+        };
+
+        provider.on("accountsChanged", handleAccountsChanged);
+        provider.on("chainChanged", handleChainChanged);
+        provider.on("disconnect", handleDisconnect);
+        */
+
+        // check if previously connected
+        // if (isPreviouslyConnected()) {
+        //     onConnect();
+        // }
+        // Render wallet details
+        setIsAuthenticated(walletData.isConnected);
+        if (walletData.isConnected) {
+            setEthBalance(walletData.balance);
+        }
+    }, [ethBalance]);
 
     const detectCurrentProvider = () => {
         let provider;
@@ -38,26 +74,78 @@ const Header = ({ className }) => {
         return provider;
     };
 
+    const isPreviouslyConnected = async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const accounts = await provider.listAccounts();
+        return accounts.length > 0;
+    };
+
+    const switchNetwork = async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        try {
+            const res = await provider.provider.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: toHex(97) }],
+            });
+            console.log(res);
+            return true;
+        } catch (switchError) {
+            if (switchError.code === 4902) {
+                try {
+                    await provider.provider.request({
+                        method: "wallet_addEthereumChain",
+                        params: [networkParams[toHex(network)]],
+                    });
+                } catch (error) {
+                    setError(error);
+                }
+            }
+            return false;
+        }
+    };
+
     const onConnect = async () => {
         try {
-            const currentProvider = detectCurrentProvider();
-            if (currentProvider) {
-                await currentProvider.request({
-                    method: "eth_requestAccounts",
-                });
-                const web3 = new Web3(currentProvider);
-                const userAccount = await web3.eth.getAccounts();
-                const account = userAccount[0];
-                const getEthBalance = await web3.eth.getBalance(account);
-                setEthBalance(getEthBalance);
-                setIsAuthenticated(true);
-            }
+            // const currentProvider = detectCurrentProvider();
+            // if (currentProvider) {
+            //     await currentProvider.request({
+            //         method: "eth_requestAccounts",
+            //     });
+            //     const web3 = new Web3(currentProvider);
+            //     const userAccount = await web3.eth.getAccounts();
+            //     const account = userAccount[0];
+            //     const getEthBalance = await web3.eth.getBalance(account);
+
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const accounts = await provider.send("eth_requestAccounts", []);
+            const balance = await provider.getBalance(accounts[0]);
+            const getEthBalance = ethers.utils.formatEther(balance);
+            // console.log(signer);
+            setWalletData({
+                provider,
+                account: accounts[0],
+                balance: getEthBalance,
+                ethers,
+                isConnected: true,
+            });
+            // console.log(walletData);
+            setEthBalance(getEthBalance);
+            setIsAuthenticated(walletData.isConnected);
+            // }
         } catch (err) {
             console.log(err);
         }
     };
 
     const onDisconnect = () => {
+        setWalletData({
+            provider: null,
+            accounts: null,
+            balance: null,
+            ethers,
+            isConnected: false,
+        });
         setIsAuthenticated(false);
     };
 
