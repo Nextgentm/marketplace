@@ -1,12 +1,15 @@
 {
     "title": "home-06",
-    "content": [{
+    "content": [
+        {
             "section": "hero-section",
-            "banners": [{
+            "banners": [
+                {
                     "id": 1,
                     "title": "The way to find any <br/> Digital content",
                     "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores expedita beatae exercitationem quasi ullam esse?",
-                    "buttons": [{
+                    "buttons": [
+                        {
                             "id": 1,
                             "path": "/login",
                             "content": "Get Started"
@@ -26,7 +29,8 @@
                     "id": 2,
                     "title": "The way to find any <br/> Digital content",
                     "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores expedita beatae exercitationem quasi ullam esse?",
-                    "buttons": [{
+                    "buttons": [
+                        {
                             "id": 1,
                             "path": "/login",
                             "content": "Get Started"
@@ -46,7 +50,8 @@
                     "id": 3,
                     "title": "The way to find any <br/> Digital content",
                     "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores expedita beatae exercitationem quasi ullam esse?",
-                    "buttons": [{
+                    "buttons": [
+                        {
                             "id": 1,
                             "path": "/login",
                             "content": "Get Started"
@@ -59,7 +64,7 @@
                         }
                     ],
                     "image": {
-                        "src": "/images/bg/bg-image-18.jpg"
+                        "src": "/images/bg/unlock-now.jpg"
                     }
                 }
             ]
@@ -87,15 +92,18 @@
             "section_title": {
                 "title": "Create and sell your NFTs"
             },
-            "items": [{
+            "items": [
+                {
                     "id": 1,
                     "title": "Set up your wallet",
                     "path": "/connect",
                     "subtitle": "Step-01",
                     "description": "Powerful features and inclusions, which makes Nuron standout, easily customizable and scalable.",
-                    "images": [{
-                        "src": "/images/icons/shape-7.png"
-                    }]
+                    "images": [
+                        {
+                            "src": "/images/icons/shape-7.png"
+                        }
+                    ]
                 },
                 {
                     "id": 2,
@@ -103,9 +111,11 @@
                     "path": "/collection",
                     "subtitle": "Step-02",
                     "description": "A great collection of beautiful website templates for your need. Choose the best suitable template.",
-                    "images": [{
-                        "src": "/images/icons/shape-1.png"
-                    }]
+                    "images": [
+                        {
+                            "src": "/images/icons/shape-1.png"
+                        }
+                    ]
                 },
                 {
                     "id": 3,
@@ -113,9 +123,11 @@
                     "path": "/connect",
                     "subtitle": "Step-03",
                     "description": "We've made the template fully responsive, so it looks great on all devices: desktop, tablets and.",
-                    "images": [{
-                        "src": "/images/icons/shape-5.png"
-                    }]
+                    "images": [
+                        {
+                            "src": "/images/icons/shape-5.png"
+                        }
+                    ]
                 },
                 {
                     "id": 4,
@@ -123,9 +135,11 @@
                     "path": "/creator",
                     "subtitle": "Step-04",
                     "description": "I throw myself down among the tall grass by the stream as I lie close to the earth NFT's.",
-                    "images": [{
-                        "src": "/images/icons/shape-6.png"
-                    }]
+                    "images": [
+                        {
+                            "src": "/images/icons/shape-6.png"
+                        }
+                    ]
                 }
             ]
         }

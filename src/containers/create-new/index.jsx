@@ -21,7 +21,7 @@ const CreateNewArea = ({ className, space }) => {
 
     const router = useRouter();
     const data = router.query;
-    // console.log(data.type);
+
     const {
         register,
         handleSubmit,
@@ -40,6 +40,10 @@ const CreateNewArea = ({ className, space }) => {
         setShowProductModal(false);
     };
     const [category, setCategory] = useState("");
+
+    const [nftImagePath, setNftImagePath] = useState("");
+    const [nftImageId, setNftImageId] = useState("");
+
     const categoryHandler = (item) => {
         setCategory(item.value);
     };
@@ -56,48 +60,51 @@ const CreateNewArea = ({ className, space }) => {
         if (getValues(e) && getValues(e)?.length > 0) {
             setSelectedImage(getValues(e)?.[0]);
         }
-        const formData = new FormData();
-        formData.append("files", getValues(e)?.[0]);
-        const resp = await fetch(
-            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`,
-            {
-                method: "post",
-                body: formData,
-            }
-        )
-            .then((response) => response.json())
-            .then((data) => {
-                if (data[0]?.id) {
-                    const old_id = localStorage.getItem("nft_id_4");
-                    if (old_id) {
-                        fetch(
-                            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:${old_id}`,
-                            {
-                                method: "delete",
-                            }
-                        );
-                    }
-                    localStorage.setItem("nft_id_4", data[0]?.id);
-                    localStorage.setItem("nft_url_4", JSON.stringify(data[0]));
+
+        if (nftImageId) {
+            /** FOr Update Image */
+            const formUpdateImage = new FormData();
+            formUpdateImage.append("fileInfo", getValues(e)?.[0]);
+            await fetch(
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload?id=${nftImageId}`,
+                {
+                    method: "post",
+                    body: formUpdateImage,
                 }
-            })
-            .catch(() => {
-                // Promise Failed, Do something
-            });
+            )
+                .then((response) => response.json())
+                .then((res) => {
+                    setNftImagePath(JSON.stringify(res));
+                    setNftImageId(res?.id);
+                });
+        } else {
+            const formData = new FormData();
+            formData.append("files", getValues(e)?.[0]);
+            await fetch(
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`,
+                {
+                    method: "post",
+                    body: formData,
+                }
+            )
+                .then((response) => response.json())
+                .then((res) => {
+                    setNftImagePath(JSON.stringify(res[0]));
+                    setNftImageId(res[0]?.id);
+                });
+        }
     }
 
     async function StoreData(data) {
         try {
-            const nft_id_4 = localStorage.getItem("nft_id_4");
-            const nft_url_4 = JSON.parse(localStorage.getItem("nft_url_4"));
-
+            const nft_url_4 = JSON.parse(nftImagePath);
             await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles`,
                 {
                     data: {
                         name: data.name ? data.name : null,
                         image: nft_url_4 || "ImagePath",
-                        imageID: nft_id_4 || 0,
+                        imageID: nftImageId || 0,
                         description: data.discription ? data.discription : null,
                         price: data.price ? Number(data.price) : null,
                         size: data.size ? Number(data.size) : null,
@@ -150,19 +157,19 @@ const CreateNewArea = ({ className, space }) => {
     };
 
     /* async function MintNFT() {
-        const ethers = require("ethers");
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const { utils } = ethers;
-        const bytes = utils.formatBytes32String(signer);
-        const contract = new ethers.Contract(
-            CreateNFT.address,
-            CreateNFT.abi,
-            signer
-        );
-        const transaction = await contract.mint();
-        const receipt = await transaction.wait();
-    } */
+    const ethers = require("ethers");
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const { utils } = ethers;
+    const bytes = utils.formatBytes32String(signer);
+    const contract = new ethers.Contract(
+        CreateNFT.address,
+        CreateNFT.abi,
+        signer
+    );
+    const transaction = await contract.mint();
+    const receipt = await transaction.wait();
+} */
 
     useEffect(() => {
         axios
@@ -171,7 +178,6 @@ const CreateNewArea = ({ className, space }) => {
             )
             .then((response) => {
                 // setDataCollection(response.data.data);
-
                 const results = [];
                 response.data.data.map((data) =>
                     results.push({
@@ -179,7 +185,6 @@ const CreateNewArea = ({ className, space }) => {
                         text: data.name,
                     })
                 );
-                console.log(results);
                 setDataCollection(results);
             });
     }, []);
