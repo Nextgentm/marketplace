@@ -37,7 +37,7 @@ const HeroArea = ({ data }) => (
                                 )}
 
                                 <div className="banner-read-thumb-lg">
-                                    <h4
+                                    {/* <h4
                                         dangerouslySetInnerHTML={{
                                             __html: banner?.title,
                                         }}
@@ -46,7 +46,7 @@ const HeroArea = ({ data }) => (
                                         dangerouslySetInnerHTML={{
                                             __html: banner?.description,
                                         }}
-                                    />
+                                    /> */}
                                     {banner?.buttons && (
                                         <div className="button-group">
                                             {banner.buttons.map(

@@ -22,16 +22,20 @@ const Collection = ({
                     />
                 </div>
             )}
-            
-            {thumbnails?.url && (
-                     <div className="collenction-small-thumbnail">
-                        <Image
-                            src={thumbnails?.url}
-                            alt={thumbnails?.alt || "Nft_Profile"}
-                            width={300}
-                            height={65}    
-                        />
-                    </div>
+
+            {thumbnails && (
+                <div className="collenction-small-thumbnail">
+                    {thumbnails.data?.map((thumb) => (
+                        <div key={thumb?.src}>
+                            <Image
+                                src={thumbnails?.url}
+                                alt={thumbnails?.alt || "Nft_Profile"}
+                                width={164}
+                                height={110}
+                            />
+                        </div>
+                    ))}
+                </div>
             )}
 
             {profile_image?.url && (
