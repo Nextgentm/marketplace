@@ -73,29 +73,31 @@ const UploadVariants = ({ className, space, pageType }) => (
                         </Link>
                     </div>
                 </div>
-                <div className="col-lg-3 col-md-6 col-12">
-                    <div className="upload-variant-wrapper">
-                        <div className="variant-preview">
-                            <Image
-                                src="/images/upload-variants/Hybrid.png"
-                                alt="nuron-single"
-                                width={495}
-                                height={417}
-                                priority
-                            />
+                {pageType !== "create" && (
+                    <div className="col-lg-3 col-md-6 col-12">
+                        <div className="upload-variant-wrapper">
+                            <div className="variant-preview">
+                                <Image
+                                    src="/images/upload-variants/Hybrid.png"
+                                    alt="nuron-single"
+                                    width={495}
+                                    height={417}
+                                    priority
+                                />
+                            </div>
+                            <Link href={`${pageType}?type=hybrid`}>
+                                <Button
+                                    size="medium"
+                                    fullwidth
+                                    className="mt--20"
+                                    target=""
+                                >
+                                    Create Hybrid
+                                </Button>
+                            </Link>
                         </div>
-                        <Link href={`${pageType}?type=hybrid`}>
-                            <Button
-                                size="medium"
-                                fullwidth
-                                className="mt--20"
-                                target=""
-                            >
-                                Create Hybrid
-                            </Button>
-                        </Link>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     </div>
