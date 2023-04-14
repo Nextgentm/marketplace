@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import CollectionModal from "@components/modals/collection-modal";
@@ -8,11 +8,22 @@ import Button from "@ui/button";
 import ErrorText from "@ui/error-text";
 import { isEmpty } from "@utils/methods";
 import axios from "axios";
+import { WalletData } from "src/context/wallet-context";
+import { useRouter } from "next/router";
+import {
+    ETHEREUM_NETWORK_CHAIN_ID,
+    POLYGON_NETWORK_CHAIN_ID,
+} from "src/lib/constants";
+import Factory721Contract from "../../contracts/json/Factory721.json";
+import Factory1155Contract from "../../contracts/json/Factory1155.json";
 
 const CreateCollectionArea = () => {
     const [showPreviewModal, setShowPreviewModal] = useState(false);
-    const [category, setCategory] = useState("");
+    const [category, setCategory] = useState(""); // cateory
+    const [blockchainNetwork, setBlockchainNetwork] = useState(""); // selected network
     const [hasCatError, setHasCatError] = useState(false);
+    const [hasBlockchainNetworkError, setHasBlockchainNetworkError] =
+        useState(false);
     const [previewData, setPreviewData] = useState({});
 
     const [logoImagePath, setLogoImagePath] = useState("");
@@ -23,10 +34,18 @@ const CreateCollectionArea = () => {
 
     const [featureImagePath, setFeatureImagePath] = useState("");
     const [featureImageId, setFeatureImageId] = useState("");
+    // Get Wallet data
+    const { walletData, setWalletData } = useContext(WalletData);
+    // Get url param
+    const router = useRouter();
 
     const categoryHandler = (item) => {
         setCategory(item.value);
     };
+    const blockchainNetworkHandler = (item) => {
+        setBlockchainNetwork(item.value);
+    };
+
     const notify = () => toast("Your collection has submitted");
 
     const {
@@ -41,6 +60,37 @@ const CreateCollectionArea = () => {
     });
 
     watch(["logoImg", "featImg", "bannerImg"]);
+
+    async function switchNetwork(chainId) {
+        if (
+            parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)
+        ) {
+            console.log(`Network is already with chain id ${chainId}`);
+            return true;
+        }
+        try {
+            const res = await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId }],
+            });
+            // console.log(res);
+            return true;
+        } catch (switchError) {
+            // console.log(switchError);
+            toast.error("Failed to change the network.");
+        }
+        return false;
+    }
+
+    useEffect(() => {
+        if (walletData.isConnected) {
+            if (blockchainNetwork === "Ethereum") {
+                switchNetwork(ETHEREUM_NETWORK_CHAIN_ID); // ethereum testnet
+            } else if (blockchainNetwork === "Polygon") {
+                switchNetwork(POLYGON_NETWORK_CHAIN_ID); // polygon testnet
+            }
+        }
+    }, [blockchainNetwork]);
 
     async function updateImage(e) {
         if (logoImageId) {
@@ -154,6 +204,22 @@ const CreateCollectionArea = () => {
             const coverImagePathObject = JSON.parse(coverImagePath);
             const featureImagePathObject = JSON.parse(featureImagePath);
 
+            /* deploy smartcontract call */
+            const deployedContractAddress = await blockchainCall(
+                data.title,
+                data.symbol,
+                data.url
+            );
+            if (!deployedContractAddress) {
+                return;
+            }
+            const deployed721ContractAddress = deployedContractAddress[0];
+            const deployed1155ContractAddress = deployedContractAddress[1];
+            // console.log(
+            //     deployed721ContractAddress,
+            //     deployed1155ContractAddress
+            // );
+
             const resp = await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`,
                 {
@@ -165,40 +231,177 @@ const CreateCollectionArea = () => {
                         coverID: Number(coverImageId),
                         featured: featureImagePathObject || "Null",
                         featuredID: Number(featureImageId),
-                        symbol: "String",
+                        symbol: data.symbol,
                         url: data.url ? data.url : null,
                         description: data.description ? data.description : null,
                         category,
                         slug: data.title.toLowerCase(),
-                        creatorEarning: data.earning
-                            ? Number(data.earning)
-                            : null,
-                        contractAddress: data.wallet ? data.wallet : null,
+                        // creatorEarning: data.earning
+                        //     ? Number(data.earning)
+                        //     : null,
+                        networkType: blockchainNetwork,
+                        paymentTokens: data.paymentTokens,
+                        contractAddress: deployed721ContractAddress, // may be null
+                        contractAddress1155: deployed1155ContractAddress, // may be null
+                        ownerAddress: walletData.account,
+                        collectionType:
+                            router.query.type.charAt(0).toUpperCase() +
+                            router.query.type.slice(1), // convert "single" to "Single"
                         payoutWalletAddress: data.wallet ? data.wallet : null,
                         explicitAndSensitiveContent: data.themeSwitch,
                     },
                 }
             );
+            notify();
+            reset();
         } catch (error) {
             console.log(error);
+            toast.error("Error while saving data");
+        }
+    }
+
+    async function blockchainCall(name, symbol, tokenURIPrefix) {
+        const signer = walletData.provider.getSigner();
+
+        try {
+            // deployed contract instance
+            console.log(router.query.type); // type of NFT collection
+            const salt = walletData.ethers.utils.formatBytes32String(
+                walletData.account.slice(-31)
+            );
+            console.log(salt);
+            if (router.query.type === "single") {
+                // Pull the deployed contract instance
+                const contract721 = new walletData.ethers.Contract(
+                    Factory721Contract.address[blockchainNetwork],
+                    Factory721Contract.abi,
+                    signer
+                );
+                const transaction = await contract721.deploy(
+                    salt,
+                    name,
+                    symbol,
+                    tokenURIPrefix
+                );
+                const receipt = await transaction.wait();
+                console.log(receipt);
+                console.log(
+                    "contractAddress",
+                    receipt.events[0].args.contractAddress
+                );
+                const erc721ContractAddr =
+                    receipt.events[0].args.contractAddress;
+                return [erc721ContractAddr, null];
+            }
+            if (router.query.type === "multiple") {
+                // Pull the deployed contract instance
+                const contract1155 = new walletData.ethers.Contract(
+                    Factory1155Contract.address[blockchainNetwork],
+                    Factory1155Contract.abi,
+                    signer
+                );
+                const transaction = await contract1155.deploy(
+                    salt,
+                    name,
+                    symbol,
+                    tokenURIPrefix
+                );
+                const receipt = await transaction.wait();
+                console.log(receipt);
+                console.log(
+                    "contractAddress",
+                    receipt.events[4].args.contractAddress
+                );
+                const erc1155ContractAddr =
+                    receipt.events[4].args.contractAddress;
+                return [null, erc1155ContractAddr];
+            }
+            if (router.query.type === "hybrid") {
+                // Pull the deployed contract instance
+                const contract721 = new walletData.ethers.Contract(
+                    Factory721Contract.address[blockchainNetwork],
+                    Factory721Contract.abi,
+                    signer
+                );
+                const transaction1 = await contract721.deploy(
+                    salt,
+                    name,
+                    symbol,
+                    tokenURIPrefix
+                );
+                const receipt1 = await transaction1.wait();
+                console.log(receipt1);
+                console.log(
+                    "contractAddress",
+                    receipt1.events[0].args.contractAddress
+                );
+                const erc721ContractAddr =
+                    receipt1.events[0].args.contractAddress;
+
+                // Pull the deployed contract instance
+                const contract1155 = new walletData.ethers.Contract(
+                    Factory1155Contract.address[blockchainNetwork],
+                    Factory1155Contract.abi,
+                    signer
+                );
+                const transaction2 = await contract1155.deploy(
+                    salt,
+                    name,
+                    symbol,
+                    tokenURIPrefix
+                );
+                const receipt2 = await transaction2.wait();
+                console.log(receipt);
+                console.log(
+                    "contractAddress",
+                    receipt2.events[4].args.contractAddress
+                );
+                const erc1155ContractAddr =
+                    receipt2.events[4].args.contractAddress;
+                return [erc721ContractAddr, erc1155ContractAddr];
+            }
+            toast.error("Please select proper collection type");
+            return null;
+        } catch (error) {
+            console.log(error);
+            toast.error("Error while deploying contract");
+            return null;
         }
     }
 
     const onSubmit = (data, e) => {
-        const { target } = e;
-        const submitBtn =
-            target.localName === "span" ? target.parentElement : target;
-        const isPreviewBtn = submitBtn.dataset?.btn;
-        setHasCatError(!category);
+        // console.log(data, e);
+        /** if Wallet not connected */
+        if (!walletData.isConnected) {
+            toast.error("Please connect wallet first");
+            return;
+        } // chnage network
+        if (blockchainNetwork === "Ethereum") {
+            if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+                // ethereum testnet
+                return;
+            }
+        } else if (blockchainNetwork === "Polygon") {
+            if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+                // polygon testnet
+                return;
+            }
+        }
 
-        if (isPreviewBtn) {
+        /** Show Error if form not submited correctly */
+        setHasCatError(!category);
+        setHasBlockchainNetworkError(!blockchainNetwork);
+        if (!blockchainNetwork || !category) {
+            return;
+        }
+        /** code for fetching submited button value */
+        // console.log(e.nativeEvent.submitter.name);
+        if (showPreviewModal) {
             setPreviewData({ ...data, image: data.logoImg[0] });
             setShowPreviewModal(true);
         }
-        if (!isPreviewBtn) {
+        if (!showPreviewModal) {
             StoreData(data);
-            notify();
-            reset();
         }
     };
 
@@ -328,6 +531,29 @@ const CreateCollectionArea = () => {
                                     <div className="col-lg-6">
                                         <div className="collection-single-wized">
                                             <label
+                                                htmlFor="symbol"
+                                                className="title"
+                                            >
+                                                symbol
+                                            </label>
+                                            <div className="create-collection-input">
+                                                <input
+                                                    className="symbol"
+                                                    type="text"
+                                                    id="symbol"
+                                                    {...register("symbol")}
+                                                />
+                                                {errors.symbol && (
+                                                    <ErrorText>
+                                                        {errors.symbol?.message}
+                                                    </ErrorText>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-12">
+                                        <div className="collection-single-wized">
+                                            <label
                                                 htmlFor="url"
                                                 className="title"
                                             >
@@ -422,18 +648,31 @@ const CreateCollectionArea = () => {
                                                 <NiceSelect
                                                     name="blockchain"
                                                     placeholder="Add Blockchain"
-                                                    options={[
-                                                        {
-                                                            value: "Ethereum",
-                                                            text: "Ethereum",
-                                                        },
-                                                        {
-                                                            value: "Polygon",
-                                                            text: "Polygon",
-                                                        },
-                                                    ]}
-                                                    onChange={categoryHandler}
+                                                    options={
+                                                        walletData.isConnected
+                                                            ? [
+                                                                {
+                                                                    value: "Ethereum",
+                                                                    text: "Ethereum",
+                                                                },
+                                                                {
+                                                                    value: "Polygon",
+                                                                    text: "Polygon",
+                                                                },
+                                                            ]
+                                                            : []
+                                                    }
+                                                    onChange={
+                                                        blockchainNetworkHandler
+                                                    }
                                                 />
+                                                {((!blockchainNetwork &&
+                                                    !isEmpty(errors)) ||
+                                                    hasBlockchainNetworkError) && (
+                                                        <ErrorText>
+                                                            Select blockchain
+                                                        </ErrorText>
+                                                    )}
                                             </div>
                                         </div>
                                     </div>
@@ -461,7 +700,7 @@ const CreateCollectionArea = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-lg-6">
+                                    {/* <div className="col-lg-6">
                                         <div className="collection-single-wized">
                                             <label
                                                 htmlFor="earning"
@@ -486,12 +725,40 @@ const CreateCollectionArea = () => {
                                                 )}
                                             </div>
                                         </div>
+                                    </div> */}
+                                    <div className="col-lg-6">
+                                        <div className="collection-single-wized">
+                                            <label
+                                                htmlFor="paymentTokens"
+                                                className="title"
+                                            >
+                                                Payment Tokens
+                                            </label>
+                                            <div className="create-collection-input">
+                                                <input
+                                                    id="paymentTokens"
+                                                    className="url"
+                                                    type="text"
+                                                    {...register(
+                                                        "paymentTokens"
+                                                    )}
+                                                />
+                                                {errors.paymentTokens && (
+                                                    <ErrorText>
+                                                        {
+                                                            errors.paymentTokens
+                                                                ?.message
+                                                        }
+                                                    </ErrorText>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
                                     <div className="col-lg-6">
                                         <div className="collection-single-wized">
                                             <label
                                                 htmlFor="wallet"
-                                                className="title"
+                                                className="title required"
                                             >
                                                 Your payout wallet address
                                             </label>
@@ -500,7 +767,10 @@ const CreateCollectionArea = () => {
                                                     id="wallet"
                                                     className="url"
                                                     type="text"
-                                                    {...register("wallet")}
+                                                    {...register("wallet", {
+                                                        required:
+                                                            "wallet address is required",
+                                                    })}
                                                 />
                                                 {errors.wallet && (
                                                     <ErrorText>
@@ -545,13 +815,23 @@ const CreateCollectionArea = () => {
                                                 className="mr--30"
                                                 type="submit"
                                                 data-btn="preview"
-                                            // onClick={handleSubmit(onSubmit)}
+                                                name="preview"
+                                                value="preview"
+                                                onClick={() =>
+                                                    setShowPreviewModal(true)
+                                                }
                                             >
                                                 Preview
                                             </Button>
                                             <Button
                                                 type="submit"
                                                 color="primary-alta"
+                                                data-btn="create"
+                                                name="create"
+                                                value="create"
+                                                onClick={() =>
+                                                    setShowPreviewModal(false)
+                                                }
                                             >
                                                 Create
                                             </Button>
