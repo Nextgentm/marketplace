@@ -47,7 +47,7 @@ const HeroArea = ({ data }) => (
                                             __html: banner?.description,
                                         }}
                                     /> */}
-                                    {banner?.buttons && (
+                                    {/* banner?.buttons && (
                                         <div className="button-group">
                                             {banner.buttons.map(
                                                 (
@@ -71,7 +71,7 @@ const HeroArea = ({ data }) => (
                                                 )
                                             )}
                                         </div>
-                                    )}
+                                                    ) */}
                                 </div>
                             </div>
                         </SliderItem>
