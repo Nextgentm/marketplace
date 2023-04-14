@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable @next/next/no-img-element */
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
@@ -11,6 +12,7 @@ import axios from "axios";
 import NiceSelect from "@ui/nice-select";
 // import CreateNFT from "src/CollectionNFT";
 import { useRouter } from "next/router";
+import Modal from "react-bootstrap/Modal";
 
 const CreateNewArea = ({ className, space }) => {
     const [showProductModal, setShowProductModal] = useState(false);
@@ -21,7 +23,7 @@ const CreateNewArea = ({ className, space }) => {
 
     const router = useRouter();
     const data = router.query;
-    // console.log(data.type);
+
     const {
         register,
         handleSubmit,
@@ -40,15 +42,54 @@ const CreateNewArea = ({ className, space }) => {
         setShowProductModal(false);
     };
     const [category, setCategory] = useState("");
+
+    const [nftImagePath, setNftImagePath] = useState("");
+    const [nftImageId, setNftImageId] = useState("");
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const shareModalHandler = () => setIsShareModalOpen((prev) => !prev);
+
     const categoryHandler = (item) => {
         setCategory(item.value);
     };
 
+    /** Dynamic_fields */
+    const [formValues, setFormValues] = useState([
+        { properties_name: "", properties_type: "" },
+    ]);
+    const addFormFields = () => {
+        setFormValues([
+            ...formValues,
+            { properties_name: "", properties_type: "" },
+        ]);
+    };
+
+    const handleNameChange = (i, e) => {
+        const newFormValues = [...formValues];
+        newFormValues[i].properties_name = e.target.value;
+        setFormValues(newFormValues);
+    };
+    const handleChange = (i, e) => {
+        const newFormValues = [...formValues];
+        newFormValues[i].properties_type = e.target.value;
+        setFormValues(newFormValues);
+    };
+
+    const removeFormFields = (i) => {
+        const newFormValues = [...formValues];
+        newFormValues.splice(i, 1);
+        setFormValues(newFormValues);
+    };
+    /** Dynamic_fields */
+
     // This function will be triggered when the file field change
-    const imageChange = (e) => {
+    /* const imageChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
             setSelectedImage(e.target.files[0]);
         }
+    }; */
+
+    const addPropertyPopup = (e) => {
+        setIsShareModalOpen(true);
     };
 
     async function updateImage(e) {
@@ -56,53 +97,56 @@ const CreateNewArea = ({ className, space }) => {
         if (getValues(e) && getValues(e)?.length > 0) {
             setSelectedImage(getValues(e)?.[0]);
         }
-        const formData = new FormData();
-        formData.append("files", getValues(e)?.[0]);
-        const resp = await fetch(
-            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`,
-            {
-                method: "post",
-                body: formData,
-            }
-        )
-            .then((response) => response.json())
-            .then((data) => {
-                if (data[0]?.id) {
-                    const old_id = localStorage.getItem("nft_id_4");
-                    if (old_id) {
-                        fetch(
-                            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload/files/:${old_id}`,
-                            {
-                                method: "delete",
-                            }
-                        );
-                    }
-                    localStorage.setItem("nft_id_4", data[0]?.id);
-                    localStorage.setItem("nft_url_4", JSON.stringify(data[0]));
+
+        if (nftImageId) {
+            /** FOr Update Image */
+            const formUpdateImage = new FormData();
+            formUpdateImage.append("fileInfo", getValues(e)?.[0]);
+            await fetch(
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload?id=${nftImageId}`,
+                {
+                    method: "post",
+                    body: formUpdateImage,
                 }
-            })
-            .catch(() => {
-                // Promise Failed, Do something
-            });
+            )
+                .then((response) => response.json())
+                .then((res) => {
+                    setNftImagePath(JSON.stringify(res));
+                    setNftImageId(res?.id);
+                });
+        } else {
+            const formData = new FormData();
+            formData.append("files", getValues(e)?.[0]);
+            await fetch(
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`,
+                {
+                    method: "post",
+                    body: formData,
+                }
+            )
+                .then((response) => response.json())
+                .then((res) => {
+                    setNftImagePath(JSON.stringify(res[0]));
+                    setNftImageId(res[0]?.id);
+                });
+        }
     }
 
     async function StoreData(data) {
         try {
-            const nft_id_4 = localStorage.getItem("nft_id_4");
-            const nft_url_4 = JSON.parse(localStorage.getItem("nft_url_4"));
-
+            const nft_url_4 = JSON.parse(nftImagePath);
             await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles`,
                 {
                     data: {
                         name: data.name ? data.name : null,
                         image: nft_url_4 || "ImagePath",
-                        imageID: nft_id_4 || 0,
+                        imageID: nftImageId || 0,
                         description: data.discription ? data.discription : null,
                         price: data.price ? Number(data.price) : null,
                         size: data.size ? Number(data.size) : null,
                         symbol: "wETH",
-                        properties: data.propertiy ? data.propertiy : null,
+                        properties: formValues || null,
                         royalty: data.royality ? Number(data.royality) : null,
                         numberOfCopies: data.numberOfCopies
                             ? Number(data.numberOfCopies)
@@ -131,7 +175,6 @@ const CreateNewArea = ({ className, space }) => {
     }
 
     const onSubmit = (data, e) => {
-        console.log(data);
         const { target } = e;
         const submitBtn =
             target.localName === "span" ? target.parentElement : target;
@@ -149,20 +192,142 @@ const CreateNewArea = ({ className, space }) => {
         }
     };
 
-    /* async function MintNFT() {
-        const ethers = require("ethers");
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const { utils } = ethers;
-        const bytes = utils.formatBytes32String(signer);
-        const contract = new ethers.Contract(
-            CreateNFT.address,
-            CreateNFT.abi,
-            signer
-        );
-        const transaction = await contract.mint();
-        const receipt = await transaction.wait();
-    } */
+    const ShareModal = ({ show, handleModal }) => (
+        <Modal
+            className="rn-popup-modal share-modal-wrapper"
+            show={show}
+            onHide={handleModal}
+            centered
+            dialogClassName="modal-800px"
+        >
+            {show && (
+                <button
+                    type="button"
+                    className="btn-close"
+                    aria-label="Close"
+                    onClick={handleModal}
+                >
+                    <i className="feather-x" />
+                </button>
+            )}
+            <Modal.Body>
+                <h5>Add Properties</h5>
+                <form action="#">
+                    <div className="form-wrapper-one">
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="input-box pb--20">
+                                    <label
+                                        htmlFor="name"
+                                        className="form-label"
+                                    >
+                                        Name
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="col-md-6">
+                                <div className="input-box pb--20">
+                                    <label
+                                        htmlFor="type"
+                                        className="form-label"
+                                    >
+                                        Type
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        {formValues.map((element, index) => (
+                            <div className="row">
+                                <div className="col-md-5">
+                                    <div className="input-box pb--20">
+                                        <input
+                                            placeholder="Name"
+                                            {...register(
+                                                `properties_name${index}`,
+                                                {
+                                                    onChange: (e) => {
+                                                        handleNameChange(
+                                                            index,
+                                                            e
+                                                        );
+                                                    },
+                                                    value: element.properties_type,
+                                                }
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="col-md-4">
+                                    <div className="input-box pb--20">
+                                        <input
+                                            placeholder="Type"
+                                            {...register(
+                                                `properties_type${index}`,
+                                                {
+                                                    onChange: (e) => {
+                                                        handleChange(index, e);
+                                                    },
+                                                    value: element.properties_type,
+                                                }
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+                                {index ? (
+                                    <div className="col-md-2 col-xl-2">
+                                        <div className="input-box">
+                                            <Button
+                                                color="primary-alta"
+                                                fullwidth
+                                                type="button"
+                                                data-btn="preview"
+                                                onClick={() =>
+                                                    removeFormFields(index)
+                                                }
+                                            >
+                                                Remove
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ) : null}
+                            </div>
+                        ))}
+                        <div className="row">
+                            <div className="col-md-12 col-xl-3">
+                                <div className="input-box">
+                                    <Button
+                                        color="primary-alta"
+                                        fullwidth
+                                        type="button"
+                                        data-btn="preview"
+                                        onClick={addFormFields}
+                                    >
+                                        Add More
+                                    </Button>
+                                </div>
+                            </div>
+                            <div className="col-md-12 col-xl-1">
+                                <div className="input-box">
+                                    <Button
+                                        color="primary"
+                                        fullwidth
+                                        type="button"
+                                        aria-label="Close"
+                                        onClick={handleModal}
+                                    >
+                                        Save
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </Modal.Body>
+        </Modal>
+    );
 
     useEffect(() => {
         axios
@@ -171,7 +336,6 @@ const CreateNewArea = ({ className, space }) => {
             )
             .then((response) => {
                 // setDataCollection(response.data.data);
-
                 const results = [];
                 response.data.data.map((data) =>
                     results.push({
@@ -179,7 +343,6 @@ const CreateNewArea = ({ className, space }) => {
                         text: data.name,
                     })
                 );
-                console.log(results);
                 setDataCollection(results);
             });
     }, []);
@@ -193,6 +356,10 @@ const CreateNewArea = ({ className, space }) => {
                     className
                 )}
             >
+                <ShareModal
+                    show={isShareModalOpen}
+                    handleModal={shareModalHandler}
+                />
                 <form action="#" onSubmit={handleSubmit(onSubmit)}>
                     <div className="container">
                         <div className="row g-5">
@@ -455,6 +622,20 @@ const CreateNewArea = ({ className, space }) => {
                                                 >
                                                     Properties
                                                 </label>
+                                                <div className="input-box">
+                                                    <Button
+                                                        color="primary-alta"
+                                                        fullwidth
+                                                        type="submit"
+                                                        data-btn="preview"
+                                                        onClick={
+                                                            addPropertyPopup
+                                                        }
+                                                    >
+                                                        Add Properties
+                                                    </Button>
+                                                </div>
+                                                {/*
                                                 <input
                                                     id="propertiy"
                                                     placeholder="e. g. `Propertie`"
@@ -463,14 +644,15 @@ const CreateNewArea = ({ className, space }) => {
                                                             "Propertiy is required",
                                                     })}
                                                 />
-                                                {errors.propertiy && (
+                                                */}
+                                                {/* errors.propertiy && (
                                                     <ErrorText>
                                                         {
                                                             errors.propertiy
                                                                 ?.message
                                                         }
                                                     </ErrorText>
-                                                )}
+                                                    ) */}
                                             </div>
                                         </div>
 
@@ -546,7 +728,7 @@ const CreateNewArea = ({ className, space }) => {
                                             </div>
                                         </div>
 
-                                        <div className="col-md-4 col-sm-4">
+                                        {/* <div className="col-md-4 col-sm-4">
                                             <div className="input-box pb--20 rn-check-box">
                                                 <input
                                                     className="rn-check-box-input"
@@ -599,7 +781,7 @@ const CreateNewArea = ({ className, space }) => {
                                                     Unlock Purchased
                                                 </label>
                                             </div>
-                                        </div>
+                                        </div> */}
 
                                         <div className="col-md-12 col-xl-4">
                                             <div className="input-box">

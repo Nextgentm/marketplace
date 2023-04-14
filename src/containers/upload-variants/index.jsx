@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import clsx from "clsx";
 import Image from "next/image";
 import Button from "@ui/button";
+import Link from "next/link";
 
 const UploadVariants = ({ className, space, pageType }) => (
     <div
@@ -30,68 +31,73 @@ const UploadVariants = ({ className, space, pageType }) => (
                     <div className="upload-variant-wrapper">
                         <div className="variant-preview">
                             <Image
-                                src="/images/upload-variants/single.jpg"
+                                src="/images/upload-variants/Single.png"
                                 alt="nuron-single"
                                 width={495}
                                 height={417}
                                 priority
                             />
                         </div>
-                        <Button
-                            path={`${pageType}?type=single`}
-                            size="medium"
-                            fullwidth
-                            className="mt--20"
-                            target=""
-                        >
-                            Create Single
-                        </Button>
+                        <Link href={`${pageType}?type=single`}>
+                            <Button
+                                size="medium"
+                                fullwidth
+                                className="mt--20"
+                                target=""
+                            >
+                                Create Single
+                            </Button>
+                        </Link>
                     </div>
                 </div>
                 <div className="col-lg-3 col-md-6 col-12">
                     <div className="upload-variant-wrapper">
                         <div className="variant-preview">
                             <Image
-                                src="/images/upload-variants/multiple.jpg"
+                                src="/images/upload-variants/Multiple.png"
                                 alt="nuron-single"
                                 width={495}
                                 height={417}
                                 priority
                             />
                         </div>
-                        <Button
-                            path={`${pageType}?type=multiple`}
-                            size="medium"
-                            fullwidth
-                            className="mt--20"
-                            target=""
-                        >
-                            Create Multiple
-                        </Button>
+                        <Link href={`${pageType}?type=multiple`}>
+                            <Button
+                                size="medium"
+                                fullwidth
+                                className="mt--20"
+                                target=""
+                            >
+                                Create Multiple
+                            </Button>
+                        </Link>
                     </div>
                 </div>
-                <div className="col-lg-3 col-md-6 col-12">
-                    <div className="upload-variant-wrapper">
-                        <div className="variant-preview">
-                            <Image
-                                src="/images/upload-variants/multiple.jpg"
-                                alt="nuron-single"
-                                width={495}
-                                height={417}
-                                priority
-                            />
+                {pageType !== "create" && (
+                    <div className="col-lg-3 col-md-6 col-12">
+                        <div className="upload-variant-wrapper">
+                            <div className="variant-preview">
+                                <Image
+                                    src="/images/upload-variants/Hybrid.png"
+                                    alt="nuron-single"
+                                    width={495}
+                                    height={417}
+                                    priority
+                                />
+                            </div>
+                            <Link href={`${pageType}?type=hybrid`}>
+                                <Button
+                                    size="medium"
+                                    fullwidth
+                                    className="mt--20"
+                                    target=""
+                                >
+                                    Create Hybrid
+                                </Button>
+                            </Link>
                         </div>
-                        <Button
-                            path={`${pageType}?type=hybrid`}
-                            size="medium"
-                            fullwidth
-                            className="mt--20"
-                            target=""
-                        >
-                            Create Hybrid
-                        </Button>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     </div>
