@@ -174,7 +174,7 @@ const ExploreProductArea = ({
     /* Filter logic end */
 
     // Generate data from products data
-    const cats = flatDeep(products.map((prod) => prod.collection.data.name));
+    const cats = flatDeep(products.map((prod) => prod.collection.data?.name));
     const categories = cats.reduce((obj, b) => {
         const newObj = { ...obj };
         newObj[b] = obj[b] + 1 || 1;
