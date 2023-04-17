@@ -32,6 +32,7 @@ const ExploreProductArea = ({
     space,
     data: { section_title, products, placeBid },
 }) => {
+    console.log(products);
     const itemsToFilter = [...products];
     const [state, dispatch] = useReducer(reducer, {
         products: [],
@@ -173,7 +174,7 @@ const ExploreProductArea = ({
     /* Filter logic end */
 
     // Generate data from products data
-    const cats = flatDeep(products.map((prod) => prod.categories));
+    const cats = flatDeep(products.map((prod) => prod.collection.data?.name));
     const categories = cats.reduce((obj, b) => {
         const newObj = { ...obj };
         newObj[b] = obj[b] + 1 || 1;
@@ -223,12 +224,12 @@ const ExploreProductArea = ({
                                         >
                                             <Product
                                                 placeBid={!!placeBid}
-                                                title={prod.title}
+                                                title={prod.name || ""}
                                                 slug={prod.slug}
                                                 latestBid={prod.latestBid}
-                                                price={prod.price}
+                                                price={`${prod.price}${prod.symbol}`}
                                                 likeCount={prod.likeCount}
-                                                image={prod.images?.[0]}
+                                                image={prod.image.data.url}
                                                 authors={prod.authors}
                                                 bitCount={prod.bitCount}
                                             />
