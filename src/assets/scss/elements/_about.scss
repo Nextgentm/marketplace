@@ -11,6 +11,7 @@
     padding: 25px;
     border: 1px solid var(--color-border);
     border-radius: 5px;
+    background: #200a3e;
 }
 
 .single-counter-up {
@@ -171,11 +172,11 @@
 }
 .rn-about-card {
     border: 1px solid var(--color-border);
-    background: #191925;
+    background: #200a3e;//#191925;
     padding: 50px 40px;
     border-radius: 5px;
     &.transparent-bg {
-        background: transparent;
+        background: #200a3e;//transparent;
         border: 1px solid var(--color-border);
         margin-top: 140px;
         @media #{$smlg-device} {
