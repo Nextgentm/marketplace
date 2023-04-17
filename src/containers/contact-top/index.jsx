@@ -50,7 +50,7 @@ const ContactTopArea = ({ space, className }) => (
                     <AddressBox
                         icon="feather-mail"
                         title="Our Email Address"
-                        emails={["admin@gmail.com", "example@gmail.com"]}
+                        emails={["support@lootmogul.com", "info@lootmogul.com"]}
                     />
                 </div>
                 <div
@@ -62,7 +62,7 @@ const ContactTopArea = ({ space, className }) => (
                     <AddressBox
                         icon="feather-map-pin"
                         title="Our Location"
-                        address="5678 Bangla Main Road, cities 580 <br> GBnagla, example 54786"
+                        address="831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States"
                     />
                 </div>
             </div>
