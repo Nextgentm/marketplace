@@ -1,6 +1,6 @@
 :root {
     // themes color
-    --color-primary: transparent linear-gradient(90deg, #E90A63 0%, #481A7F 100%) 0% 0% no-repeat padding-box;//#00a3ff;
+    --color-primary: transparent linear-gradient(100deg, #E90A63 50%, #481A7F 100%) 0% 0% no-repeat padding-box;//#00a3ff;
     --color-primary-alta: #5E229D 0% 0% no-repeat padding-box;//#212e48;
 
     --color-gray: #f6f6f6;
@@ -8,10 +8,10 @@
     --color-subtitle: #f9004d;
 
     // background-color
-    --background-color-1: #24243557;
+    --background-color-1: #200a3e; //#24243557;
     --background-color-2: transparent linear-gradient(90deg, #070623 0%, #1F052C 100%) 0% 0% no-repeat padding-box;//#13131d;
     --background-color-3: #151521;
-    --background-color-4: #242435;
+    --background-color-4: #200a3e; //#242435;
 
     // color gradient
     --gradient-one: linear-gradient(to right bottom, #2899d8, #00a3ff);
