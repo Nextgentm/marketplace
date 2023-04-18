@@ -8,7 +8,7 @@
         "format": "prettier --ignore-path .prettierignore --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
         "lint": "eslint --ignore-path .eslintignore . --ext ts --ext tsx --ext js --ext jsx",
         "lint:fix": "yarn format & next lint --dir src",
-        "clean-cache": "rimraf .next",
+        "clean-cache": "rimraf .next yarn.lock",
         "clean": "rimraf node_modules .next"
     },
     "dependencies": {
@@ -47,7 +47,8 @@
         "remark-html": "^15.0.1",
         "sal.js": "^0.8.5",
         "sass": "^1.45.0",
-        "web3": "^1.7.4"
+        "web3": "^1.7.4",
+        "ethereumjs-abi": "0.6.6"
     },
     "devDependencies": {
         "@babel/core": "^7.16.0",
