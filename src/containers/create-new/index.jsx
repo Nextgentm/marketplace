@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable @next/next/no-img-element */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
@@ -11,8 +11,15 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import NiceSelect from "@ui/nice-select";
 // import CreateNFT from "src/CollectionNFT";
-import { useRouter } from "next/router";
 import Modal from "react-bootstrap/Modal";
+import { useRouter } from "next/router";
+import { WalletData } from "src/context/wallet-context";
+import {
+    ETHEREUM_NETWORK_CHAIN_ID,
+    POLYGON_NETWORK_CHAIN_ID,
+} from "src/lib/constants";
+import ERC721Contract from "../../contracts/json/erc721.json";
+import ERC1155Contract from "../../contracts/json/erc1155.json";
 
 const CreateNewArea = ({ className, space }) => {
     const [showProductModal, setShowProductModal] = useState(false);
@@ -20,6 +27,8 @@ const CreateNewArea = ({ className, space }) => {
     const [hasImageError, setHasImageError] = useState(false);
     const [previewData, setPreviewData] = useState({});
     const [dataCollection, setDataCollection] = useState(null);
+
+    const { walletData, setWalletData } = useContext(WalletData);
 
     const router = useRouter();
     const data = router.query;
@@ -41,44 +50,25 @@ const CreateNewArea = ({ className, space }) => {
     const handleProductModal = () => {
         setShowProductModal(false);
     };
-    const [category, setCategory] = useState("");
+    const [selectedCollection, setSelectedCollection] = useState(null);
 
     const [nftImagePath, setNftImagePath] = useState("");
     const [nftImageId, setNftImageId] = useState("");
-    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-    const shareModalHandler = () => setIsShareModalOpen((prev) => !prev);
 
-    const categoryHandler = (item) => {
-        setCategory(item.value);
+    const [isAddPropertyModalOpen, setIsAddPropertyModalOpen] = useState(false);
+
+    const isAddPropertyModalHandler = () =>
+        setIsAddPropertyModalOpen((prev) => !prev);
+
+    const selectedCollectionHandler = (item) => {
+        setSelectedCollection(item.value);
     };
 
     /** Dynamic_fields */
     const [formValues, setFormValues] = useState([
-        { properties_name: "", properties_type: "" },
+        // { properties_name: "", properties_type: "" },
     ]);
-    const addFormFields = () => {
-        setFormValues([
-            ...formValues,
-            { properties_name: "", properties_type: "" },
-        ]);
-    };
 
-    const handleNameChange = (i, e) => {
-        const newFormValues = [...formValues];
-        newFormValues[i].properties_name = e.target.value;
-        setFormValues(newFormValues);
-    };
-    const handleChange = (i, e) => {
-        const newFormValues = [...formValues];
-        newFormValues[i].properties_type = e.target.value;
-        setFormValues(newFormValues);
-    };
-
-    const removeFormFields = (i) => {
-        const newFormValues = [...formValues];
-        newFormValues.splice(i, 1);
-        setFormValues(newFormValues);
-    };
     /** Dynamic_fields */
 
     // This function will be triggered when the file field change
@@ -89,7 +79,7 @@ const CreateNewArea = ({ className, space }) => {
     }; */
 
     const addPropertyPopup = (e) => {
-        setIsShareModalOpen(true);
+        setIsAddPropertyModalOpen(true);
     };
 
     async function updateImage(e) {
@@ -134,8 +124,31 @@ const CreateNewArea = ({ className, space }) => {
 
     async function StoreData(data) {
         try {
+            let contractAddress;
+            if (router.query.type === "single") {
+                contractAddress = selectedCollection.contractAddress;
+            } else if (router.query.type === "multiple") {
+                contractAddress = selectedCollection.contractAddress1155;
+            }
+            const metadataURL = data?.external_url ? data?.external_url : "";
+            const { price, royality } = data;
+            const supply = data?.numberOfCopies
+                ? Number(data?.numberOfCopies)
+                : 1;
+
+            const tokenID = await MintNFT(
+                contractAddress,
+                metadataURL,
+                price,
+                royality,
+                supply
+            );
+            if (!tokenID) {
+                return;
+            }
+
             const nft_url_4 = JSON.parse(nftImagePath);
-            await axios.post(
+            const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles`,
                 {
                     data: {
@@ -144,33 +157,129 @@ const CreateNewArea = ({ className, space }) => {
                         imageID: nftImageId || 0,
                         description: data.discription ? data.discription : null,
                         price: data.price ? Number(data.price) : null,
-                        size: data.size ? Number(data.size) : null,
+                        size: 1, // data.size ? Number(data.size) : null,
                         symbol: "wETH",
+                        nftID: tokenID.toString(),
+                        external_url: data?.external_url,
                         properties: formValues || null,
                         royalty: data.royality ? Number(data.royality) : null,
-                        numberOfCopies: data.numberOfCopies
-                            ? Number(data.numberOfCopies)
+                        numberOfCopies: data?.numberOfCopies
+                            ? Number(data?.numberOfCopies)
                             : null,
                         imageHash: "String",
                         metadataHash: "String",
-                        creator: 0,
-                        owner: 0,
+                        creator: walletData.account,
+                        owner: walletData.account,
                         collectionContractAddress:
                             data.collectionContractAddress
                                 ? data.collectionContractAddress
                                 : null,
-                        putOnSale: data.putonsale,
+                        putOnSale: false, // data.putonsale,
                         instantSalePrice: data.instantsaleprice,
                         unlockPurchased: data.unlockpurchased,
                         slug: data.name
                             ? data.name.toLowerCase().split(" ").join("-")
                             : null,
-                        collection: "String",
+                        collection: selectedCollection.id,
                     },
                 }
             );
+            console.log(res);
+            const collectiblesId = res.data.data.id;
+            // Add collectible properties
+            for (let i = 0; i < formValues.length; i++) {
+                if (
+                    formValues[i].properties_name &&
+                    formValues[i].properties_type
+                ) {
+                    axios.post(
+                        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectible-properties`,
+                        {
+                            data: {
+                                name: formValues[i].properties_name,
+                                type: formValues[i].properties_type,
+                                collectibles: collectiblesId,
+                            },
+                        }
+                    );
+                }
+            }
+            notify();
+            reset();
+            setSelectedImage();
+            setFormValues([]);
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async function MintNFT(
+        contractAddress,
+        metadataURL,
+        price,
+        royalty,
+        supply
+    ) {
+        const signer = walletData.provider.getSigner();
+
+        try {
+            // deployed contract instance
+            // console.log(router.query.type); // type of NFT collection
+            // const contractAddress =
+            //     "0xe168a8806ac3d151A46c7a3853e8226076FF286c";
+            // const metadataURL = "";
+            // const price = 100;
+            // const royalty = 20;
+            // const supply = 100;
+            console.log(contractAddress, metadataURL, price, royalty, supply);
+            if (router.query.type === "single") {
+                // Pull the deployed contract instance
+                const contract721 = new walletData.ethers.Contract(
+                    contractAddress,
+                    ERC721Contract.abi,
+                    signer
+                );
+                const options = {
+                    value: walletData.ethers.utils.parseEther("0.01"),
+                };
+                const transaction = await contract721.createToken(
+                    metadataURL,
+                    price,
+                    options
+                );
+                const receipt = await transaction.wait();
+                console.log(receipt);
+                const tokenID = parseInt(
+                    receipt.events[1].args.tokenId._hex,
+                    16
+                );
+                console.log("contractAddress", tokenID);
+                return tokenID;
+            }
+            if (router.query.type === "multiple") {
+                // Pull the deployed contract instance
+                const contract1155 = new walletData.ethers.Contract(
+                    contractAddress,
+                    ERC1155Contract.abi,
+                    signer
+                );
+                const transaction = await contract1155.mint(
+                    metadataURL,
+                    royalty,
+                    supply
+                );
+                const receipt = await transaction.wait();
+                console.log(receipt);
+                const tokenID = parseInt(receipt.events[0].args.id._hex, 16);
+                console.log("contractAddress", tokenID);
+                return tokenID;
+            }
+            toast.error("Please select proper collection type");
+            return null;
+        } catch (error) {
+            console.log(error);
+            toast.error("Error while creating NFT");
+            return null;
         }
     }
 
@@ -180,154 +289,215 @@ const CreateNewArea = ({ className, space }) => {
             target.localName === "span" ? target.parentElement : target;
         const isPreviewBtn = submitBtn.dataset?.btn;
         setHasImageError(!selectedImage);
+
+        if (!walletData.isConnected) {
+            toast.error("Please connect wallet first");
+            return;
+        } // chnage network
+        if (selectedCollection.networkType === "Ethereum") {
+            if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+                // ethereum testnet
+                return;
+            }
+        } else if (selectedCollection.networkType === "Polygon") {
+            if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+                // polygon testnet
+                return;
+            }
+        }
         if (isPreviewBtn && selectedImage) {
             setPreviewData({ ...data, image: selectedImage });
             setShowProductModal(true);
         }
         if (!isPreviewBtn) {
-            notify();
-            reset();
-            setSelectedImage();
             StoreData(data);
         }
     };
 
-    const ShareModal = ({ show, handleModal }) => (
-        <Modal
-            className="rn-popup-modal share-modal-wrapper"
-            show={show}
-            onHide={handleModal}
-            centered
-            dialogClassName="modal-800px"
-        >
-            {show && (
-                <button
-                    type="button"
-                    className="btn-close"
-                    aria-label="Close"
-                    onClick={handleModal}
-                >
-                    <i className="feather-x" />
-                </button>
-            )}
-            <Modal.Body>
-                <h5>Add Properties</h5>
-                <form action="#">
-                    <div className="form-wrapper-one">
-                        <div className="row">
-                            <div className="col-md-6">
-                                <div className="input-box pb--20">
-                                    <label
-                                        htmlFor="name"
-                                        className="form-label"
-                                    >
-                                        Name
-                                    </label>
-                                </div>
-                            </div>
+    const ShareModal = ({ show, handleModal, formValues, setFormValues }) => {
+        // Inner values used to stop multiple rendering of popup view
+        const [formDataValues, setFormDataValues] = useState([]);
 
-                            <div className="col-md-6">
-                                <div className="input-box pb--20">
-                                    <label
-                                        htmlFor="type"
-                                        className="form-label"
-                                    >
-                                        Type
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+        useEffect(() => {
+            setFormDataValues(formValues);
+        }, []);
 
-                        {formValues.map((element, index) => (
+        const onSave = () => {
+            setFormValues(formDataValues);
+            handleModal();
+        };
+
+        const addFormFields = () => {
+            // console.log(formDataValues);
+            setFormDataValues([
+                ...formDataValues,
+                { properties_name: "", properties_type: "" },
+            ]);
+        };
+
+        const handleNameChange = (i, e) => {
+            const newFormValues = [...formDataValues];
+            newFormValues[i].properties_name = e.target.value;
+            setFormDataValues(newFormValues);
+        };
+        const handleChange = (i, e) => {
+            const newFormValues = [...formDataValues];
+            newFormValues[i].properties_type = e.target.value;
+            setFormDataValues(newFormValues);
+        };
+
+        const removeFormFields = (i) => {
+            const newFormValues = [...formDataValues];
+            newFormValues.splice(i, 1);
+            setFormDataValues(newFormValues);
+        };
+
+        return (
+            <Modal
+                className="rn-popup-modal share-modal-wrapper"
+                show={show}
+                onHide={handleModal}
+                centered
+                dialogClassName="modal-800px"
+            >
+                {show && (
+                    <button
+                        type="button"
+                        className="btn-close"
+                        aria-label="Close"
+                        onClick={handleModal}
+                    >
+                        <i className="feather-x" />
+                    </button>
+                )}
+                <Modal.Body>
+                    <h5>Add Properties</h5>
+                    <form action="#">
+                        <div className="form-wrapper-one">
                             <div className="row">
-                                <div className="col-md-5">
+                                <div className="col-md-6">
                                     <div className="input-box pb--20">
-                                        <input
-                                            placeholder="Name"
-                                            {...register(
-                                                `properties_name${index}`,
-                                                {
-                                                    onChange: (e) => {
-                                                        handleNameChange(
-                                                            index,
-                                                            e
-                                                        );
-                                                    },
-                                                    value: element.properties_type,
-                                                }
-                                            )}
-                                        />
+                                        <label
+                                            htmlFor="name"
+                                            className="form-label"
+                                        >
+                                            Name
+                                        </label>
                                     </div>
                                 </div>
 
-                                <div className="col-md-4">
+                                <div className="col-md-6">
                                     <div className="input-box pb--20">
-                                        <input
-                                            placeholder="Type"
-                                            {...register(
-                                                `properties_type${index}`,
-                                                {
-                                                    onChange: (e) => {
-                                                        handleChange(index, e);
-                                                    },
-                                                    value: element.properties_type,
-                                                }
-                                            )}
-                                        />
+                                        <label
+                                            htmlFor="type"
+                                            className="form-label"
+                                        >
+                                            Type
+                                        </label>
                                     </div>
                                 </div>
-                                {index ? (
-                                    <div className="col-md-2 col-xl-2">
-                                        <div className="input-box">
-                                            <Button
-                                                color="primary-alta"
-                                                fullwidth
-                                                type="button"
-                                                data-btn="preview"
-                                                onClick={() =>
-                                                    removeFormFields(index)
-                                                }
-                                            >
-                                                Remove
-                                            </Button>
+                            </div>
+
+                            {formDataValues?.map((element, index) => (
+                                <div className="row">
+                                    <div className="col-md-5">
+                                        <div className="input-box pb--20">
+                                            <input
+                                                id={`properties_name${index}`}
+                                                placeholder="Name"
+                                                value={element.properties_name}
+                                                {...register(
+                                                    `properties_name${index}`,
+                                                    {
+                                                        onChange: (e) => {
+                                                            handleNameChange(
+                                                                index,
+                                                                e
+                                                            );
+                                                        },
+                                                        required:
+                                                            "Enter properties name",
+                                                    }
+                                                )}
+                                            />
                                         </div>
                                     </div>
-                                ) : null}
-                            </div>
-                        ))}
-                        <div className="row">
-                            <div className="col-md-12 col-xl-3">
-                                <div className="input-box">
-                                    <Button
-                                        color="primary-alta"
-                                        fullwidth
-                                        type="button"
-                                        data-btn="preview"
-                                        onClick={addFormFields}
-                                    >
-                                        Add More
-                                    </Button>
+
+                                    <div className="col-md-4">
+                                        <div className="input-box pb--20">
+                                            <input
+                                                id={`properties_type${index}`}
+                                                placeholder="Type"
+                                                value={element.properties_type}
+                                                {...register(
+                                                    `properties_type${index}`,
+                                                    {
+                                                        onChange: (e) => {
+                                                            handleChange(
+                                                                index,
+                                                                e
+                                                            );
+                                                        },
+                                                        required:
+                                                            "Enter properties type",
+                                                    }
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+                                    {index ? (
+                                        <div className="col-md-2 col-xl-2">
+                                            <div className="input-box">
+                                                <Button
+                                                    color="primary-alta"
+                                                    fullwidth
+                                                    type="button"
+                                                    data-btn="preview"
+                                                    onClick={() =>
+                                                        removeFormFields(index)
+                                                    }
+                                                >
+                                                    Remove
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ) : null}
                                 </div>
-                            </div>
-                            <div className="col-md-12 col-xl-1">
-                                <div className="input-box">
-                                    <Button
-                                        color="primary"
-                                        fullwidth
-                                        type="button"
-                                        aria-label="Close"
-                                        onClick={handleModal}
-                                    >
-                                        Save
-                                    </Button>
+                            ))}
+                            <div className="row">
+                                <div className="col-md-12 col-xl-3">
+                                    <div className="input-box">
+                                        <Button
+                                            color="primary-alta"
+                                            fullwidth
+                                            type="button"
+                                            data-btn="preview"
+                                            onClick={addFormFields}
+                                        >
+                                            Add More
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="col-md-12 col-xl-1">
+                                    <div className="input-box">
+                                        <Button
+                                            color="primary"
+                                            fullwidth
+                                            type="button"
+                                            aria-label="Close"
+                                            onClick={onSave}
+                                        >
+                                            Save
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </Modal.Body>
-        </Modal>
-    );
+                    </form>
+                </Modal.Body>
+            </Modal>
+        );
+    };
 
     useEffect(() => {
         axios
@@ -339,7 +509,7 @@ const CreateNewArea = ({ className, space }) => {
                 const results = [];
                 response.data.data.map((data) =>
                     results.push({
-                        value: data.name,
+                        value: data,
                         text: data.name,
                     })
                 );
@@ -347,6 +517,38 @@ const CreateNewArea = ({ className, space }) => {
             });
     }, []);
     // console.log(dataCollection);
+
+    async function switchNetwork(chainId) {
+        if (
+            parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)
+        ) {
+            console.log(`Network is already with chain id ${chainId}`);
+            return true;
+        }
+        try {
+            const res = await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId }],
+            });
+            // console.log(res);
+            return true;
+        } catch (switchError) {
+            // console.log(switchError);
+            toast.error("Failed to change the network.");
+        }
+        return false;
+    }
+
+    useEffect(() => {
+        if (selectedCollection) {
+            if (selectedCollection.networkType === "Ethereum") {
+                switchNetwork(ETHEREUM_NETWORK_CHAIN_ID); // ethereum testnet
+            } else if (selectedCollection.networkType === "Polygon") {
+                switchNetwork(POLYGON_NETWORK_CHAIN_ID); // polygon testnet
+            }
+        }
+    }, [selectedCollection]);
+
     return (
         <>
             <div
@@ -357,8 +559,10 @@ const CreateNewArea = ({ className, space }) => {
                 )}
             >
                 <ShareModal
-                    show={isShareModalOpen}
-                    handleModal={shareModalHandler}
+                    show={isAddPropertyModalOpen}
+                    handleModal={isAddPropertyModalHandler}
+                    formValues={formValues}
+                    setFormValues={setFormValues}
                 />
                 <form action="#" onSubmit={handleSubmit(onSubmit)}>
                     <div className="container">
@@ -513,13 +717,13 @@ const CreateNewArea = ({ className, space }) => {
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="col-lg-6">
+                                        <div className="col-lg-12">
                                             <div className="collection-single-wized">
                                                 <label
                                                     htmlFor="category"
                                                     className="title required"
                                                 >
-                                                    Category
+                                                    Collection
                                                 </label>
                                                 <div className="create-collection-input">
                                                     {dataCollection && (
@@ -530,7 +734,7 @@ const CreateNewArea = ({ className, space }) => {
                                                                 dataCollection
                                                             }
                                                             onChange={
-                                                                categoryHandler
+                                                                selectedCollectionHandler
                                                             }
                                                         />
                                                     )}
@@ -538,31 +742,35 @@ const CreateNewArea = ({ className, space }) => {
                                             </div>
                                         </div>
 
-                                        <div className="col-md-6">
+                                        <div className="col-md-12">
                                             <div className="input-box pb--20">
                                                 <label
-                                                    htmlFor="Collection Contract Address"
+                                                    htmlFor="Propertie"
                                                     className="form-label"
                                                 >
-                                                    Collection Contract Address
+                                                    Properties
                                                 </label>
-                                                <input
-                                                    id="collectionContractAddress"
-                                                    placeholder="Collection Contract Address"
-                                                    {...register(
-                                                        "collectionContractAddress"
-                                                    )}
-                                                />
+                                                <div className="input-box">
+                                                    <Button
+                                                        color="primary-alta"
+                                                        fullwidth
+                                                        onClick={
+                                                            addPropertyPopup
+                                                        }
+                                                    >
+                                                        Add Properties
+                                                    </Button>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="col-md-4">
+                                        <div className="col-md-6">
                                             <div className="input-box pb--20">
                                                 <label
                                                     htmlFor="price"
                                                     className="form-label"
                                                 >
-                                                    Item Price in $
+                                                    Item Price
                                                 </label>
                                                 <input
                                                     id="price"
@@ -585,78 +793,7 @@ const CreateNewArea = ({ className, space }) => {
                                             </div>
                                         </div>
 
-                                        <div className="col-md-4">
-                                            <div className="input-box pb--20">
-                                                <label
-                                                    htmlFor="Size"
-                                                    className="form-label"
-                                                >
-                                                    Size
-                                                </label>
-                                                <input
-                                                    id="size"
-                                                    placeholder="e. g. `Size`"
-                                                    {...register("size", {
-                                                        pattern: {
-                                                            value: /^[0-9]+$/,
-                                                            message:
-                                                                "Please enter a number",
-                                                        },
-                                                        required:
-                                                            "Size is required",
-                                                    })}
-                                                />
-                                                {errors.size && (
-                                                    <ErrorText>
-                                                        {errors.size?.message}
-                                                    </ErrorText>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div className="col-md-4">
-                                            <div className="input-box pb--20">
-                                                <label
-                                                    htmlFor="Propertie"
-                                                    className="form-label"
-                                                >
-                                                    Properties
-                                                </label>
-                                                <div className="input-box">
-                                                    <Button
-                                                        color="primary-alta"
-                                                        fullwidth
-                                                        type="submit"
-                                                        data-btn="preview"
-                                                        onClick={
-                                                            addPropertyPopup
-                                                        }
-                                                    >
-                                                        Add Properties
-                                                    </Button>
-                                                </div>
-                                                {/*
-                                                <input
-                                                    id="propertiy"
-                                                    placeholder="e. g. `Propertie`"
-                                                    {...register("propertiy", {
-                                                        required:
-                                                            "Propertiy is required",
-                                                    })}
-                                                />
-                                                */}
-                                                {/* errors.propertiy && (
-                                                    <ErrorText>
-                                                        {
-                                                            errors.propertiy
-                                                                ?.message
-                                                        }
-                                                    </ErrorText>
-                                                    ) */}
-                                            </div>
-                                        </div>
-
-                                        <div className="col-md-12">
+                                        <div className="col-md-6">
                                             <div className="input-box pb--20">
                                                 <label
                                                     htmlFor="Royality"
@@ -703,48 +840,56 @@ const CreateNewArea = ({ className, space }) => {
                                                 />
                                             </div>
                                         </div>
+
                                         <div className="col-md-6">
-                                            <div className="input-box pb--20">
-                                                <label
-                                                    htmlFor="Number Of Copies"
-                                                    className="form-label"
-                                                >
-                                                    Number Of Copies
-                                                </label>
-                                                <input
-                                                    id="numberOfCopies"
-                                                    placeholder="e. g. `1-100`"
-                                                    {...register(
-                                                        "numberOfCopies",
-                                                        {
-                                                            pattern: {
-                                                                value: /^[0-9]+$/,
-                                                                message:
-                                                                    "Please enter a number",
-                                                            },
-                                                        }
-                                                    )}
-                                                />
-                                            </div>
+                                            {router.query.type ===
+                                                "multiple" && (
+                                                    <div className="input-box pb--20">
+                                                        <label
+                                                            htmlFor="Number Of Copies"
+                                                            className="form-label"
+                                                        >
+                                                            Number Of Copies
+                                                        </label>
+                                                        <input
+                                                            id="numberOfCopies"
+                                                            placeholder="e. g. `1-100`"
+                                                            {...register(
+                                                                "numberOfCopies",
+                                                                {
+                                                                    pattern: {
+                                                                        value: /^[0-9]+$/,
+                                                                        message:
+                                                                            "Please enter a number",
+                                                                    },
+                                                                }
+                                                            )}
+                                                        />
+                                                    </div>
+                                                )}
                                         </div>
 
-                                        {/* <div className="col-md-4 col-sm-4">
-                                            <div className="input-box pb--20 rn-check-box">
-                                                <input
-                                                    className="rn-check-box-input"
-                                                    type="checkbox"
-                                                    id="putonsale"
-                                                    {...register("putonsale")}
-                                                />
-                                                <label
-                                                    className="rn-check-box-label"
-                                                    htmlFor="putonsale"
-                                                >
-                                                    Put on Sale
-                                                </label>
+                                        {/* <div className="row">
+                                            <div className="col-md-4 col-sm-4">
+                                                <div className="input-box pb--20 rn-check-box">
+                                                    <input
+                                                        className="rn-check-box-input"
+                                                        type="checkbox"
+                                                        id="putonsale"
+                                                        {...register(
+                                                            "putonsale"
+                                                        )}
+                                                    />
+                                                    <label
+                                                        className="rn-check-box-label"
+                                                        htmlFor="putonsale"
+                                                    >
+                                                        Put on Sale
+                                                    </label>
+                                                </div>
                                             </div>
-                                        </div>
-
+                                        </div> */}
+                                        {/*
                                         <div className="col-md-4 col-sm-4">
                                             <div className="input-box pb--20 rn-check-box">
                                                 <input
@@ -807,19 +952,21 @@ const CreateNewArea = ({ className, space }) => {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="mt--100 mt_sm--30 mt_md--30 d-block d-lg-none">
-                                    <h5> Note: </h5>
-                                    <span>
-                                        {" "}
-                                        Service fee : <strong>2.5%</strong>{" "}
-                                    </span>{" "}
-                                    <br />
-                                    <span>
-                                        {" "}
-                                        You will receive :{" "}
-                                        <strong>25.00 ETH $50,000</strong>
-                                    </span>
+                                    <div className="mt--100 mt_sm--30 mt_md--30 d-block d-lg-none">
+                                        <h5> Note: </h5>
+                                        <span>
+                                            {" "}
+                                            Service fee : <strong>
+                                                2.5%
+                                            </strong>{" "}
+                                        </span>{" "}
+                                        <br />
+                                        <span>
+                                            {" "}
+                                            You will receive :{" "}
+                                            <strong>25.00 ETH $50,000</strong>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

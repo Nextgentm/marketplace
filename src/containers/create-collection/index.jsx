@@ -10,6 +10,7 @@ import { isEmpty } from "@utils/methods";
 import axios from "axios";
 import { WalletData } from "src/context/wallet-context";
 import { useRouter } from "next/router";
+import Multiselect from "multiselect-react-dropdown";
 import {
     ETHEREUM_NETWORK_CHAIN_ID,
     POLYGON_NETWORK_CHAIN_ID,
@@ -34,6 +35,9 @@ const CreateCollectionArea = () => {
 
     const [featureImagePath, setFeatureImagePath] = useState("");
     const [featureImageId, setFeatureImageId] = useState("");
+
+    const [paymentTokensData, setPaymentTokensData] = useState(null);
+    const [selectedPaymentTokens, setSelectedPaymentTokens] = useState([]);
     // Get Wallet data
     const { walletData, setWalletData } = useContext(WalletData);
     // Get url param
@@ -91,6 +95,22 @@ const CreateCollectionArea = () => {
             }
         }
     }, [blockchainNetwork]);
+
+    useEffect(() => {
+        axios
+            .get(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/payment-tokens`)
+            .then((response) => {
+                // console.log(response.data.data);
+                const results = [];
+                response.data.data.map((data) =>
+                    results.push({
+                        value: data.id,
+                        key: data.name,
+                    })
+                );
+                setPaymentTokensData(results);
+            });
+    }, []);
 
     async function updateImage(e) {
         if (logoImageId) {
@@ -220,6 +240,11 @@ const CreateCollectionArea = () => {
             //     deployed1155ContractAddress
             // );
 
+            const selectedPaymentTokensList = Array.from(
+                selectedPaymentTokens
+            ).map(({ value }) => value);
+            // console.log(selectedPaymentTokens);
+
             const resp = await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`,
                 {
@@ -235,12 +260,14 @@ const CreateCollectionArea = () => {
                         url: data.url ? data.url : null,
                         description: data.description ? data.description : null,
                         category,
-                        slug: data.title.toLowerCase(),
+                        slug: data.title
+                            ? data.title.toLowerCase().split(" ").join("-")
+                            : null,
                         // creatorEarning: data.earning
                         //     ? Number(data.earning)
                         //     : null,
                         networkType: blockchainNetwork,
-                        paymentTokens: data.paymentTokens,
+                        paymentTokens: selectedPaymentTokensList,
                         contractAddress: deployed721ContractAddress, // may be null
                         contractAddress1155: deployed1155ContractAddress, // may be null
                         ownerAddress: walletData.account,
@@ -735,14 +762,43 @@ const CreateCollectionArea = () => {
                                                 Payment Tokens
                                             </label>
                                             <div className="create-collection-input">
-                                                <input
+                                                {paymentTokensData && (
+                                                    <Multiselect
+                                                        id="paymentTokens"
+                                                        options={
+                                                            paymentTokensData
+                                                        }
+                                                        displayValue="key"
+                                                        onRemove={(event) => {
+                                                            setSelectedPaymentTokens(
+                                                                event
+                                                            );
+                                                        }}
+                                                        onSelect={(event) => {
+                                                            setSelectedPaymentTokens(
+                                                                event
+                                                            );
+                                                        }}
+                                                        showCheckbox
+                                                    />
+                                                )}
+                                                {/* <select
                                                     id="paymentTokens"
-                                                    className="url"
-                                                    type="text"
-                                                    {...register(
-                                                        "paymentTokens"
-                                                    )}
-                                                />
+                                                    multiple="multiple"
+                                                >
+                                                    {paymentTokensData &&
+                                                        paymentTokensData.map(
+                                                            (data) => (
+                                                                <option
+                                                                    value={
+                                                                        data.value
+                                                                    }
+                                                                >
+                                                                    {data.text}
+                                                                </option>
+                                                            )
+                                                        )}
+                                                </select> */}
                                                 {errors.paymentTokens && (
                                                     <ErrorText>
                                                         {
