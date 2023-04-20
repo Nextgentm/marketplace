@@ -8,35 +8,57 @@ import ProductDetailsArea from "@containers/product-details";
 import ProductArea from "@containers/product/layout-03";
 import { shuffleArray } from "@utils/methods";
 
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 // demo data
 import productData from "../../data/products.json";
 
-const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => (
-    <Wrapper>
-        <SEO pageTitle="Product Details" />
-        <Header />
-        <main id="main-content">
-            <Breadcrumb
-                pageTitle="Product Details"
-                currentPage="Product Details"
-            />
-            <ProductDetailsArea product={product} />
-            <ProductArea
-                data={{
-                    section_title: { title: "Recent View" },
-                    products: recentViewProducts,
-                }}
-            />
-            <ProductArea
-                data={{
-                    section_title: { title: "Related Item" },
-                    products: relatedProducts,
-                }}
-            />
-        </main>
-        <Footer />
-    </Wrapper>
-);
+const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => {
+    const router = useRouter();
+    console.log(router.query.slug);
+    const [dataCollectibles, setDataCollectibles] = useState(null);
+    useEffect(() => {
+        axios
+            .get(
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/3?populate=*`
+            )
+            .then((response) => {
+                setDataCollectibles(response.data.data);
+            });
+    }, []);
+    console.log(dataCollectibles);
+    return (
+        <Wrapper>
+            <SEO pageTitle="Product Details" />
+            <Header />
+            <main id="main-content">
+                <Breadcrumb
+                    pageTitle="Product Details"
+                    currentPage="Product Details"
+                />
+                {dataCollectibles && (
+                    <ProductDetailsArea product={dataCollectibles} />
+                )}
+
+                <ProductArea
+                    data={{
+                        section_title: { title: "Recent View" },
+                        products: recentViewProducts,
+                    }}
+                />
+                <ProductArea
+                    data={{
+                        section_title: { title: "Related Item" },
+                        products: relatedProducts,
+                    }}
+                />
+            </main>
+            <Footer />
+        </Wrapper>
+    );
+};
 
 export async function getStaticPaths() {
     return {

@@ -11,29 +11,38 @@ const GalleryTab = ({ images }) => (
         <TabContainer defaultActiveKey="nav-0">
             <div className="pd-tab-inner">
                 <Nav className="rn-pd-nav rn-pd-rt-content nav-pills">
-                    {images?.map((image, index) => (
+                    {/* images?.map((image, index) => (
                         <Nav.Link
-                            key={image.src}
+                            key={
+                                image.src ||
+                                "/images/portfolio/lg/portfolio-01.jpg"
+                            }
                             as="button"
                             eventKey={`nav-${index}`}
                         >
                             <span className="rn-pd-sm-thumbnail">
                                 <Image
-                                    src={image.src}
+                                    src={
+                                        image.src ||
+                                        "/images/portfolio/lg/portfolio-01.jpg"
+                                    }
                                     alt={image?.alt || "Product"}
                                     width={167}
                                     height={167}
                                 />
                             </span>
                         </Nav.Link>
-                    ))}
+                                )) */}
                 </Nav>
-                <TabContent className="rn-pd-content">
+                {/* <TabContent className="rn-pd-content">
                     {images?.map((image, index) => (
                         <TabPane key={image.src} eventKey={`nav-${index}`}>
                             <div className="rn-pd-thumbnail">
                                 <Image
-                                    src={image.src}
+                                    src={
+                                        image.src ||
+                                        "/images/portfolio/lg/portfolio-01.jpg"
+                                    }
                                     alt={image?.alt || "Product"}
                                     width={560}
                                     height={560}
@@ -42,7 +51,7 @@ const GalleryTab = ({ images }) => (
                             </div>
                         </TabPane>
                     ))}
-                </TabContent>
+                                </TabContent> */}
             </div>
         </TabContainer>
     </div>
