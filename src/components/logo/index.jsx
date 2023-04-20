@@ -21,8 +21,8 @@ const Logo = ({ className, logo }) => (
                 <Image
                     src={logo[1].src}
                     alt={logo[1]?.alt || "nft-logo"}
-                    width={106}
-                    height={35}
+                    width={60}
+                    height={60}
                     priority
                 />
             </Anchor>
