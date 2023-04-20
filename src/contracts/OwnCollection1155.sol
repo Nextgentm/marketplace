@@ -16,7 +16,6 @@ contract LootmogulUser1155Token is
     ERC2981,
     AccessControl
 {
-
     using Counters for Counters.Counter;
     using Strings for uint256;
     Counters.Counter private _tokenIdTracker;
@@ -34,7 +33,7 @@ contract LootmogulUser1155Token is
         address indexed previousOwner,
         address indexed newOwner
     );
-    
+
     event BaseURIChanged(string indexed uri, string indexed newuri);
 
     constructor(
@@ -62,11 +61,9 @@ contract LootmogulUser1155Token is
         @param newOwner : newOwner address 
     */
 
-    function transferOwnership(address newOwner)
-        external
-        onlyRole(ADMIN_ROLE)
-        returns (bool)
-    {
+    function transferOwnership(
+        address newOwner
+    ) external onlyRole(ADMIN_ROLE) returns (bool) {
         require(
             newOwner != address(0),
             "Ownable: new owner is the zero address"
@@ -78,7 +75,9 @@ contract LootmogulUser1155Token is
         return true;
     }
 
-    function setBaseURI(string memory uri_) external onlyRole(ADMIN_ROLE) returns (bool) {
+    function setBaseURI(
+        string memory uri_
+    ) external onlyRole(ADMIN_ROLE) returns (bool) {
         emit BaseURIChanged(baseTokenURI, uri_);
         baseTokenURI = uri_;
         return true;
@@ -99,13 +98,9 @@ contract LootmogulUser1155Token is
         return _tokenId;
     }
 
-    function uri(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (string memory)
-    {
+    function uri(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
         require(
             exists(tokenId),
             "ERC1155URIStorage: URI query for nonexistent token"
@@ -129,7 +124,9 @@ contract LootmogulUser1155Token is
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         virtual
