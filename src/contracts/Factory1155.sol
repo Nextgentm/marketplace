@@ -13,7 +13,11 @@ contract Factory1155 {
         string memory tokenURIPrefix
     ) external returns (address addr) {
         addr = address(
-            new LootmogulUser1155Token{salt: _salt}(name, symbol, tokenURIPrefix)
+            new LootmogulUser1155Token{salt: _salt}(
+                name,
+                symbol,
+                tokenURIPrefix
+            )
         );
         LootmogulUser1155Token token = LootmogulUser1155Token(address(addr));
         token.transferOwnership(msg.sender);

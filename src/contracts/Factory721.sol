@@ -12,9 +12,7 @@ contract Factory721 {
         string memory symbol,
         string memory tokenURIPrefix
     ) external returns (address addr) {
-        addr = address(
-            new NFTMarketplace()
-        );
+        addr = address(new NFTMarketplace());
         NFTMarketplace token = NFTMarketplace(address(addr));
         emit Deployed(msg.sender, addr);
     }
