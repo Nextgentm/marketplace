@@ -3,15 +3,22 @@ import clsx from "clsx";
 import TopSeller from "@components/top-seller/layout-01";
 import { ImageType } from "@utils/types";
 
-const ProductCategory = ({ className, owner }) => (
+const ProductCategory = ({ className, owner, royalty }) => (
     <div className={clsx("catagory", className)}>
         <span>
-            Catagory <span className="color-body">10% royalties</span>
+            Catagory{" "}
+            {royalty && (
+                <span className="color-body">{royalty}% royalties</span>
+            )}
         </span>
         <TopSeller
-            name={owner.name}
-            slug={owner.slug}
-            image={{ src: owner.image.src, width: 44, height: 44 }}
+            name={owner.data?.category}
+            slug={owner.data?.slug}
+            image={{
+                src: "/images/client/client-1.png",
+                width: 44,
+                height: 44,
+            }}
         />
     </div>
 );
@@ -23,6 +30,7 @@ ProductCategory.propTypes = {
         slug: PropTypes.string,
         image: ImageType,
     }),
+    royalty: PropTypes.string,
 };
 
 export default ProductCategory;
