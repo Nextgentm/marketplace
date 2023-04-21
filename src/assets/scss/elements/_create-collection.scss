@@ -9,15 +9,12 @@
     background: var(--background-color-1);
     border: 1px solid var(--color-border);
     border-radius: 6px;
-
     @media #{$small-mobile} {
         padding: 10px;
     }
-
     .button-wrapper {
         display: flex;
         flex-wrap: wrap;
-
         .btn {
             &:last-child {
                 @media only screen and (max-width: 400px) {
@@ -28,11 +25,7 @@
     }
 }
 
-.create-collection-form-wrapper
-    .nuron-information
-    .single-notice-setting
-    .content-text
-    p {
+.create-collection-form-wrapper .nuron-information .single-notice-setting .content-text p {
     font-size: var(--font-size-b1);
     font-weight: 500;
 }
@@ -45,25 +38,20 @@
 
 .collection-single-wized {
     margin-bottom: 30px;
-
     &.banner {
         background: var(--background-color-1);
         padding: 25px;
         border-radius: 6px;
         border: 1px solid var(--color-border);
-
         @media #{$small-mobile} {
             padding: 15px;
         }
     }
-
     .title {
         margin-bottom: 10px;
-
         &.required {
             position: relative;
             display: table;
-
             &::after {
                 position: absolute;
                 content: "*";
@@ -74,13 +62,11 @@
             }
         }
     }
-
     span {
         &.sub {
             margin-bottom: 10px;
         }
     }
-
     .create-collection-input {
         .logo-c-image {
             margin-top: 15px;
@@ -112,13 +98,11 @@
                 right: 13px;
             }
         }
-
         .brows-file-wrapper {
             input {
                 display: none;
             }
         }
-
         &.feature-image {
             .logo-c-image {
                 border-radius: 6px;
@@ -131,7 +115,6 @@
                 right: -10px;
             }
         }
-
         &.banner-image {
             .logo-c-image {
                 border-radius: 6px;
@@ -144,7 +127,6 @@
                 right: -10px;
             }
         }
-
         input {
             background: var(--background-color-4);
             border-radius: 5px;
@@ -154,20 +136,16 @@
             border: 2px solid var(--color-border);
             transition: 0.3s;
             margin-top: 15px;
-
             &:focus {
                 border: 2px solid var(--color-primary);
             }
-
             &.name {
                 height: 50px;
             }
-
             &.url {
                 height: 50px;
             }
         }
-
         textarea {
             background: var(--background-color-4);
             height: 210px;
@@ -179,7 +157,6 @@
             transition: var(--transition);
             margin-top: 15px;
         }
-
         .nice-select {
             margin-top: 15px;
             padding: 0px 32px 0 22px;
@@ -191,12 +168,10 @@
             transition: var(--transition);
             height: 50px;
             line-height: 45px;
-
             &::after {
                 right: 18px;
                 top: 55%;
             }
-
             &.open {
                 .list {
                     width: 100%;
@@ -211,8 +186,7 @@
     flex-wrap: wrap;
     user-select: none;
     border-radius: 8px;
-
-    & > * {
+    &>* {
         margin: 0.5rem 1rem;
     }
 }
@@ -234,29 +208,24 @@
     position: absolute;
     white-space: nowrap;
     width: 1px;
-
-    &:checked + .checkbox-tile {
+    &:checked+.checkbox-tile {
         border-color: var(--color-primary);
         box-shadow: 0 5px 10px rgba(#000, 0.1);
         color: var(--color-primary);
-
         &:before {
             transform: scale(1);
             opacity: 1;
             background-color: var(--color-primary);
             border-color: var(--color-primary);
         }
-
         .checkbox-icon,
         .checkbox-label {
             color: var(--color-primary);
         }
     }
-
-    &:focus + .checkbox-tile {
+    &:focus+.checkbox-tile {
         border-color: var(--color-primary);
         box-shadow: 0 5px 10px rgba(#000, 0.1), 0 0 0 4px #b5c9fc;
-
         &:before {
             transform: scale(1);
             opacity: 1;
@@ -278,7 +247,6 @@
     transition: 0.15s ease;
     cursor: pointer;
     position: relative;
-
     &:before {
         content: "";
         position: absolute;
@@ -298,10 +266,8 @@
         background-repeat: no-repeat;
         background-position: 50% 50%;
     }
-
     &:hover {
         border-color: var(--color-primary);
-
         &:before {
             transform: scale(1);
             opacity: 1;
@@ -312,7 +278,6 @@
 .checkbox-icon {
     transition: 0.375s ease;
     color: #494949;
-
     svg {
         width: 3rem;
         height: 3rem;
@@ -332,7 +297,6 @@ fieldset {
         margin: 20px 0 0 0;
         margin-left: -10px;
     }
-
     padding: 0;
     border: none;
 }
@@ -340,24 +304,31 @@ fieldset {
 .width-50-wrapper {
     display: flex;
     justify-content: space-between;
-
     @media #{$smlg-device} {
         flex-direction: column;
     }
-
     .collection-single-wized {
         width: 48.5%;
         padding: 20px;
         background: var(--background-color-1);
         border: 1px solid var(--color-border);
         border-radius: 6px;
-
         @media #{$small-mobile} {
             padding: 15px;
         }
-
         @media #{$smlg-device} {
             width: 100%;
         }
     }
+}
+
+.collection-single-wized .create-collection-input #paymentTokens .searchWrapper {
+    padding: 0;
+    border: 0;
+}
+
+.chip,
+.multiSelectContainer li:hover,
+.highlightOption {
+    background: #F60C67 !important;
 }

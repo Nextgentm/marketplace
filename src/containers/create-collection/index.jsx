@@ -397,6 +397,11 @@ const CreateCollectionArea = () => {
     }
 
     const onSubmit = (data, e) => {
+        const { target } = e;
+        const submitBtn =
+            target.localName === "span" ? target.parentElement : target;
+        const isPreviewBtn = submitBtn.dataset?.btn;
+        console.log(isPreviewBtn);
         // console.log(data, e);
         /** if Wallet not connected */
         if (!walletData.isConnected) {
@@ -423,11 +428,11 @@ const CreateCollectionArea = () => {
         }
         /** code for fetching submited button value */
         // console.log(e.nativeEvent.submitter.name);
-        if (showPreviewModal) {
+        if (isPreviewBtn) {
             setPreviewData({ ...data, image: data.logoImg[0] });
             setShowPreviewModal(true);
         }
-        if (!showPreviewModal) {
+        if (!isPreviewBtn) {
             StoreData(data);
         }
     };
@@ -561,7 +566,7 @@ const CreateCollectionArea = () => {
                                                 htmlFor="symbol"
                                                 className="title"
                                             >
-                                                symbol
+                                                Symbol
                                             </label>
                                             <div className="create-collection-input">
                                                 <input
@@ -871,11 +876,7 @@ const CreateCollectionArea = () => {
                                                 className="mr--30"
                                                 type="submit"
                                                 data-btn="preview"
-                                                name="preview"
-                                                value="preview"
-                                                onClick={() =>
-                                                    setShowPreviewModal(true)
-                                                }
+                                                onClick={handleSubmit(onSubmit)}
                                             >
                                                 Preview
                                             </Button>
