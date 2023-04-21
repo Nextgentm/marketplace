@@ -14,6 +14,7 @@ contract Factory721 {
     ) external returns (address addr) {
         addr = address(new NFTMarketplace());
         NFTMarketplace token = NFTMarketplace(address(addr));
+        token.transferOwnership(msg.sender);
         emit Deployed(msg.sender, addr);
     }
 }

@@ -39,6 +39,11 @@ contract NFTMarketplace is ERC721URIStorage, ERC721Burnable {
         bool currentlyListed
     );
 
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
+
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call this method");
         _;
@@ -51,6 +56,11 @@ contract NFTMarketplace is ERC721URIStorage, ERC721Burnable {
 
     constructor() ERC721("NFTMarketplace", "NFTM") {
         owner = payable(msg.sender);
+    }
+
+    function transferOwnership(address newOwner) public onlyOwner {
+        emit OwnershipTransferred(owner, newOwner);
+        owner = payable(newOwner);
     }
 
     // The following functions are overrides required by Solidity.
