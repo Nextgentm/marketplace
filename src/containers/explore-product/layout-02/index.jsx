@@ -68,13 +68,11 @@ const ExploreProductArea = ({ className, space, data }) => {
                             >
                                 <Product
                                     placeBid={!!data.placeBid}
-                                    title={prod.name ? prod.name : "Demo NFT"}
-                                    slug={prod.slug ? prod.slug : "#"}
-                                    latestBid={
-                                        prod.latestBid ? prod.latestBid : "6/30"
-                                    }
-                                    price={prod.price ? prod.price : "0"}
-                                    symbol={prod.symbol ? prod.symbol : "BTC"}
+                                    title={prod.name || "Untitled NFT"}
+                                    slug={prod.slug || "#"}
+                                    latestBid={prod.latestBid || "N/A"}
+                                    price={prod.price || "0"}
+                                    symbol={prod.symbol || ""}
                                     likeCount={500}
                                     image={
                                         prod.image.data
