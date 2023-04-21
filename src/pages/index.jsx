@@ -76,7 +76,7 @@ const Home = () => {
                         creators: sellerData,
                     }}
                 />
-                <ServiceArea data={content["service-section"]} />
+                {/* <ServiceArea data={content["service-section"]} /> */}
             </main>
             <Footer />
         </Wrapper>

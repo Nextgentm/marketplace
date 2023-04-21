@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 
 const NewsletterWidget = ({ data }) => (
-    <div className="widget-bottom mt--40 pt--40">
+    <div className="widget-bottom mt--20 pt--40">
         <h6 className="title">{data.title}</h6>
         <div className="input-group">
             <input
