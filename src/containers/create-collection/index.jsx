@@ -471,7 +471,12 @@ const CreateCollectionArea = () => {
                                         },
                                     })}
                                 />
-
+                                <label
+                                    htmlFor="logoImg"
+                                    className="imagerecommended"
+                                >
+                                    4500 x 4500px recommended
+                                </label>
                                 {errors.logoImg && (
                                     <ErrorText>
                                         {errors.logoImg?.message}
@@ -498,6 +503,12 @@ const CreateCollectionArea = () => {
                                         },
                                     })}
                                 />
+                                <label
+                                    htmlFor="featImg"
+                                    className="imagerecommended"
+                                >
+                                    590 x 420px recommended
+                                </label>
                                 {errors.featImg && (
                                     <ErrorText>
                                         {errors.featImg?.message}
@@ -524,6 +535,13 @@ const CreateCollectionArea = () => {
                                         },
                                     })}
                                 />
+                                <label
+                                    htmlFor="bannerImg"
+                                    className="imagerecommended"
+                                >
+                                    590 x 420px recommended
+                                </label>
+
                                 {errors.bannerImg && (
                                     <ErrorText>
                                         {errors.bannerImg?.message}
