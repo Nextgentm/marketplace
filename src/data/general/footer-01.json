@@ -7,39 +7,34 @@
                 "alt": "logo"
             }
         ],
-        "text": "Created with the collaboration of over 60 of the world's best Nuron Artists."
+        "text": "Created with the collaboration of over 60 of the world's best Lootmogul collection."
     },
     "newsletter-widget": {
-        "title": "Get The Latest Nuron Updates",
-        "note": "Email is safe. We don't spam."
+        "title": "Subscribe to get the updates",
+        "note": "support@lootmogul.com"
     },
     "quicklink-widget": {
-        "title": "Nuron",
+        "title": "Marketplace",
         "menu": [
             {
                 "id": 1,
-                "text": "Protocol Explore",
-                "path": "/explore-01"
+                "text": "All NFT's",
+                "path": "/explore-14"
             },
             {
                 "id": 2,
-                "text": "System Token",
-                "path": "/about"
+                "text": "Collections",
+                "path": "/collection"
             },
             {
                 "id": 3,
-                "text": "Otimize Time",
-                "path": "/about"
-            },
-            {
-                "id": 4,
-                "text": "Visual Checking",
+                "text": "About Us",
                 "path": "/about"
             },
             {
                 "id": 5,
-                "text": "Fadeup System",
-                "path": "/blog"
+                "text": "Rankings",
+                "path": "/ranking"
             },
             {
                 "id": 6,
@@ -48,53 +43,60 @@
             },
             {
                 "id": 7,
-                "text": "System Auto Since",
-                "path": "/blog"
+                "text": "Create NFT",
+                "path": "/upload-variants"
+            },
+            {
+                "id": 8,
+                "text": "Create Collection",
+                "path": "/upload-variants-collection"
             }
         ]
     },
     "information-widget": {
-        "title": "Information",
+        "title": "Quick Links",
         "menu": [
             {
                 "id": 1,
-                "text": "Market Explore",
-                "path": "/explore-01"
+                "text": "What is Metaverse?",
+                "path": "https://metaverse.lootmogul.com/what-is-metaverse/"
             },
             {
                 "id": 2,
-                "text": "Ready Token",
-                "path": "/about"
+                "text": "What are Digital Collectibles?",
+                "path": "https://metaverse.lootmogul.com/what-is-nft/"
             },
             {
                 "id": 3,
-                "text": "Otimize Time",
-                "path": "/about"
+                "text": "Contact",
+                "path": "/contact"
             },
             {
                 "id": 4,
-                "text": "Main Option",
-                "path": "/about"
+                "text": "Press Releases",
+                "path": "https://lootmogulstg.wpengine.com/press-releases/"
             },
             {
                 "id": 5,
-                "text": "Blog Grid",
-                "path": "/blog"
+                "text": "FAQs",
+                "path": "https://metaverse.lootmogul.com/faq/"
             },
             {
                 "id": 6,
-                "text": "About Us",
-                "path": "/about"
+                "text": "Privacy Policy",
+                "path": "https://metaverse.lootmogul.com/privacy-policy/"
             },
             {
                 "id": 7,
-                "text": "Fix Bug",
-                "path": "/blog"
+                "text": "Terms of Services",
+                "path": "https://metaverse.lootmogul.com/terms-conditions/"
             }
         ]
     },
     "soldout-widget": {
-        "title": "Recent Sold Out",
+        "title": "Download Our App",
+        "link": "https://apps.apple.com/in/app/lootmogul/id1619785065",
+        "image": "/images/contact/app.jpg",
         "products": [
             {
                 "id": 1,
@@ -142,5 +144,5 @@
             }
         ]
     },
-    "copyright_text": "©2022 Nuron, Inc. All rights reserved"
+    "copyright_text": "© 2023 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States"
 }

@@ -8,33 +8,45 @@
     "socials": [
         {
             "id": 1,
-            "icon": "feather-facebook",
-            "link": "https://facebook.com",
-            "title": "Facebook"
+            "icon": "feather-discord",
+            "link": "https://discord.gg/mHUqAm8fsh",
+            "title": "discord"
+        },
+        {
+            "id": 2,
+            "icon": "feather-send",
+            "link": "https://t.me/LootMogulcommunitychat",
+            "title": "Twitter"
         },
         {
             "id": 2,
             "icon": "feather-twitter",
-            "link": "https://twitter.com",
+            "link": "https://twitter.com/LootMogul",
             "title": "Twitter"
         },
         {
             "id": 3,
             "icon": "feather-instagram",
-            "link": "https://instagram.com",
+            "link": "https://www.instagram.com/lootmogul/?hl=en",
             "title": "Instagram"
         },
         {
+            "id": 1,
+            "icon": "feather-facebook",
+            "link": "https://www.facebook.com/LootMogul/",
+            "title": "Facebook"
+        },
+        {
             "id": 4,
-            "icon": "feather-linkedin",
-            "link": "https://linkedin.com",
-            "title": "linkedin"
+            "icon": "feather-youtube",
+            "link": "https://www.youtube.com/@lootmogul",
+            "title": "youtube"
         },
         {
             "id": 5,
-            "icon": "feather-mail",
-            "link": "https://mail.com",
-            "title": "mail"
+            "icon": "feather-medium",
+            "link": "https://lootmogul.medium.com/",
+            "title": "medium"
         }
     ]
 }

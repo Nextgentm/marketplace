@@ -5,7 +5,18 @@ import Image from "next/image";
 const SoldOutWidget = ({ data }) => (
     <div className="footer-widget">
         <h6 className="widget-title">{data.title}</h6>
-        {data?.products && (
+        {data?.image && (
+            <Anchor className="logo-light" path={data.link}>
+                <Image
+                    src={data.image}
+                    alt="nft-logo"
+                    width={250}
+                    height={70}
+                    priority
+                />
+            </Anchor>
+        )}
+        {/* data?.products && (
             <ul className="footer-recent-post">
                 {data.products.map((product) => (
                     <li key={product.id} className="recent-post">
@@ -37,13 +48,15 @@ const SoldOutWidget = ({ data }) => (
                     </li>
                 ))}
             </ul>
-        )}
+                                    ) */}
     </div>
 );
 
 SoldOutWidget.propTypes = {
     data: PropTypes.shape({
         title: PropTypes.string,
+        image: PropTypes.string,
+        link: PropTypes.string,
         products: PropTypes.arrayOf(
             PropTypes.shape({
                 id: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
