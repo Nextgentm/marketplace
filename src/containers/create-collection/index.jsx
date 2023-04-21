@@ -397,6 +397,11 @@ const CreateCollectionArea = () => {
     }
 
     const onSubmit = (data, e) => {
+        const { target } = e;
+        const submitBtn =
+            target.localName === "span" ? target.parentElement : target;
+        const isPreviewBtn = submitBtn.dataset?.btn;
+        console.log(isPreviewBtn);
         // console.log(data, e);
         /** if Wallet not connected */
         if (!walletData.isConnected) {
@@ -423,11 +428,11 @@ const CreateCollectionArea = () => {
         }
         /** code for fetching submited button value */
         // console.log(e.nativeEvent.submitter.name);
-        if (showPreviewModal) {
+        if (isPreviewBtn) {
             setPreviewData({ ...data, image: data.logoImg[0] });
             setShowPreviewModal(true);
         }
-        if (!showPreviewModal) {
+        if (!isPreviewBtn) {
             StoreData(data);
         }
     };
@@ -466,7 +471,12 @@ const CreateCollectionArea = () => {
                                         },
                                     })}
                                 />
-
+                                <label
+                                    htmlFor="logoImg"
+                                    className="imagerecommended"
+                                >
+                                    4500 x 4500px recommended
+                                </label>
                                 {errors.logoImg && (
                                     <ErrorText>
                                         {errors.logoImg?.message}
@@ -493,6 +503,12 @@ const CreateCollectionArea = () => {
                                         },
                                     })}
                                 />
+                                <label
+                                    htmlFor="featImg"
+                                    className="imagerecommended"
+                                >
+                                    590 x 420px recommended
+                                </label>
                                 {errors.featImg && (
                                     <ErrorText>
                                         {errors.featImg?.message}
@@ -519,6 +535,13 @@ const CreateCollectionArea = () => {
                                         },
                                     })}
                                 />
+                                <label
+                                    htmlFor="bannerImg"
+                                    className="imagerecommended"
+                                >
+                                    590 x 420px recommended
+                                </label>
+
                                 {errors.bannerImg && (
                                     <ErrorText>
                                         {errors.bannerImg?.message}
@@ -561,7 +584,7 @@ const CreateCollectionArea = () => {
                                                 htmlFor="symbol"
                                                 className="title"
                                             >
-                                                symbol
+                                                Symbol
                                             </label>
                                             <div className="create-collection-input">
                                                 <input
@@ -871,11 +894,7 @@ const CreateCollectionArea = () => {
                                                 className="mr--30"
                                                 type="submit"
                                                 data-btn="preview"
-                                                name="preview"
-                                                value="preview"
-                                                onClick={() =>
-                                                    setShowPreviewModal(true)
-                                                }
+                                                onClick={handleSubmit(onSubmit)}
                                             >
                                                 Preview
                                             </Button>
