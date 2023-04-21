@@ -11,47 +11,55 @@ const GalleryTab = ({ images }) => (
         <TabContainer defaultActiveKey="nav-0">
             <div className="pd-tab-inner">
                 <Nav className="rn-pd-nav rn-pd-rt-content nav-pills">
-                    {/* images?.map((image, index) => (
+                    {images.data && (
                         <Nav.Link
                             key={
-                                image.src ||
+                                images.data.url ||
                                 "/images/portfolio/lg/portfolio-01.jpg"
                             }
                             as="button"
-                            eventKey={`nav-${index}`}
+                            eventKey={`nav-${images.data.id}`}
                         >
                             <span className="rn-pd-sm-thumbnail">
                                 <Image
                                     src={
-                                        image.src ||
+                                        images.data.url ||
                                         "/images/portfolio/lg/portfolio-01.jpg"
                                     }
-                                    alt={image?.alt || "Product"}
+                                    alt={
+                                        images.data.alternativeText || "Product"
+                                    }
                                     width={167}
                                     height={167}
                                 />
                             </span>
                         </Nav.Link>
-                                )) */}
+                    )}
                 </Nav>
-                {/* <TabContent className="rn-pd-content">
-                    {images?.map((image, index) => (
-                        <TabPane key={image.src} eventKey={`nav-${index}`}>
+                <TabContent className="rn-pd-content">
+                    {images.data && (
+                        <TabPane
+                            key={images.data.url}
+                            eventKey={`nav-${images.data.id}`}
+                            active="true"
+                        >
                             <div className="rn-pd-thumbnail">
                                 <Image
                                     src={
-                                        image.src ||
+                                        images.data.url ||
                                         "/images/portfolio/lg/portfolio-01.jpg"
                                     }
-                                    alt={image?.alt || "Product"}
+                                    alt={
+                                        images.data.alternativeText || "Product"
+                                    }
                                     width={560}
                                     height={560}
                                     priority
                                 />
                             </div>
                         </TabPane>
-                    ))}
-                                </TabContent> */}
+                    )}
+                </TabContent>
             </div>
         </TabContainer>
     </div>

@@ -24,7 +24,7 @@ const ProductDetailsArea = ({ space, className, product }) => (
             <div className="row g-5">
                 <div className="col-lg-7 col-md-12 col-sm-12">
                     <Sticky>
-                        <GalleryTab images="" />
+                        <GalleryTab images={product.image} />
                     </Sticky>
                 </div>
                 <div className="col-lg-5 col-md-12 col-sm-12 mt_md--50 mt_sm--60">
@@ -44,10 +44,13 @@ const ProductDetailsArea = ({ space, className, product }) => (
                             {`${product.description.substring(0, 110)}...`}
                         </h6>
                         <div className="catagory-collection">
-                            {/* <ProductCategory owner={product.owner} />
+                            <ProductCategory
+                                owner={product.collection}
+                                royalty={product.royalty}
+                            />
                             <ProductCollection
                                 collection={product.collection}
-                            /> */}
+                            />
                         </div>
                         <Button color="primary-alta" path="#">
                             Put on Sale

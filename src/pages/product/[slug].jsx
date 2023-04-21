@@ -13,12 +13,12 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 // demo data
-import productData from "../../data/products.json";
+// import productData from "../../data/products.json";
 
 const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => {
     const router = useRouter();
-    console.log(router.query.slug);
-    const [dataCollectibles, setDataCollectibles] = useState(null);
+
+    /* const [dataCollectibles, setDataCollectibles] = useState(null);
     useEffect(() => {
         axios
             .get(
@@ -28,7 +28,7 @@ const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => {
                 setDataCollectibles(response.data.data);
             });
     }, []);
-    console.log(dataCollectibles);
+    console.log(dataCollectibles); */
     return (
         <Wrapper>
             <SEO pageTitle="Product Details" />
@@ -38,22 +38,21 @@ const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => {
                     pageTitle="Product Details"
                     currentPage="Product Details"
                 />
-                {dataCollectibles && (
-                    <ProductDetailsArea product={dataCollectibles} />
-                )}
+                {product && <ProductDetailsArea product={product} />}
 
                 <ProductArea
                     data={{
-                        section_title: { title: "Recent View" },
+                        section_title: { title: "Related Item" },
                         products: recentViewProducts,
                     }}
                 />
+                {/*
                 <ProductArea
                     data={{
                         section_title: { title: "Related Item" },
                         products: relatedProducts,
                     }}
-                />
+                /> */}
             </main>
             <Footer />
         </Wrapper>
@@ -61,8 +60,12 @@ const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => {
 };
 
 export async function getStaticPaths() {
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=*`
+    );
+    const productData = await res.json();
     return {
-        paths: productData.map(({ slug }) => ({
+        paths: productData.data.map(({ slug }) => ({
             params: {
                 slug,
             },
@@ -72,12 +75,20 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-    const product = productData.find(({ slug }) => slug === params.slug);
-    const { categories } = product;
-    const recentViewProducts = shuffleArray(productData).slice(0, 5);
-    const relatedProducts = productData
-        .filter((prod) => prod.categories?.some((r) => categories?.includes(r)))
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=*`
+    );
+    const productData = await res.json();
+    const product = productData.data.find(({ slug }) => slug === params.slug);
+    // const { category } = product.collection.data;
+    const recentViewProducts = shuffleArray(productData.data).slice(0, 5);
+    const relatedProducts = [];
+    /* const relatedProducts = productData.data
+        .filter((prod) =>
+            prod.collection.category?.some((r) => category?.includes(r))
+        )
         .slice(0, 5);
+    console.log(relatedProducts); */
     return {
         props: {
             className: "template-color-1",
