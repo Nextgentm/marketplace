@@ -753,7 +753,6 @@ const CreateNewArea = ({ className, space }) => {
                                                 <div className="input-box">
                                                     <Button
                                                         color="primary-alta"
-                                                        fullwidth
                                                         onClick={
                                                             addPropertyPopup
                                                         }
