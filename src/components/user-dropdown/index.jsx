@@ -76,9 +76,6 @@ const UserDropdown = ({ onDisconnect, ethBalance }) => (
                     <Anchor path="/edit-profile">Edit Profile</Anchor>
                 </li>
                 <li>
-                    <Anchor path="/connect">Manage funds</Anchor>
-                </li>
-                <li>
                     <button type="button" onClick={onDisconnect}>
                         Sign Out
                     </button>
