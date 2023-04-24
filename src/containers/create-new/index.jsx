@@ -65,7 +65,7 @@ const CreateNewArea = ({ className, space }) => {
 
     /** Dynamic_fields */
     const [formValues, setFormValues] = useState([
-        // { properties_name: "", properties_type: "" },
+        { properties_name: "", properties_type: "" },
     ]);
 
     /** Dynamic_fields */
@@ -397,7 +397,7 @@ const CreateNewArea = ({ className, space }) => {
                             </div>
 
                             {formDataValues?.map((element, index) => (
-                                <div className="row">
+                                <div className="row" key={index}>
                                     <div className="col-md-5">
                                         <div className="input-box pb--20">
                                             <input
@@ -443,23 +443,21 @@ const CreateNewArea = ({ className, space }) => {
                                             />
                                         </div>
                                     </div>
-                                    {index ? (
-                                        <div className="col-md-2 col-xl-2">
-                                            <div className="input-box">
-                                                <Button
-                                                    color="primary-alta"
-                                                    fullwidth
-                                                    type="button"
-                                                    data-btn="preview"
-                                                    onClick={() =>
-                                                        removeFormFields(index)
-                                                    }
-                                                >
-                                                    Remove
-                                                </Button>
-                                            </div>
+                                    <div className="col-md-2 col-xl-2">
+                                        <div className="input-box">
+                                            <Button
+                                                color="primary-alta"
+                                                fullwidth
+                                                type="button"
+                                                data-btn="preview"
+                                                onClick={() =>
+                                                    removeFormFields(index)
+                                                }
+                                            >
+                                                Remove
+                                            </Button>
                                         </div>
-                                    ) : null}
+                                    </div>
                                 </div>
                             ))}
                             <div className="row">
@@ -498,20 +496,37 @@ const CreateNewArea = ({ className, space }) => {
     };
 
     useEffect(() => {
+        const collectionType = router.query.type
+            ? router.query.type.charAt(0).toUpperCase() +
+            router.query.type.slice(1)
+            : null; // make first letter capital single to Single
+        const collectionURL = collectionType
+            ? `?filters[collectionType][$eq]=${collectionType}`
+            : "";
         axios
             .get(
-                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections?populate=*`
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections${collectionURL}`
             )
             .then((response) => {
                 // setDataCollection(response.data.data);
+                let paramCollection = null;
                 const results = [];
-                response.data.data.map((data) =>
+                response.data.data.map((ele, i) => {
                     results.push({
-                        value: data,
-                        text: data.name,
-                    })
-                );
+                        value: ele,
+                        text: ele.name,
+                    });
+                    if (router.query.collection === ele.slug) {
+                        paramCollection = ele;
+                        paramCollection.index = i;
+                    }
+                    // console.log(ele.slug);
+                });
                 setDataCollection(results);
+                // console.log(paramCollection);
+                if (paramCollection) {
+                    setSelectedCollection(paramCollection);
+                }
             });
     }, [router.query.type]);
     // console.log(dataCollection);
@@ -733,6 +748,9 @@ const CreateNewArea = ({ className, space }) => {
                                                             }
                                                             onChange={
                                                                 selectedCollectionHandler
+                                                            }
+                                                            defaultCurrent={
+                                                                selectedCollection?.index
                                                             }
                                                         />
                                                     )}
