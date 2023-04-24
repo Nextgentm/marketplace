@@ -71,10 +71,10 @@ function slideToggle(element, duration = 500) {
 const flatDeep = (arr, d = 1) =>
     d > 0
         ? arr.reduce(
-              (acc, val) =>
-                  acc.concat(Array.isArray(val) ? flatDeep(val, d - 1) : val),
-              []
-          )
+            (acc, val) =>
+                acc.concat(Array.isArray(val) ? flatDeep(val, d - 1) : val),
+            []
+        )
         : arr.slice();
 
 function slugify(text) {
@@ -162,6 +162,46 @@ const isEmpty = (obj) => {
     }
     return true;
 };
+const normalize = (data) => {
+    const isObject = (data) =>
+        Object.prototype.toString.call(data) === "[object Object]";
+    const isArray = (data) =>
+        Object.prototype.toString.call(data) === "[object Array]";
+
+    const flatten = (data) => {
+        if (!data.attributes) return data;
+
+        return {
+            ...(data.id ? { id: data.id } : {}),
+            ...data.attributes,
+        };
+    };
+
+    if (isArray(data)) {
+        return data.map((item) => normalize(item));
+    }
+
+    if (isObject(data)) {
+        if (isArray(data.data)) {
+            data = [...data.data];
+        } else if (isObject(data.data)) {
+            data = flatten({ ...data.data });
+        } else if (data.data === null) {
+            data = null;
+        } else {
+            data = flatten(data);
+        }
+
+        // eslint-disable-next-line no-restricted-syntax, guard-for-in
+        for (const key in data) {
+            data[key] = normalize(data[key]);
+        }
+
+        return data;
+    }
+
+    return data;
+};
 
 module.exports = {
     slideUp,
@@ -175,4 +215,5 @@ module.exports = {
     shuffleArray,
     hasKey,
     isEmpty,
+    normalize,
 };

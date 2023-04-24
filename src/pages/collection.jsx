@@ -4,51 +4,35 @@ import Header from "@layout/header/header-01";
 import Footer from "@layout/footer/footer-01";
 import Breadcrumb from "@components/breadcrumb";
 import CollectionArea from "@containers/collection/layout-03";
+import { ALL_COLLECTION_QUERY } from "src/graphql/query/collection/getCollection";
+import client from "@utils/apollo-client";
 
-// demo data
+const Collection = (props) => (
+    <Wrapper>
+        <SEO pageTitle="Collection" />
+        <Header />
+        <main id="main-content">
+            <Breadcrumb pageTitle="Our Collection" currentPage="Collection" />
+            <CollectionArea data={props.data} />
+        </main>
+        <Footer />
+    </Wrapper>
+);
 
-import { useState, useEffect } from "react";
-import axios from "axios";
-import collectionsData from "../data/collections.json";
-
-export async function getStaticProps() {
-    return { props: { className: "template-color-1" } };
-}
-
-const Collection = () => {
-    const [dataCollection, setDataCollection] = useState(null);
-    useEffect(() => {
-        axios
-            .get(
-                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections?populate=*`
-            )
-            .then((response) => {
-                setDataCollection(response.data.data);
-            });
-    }, []);
-    // console.log(dataCollection);
-    return (
-        <Wrapper>
-            <SEO pageTitle="Collection" />
-            <Header />
-            <main id="main-content">
-                <Breadcrumb
-                    pageTitle="Our Collection"
-                    currentPage="Collection"
-                />
-                {dataCollection && (
-                    <CollectionArea
-                        data={
-                            dataCollection
-                                ? { collections: dataCollection }
-                                : { collections: collectionsData }
-                        }
-                    />
-                )}
-            </main>
-            <Footer />
-        </Wrapper>
-    );
+export const getStaticProps = async () => {
+    const { data } = await client.query({
+        query: ALL_COLLECTION_QUERY,
+        variables: {
+            pagination: {
+                pageSize: 5,
+            },
+        },
+    });
+    return {
+        props: {
+            className: "template-color-1",
+            data,
+        },
+    };
 };
-
 export default Collection;
