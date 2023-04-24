@@ -23,6 +23,9 @@
                     ],
                     "image": {
                         "src": "/images/bg/bg-image-18.jpg"
+                    },
+                    "mobile": {
+                        "src": "/images/bg/bg-image-18-mobile.jpg"
                     }
                 },
                 {
@@ -44,6 +47,9 @@
                     ],
                     "image": {
                         "src": "/images/bg/bg-image-19.jpg"
+                    },
+                    "mobile": {
+                        "src": "/images/bg/bg-image-19-mobile.jpg"
                     }
                 },
                 {
@@ -65,6 +71,9 @@
                     ],
                     "image": {
                         "src": "/images/bg/unlock-now.jpg"
+                    },
+                    "mobile": {
+                        "src": "/images/bg/unlock-now-mobile.jpg"
                     }
                 }
             ]

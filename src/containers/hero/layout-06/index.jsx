@@ -17,7 +17,7 @@ const HeroArea = ({ data }) => (
             {data?.banners && (
                 <Slider
                     options={SliderOptions}
-                    className="slider-style-6 wide-wrapper slick-activation-06 slick-arrow-between"
+                    className="slider-style-6 wide-wrapper slick-activation-06 slick-arrow-between desktop-slider"
                 >
                     {data.banners.map((banner) => (
                         <SliderItem key={banner.id}>
@@ -73,6 +73,32 @@ const HeroArea = ({ data }) => (
                                         </div>
                                                     ) */}
                                 </div>
+                            </div>
+                        </SliderItem>
+                    ))}
+                </Slider>
+            )}
+            {data?.banners && (
+                <Slider
+                    options={SliderOptions}
+                    className="slider-style-6 wide-wrapper slick-activation-06 slick-arrow-between mobile-slider"
+                >
+                    {data.banners.map((banner) => (
+                        <SliderItem key={banner.id}>
+                            <div className="slide">
+                                {banner.mobile?.src && (
+                                    <Image
+                                        src={banner.mobile.src}
+                                        alt="Slider BG"
+                                        quality={100}
+                                        priority
+                                        width="600"
+                                        height="700"
+                                        style={{
+                                            objectFit: "cover",
+                                        }}
+                                    />
+                                )}
                             </div>
                         </SliderItem>
                     ))}

@@ -20,9 +20,7 @@ const ProductFilter = ({
     <div className="nu-course-sidebar">
         <SortWidget onChange={sortHandler} value={sort} />
         <CategoryFilter categories={categories} onChange={filterHandler} />
-        <LevelFilter onChange={filterHandler} levels={levels} />
         <PriceSort onChange={sortHandler} value={sort} />
-        <LanguageFilter onChange={filterHandler} languages={languages} />
         <RatingFilter onChange={filterHandler} />
         <PriceRangeFilter values={inputs.price} onChange={priceHandler} />
     </div>

@@ -1,29 +1,45 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import Collection from "@components/collection";
 import Pagination from "@components/pagination-02";
 import { CollectionType } from "@utils/types";
+import { normalize } from "@utils/methods";
 
 const POSTS_PER_PAGE = 8;
 
 const CollectionArea = ({ className, space, id, data }) => {
     const [collections, setCollections] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const numberOfPages = Math.ceil(data.collections.length / POSTS_PER_PAGE);
-    const paginationHandler = (page) => {
-        setCurrentPage(page);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-
-    const creatorHandler = useCallback(() => {
-        const start = (currentPage - 1) * POSTS_PER_PAGE;
-        setCollections(data.collections.slice(start, start + POSTS_PER_PAGE));
-    }, [currentPage, data.collections]);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageCount: 1,
+        pageSize: 100,
+        total: 6,
+    });
 
     useEffect(() => {
-        creatorHandler();
-    }, [currentPage, creatorHandler]);
+        console.log("data", data);
+        if (data?.collections) {
+            console.log("Collection", data?.collections);
+            setCollections(normalize(data?.collections));
+            setPagination(data.collections.meta.pagination);
+        }
+    }, [data]);
+
+    // const numberOfPages = Math.ceil(data.collections.length / POSTS_PER_PAGE);
+    // const paginationHandler = (page) => {
+    //     setCurrentPage(page);
+    //     window.scrollTo({ top: 0, behavior: "smooth" });
+    // };
+
+    // const creatorHandler = useCallback(() => {
+    //     const start = (currentPage - 1) * POSTS_PER_PAGE;
+    //     setCollections(data.collections.slice(start, start + POSTS_PER_PAGE));
+    // }, [currentPage, data.collections]);
+
+    // useEffect(() => {
+    //     creatorHandler();
+    // }, [currentPage, creatorHandler]);
     return (
         <div
             className={clsx(
@@ -44,7 +60,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                                 <Collection
                                     title={collection.name}
                                     total_item={collection.total_item}
-                                    path={collection.slug}
+                                    path={`collection/${collection.slug}`}
                                     image={collection.cover.data}
                                     thumbnails={collection.featured.data}
                                     profile_image={collection.logo.data}
@@ -61,9 +77,11 @@ const CollectionArea = ({ className, space, id, data }) => {
                         data-sal-duration="800"
                     >
                         <Pagination
-                            currentPage={currentPage}
-                            numberOfPages={numberOfPages}
-                            onClick={paginationHandler}
+                            currentPage={pagination.page}
+                            numberOfPages={Math.ceil(
+                                pagination.total / pagination.pageSize
+                            )}
+                            onClick={() => { }}
                         />
                     </div>
                 </div>
