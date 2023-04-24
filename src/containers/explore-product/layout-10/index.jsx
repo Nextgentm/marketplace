@@ -30,9 +30,9 @@ const POSTS_PER_PAGE = 12;
 const ExploreProductArea = ({
     className,
     space,
-    data: { section_title, products, placeBid },
+    data: { section_title, products, placeBid, collectionPage, collectionData },
 }) => {
-    console.log(products);
+    // console.log(collectionData);
     const itemsToFilter = [...products];
     const [state, dispatch] = useReducer(reducer, {
         products: [],
@@ -174,12 +174,18 @@ const ExploreProductArea = ({
     /* Filter logic end */
 
     // Generate data from products data
-    const cats = flatDeep(products.map((prod) => prod.collection.data?.name));
-    const categories = cats.reduce((obj, b) => {
-        const newObj = { ...obj };
-        newObj[b] = obj[b] + 1 || 1;
-        return newObj;
-    }, {});
+    let categories = [];
+    if (!collectionPage) {
+        const cats = flatDeep(
+            products.map((prod) => prod.collection.data?.name)
+        );
+        categories = cats.reduce((obj, b) => {
+            const newObj = { ...obj };
+            newObj[b] = obj[b] + 1 || 1;
+            return newObj;
+        }, {});
+    }
+
     const levels = [...new Set(products.map((prod) => prod.level))];
     const languages = [...new Set(products.map((prod) => prod.language))];
 
@@ -207,8 +213,6 @@ const ExploreProductArea = ({
                             inputs={state.inputs}
                             sort={state.sort}
                             categories={categories}
-                            levels={levels}
-                            languages={languages}
                             filterHandler={filterHandler}
                             priceHandler={priceHandler}
                         />
@@ -229,7 +233,10 @@ const ExploreProductArea = ({
                                                 latestBid={prod.latestBid}
                                                 price={`${prod.price}${prod.symbol}`}
                                                 likeCount={prod.likeCount}
-                                                image={prod.image.data.url}
+                                                image={
+                                                    prod.image?.data.url ||
+                                                    "/images/portfolio/lg/portfolio-01.jpg"
+                                                }
                                                 authors={prod.authors}
                                                 bitCount={prod.bitCount}
                                             />
@@ -262,6 +269,8 @@ ExploreProductArea.propTypes = {
         section_title: SectionTitleType,
         products: PropTypes.arrayOf(ProductType),
         placeBid: PropTypes.bool,
+        collectionPage: PropTypes.bool,
+        collectionData: PropTypes.arrayOf(ProductType),
     }),
 };
 
