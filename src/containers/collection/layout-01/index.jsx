@@ -52,7 +52,7 @@ const TopCollectionArea = ({ className, id, space, data }) => (
                             <Collection
                                 title={collection.name}
                                 total_item={collection.total_item}
-                                path={collection.slug}
+                                path={`collection/${collection.slug}`}
                                 image={collection.cover.data}
                                 thumbnails={collection.featured.data}
                                 profile_image={collection.logo.data}

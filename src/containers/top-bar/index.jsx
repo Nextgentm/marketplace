@@ -152,8 +152,8 @@ const TopBarArea = () => {
                 isOpen={offcanvas}
                 onClick={offcanvasHandler}
                 logo={[
-                    { src: "/images/logo/logo-white.png" },
-                    { src: "/images/logo/logo-dark.png" },
+                    { src: "/images/logo/logo-full-mobile.png" },
+                    { src: "/images/logo/logo-full-mobile.png" },
                 ]}
             />
         </>

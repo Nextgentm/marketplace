@@ -60,10 +60,10 @@ const CollectionArea = ({ className, space, id, data }) => {
                                 <Collection
                                     title={collection.name}
                                     total_item={collection.total_item}
-                                    path={collection.slug}
-                                    image={collection.cover}
-                                    thumbnails={collection.featured}
-                                    profile_image={collection.logo}
+                                    path={`collection/${collection.slug}`}
+                                    image={collection.cover.data}
+                                    thumbnails={collection.featured.data}
+                                    profile_image={collection.logo.data}
                                 />
                             </div>
                         ))}
