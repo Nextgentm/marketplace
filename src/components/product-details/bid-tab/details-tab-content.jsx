@@ -17,10 +17,10 @@ const DetailsTabContent = ({ owner, properties, tags }) => (
                     {properties.map((property) => (
                         <div key={property.id} className="pd-property-inner">
                             <span className="color-body type">
-                                {property.type}
+                                {property.name}
                             </span>
                             <span className="color-white value">
-                                {property.value}
+                                {property.type}
                             </span>
                         </div>
                     ))}

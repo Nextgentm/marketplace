@@ -30,8 +30,8 @@ ProductBid.propTypes = {
         amount: PropTypes.number.isRequired,
         currency: PropTypes.string.isRequired,
     }).isRequired,
-    likeCount: PropTypes.number.isRequired,
-    symbol: PropTypes.string,
+    likeCount: PropTypes?.number?.isRequired,
+    symbol: PropTypes?.string,
 };
 
 export default ProductBid;
