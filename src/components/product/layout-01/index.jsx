@@ -50,7 +50,7 @@ const Product = ({
                     {image && (
                         <Anchor path={`/product/${slug}`}>
                             <Image
-                                src={image?.src ? image.src : image}
+                                src={image?.url ? image.url : image}
                                 alt={image?.alt || "NFT_portfolio"}
                                 width={533}
                                 height={533}
