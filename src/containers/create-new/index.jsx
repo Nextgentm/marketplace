@@ -31,7 +31,6 @@ const CreateNewArea = ({ className, space }) => {
     const { walletData, setWalletData } = useContext(WalletData);
 
     const router = useRouter();
-    const data = router.query;
 
     const {
         register,
@@ -132,9 +131,7 @@ const CreateNewArea = ({ className, space }) => {
             }
             const metadataURL = data?.external_url ? data?.external_url : "";
             const { price, royality } = data;
-            const supply = data?.numberOfCopies
-                ? Number(data?.numberOfCopies)
-                : 1;
+            const supply = data?.supply ? Number(data?.supply) : 1;
 
             const tokenID = await MintNFT(
                 contractAddress,
@@ -163,9 +160,7 @@ const CreateNewArea = ({ className, space }) => {
                         external_url: data?.external_url,
                         properties: formValues || null,
                         royalty: data.royality ? Number(data.royality) : null,
-                        numberOfCopies: data?.numberOfCopies
-                            ? Number(data?.numberOfCopies)
-                            : null,
+                        supply,
                         imageHash: "String",
                         metadataHash: "String",
                         creator: walletData.account,
@@ -244,16 +239,16 @@ const CreateNewArea = ({ className, space }) => {
                 };
                 const transaction = await contract721.createToken(
                     metadataURL,
-                    price,
-                    options
+                    price
+                    // options
                 );
                 const receipt = await transaction.wait();
-                console.log(receipt);
-                const tokenID = parseInt(
-                    receipt.events[1].args.tokenId._hex,
-                    16
+                // console.log(receipt);
+                const correctEvent = receipt.events.find(
+                    (event) => event.event === "Transfer"
                 );
-                console.log("contractAddress", tokenID);
+                const tokenID = parseInt(correctEvent.args.tokenId._hex, 16);
+                console.log("tokenID is ", tokenID);
                 return tokenID;
             }
             if (router.query.type === "multiple") {
@@ -269,9 +264,12 @@ const CreateNewArea = ({ className, space }) => {
                     supply
                 );
                 const receipt = await transaction.wait();
-                console.log(receipt);
-                const tokenID = parseInt(receipt.events[0].args.id._hex, 16);
-                console.log("contractAddress", tokenID);
+                // console.log(receipt);
+                const correctEvent = receipt.events.find(
+                    (event) => event.event === "TransferSingle"
+                );
+                const tokenID = parseInt(correctEvent.args.id._hex, 16);
+                console.log("tokenID is ", tokenID);
                 return tokenID;
             }
             toast.error("Please select proper collection type");
@@ -515,7 +513,7 @@ const CreateNewArea = ({ className, space }) => {
                 );
                 setDataCollection(results);
             });
-    }, []);
+    }, [router.query.type]);
     // console.log(dataCollection);
 
     async function switchNetwork(chainId) {
@@ -622,10 +620,10 @@ const CreateNewArea = ({ className, space }) => {
                                 </div>
 
                                 <div className="mt--100 mt_sm--30 mt_md--30 d-none d-lg-block">
-                                    {data?.type && (
+                                    {router.query?.type && (
                                         <h5>
                                             Selected Variants:{" "}
-                                            {data?.type.toUpperCase()}
+                                            {router.query?.type.toUpperCase()}
                                         </h5>
                                     )}
                                     <h5> Note: </h5>
@@ -667,7 +665,7 @@ const CreateNewArea = ({ className, space }) => {
                                                 )}
                                             </div>
                                         </div>
-                                        {data?.type && (
+                                        {router.query?.type && (
                                             <div className="col-md-6">
                                                 <div className="input-box pb--20">
                                                     <label
@@ -679,7 +677,7 @@ const CreateNewArea = ({ className, space }) => {
                                                     <input
                                                         id="type"
                                                         placeholder="Type"
-                                                        value={data?.type.toUpperCase()}
+                                                        value={router.query?.type.toUpperCase()}
                                                         readOnly
                                                         {...register("type")}
                                                     />
@@ -729,7 +727,7 @@ const CreateNewArea = ({ className, space }) => {
                                                     {dataCollection && (
                                                         <NiceSelect
                                                             name="category"
-                                                            placeholder="Add Category"
+                                                            placeholder="Select Collection"
                                                             options={
                                                                 dataCollection
                                                             }
@@ -845,24 +843,21 @@ const CreateNewArea = ({ className, space }) => {
                                                 "multiple" && (
                                                     <div className="input-box pb--20">
                                                         <label
-                                                            htmlFor="Number Of Copies"
+                                                            htmlFor="supply"
                                                             className="form-label"
                                                         >
-                                                            Number Of Copies
+                                                            Supply
                                                         </label>
                                                         <input
-                                                            id="numberOfCopies"
+                                                            id="supply"
                                                             placeholder="e. g. `1-100`"
-                                                            {...register(
-                                                                "numberOfCopies",
-                                                                {
-                                                                    pattern: {
-                                                                        value: /^[0-9]+$/,
-                                                                        message:
-                                                                            "Please enter a number",
-                                                                    },
-                                                                }
-                                                            )}
+                                                            {...register("supply", {
+                                                                pattern: {
+                                                                    value: /^[0-9]+$/,
+                                                                    message:
+                                                                        "Please enter a number",
+                                                                },
+                                                            })}
                                                         />
                                                     </div>
                                                 )}
