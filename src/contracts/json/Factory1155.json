@@ -1,9 +1,28 @@
 {
     "address": {
         "Ethereum": null,
-        "Polygon": "0xB4451D1F30009128EAa5eCEE8529a4C49EF9BC30"
+        "Polygon": "0x9e7bf88C5BDeBcd74C36a8aC07bb5fa002173A12"
     },
     "abi": [
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "contractAddress",
+                    "type": "address"
+                }
+            ],
+            "name": "Deployed",
+            "type": "event"
+        },
         {
             "inputs": [
                 {
@@ -37,25 +56,6 @@
             ],
             "stateMutability": "nonpayable",
             "type": "function"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": false,
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "address",
-                    "name": "contractAddress",
-                    "type": "address"
-                }
-            ],
-            "name": "Deployed",
-            "type": "event"
         }
     ]
 }
