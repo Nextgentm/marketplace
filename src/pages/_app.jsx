@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useRouter } from "next/router";
 import sal from "sal.js";
@@ -9,6 +9,10 @@ import "../assets/css/modal-video.css";
 import "react-toastify/dist/ReactToastify.css";
 import "../assets/scss/style.scss";
 import WalletDataContext from "src/context/wallet-context";
+import { useApollo } from "src/hooks/use-apollo-client";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ApolloProvider } from "@apollo/client";
+import client from "@utils/apollo-client";
 
 const MyApp = ({ Component, pageProps }) => {
     const router = useRouter();
@@ -22,12 +26,15 @@ const MyApp = ({ Component, pageProps }) => {
     useEffect(() => {
         document.body.className = `${pageProps.className}`;
     });
+
     return (
-        <WalletDataContext>
-            <ThemeProvider defaultTheme="dark">
-                <Component {...pageProps} />
-            </ThemeProvider>
-        </WalletDataContext>
+        <ApolloProvider client={client}>
+            <WalletDataContext>
+                <ThemeProvider defaultTheme="dark">
+                    <Component {...pageProps} />
+                </ThemeProvider>
+            </WalletDataContext>
+        </ApolloProvider>
     );
 };
 
