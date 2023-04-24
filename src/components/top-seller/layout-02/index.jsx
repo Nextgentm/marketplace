@@ -121,7 +121,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product }) => {
                         {eth && (
                             <>
                                 {eth}
-                                {product.auction.data.priceCurrency} by {name}
+                                {/* {product.auction.data.priceCurrency} by {name} */}
                             </>
                         )}
                         <Anchor path={path}>{name}</Anchor>
