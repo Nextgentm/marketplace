@@ -9,7 +9,6 @@ import "../assets/css/modal-video.css";
 import "react-toastify/dist/ReactToastify.css";
 import "../assets/scss/style.scss";
 import WalletDataContext from "src/context/wallet-context";
-import { useApollo } from "src/hooks/use-apollo-client";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ApolloProvider } from "@apollo/client";
 import client from "@utils/apollo-client";
