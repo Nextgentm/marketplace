@@ -10,7 +10,7 @@ const Collection = ({
     profile_image,
     path,
 }) => (
-    <Anchor path={path} className="rn-collection-inner-one">
+    <Anchor target="_self" path={path} className="rn-collection-inner-one">
         <div className="collection-wrapper">
             {image?.url && (
                 <div className="collection-big-thumbnail">

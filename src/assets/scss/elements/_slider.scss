@@ -260,3 +260,38 @@
         }
     }
 }
+
+/*-------------------------------
+   Slider Mobile
+---------------------------------*/
+.rn-banner-area.rn-section-gapTop {
+    @media #{$md-layout} {
+        padding-top: 0px;
+    }
+    @media #{$sm-layout} {
+        padding-top: 0px;
+    }
+}
+
+.rn-banner-area {
+    .slider-style-6.mobile-slider{display: none;}
+    @media #{$laptop-device} {
+        .slider-style-6.mobile-slider{display: none;}
+    }
+    @media #{$lg-layout} {
+        .slider-style-6.mobile-slider{display: none;}
+    }
+    @media #{$md-layout} {
+        .slider-style-6.mobile-slider{display: none;}
+    }
+
+    @media #{$sm-layout} {
+        .slider-style-6.desktop-slider{display: none;}
+        .slider-style-6.mobile-slider{display: block;}
+    }
+
+    @media #{$large-mobile} {
+        .slider-style-6.desktop-slider{display: none;}
+        .slider-style-6.mobile-slider{display: block;}
+    }
+}
