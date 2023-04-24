@@ -12,7 +12,13 @@ const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
     ssr: false,
 });
 
-const PlaceBet = ({ highest_bid, auction_date, btnColor, className }) => {
+const PlaceBet = ({
+    highest_bid,
+    auction_date,
+    product,
+    btnColor,
+    className,
+}) => {
     const [showBidModal, setShowBidModal] = useState(false);
     const handleBidModal = () => {
         setShowBidModal((prev) => !prev);
@@ -25,7 +31,7 @@ const PlaceBet = ({ highest_bid, auction_date, btnColor, className }) => {
                         <h6 className="title">Winning bit</h6>
                         <div className="top-seller-inner-one">
                             <div className="top-seller-wrapper">
-                                {highest_bid.bidder?.image?.src && (
+                                {highest_bid?.bidder?.image?.src && (
                                     <div className="thumbnail">
                                         <Anchor path={highest_bid.bidder.slug}>
                                             <Image
@@ -43,12 +49,12 @@ const PlaceBet = ({ highest_bid, auction_date, btnColor, className }) => {
                                 <div className="top-seller-content">
                                     <span className="heighest-bid">
                                         Heighest bid{" "}
-                                        <Anchor path={highest_bid.bidder.slug}>
-                                            {highest_bid.bidder.name}
+                                        <Anchor path={highest_bid?.bidder.slug}>
+                                            {highest_bid?.bidder.name}
                                         </Anchor>
                                     </span>
                                     <span className="count-number">
-                                        {highest_bid.amount}
+                                        {highest_bid?.amount}
                                     </span>
                                 </div>
                             </div>
@@ -69,7 +75,11 @@ const PlaceBet = ({ highest_bid, auction_date, btnColor, className }) => {
                     Place a Bid
                 </Button>
             </div>
-            <PlaceBidModal show={showBidModal} handleModal={handleBidModal} />
+            <PlaceBidModal
+                show={showBidModal}
+                handleModal={handleBidModal}
+                product={product}
+            />
         </>
     );
 };
