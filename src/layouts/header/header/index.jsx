@@ -18,6 +18,8 @@ import { WalletData } from "src/context/wallet-context";
 import { ethers } from "ethers";
 import headerData from "../../../data/general/header-01.json";
 import menuData from "../../../data/general/menu-01.json";
+import Link from "next/link";
+import { authenticationData } from "src/graphql/reactive/authentication";
 
 const Header = ({ className }) => {
   const sticky = useSticky();
@@ -27,7 +29,7 @@ const Header = ({ className }) => {
   const [ethBalance, setEthBalance] = useState("");
 
   const { walletData, setWalletData } = useContext(WalletData);
-
+  const isLoggedIn = authenticationData().isAuthenticated
   useEffect(() => {
     /* code for runtime metamask events */
     /* const handleAccountsChanged = (accounts) => {
@@ -178,11 +180,22 @@ const Header = ({ className }) => {
                 </div>
                 <FlyoutSearchForm isOpen={search} />
               </div>
-              {!isAuthenticated && (
+              {!isAuthenticated && !isLoggedIn && (
+                <div className="setting-option header-btn">
+                  <div className="icon-box">
+                    <Link href="/login">
+                      <Button color="primary" className="connectBtn" size="small">
+                        Login/Sign up
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              )}
+              {!isAuthenticated && isLoggedIn && (
                 <div className="setting-option header-btn">
                   <div className="icon-box">
                     <Button color="primary" className="connectBtn" size="small" onClick={onConnect}>
-                      Wallet connect
+                      Wallet Connect
                     </Button>
                   </div>
                 </div>
@@ -211,7 +224,7 @@ const Header = ({ className }) => {
             </div>
           </div>
         </div>
-      </header>
+      </header >
       <MobileMenu isOpen={offcanvas} onClick={offcanvasHandler} menu={menuData} logo={headerData.logo} />
     </>
   );

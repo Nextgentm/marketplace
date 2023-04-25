@@ -10,6 +10,7 @@ import { ALL_COLLECTION_QUERY } from "src/graphql/query/collection/getCollection
 import _ from "lodash";
 
 const CollectionArea = ({ className, space, id, data }) => {
+  console.log("className", className)
   const [collectionsRecords, setCollectionsRecords] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,

@@ -1,5 +1,5 @@
-import fs from "fs";
 import path from "path";
+import { authenticationData } from "src/graphql/reactive/authentication";
 
 const directory = path.join(process.cwd(), "src/data/authors");
 
@@ -43,3 +43,15 @@ export function getAuthorByID(id, fields) {
   const user = users.find((item) => item.id === id);
   return user || {};
 }
+
+export const userSessionData = () => {
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const token = localStorage.getItem("user") || "";
+  const isAuthenticated = localStorage.getItem("user") || "";
+
+  return {
+    isAuthenticated,
+    token,
+    user
+  };
+};

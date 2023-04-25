@@ -23,7 +23,27 @@ const MyApp = ({ Component, pageProps }) => {
     router.events.on("routeChangeStart", handleRouteStart);
     router.events.on("routeChangeComplete", handleRouteDone);
     router.events.on("routeChangeError", handleRouteDone);
+    let activeRequests = 0;
+    const originalFetch = window.fetch;
+    window.fetch = async function (...args) {
+      if (activeRequests === 0) {
+        handleRouteStart();
+      }
 
+      activeRequests++;
+
+      try {
+        const response = await originalFetch(...args);
+        return response;
+      } catch (error) {
+        return Promise.reject(error);
+      } finally {
+        activeRequests -= 1;
+        if (activeRequests === 0) {
+          handleRouteDone();
+        }
+      }
+    };
     return () => {
       router.events.off("routeChangeStart", handleRouteStart);
       router.events.off("routeChangeComplete", handleRouteDone);
@@ -34,7 +54,7 @@ const MyApp = ({ Component, pageProps }) => {
   useEffect(() => {
     sal();
     document.body.className = `${pageProps.className}`;
-  }, []);
+  }, [pageProps]);
 
 
   const handleRouteStart = async () => {

@@ -1,6 +1,6 @@
 import SEO from "@components/seo";
 import Wrapper from "@layout/wrapper";
-import Header from "@layout/header/header-01";
+import Header from "@layout/header/header";
 import Footer from "@layout/footer/footer-01";
 import Breadcrumb from "@components/breadcrumb";
 import CollectionArea from "@containers/collection/layout-03";
@@ -19,7 +19,9 @@ const Collection = (props) => (
   </Wrapper>
 );
 
-export const getStaticProps = async () => {
+
+Collection.getInitialProps = async (nextAppContext) => {
+  console.log("nextAppContext", nextAppContext.req.headers)
   const { data } = await client.query({
     query: ALL_COLLECTION_QUERY,
     variables: {
@@ -30,10 +32,9 @@ export const getStaticProps = async () => {
     fetchPolicy: "network-only"
   });
   return {
-    props: {
-      className: "template-color-1",
-      data
-    }
+    className: "template-color-1",
+    data
   };
 };
+
 export default Collection;
