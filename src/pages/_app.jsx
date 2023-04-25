@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import PropTypes from "prop-types";
 import { useRouter } from "next/router";
 import sal from "sal.js";

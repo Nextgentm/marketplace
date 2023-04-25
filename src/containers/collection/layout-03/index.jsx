@@ -1,4 +1,3 @@
-/* eslint-disable no-use-before-define */
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";

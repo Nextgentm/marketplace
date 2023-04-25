@@ -5,7 +5,7 @@ module.exports = {
     eslint: {
         // Warning: This allows production builds to successfully complete even if
         // your project has ESLint errors.
-        ignoreDuringBuilds: true,
+        ignoreDuringBuilds: false,
     },
     reactStrictMode: false,
     sassOptions: {
@@ -24,4 +24,10 @@ module.exports = {
     images: {
         domains: ['media-content.lootmogul.com'],
     },
+    compiler: {
+        styledComponents: {
+            displayName: true,
+            "ssr": true
+        }
+    }
 };
