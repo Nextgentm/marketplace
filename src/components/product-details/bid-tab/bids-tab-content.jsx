@@ -7,10 +7,10 @@ const BidsTabContent = ({ bids, product }) => (
         {bids?.map((bid) => (
             <TopSeller
                 key={bid?.id}
-                name={bid?.walletAddress}
+                name={bid?.bidderAddress}
                 eth={bid?.bidPrice}
                 path={bid?.user?.slug}
-                time={bid?.bidAt}
+                time={bid?.createdAt}
                 image={{ src: bid?.user?.image?.src, width: 44, height: 44 }}
                 product={product}
             />
