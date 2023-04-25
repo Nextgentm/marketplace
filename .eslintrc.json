@@ -1,209 +1,22 @@
 {
-    "parser": "@babel/eslint-parser",
-    "env": {
-        "browser": true,
-        "es2020": true,
-        "node": true
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:react/recommended",
-        "plugin:react-hooks/recommended",
-        "plugin:import/warnings",
-        "plugin:jsx-a11y/strict",
-        "plugin:prettier/recommended",
-        "plugin:@next/next/recommended",
-        "airbnb"
-    ],
-    "settings": {
-        "react": {
-            "version": "detect"
-        },
-        "import/resolver": {
-            "alias": {
-                "map": [
-                    [
-                        "@assets",
-                        "./src/assets/"
-                    ],
-                    [
-                        "@ui",
-                        "./src/components/ui/"
-                    ],
-                    [
-                        "@components",
-                        "./src/components/"
-                    ],
-                    [
-                        "@widgets",
-                        "./src/components/widgets/"
-                    ],
-                    [
-                        "@containers",
-                        "./src/containers/"
-                    ],
-                    [
-                        "@layout",
-                        "./src/layouts/"
-                    ],
-                    [
-                        "@utils",
-                        "./src/utils/"
-                    ],
-                    [
-                        "@hooks",
-                        "./src/hooks/"
-                    ]
-                ],
-                "extensions": [
-                    ".js",
-                    ".jsx"
-                ]
-            },
-            "node": {
-                "paths": [
-                    "./"
-                ]
-            }
-        }
-    },
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 11,
-        "sourceType": "module",
-        "requireConfigFile": false,
-        "babelOptions": {
-            "presets": [
-                "@babel/preset-react"
-            ]
-        }
-    },
-    "plugins": [
-        "react",
-        "react-hooks",
-        "prettier",
-        "jsx-a11y"
-    ],
-    "rules": {
-        "prefer-template": "warn",
-        "arrow-spacing": "off",
-        "space-before-blocks": "off",
-        "object-curly-spacing": "off",
-        "react/jsx-no-useless-fragment": "warn",
-        "comma-spacing": "off",
-        "import/order": "warn",
-        "no-multi-spaces": "off",
-        "space-in-parens": "warn",
-        "react/no-unstable-nested-components": "warn",
-        "space-infix-ops": "warn",
-        "no-empty": "warn",
-        "padded-blocks": "warn",
-        "spaced-comment": "warn",
-        "react/jsx-curly-brace-presence": "warn",
-        "semi": "warn",
-        "prefer-const": "warn",
-        "keyword-spacing": "warn",
-        "prefer-destructuring": "warn",
-        "no-undef": "warn",
-        "react/prop-types": "warn",
-        "no-multiple-empty-lines": "warn",
-        "import/no-unresolved": "warn",
-        "key-spacing": "warn",
-        "object-shorthand": "warn",
-        "no-trailing-spaces": "warn",
-        "no-shadow": "warn",
-        "no-use-before-define": "warn",
-        "linebreak-style": "off",
-        "object-curly-newline": "off",
-        "import/prefer-default-export": "off",
-        "prettier/prettier": "warn",
-        "import/no-extraneous-dependencies": "off",
-        "indent": [
-            "warn",
-            4,
-            {
-                "SwitchCase": 1
-            }
-        ],
-        "quotes": [
-            "warn",
-            "double",
-            {
-                "allowTemplateLiterals": true
-            }
-        ],
-        "camelcase": [
-            "off",
-            {
-                "properties": "never"
-            }
-        ],
-        "eslint-plugin/fixer-return:": "off",
-        "operator-linebreak": "off",
-        "implicit-arrow-linebreak": "off",
-        "comma-dangle": [
-            "warn",
-            "only-multiline"
-        ],
-        "function-paren-newline": "off",
-        "react/jsx-indent": "off",
-        "react/jsx-indent-props": "off",
-        "react/jsx-one-expression-per-line": "off",
-        "no-unused-vars": [
-            "warn",
-            {
-                "argsIgnorePattern": "^_",
-                "varsIgnorePattern": "^_"
-            }
-        ],
-        "react/jsx-props-no-spreading": "off",
-        "react/jsx-uses-react": "off",
-        "react/react-in-jsx-scope": "off",
-        "react/require-default-props": 0,
-        "react-hooks/rules-of-hooks": "warn",
-        "react-hooks/exhaustive-deps": "warn",
-        "react/no-danger": "off",
-        "react/jsx-fragments": "off",
-        "react/jsx-curly-newline": "off",
-        "jsx-a11y/label-has-associated-control": [
-            "warn",
-            {
-                "required": {
-                    "some": [
-                        "nesting",
-                        "id"
-                    ]
-                }
-            }
-        ],
-        "jsx-a11y/label-has-for": [
-            "warn",
-            {
-                "required": {
-                    "some": [
-                        "nesting",
-                        "id"
-                    ]
-                }
-            }
-        ],
-        "no-plusplus": [
-            "warn",
-            {
-                "allowForLoopAfterthoughts": true
-            }
-        ],
-        "react/function-component-definition": [
-            "warn",
-            {
-                "namedComponents": "arrow-function"
-            }
-        ],
-        "no-underscore-dangle": "off",
-        "@next/next/no-html-link-for-pages": "warn",
-        "no-multi-assign": "off",
-        "default-param-last": "off"
+  "extends": ["next/core-web-vitals", "prettier"],
+  "rules": {
+    "@next/next/no-img-element": "off",
+    "react/prop-types": "off",
+    "react/display-name": "off",
+    "no-var": "error",
+    "quotes": [
+      2,
+      "double",
+      {
+        "allowTemplateLiterals": true,
+        "avoidEscape": true
+      }
+    ]
+  },
+  "settings": {
+    "next": {
+      "rootDir": "./src"
     }
+  }
 }

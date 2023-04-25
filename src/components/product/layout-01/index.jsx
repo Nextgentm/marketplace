@@ -11,119 +11,101 @@ import { ImageType } from "@utils/types";
 import PlaceBidModal from "@components/modals/placebid-modal";
 
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
-    ssr: false,
+  ssr: false
 });
 
 const ShareDropdown = dynamic(() => import("@components/share-dropdown"), {
-    ssr: false,
+  ssr: false
 });
 
 const Product = ({
-    overlay,
-    title,
-    slug,
-    latestBid,
-    price,
-    symbol,
-    likeCount,
-    auction_date,
-    image,
-    bitCount,
-    authors,
-    placeBid,
-    disableShareDropdown,
+  overlay,
+  title,
+  slug,
+  latestBid,
+  price,
+  symbol,
+  likeCount,
+  auction_date,
+  image,
+  bitCount,
+  authors,
+  placeBid,
+  disableShareDropdown
 }) => {
-    const [showBidModal, setShowBidModal] = useState(false);
-    const handleBidModal = () => {
-        setShowBidModal((prev) => !prev);
-    };
-    return (
-        <>
-            <div
-                className={clsx(
-                    "product-style-one",
-                    !overlay && "no-overlay",
-                    placeBid && "with-placeBid"
-                )}
-            >
-                <div className="card-thumbnail">
-                    {image && (
-                        <Anchor path={`/product/${slug}`}>
-                            <Image
-                                src={image?.src ? image.src : image}
-                                alt={image?.alt || "NFT_portfolio"}
-                                width={533}
-                                height={533}
-                            />
-                        </Anchor>
-                    )}
-                    {auction_date && <CountdownTimer date={auction_date} />}
-                    {placeBid && (
-                        <Button onClick={handleBidModal} size="small">
-                            Place Bid
-                        </Button>
-                    )}
-                </div>
-                <div className="product-share-wrapper">
-                    <div className="profile-share">
-                        {authors?.map((client) => (
-                            <ClientAvatar
-                                key={client.name}
-                                slug={client.slug}
-                                name={client.name}
-                                image={client.image}
-                            />
-                        ))}
-                        <Anchor
-                            className="more-author-text"
-                            path={`/product/${slug}`}
-                        >
-                            {bitCount}+ Place Bit.
-                        </Anchor>
-                    </div>
-                    {!disableShareDropdown && <ShareDropdown />}
-                </div>
-                <Anchor path={`/product/${slug}`}>
-                    <span className="product-name">{title}</span>
-                </Anchor>
-                <span className="latest-bid">Highest bid {latestBid}</span>
-                <ProductBid
-                    symbol={symbol}
-                    price={price}
-                    likeCount={likeCount}
-                />
-            </div>
-            <PlaceBidModal show={showBidModal} handleModal={handleBidModal} />
-        </>
-    );
+  const [showBidModal, setShowBidModal] = useState(false);
+  const handleBidModal = () => {
+    setShowBidModal((prev) => !prev);
+  };
+  return (
+    <>
+      <div className={clsx("product-style-one", !overlay && "no-overlay", placeBid && "with-placeBid")}>
+        <div className="card-thumbnail">
+          {image && (
+            <Anchor path={`/product/${slug}`}>
+              <Image
+                src={image?.src ? image.src : image}
+                alt={image?.alt || "NFT_portfolio"}
+                width={533}
+                height={533}
+              />
+            </Anchor>
+          )}
+          {auction_date && <CountdownTimer date={auction_date} />}
+          {placeBid && (
+            <Button onClick={handleBidModal} size="small">
+              Place Bid
+            </Button>
+          )}
+        </div>
+        <div className="product-share-wrapper">
+          <div className="profile-share">
+            {authors?.map((client) => (
+              <ClientAvatar key={client.name} slug={client.slug} name={client.name} image={client.image} />
+            ))}
+            <Anchor className="more-author-text" path={`/product/${slug}`}>
+              {bitCount}+ Place Bit.
+            </Anchor>
+          </div>
+          {!disableShareDropdown && <ShareDropdown />}
+        </div>
+        <Anchor path={`/product/${slug}`}>
+          <span className="product-name">{title}</span>
+        </Anchor>
+        <span className="latest-bid">Highest bid {latestBid}</span>
+        <ProductBid symbol={symbol} price={price} likeCount={likeCount} />
+      </div>
+      <PlaceBidModal show={showBidModal} handleModal={handleBidModal} />
+    </>
+  );
 };
 
 Product.propTypes = {
-    overlay: PropTypes.bool,
-    title: PropTypes.string.isRequired,
-    slug: PropTypes.string.isRequired,
-    latestBid: PropTypes.string.isRequired,
-    price: PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        currency: PropTypes.string.isRequired,
-    }).isRequired,
-    likeCount: PropTypes.number.isRequired,
-    auction_date: PropTypes.string,
-    image: ImageType.isRequired,
-    authors: PropTypes.arrayOf(
-        PropTypes.shape({
-            name: PropTypes.string.isRequired,
-            slug: PropTypes.string.isRequired,
-            image: ImageType.isRequired,
-        })
-    ),
-    bitCount: PropTypes.number,
-    placeBid: PropTypes.bool,
-    disableShareDropdown: PropTypes.bool,
+  overlay: PropTypes.bool,
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string.isRequired,
+  latestBid: PropTypes.string.isRequired,
+  price: PropTypes.shape({
+    amount: PropTypes.number.isRequired,
+    currency: PropTypes.string.isRequired
+  }).isRequired,
+  likeCount: PropTypes.number.isRequired,
+  auction_date: PropTypes.string,
+  image: ImageType.isRequired,
+  authors: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      slug: PropTypes.string.isRequired,
+      image: ImageType.isRequired
+    })
+  ),
+  bitCount: PropTypes.number,
+  placeBid: PropTypes.bool,
+  disableShareDropdown: PropTypes.bool
 };
 
 Product.defaultProps = {
-    overlay: false,
+  overlay: false
 };
 
 export default Product;

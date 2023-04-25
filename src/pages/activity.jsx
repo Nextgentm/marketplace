@@ -8,17 +8,17 @@ import ActivityArea from "@containers/activity";
 import activityData from "../data/activity.json";
 
 export async function getStaticProps() {
-    return { props: { className: "template-color-1" } };
+  return { props: { className: "template-color-1" } };
 }
 const Home = () => (
-    <Wrapper>
-        <SEO pageTitle="Acivity" />
-        <Header />
-        <main id="main-content">
-            <ActivityArea data={{ activities: activityData }} />
-        </main>
-        <Footer />
-    </Wrapper>
+  <Wrapper>
+    <SEO pageTitle="Acivity" />
+    <Header />
+    <main id="main-content">
+      <ActivityArea data={{ activities: activityData }} />
+    </main>
+    <Footer />
+  </Wrapper>
 );
 
 export default Home;
