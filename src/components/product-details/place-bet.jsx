@@ -12,6 +12,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { WalletData } from "src/context/wallet-context";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+
+import { convertEthertoWei } from "../../lib/BlokchainHelperFunctions";
 import ERC721Contract from "../../contracts/json/erc721.json";
 import ERC1155Contract from "../../contracts/json/erc1155.json";
 import TradeContract from "../../contracts/json/trade.json";
@@ -82,7 +84,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) =
             console.log(allowanceAmount, parseInt(price));
             if (allowanceAmount < parseInt(price)) {
                 // approve nft first
-                const transaction = await tokenContract.approve(TransferProxy.address, parseInt(price));
+                const transaction = await tokenContract.approve(TransferProxy.address, price);
                 const receipt = await transaction.wait();
                 console.log(receipt);
             }
@@ -103,9 +105,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) =
                     ? product.auction.data.quantity
                     : 1
                     }`;
-                const unitPrice = `${parseFloat(product.auction.data.quantity) /
-                    parseFloat(amount)
-                    }`;
+                const unitPrice = `${parseFloat(amount) / parseFloat(product.auction.data.quantity)}`;
 
                 // Pull the deployed contract instance
                 const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
@@ -174,9 +174,13 @@ const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) =
             }
         }
         if (product.auction.data.sellType == "Bidding") {
-            StoreData(event.target.price?.value);
+            const price = convertEthertoWei(walletData.ethers, event.target.price?.value);
+            // console.log(price);
+            StoreData(price);
         } else {
-            StoreData(product.auction.data.bidPrice);
+            const price = convertEthertoWei(walletData.ethers, product.auction.data.bidPrice);
+            // console.log(price);
+            StoreData(price);
         }
     };
 

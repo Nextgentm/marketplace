@@ -10,6 +10,7 @@ import { Button } from "react-bootstrap";
 import { useRouter } from "next/router";
 import { WalletData } from "src/context/wallet-context";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { convertEthertoWei } from "../../../lib/BlokchainHelperFunctions";
 import ERC721Contract from "../../../contracts/json/erc721.json";
 import ERC1155Contract from "../../../contracts/json/erc1155.json";
 import TradeContract from "../../../contracts/json/trade.json";
@@ -54,7 +55,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product }) => {
                     : product.collection.data.contractAddress1155;
             const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
             const skipRoyalty = true;
-            const amount = `${eth}`;
+            const amount = convertEthertoWei(walletData.ethers, eth);
             const tokenId = `${product.nftID}`;
             const tokenURI = "";
             const supply = `${product.supply ? product.supply : 1}`;
@@ -63,8 +64,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product }) => {
                 ? product.auction.data.quantity
                 : 1
                 }`;
-            const unitPrice = `${parseFloat(product.auction.data.quantity) / parseFloat(amount)
-                }`;
+            const unitPrice = `${parseFloat(amount) / parseFloat(product.auction.data.quantity)}`;
 
             // Pull the deployed contract instance
             const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);

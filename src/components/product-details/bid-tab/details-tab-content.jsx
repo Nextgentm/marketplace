@@ -9,7 +9,7 @@ const DetailsTabContent = ({ owner, properties, tags, supply }) => (
       <span>NFT Owner : {owner}</span>
       <span>Supply : {supply}</span>
     </div>
-    {properties && (
+    {properties && properties?.length > 0 && (
       <div className="rn-pd-sm-property-wrapper">
         <h6 className="pd-property-title">Property</h6>
         <div className="property-wrapper">
