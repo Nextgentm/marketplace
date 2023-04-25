@@ -5,7 +5,7 @@ import clsx from "clsx";
 const Pagination = ({ className, currentPage, numberOfPages, onClick }) => {
     const isFirst = currentPage === 1;
     const isLast = currentPage === numberOfPages;
-    const previousPage = currentPage - 1 === 1 ? currentPage : currentPage - 1;
+    const previousPage = currentPage - 1 === 0 ? currentPage : currentPage - 1;
     const nextPage = currentPage + 1;
     return (
         <nav
