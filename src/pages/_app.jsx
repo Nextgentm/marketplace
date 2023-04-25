@@ -8,24 +8,50 @@ import "../assets/css/feather.css";
 import "../assets/css/modal-video.css";
 import "react-toastify/dist/ReactToastify.css";
 import "../assets/scss/style.scss";
+import "nprogress/nprogress.css";
 import WalletDataContext from "src/context/wallet-context";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ApolloProvider } from "@apollo/client";
 import client from "@utils/apollo-client";
+import { loadNProgress } from "@utils/nprogress";
+// import { loadNProgress } from "@utils/nprogress";
 
 const MyApp = ({ Component, pageProps }) => {
   const router = useRouter();
   useEffect(() => {
     sal({ threshold: 0.1, once: true });
+    router.events.on("routeChangeStart", handleRouteStart);
+    router.events.on("routeChangeComplete", handleRouteDone);
+    router.events.on("routeChangeError", handleRouteDone);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteStart);
+      router.events.off("routeChangeComplete", handleRouteDone);
+      router.events.off("routeChangeError", handleRouteDone);
+    };
   }, [router.asPath]);
 
   useEffect(() => {
     sal();
-  }, []);
-  useEffect(() => {
     document.body.className = `${pageProps.className}`;
-  });
+  }, []);
 
+
+  const handleRouteStart = async () => {
+    const NProgress = await loadNProgress();
+    NProgress.configure({ showSpinner: false })
+
+    setTimeout(() => {
+      NProgress && NProgress.start();
+    }, 10);
+  }
+
+  const handleRouteDone = async () => {
+    const NProgress = await loadNProgress();
+    setTimeout(() => {
+      NProgress && NProgress.done();
+    }, 20);
+  }
   return (
     <ApolloProvider client={client}>
       <WalletDataContext>

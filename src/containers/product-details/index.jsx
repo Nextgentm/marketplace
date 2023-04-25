@@ -15,7 +15,13 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { WalletData } from "src/context/wallet-context";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import {
+  ETHEREUM_NETWORK_CHAIN_ID,
+  POLYGON_NETWORK_CHAIN_ID,
+} from "src/lib/constants";
+import DirectSalesModal from "@components/modals/direct-sales";
+import TimeAuctionModal from "@components/modals/time-auction";
+
 import ERC721Contract from "../../contracts/json/erc721.json";
 import ERC1155Contract from "../../contracts/json/erc1155.json";
 import TradeContract from "../../contracts/json/trade.json";
@@ -30,6 +36,15 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   const { walletData, setWalletData } = useContext(WalletData);
 
   const router = useRouter();
+  const [showDirectSalesModal, setShowDirectSalesModal] = useState(false);
+  const handleDirectSaleModal = () => {
+    setShowDirectSalesModal((prev) => !prev);
+  };
+
+  const [showTimeAuctionModal, setShowTimeAuctionModal] = useState(false);
+  const handleTimeAuctionModal = () => {
+    setShowTimeAuctionModal((prev) => !prev);
+  };
 
   async function switchNetwork(chainId) {
     if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
@@ -352,6 +367,14 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           </div>
         </div>
       </div>
+      <DirectSalesModal
+        show={showDirectSalesModal}
+        handleModal={handleDirectSaleModal}
+      />
+      <TimeAuctionModal
+        show={showDirectSalesModal}
+        handleModal={handleTimeAuctionModal}
+      />
     </div>
   );
 };

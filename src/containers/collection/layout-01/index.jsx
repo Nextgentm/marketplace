@@ -28,7 +28,6 @@ const TopCollectionArea = ({ className, id, space, data }) => (
       </div>
       {data?.collections && (
         <div className="row g-5">
-          {/* JSON.stringify(data.collections) */}
           {data.collections.map((collection) => (
             <div
               key={collection.id}
