@@ -1,49 +1,11 @@
 import PropTypes from "prop-types";
 import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
-import { DateRangePicker, Stack } from "rsuite";
-import startOfWeek from "date-fns/startOfWeek";
-import endOfWeek from "date-fns/endOfWeek";
-import addDays from "date-fns/addDays";
-import startOfMonth from "date-fns/startOfMonth";
-import "rsuite/dist/rsuite.min.css";
 
-const { beforeToday } = DateRangePicker;
+
+
 const DirectSalesModal = ({ show, handleModal, product, handleSubmit }) => {
-    const predefinedRanges = [
-        {
-            label: "Today",
-            value: [new Date(), new Date()],
-            placement: "left",
-        },
-        {
-            label: "This week",
-            value: [startOfWeek(new Date()), endOfWeek(new Date())],
-            placement: "left",
-        },
-        {
-            label: "This month",
-            value: [startOfMonth(new Date()), new Date()],
-            placement: "left",
-        },
-        {
-            label: "This year",
-            value: [new Date(new Date().getFullYear(), 0, 1), new Date()],
-            placement: "left",
-        },
-        {
-            label: "Next week",
-            closeOverlay: false,
-            value: (value) => {
-                const [start = new Date()] = value || [];
-                return [
-                    addDays(startOfWeek(start, { weekStartsOn: 0 }), 7),
-                    addDays(endOfWeek(start, { weekStartsOn: 0 }), 7),
-                ];
-            },
-            appearance: "default",
-        },
-    ];
+
     return (
         <Modal
             className="rn-popup-modal placebid-modal-wrapper"
@@ -79,27 +41,31 @@ const DirectSalesModal = ({ show, handleModal, product, handleSubmit }) => {
                                         type="number"
                                         name="price"
                                         step="0.0000001"
-                                        min={product?.auction?.data?.bidPrice}
+                                        min="1"
                                         required
                                     />
+                                    <input id="currency" type="hidden" value="wETH" />
                                     <span>wETH</span>
                                 </div>
                             </div>
 
                             <div className="bid-content-mid">
-                                <p>Expiration date</p>
-                                <Stack
-                                    direction="column"
-                                    spacing={8}
-                                    alignItems="flex-start"
-                                >
-                                    <DateRangePicker
-                                        ranges={predefinedRanges}
-                                        placeholder="Expiration date"
-                                        style={{ width: 300 }}
-                                    // disabledDate={beforeToday()}
-                                    />
-                                </Stack>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <label htmlFor="startDate">Start Date</label>
+                                        <input type="date" id="startDate" name="startDate" />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label htmlFor="startDate">End Date</label>
+                                        <input type="date" id="endDate" name="endDate" />
+                                    </div>
+                                </div>
+                                {product?.supply > 1 && (
+                                    <div className="row">
+                                        <label htmlFor="quantity">Quantity</label>
+                                        <input type="number" id="quantity" min="1" placeholder="e.g. 10" />
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="bit-continue-button">
