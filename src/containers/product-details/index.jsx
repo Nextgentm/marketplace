@@ -21,6 +21,7 @@ import {
 } from "src/lib/constants";
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
+import TransferPopupModal from "@components/modals/transfer";
 
 import ERC721Contract from "../../contracts/json/erc721.json";
 import ERC1155Contract from "../../contracts/json/erc1155.json";
@@ -44,6 +45,11 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   const [showTimeAuctionModal, setShowTimeAuctionModal] = useState(false);
   const handleTimeAuctionModal = () => {
     setShowTimeAuctionModal((prev) => !prev);
+  };
+
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const handleShowTransferModal = () => {
+    setShowTransferModal((prev) => !prev);
   };
 
   async function switchNetwork(chainId) {
@@ -215,20 +221,21 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                         <Nav as="div" className="nav-tabs">
                           <Nav.Link
                             as="button"
-                            eventKey="nav-direct-sale"
-                            onClick={() => setSellType("nav-direct-sale")}
+                            eventKey="nav-direct-sale1"
+                            onClick={() => handleDirectSaleModal(true)}
                           >
                             Direct Sale
                           </Nav.Link>
                           <Nav.Link
                             as="button"
-                            eventKey="nav-timed-auction"
-                            onClick={() => setSellType("nav-timed-auction")}
+                            eventKey="nav-timed-auction1"
+                            onClick={() => handleTimeAuctionModal(true)}
                           >
                             Timed Auction
                           </Nav.Link>
                         </Nav>
                       </nav>
+
                       <TabContent className="rn-bid-content">
                         <TabPane eventKey="nav-direct-sale">
                           <div className="rn-pd-bd-wrapper mt--20">
@@ -344,6 +351,10 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                       Put on Sale
                     </Button>
                   )}
+                  <Button color="primary-alta" onClick={() => handleShowTransferModal(true)}>
+                    Transfer
+                  </Button>
+
                   <div className="rn-bid-details">
                     <BidTab
                       bids={product.putOnSale && product.auction.data.sellType == "Bidding" ? bids : null}
@@ -372,8 +383,12 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         handleModal={handleDirectSaleModal}
       />
       <TimeAuctionModal
-        show={showDirectSalesModal}
+        show={showTimeAuctionModal}
         handleModal={handleTimeAuctionModal}
+      />
+      <TransferPopupModal
+        show={showTransferModal}
+        handleModal={handleShowTransferModal}
       />
     </div>
   );

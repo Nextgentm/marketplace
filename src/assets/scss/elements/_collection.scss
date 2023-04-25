@@ -137,9 +137,10 @@
                 width: 100%;
                 height: auto;
                 transition: var(--transition);
+                aspect-ratio: 3/2;
             }
         }
-        .collenction-small-thumbnail {
+        .collection-small-thumbnail {
             display: flex;
             justify-content: space-between;
             margin-left: -4px;
@@ -167,7 +168,12 @@
             border-radius: 50%;
             border: 5px solid var(--color-primary-alta);
             transition: var(--transition);
+            aspect-ratio:1/1;
 
+        
+            img{
+            aspect-ratio:1/1
+            }
             @media #{$md-layout} {
                 max-width: 60px;
                 height: 60px;

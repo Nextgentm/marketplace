@@ -37,6 +37,7 @@
     "multiselect-react-dropdown": "^2.0.25",
     "next": "^13.0.6",
     "next-themes": "^0.1.1",
+    "nprogress": "^0.2.0",
     "pre-commit": "^1.2.2",
     "prop-types": "^15.7.2",
     "react": "^18.2.0",
@@ -60,6 +61,7 @@
     "remark-html": "^15.0.1",
     "sal.js": "^0.8.5",
     "sass": "^1.45.0",
+    "sharp": "^0.32.0",
     "web3": "^1.7.4",
     "rsuite": "^5.32.0"
   },
