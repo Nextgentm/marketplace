@@ -21,7 +21,6 @@ const Explore14 = () => {
       setDataCollectibles(response.data.data);
     });
   }, []);
-  console.log(dataCollectibles);
   return (
     <Wrapper>
       <SEO pageTitle="Explore Simple" />
