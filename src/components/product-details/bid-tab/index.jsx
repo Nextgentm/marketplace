@@ -35,7 +35,7 @@ const BidTab = ({ className, bids, product, owner, properties, tags, history }) 
           </TabPane>
         )}
         <TabPane eventKey="nav-details">
-          <DetailsTabContent owner={owner} properties={properties} tags={tags} />
+          <DetailsTabContent owner={owner} properties={properties} tags={tags} supply={product.supply} />
         </TabPane>
         {history && (
           <TabPane eventKey="nav-histroy">

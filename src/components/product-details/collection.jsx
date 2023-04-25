@@ -21,7 +21,7 @@ const ProductCollection = ({ className, collection }) => {
       <span>Collections</span>
       <TopSeller
         name={collection.data?.name}
-        slug={collection.data?.slug}
+        slug={"/collection/" + collection.data?.slug}
         image={{ src: collectionImage?.url, width: 44, height: 44 }}
       />
     </div>
