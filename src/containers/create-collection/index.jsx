@@ -218,7 +218,7 @@ const CreateCollectionArea = () => {
     }
 
     async function StoreData(data) {
-        console.log(data);
+        // console.log(data);
         try {
             const logoImagePathObject = JSON.parse(logoImagePath);
             const coverImagePathObject = JSON.parse(coverImagePath);
@@ -245,6 +245,9 @@ const CreateCollectionArea = () => {
             ).map(({ value }) => value);
             // console.log(selectedPaymentTokens);
 
+            const slug = data.title
+                ? data.title.toLowerCase().split(" ").join("-")
+                : null;
             const resp = await axios.post(
                 `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`,
                 {
@@ -260,9 +263,7 @@ const CreateCollectionArea = () => {
                         url: data.url ? data.url : null,
                         description: data.description ? data.description : null,
                         category,
-                        slug: data.title
-                            ? data.title.toLowerCase().split(" ").join("-")
-                            : null,
+                        slug,
                         // creatorEarning: data.earning
                         //     ? Number(data.earning)
                         //     : null,
@@ -279,8 +280,18 @@ const CreateCollectionArea = () => {
                     },
                 }
             );
+            console.log(resp);
             notify();
             reset();
+            if (router.query.type === "single") {
+                router.push(`/create?type=single&collection=${slug}`);
+            }
+            if (router.query.type === "multiple") {
+                router.push(`/create?type=multiple&collection=${slug}`);
+            }
+            if (router.query.type === "hybrid") {
+                router.push(`/upload-variants?collection=${slug}`);
+            }
         } catch (error) {
             console.log(error);
             toast.error("Error while saving data");
@@ -311,13 +322,15 @@ const CreateCollectionArea = () => {
                     tokenURIPrefix
                 );
                 const receipt = await transaction.wait();
-                console.log(receipt);
+                // console.log(receipt);
+                const correctEvent = receipt.events.find(
+                    (event) => event.event === "Deployed"
+                );
                 console.log(
                     "contractAddress",
-                    receipt.events[0].args.contractAddress
+                    correctEvent.args.contractAddress
                 );
-                const erc721ContractAddr =
-                    receipt.events[0].args.contractAddress;
+                const erc721ContractAddr = correctEvent.args.contractAddress;
                 return [erc721ContractAddr, null];
             }
             if (router.query.type === "multiple") {
@@ -334,13 +347,15 @@ const CreateCollectionArea = () => {
                     tokenURIPrefix
                 );
                 const receipt = await transaction.wait();
-                console.log(receipt);
+                // console.log(receipt);
+                const correctEvent = receipt.events.find(
+                    (event) => event.event === "Deployed"
+                );
                 console.log(
                     "contractAddress",
-                    receipt.events[4].args.contractAddress
+                    correctEvent.args.contractAddress
                 );
-                const erc1155ContractAddr =
-                    receipt.events[4].args.contractAddress;
+                const erc1155ContractAddr = correctEvent.args.contractAddress;
                 return [null, erc1155ContractAddr];
             }
             if (router.query.type === "hybrid") {
@@ -357,13 +372,15 @@ const CreateCollectionArea = () => {
                     tokenURIPrefix
                 );
                 const receipt1 = await transaction1.wait();
-                console.log(receipt1);
+                // console.log(receipt);
+                const correctEvent1 = receipt1.events.find(
+                    (event) => event.event === "Deployed"
+                );
                 console.log(
                     "contractAddress",
-                    receipt1.events[0].args.contractAddress
+                    correctEvent1.args.contractAddress
                 );
-                const erc721ContractAddr =
-                    receipt1.events[0].args.contractAddress;
+                const erc721ContractAddr = correctEvent1.args.contractAddress;
 
                 // Pull the deployed contract instance
                 const contract1155 = new walletData.ethers.Contract(
@@ -378,13 +395,15 @@ const CreateCollectionArea = () => {
                     tokenURIPrefix
                 );
                 const receipt2 = await transaction2.wait();
-                console.log(receipt);
+                // console.log(receipt);
+                const correctEvent2 = receipt2.events.find(
+                    (event) => event.event === "Deployed"
+                );
                 console.log(
                     "contractAddress",
-                    receipt2.events[4].args.contractAddress
+                    correctEvent2.args.contractAddress
                 );
-                const erc1155ContractAddr =
-                    receipt2.events[4].args.contractAddress;
+                const erc1155ContractAddr = correctEvent2.args.contractAddress;
                 return [erc721ContractAddr, erc1155ContractAddr];
             }
             toast.error("Please select proper collection type");

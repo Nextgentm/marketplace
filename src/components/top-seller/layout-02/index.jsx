@@ -55,9 +55,9 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product }) => {
             const amount = `${eth}`;
             const tokenId = `${product.nftID}`;
             const tokenURI = "";
-            const supply = `${1}`;
+            const supply = `${product.supply ? product.supply : 1}`;
             const royaltyFee = `${10}`;
-            const qty = `${1}`;
+            const qty = `${product.supply ? product.supply : 1}`;
 
             // Pull the deployed contract instance
             const tradeContract = new walletData.ethers.Contract(
@@ -91,7 +91,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product }) => {
             if (product.auction.data.sellType === "FixedPrice") {
                 toast.success("NFT purchased successfully!");
             } else {
-                toast.success("Bidding placed successfully!");
+                toast.success("Bidding Accepted successfully!");
             }
             router.reload();
         } catch (error) {

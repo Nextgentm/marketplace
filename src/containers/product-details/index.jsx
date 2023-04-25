@@ -9,7 +9,7 @@ import ProductCollection from "@components/product-details/collection";
 import BidTab from "@components/product-details/bid-tab";
 import PlaceBet from "@components/product-details/place-bet";
 import { ImageType } from "@utils/types";
-import { useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { TabContainer, TabContent, Nav, TabPane } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -26,7 +26,7 @@ import TransferProxy from "../../contracts/json/TransferProxy.json";
 
 // Demo Image
 
-const ProductDetailsArea = ({ space, className, product }) => {
+const ProductDetailsArea = ({ space, className, product, bids }) => {
     const [showAuctionInputModel, setShowAuctionInputModel] = useState(false);
     const [sellType, setSellType] = useState("nav-direct-sale");
 
@@ -117,7 +117,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                 const receipt = await transaction.wait();
                 // console.log(receipt);
             }
-            return false;
+            return true;
         } catch (error) {
             console.log(error);
             return false;
@@ -126,7 +126,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
 
     async function StoreData(data) {
         try {
-            if (!approveNFT()) {
+            if (!(await approveNFT())) {
                 return;
             }
             // update auction to complete
@@ -141,6 +141,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                         startTimestamp: data.startTimestamp,
                         endTimeStamp: data.endTimeStamp,
                         collectible: product.id,
+                        quantity: data.quantity ? data.quantity : 1,
                     },
                 }
             );
@@ -197,6 +198,9 @@ const ProductDetailsArea = ({ space, className, product }) => {
             endTimeStamp: event.target.endDate.value,
             sellType: _sellType,
             currency: event.target.currency.value,
+            quantity: event.target.quantity?.value
+                ? event.target.quantity?.value
+                : 1,
         };
         console.log(data);
         StoreData(data);
@@ -340,6 +344,20 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                                                         />
                                                                     </div>
                                                                 </div>
+                                                                {product.supply >
+                                                                    1 && (
+                                                                        <div className="row">
+                                                                            <label htmlFor="quantity">
+                                                                                Quantity
+                                                                            </label>
+                                                                            <input
+                                                                                type="number"
+                                                                                id="quantity"
+                                                                                min="1"
+                                                                                placeholder="e.g. 10"
+                                                                            />
+                                                                        </div>
+                                                                    )}
                                                                 <div className="row">
                                                                     <div className="col-md-6">
                                                                         <Button
@@ -427,6 +445,20 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                                                         />
                                                                     </div>
                                                                 </div>
+                                                                {product.supply >
+                                                                    1 && (
+                                                                        <div className="row">
+                                                                            <label htmlFor="quantity">
+                                                                                Quantity
+                                                                            </label>
+                                                                            <input
+                                                                                type="number"
+                                                                                id="quantity"
+                                                                                min="1"
+                                                                                placeholder="e.g. 10"
+                                                                            />
+                                                                        </div>
+                                                                    )}
                                                                 <div className="row">
                                                                     <div className="col-md-6">
                                                                         <Button
@@ -470,10 +502,13 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                             </Button>
                                         )}
                                     <div className="rn-bid-details">
+                                        {console.log(bids)}
                                         <BidTab
                                             bids={
-                                                product.putOnSale
-                                                    ? product?.bids?.data
+                                                product.putOnSale &&
+                                                    product.auction.data.sellType ==
+                                                    "Bidding"
+                                                    ? bids
                                                     : null
                                             }
                                             owner={product?.owner}
@@ -522,7 +557,6 @@ ProductDetailsArea.propTypes = {
         }).isRequired,
         owner: PropTypes.shape({}),
         collection: PropTypes.shape({}),
-        bids: PropTypes.arrayOf(PropTypes.shape({})),
         properties: PropTypes.arrayOf(PropTypes.shape({})),
         tags: PropTypes.arrayOf(PropTypes.shape({})),
         history: PropTypes.arrayOf(PropTypes.shape({})),
@@ -530,6 +564,7 @@ ProductDetailsArea.propTypes = {
         auction_date: PropTypes.string,
         images: PropTypes.arrayOf(ImageType),
     }),
+    bids: PropTypes.arrayOf(PropTypes.shape({})),
 };
 
 ProductDetailsArea.defaultProps = {

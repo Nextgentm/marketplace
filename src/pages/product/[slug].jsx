@@ -15,7 +15,12 @@ import { shuffleArray } from "@utils/methods";
 // demo data
 // import productData from "../../data/products.json";
 
-const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => (
+const ProductDetails = ({
+    product,
+    bids,
+    recentViewProducts,
+    relatedProducts,
+}) => (
     // const router = useRouter();
 
     /* const [dataCollectibles, setDataCollectibles] = useState(null);
@@ -37,7 +42,7 @@ const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => (
                 pageTitle="Product Details"
                 currentPage="Product Details"
             />
-            {product && <ProductDetailsArea product={product} />}
+            {product && <ProductDetailsArea product={product} bids={bids} />}
 
             <ProductArea
                 data={{
@@ -77,21 +82,16 @@ export async function getStaticProps({ params }) {
     );
     const productData = await res.json();
     const product = productData.data.find(({ slug }) => slug === params.slug);
-    product.bids = {
-        data: [
-            {
-                id: 7,
-                walletAddress: "0xd14bebf277c671ee22ed433e67f36ca38ec5a0e5",
-                bidPrice: 20,
-                priceCurrency: "wETH",
-                startTimestamp: "2023-04-22",
-                endTimeStamp: "2023-04-29",
-                sellType: "Bidding",
-                createdAt: "2023-04-22T13:00:22.773Z",
-            },
-        ],
-    };
-    // const { category } = product.collection.data;
+    let bids = null;
+
+    if (product.putOnSale) {
+        // Get All Bids
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions/${product.auction?.data?.id}?populate=*`
+        );
+        const auction = await response.json();
+        bids = auction.data.biddings.data;
+    }
     const recentViewProducts = shuffleArray(productData.data).slice(0, 5);
     const relatedProducts = [];
     /* const relatedProducts = productData.data
@@ -104,6 +104,7 @@ export async function getStaticProps({ params }) {
         props: {
             className: "template-color-1",
             product,
+            bids,
             recentViewProducts,
             relatedProducts,
         }, // will be passed to the page component as props
@@ -113,7 +114,7 @@ export async function getStaticProps({ params }) {
 ProductDetails.propTypes = {
     product: PropTypes.shape({}),
     recentViewProducts: PropTypes.arrayOf(PropTypes.shape({})),
-    relatedProducts: PropTypes.arrayOf(PropTypes.shape({})),
+    bids: PropTypes.arrayOf(PropTypes.shape({})),
 };
 
 export default ProductDetails;
