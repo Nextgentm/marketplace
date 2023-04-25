@@ -66,7 +66,9 @@ const AuthorProfileArea = ({ className, productData }) => (
                                             price={prod.price}
                                             likeCount={prod.likeCount}
                                             auction_date={prod.auction_date}
-                                            image={prod.image?.data}
+                                            image={{
+                                                src: prod.image?.data?.url,
+                                            }}
                                             owner={prod.owner}
                                             bitCount={prod.bitCount}
                                         />
@@ -91,7 +93,9 @@ const AuthorProfileArea = ({ className, productData }) => (
                                             price={prod.price}
                                             likeCount={prod.likeCount}
                                             auction_date={prod.auction_date}
-                                            image={prod.image?.data}
+                                            image={{
+                                                src: prod.image?.data?.url,
+                                            }}
                                             owner={prod.owner}
                                             bitCount={prod.bitCount}
                                         />
@@ -116,7 +120,9 @@ const AuthorProfileArea = ({ className, productData }) => (
                                             price={prod.price}
                                             likeCount={prod.likeCount}
                                             auction_date={prod.auction_date}
-                                            image={prod.image?.data}
+                                            image={{
+                                                src: prod.image?.data?.url,
+                                            }}
                                             owner={prod.owner}
                                             bitCount={prod.bitCount}
                                         />
