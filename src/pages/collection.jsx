@@ -8,32 +8,32 @@ import { ALL_COLLECTION_QUERY } from "src/graphql/query/collection/getCollection
 import client from "@utils/apollo-client";
 
 const Collection = (props) => (
-    <Wrapper>
-        <SEO pageTitle="Collection" />
-        <Header />
-        <main id="main-content">
-            <Breadcrumb pageTitle="Our Collection" currentPage="Collection" />
-            <CollectionArea {...props} />
-        </main>
-        <Footer />
-    </Wrapper>
+  <Wrapper>
+    <SEO pageTitle="Collection" />
+    <Header />
+    <main id="main-content">
+      <Breadcrumb pageTitle="Our Collection" currentPage="Collection" />
+      <CollectionArea {...props} />
+    </main>
+    <Footer />
+  </Wrapper>
 );
 
 export const getStaticProps = async () => {
-    const { data } = await client.query({
-        query: ALL_COLLECTION_QUERY,
-        variables: {
-            pagination: {
-                pageSize: 5,
-            },
-        },
-        fetchPolicy: "network-only",
-    });
-    return {
-        props: {
-            className: "template-color-1",
-            data,
-        },
-    };
+  const { data } = await client.query({
+    query: ALL_COLLECTION_QUERY,
+    variables: {
+      pagination: {
+        pageSize: 5
+      }
+    },
+    fetchPolicy: "network-only"
+  });
+  return {
+    props: {
+      className: "template-color-1",
+      data
+    }
+  };
 };
 export default Collection;

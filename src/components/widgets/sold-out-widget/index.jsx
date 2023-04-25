@@ -3,20 +3,14 @@ import Anchor from "@ui/anchor";
 import Image from "next/image";
 
 const SoldOutWidget = ({ data }) => (
-    <div className="footer-widget">
-        <h6 className="widget-title">{data.title}</h6>
-        {data?.image && (
-            <Anchor className="logo-light" path={data.link}>
-                <Image
-                    src={data.image}
-                    alt="nft-logo"
-                    width={250}
-                    height={70}
-                    priority
-                />
-            </Anchor>
-        )}
-        {/* data?.products && (
+  <div className="footer-widget">
+    <h6 className="widget-title">{data.title}</h6>
+    {data?.image && (
+      <Anchor className="logo-light" path={data.link}>
+        <Image src={data.image} alt="nft-logo" width={250} height={70} priority />
+      </Anchor>
+    )}
+    {/* data?.products && (
             <ul className="footer-recent-post">
                 {data.products.map((product) => (
                     <li key={product.id} className="recent-post">
@@ -49,29 +43,28 @@ const SoldOutWidget = ({ data }) => (
                 ))}
             </ul>
                                     ) */}
-    </div>
+  </div>
 );
 
 SoldOutWidget.propTypes = {
-    data: PropTypes.shape({
-        title: PropTypes.string,
-        image: PropTypes.string,
-        link: PropTypes.string,
-        products: PropTypes.arrayOf(
-            PropTypes.shape({
-                id: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-                    .isRequired,
-                title: PropTypes.string.isRequired,
-                path: PropTypes.string.isRequired,
-                highestBid: PropTypes.string.isRequired,
-                price: PropTypes.string.isRequired,
-                image: PropTypes.shape({
-                    src: PropTypes.string.isRequired,
-                    alt: PropTypes.string,
-                }),
-            })
-        ),
-    }),
+  data: PropTypes.shape({
+    title: PropTypes.string,
+    image: PropTypes.string,
+    link: PropTypes.string,
+    products: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+        title: PropTypes.string.isRequired,
+        path: PropTypes.string.isRequired,
+        highestBid: PropTypes.string.isRequired,
+        price: PropTypes.string.isRequired,
+        image: PropTypes.shape({
+          src: PropTypes.string.isRequired,
+          alt: PropTypes.string
+        })
+      })
+    )
+  })
 };
 
 export default SoldOutWidget;

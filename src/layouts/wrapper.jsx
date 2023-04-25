@@ -3,15 +3,15 @@ import ScrollToTop from "@ui/scroll-to-top";
 import { ToastContainer } from "react-toastify";
 
 const Wrapper = ({ children }) => (
-    <>
-        {children}
-        <ScrollToTop />
-        <ToastContainer />
-    </>
+  <>
+    {children}
+    <ScrollToTop />
+    <ToastContainer />
+  </>
 );
 
 Wrapper.propTypes = {
-    children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired
 };
 
 export default Wrapper;

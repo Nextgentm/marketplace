@@ -17,70 +17,62 @@ import sellerData from "../data/sellers.json";
 import productData from "../data/products.json";
 
 export async function getStaticProps() {
-    return { props: { className: "template-color-1" } };
+  return { props: { className: "template-color-1" } };
 }
 
 const Home = () => {
-    const content = normalizedData(homepageData?.content || []);
-    const [dataCollection, setDataCollection] = useState(null);
-    const [dataCollectibles, setDataCollectibles] = useState(null);
+  const content = normalizedData(homepageData?.content || []);
+  const [dataCollection, setDataCollection] = useState(null);
+  const [dataCollectibles, setDataCollectibles] = useState(null);
 
-    useEffect(() => {
-        axios
-            .get(
-                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections?populate=*`
-            )
-            .then((response) => {
-                setDataCollection(response.data.data);
-            });
-    }, []);
+  useEffect(() => {
+    axios.get(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections?populate=*`).then((response) => {
+      setDataCollection(response.data.data);
+    });
+  }, []);
 
-    useEffect(() => {
-        axios
-            .get(
-                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?populate=*`
-            )
-            .then((response) => {
-                setDataCollectibles(response.data.data);
-            });
-    }, []);
+  useEffect(() => {
+    axios.get(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?populate=*`).then((response) => {
+      setDataCollectibles(response.data.data);
+    });
+  }, []);
 
-    console.log(dataCollectibles);
+  console.log(dataCollectibles);
 
-    return (
-        <Wrapper>
-            <SEO pageTitle="NFT Marketplace" />
-            <Header />
-            <main id="main-content">
-                <HeroArea data={content["hero-section"]} />
+  return (
+    <Wrapper>
+      <SEO pageTitle="NFT Marketplace" />
+      <Header />
+      <main id="main-content">
+        <HeroArea data={content["hero-section"]} />
 
-                <CollectionArea
-                    data={
-                        dataCollection && {
-                            ...content["collection-section"],
-                            collections: dataCollection.slice(0, 4),
-                        }
-                    }
-                />
-                <ExploreProductArea
-                    data={
-                        dataCollectibles && {
-                            ...content["explore-product-section"],
-                            products: dataCollectibles,
-                        }
-                    }
-                />
-                <CreatorArea
-                    data={{
-                        ...content["top-sller-section"],
-                        creators: sellerData,
-                    }}
-                />
-                {/* <ServiceArea data={content["service-section"]} /> */}
-            </main>
-            <Footer />
-        </Wrapper>
-    );
+        <CollectionArea
+          data={
+            dataCollection && {
+              ...content["collection-section"],
+              collections: dataCollection.slice(0, 4)
+            }
+          }
+        />
+        <ExploreProductArea
+          data={
+            dataCollectibles && {
+              ...content["explore-product-section"],
+              products: dataCollectibles
+            }
+          }
+        />
+        <CreatorArea
+          data={{
+            ...content["top-sller-section"],
+            creators: sellerData
+          }}
+        />
+        {/* <ServiceArea data={content["service-section"]} /> */}
+      </main>
+      <Footer />
+    </Wrapper>
+  );
 };
 
 export default Home;

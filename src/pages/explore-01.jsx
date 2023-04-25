@@ -9,29 +9,26 @@ import ExploreProductArea from "@containers/explore-product/layout-01";
 import productData from "../data/products.json";
 
 export async function getStaticProps() {
-    return { props: { className: "template-color-1" } };
+  return { props: { className: "template-color-1" } };
 }
 
 const Home02 = () => (
-    <Wrapper>
-        <SEO pageTitle="Explore Filter" />
-        <Header />
-        <main id="main-content">
-            <Breadcrumb
-                pageTitle="Explore Filter"
-                currentPage="Explore With Filter"
-            />
-            <ExploreProductArea
-                data={{
-                    section_title: {
-                        title: "Explore Product",
-                    },
-                    products: productData,
-                }}
-            />
-        </main>
-        <Footer />
-    </Wrapper>
+  <Wrapper>
+    <SEO pageTitle="Explore Filter" />
+    <Header />
+    <main id="main-content">
+      <Breadcrumb pageTitle="Explore Filter" currentPage="Explore With Filter" />
+      <ExploreProductArea
+        data={{
+          section_title: {
+            title: "Explore Product"
+          },
+          products: productData
+        }}
+      />
+    </main>
+    <Footer />
+  </Wrapper>
 );
 
 export default Home02;

@@ -11,31 +11,28 @@ import productData from "../data/products-02.json";
 import notificationData from "../data/notifications.json";
 
 export async function getStaticProps() {
-    return { props: { className: "template-color-1" } };
+  return { props: { className: "template-color-1" } };
 }
 
 const Home02 = () => (
-    <Wrapper>
-        <SEO pageTitle="Explore List Style" />
-        <Header />
-        <main id="main-content">
-            <Breadcrumb
-                pageTitle="Explore Style List"
-                currentPage="Explore Style List"
-            />
-            <ProductArea
-                data={{
-                    section_title: {
-                        title: "OUR All NFT'S",
-                    },
-                    products: productData,
-                    notifications: notificationData,
-                    creators: sellerData,
-                }}
-            />
-        </main>
-        <Footer />
-    </Wrapper>
+  <Wrapper>
+    <SEO pageTitle="Explore List Style" />
+    <Header />
+    <main id="main-content">
+      <Breadcrumb pageTitle="Explore Style List" currentPage="Explore Style List" />
+      <ProductArea
+        data={{
+          section_title: {
+            title: "OUR All NFT'S"
+          },
+          products: productData,
+          notifications: notificationData,
+          creators: sellerData
+        }}
+      />
+    </main>
+    <Footer />
+  </Wrapper>
 );
 
 export default Home02;

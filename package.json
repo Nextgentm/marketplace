@@ -6,15 +6,17 @@
     "build": "next build",
     "start": "next start",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "lint": "eslint --ignore-path .eslintignore . --ext ts --ext tsx --ext js --ext jsx",
+    "lint": "next lint --ignore-path .eslintignore . --ext ts --ext tsx --ext js --ext jsx",
     "lint:fix": "yarn format & next lint --dir src",
     "clean-cache": "rimraf .next yarn.lock",
     "clean": "rimraf node_modules .next",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "analyze": "ANALYZE=true  next build"
   },
   "dependencies": {
     "@apollo/client": "^3.7.12",
     "@apollo/react-hooks": "^4.0.0",
+    "@next/bundle-analyzer": "^13.3.1",
     "@openzeppelin/contracts": "^4.8.2",
     "@openzeppelin/test-helpers": "^0.5.16",
     "@truffle/hdwallet-provider": "^2.1.8",
@@ -25,6 +27,7 @@
     "clsx": "^1.1.1",
     "dayjs": "^1.11.3",
     "dotenv": "^16.0.3",
+    "eslint-config-next": "^13.3.1",
     "ethereumjs-abi": "0.6.6",
     "framer-motion": "^6.2.6",
     "graphql": "^16.6.0",

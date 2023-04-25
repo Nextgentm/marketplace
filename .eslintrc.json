@@ -1,20 +1,22 @@
 {
-    "extends": [
-        "next/core-web-vitals",
-        "prettier"
-    ],
-    "rules": {
-        "@next/next/no-img-element": "off",
-        "react/prop-types": "off",
-        "react/display-name": "off",
-        "no-var": "error",
-        "quotes": [
-            2,
-            "double",
-            {
-                "allowTemplateLiterals": true,
-                "avoidEscape": true
-            }
-        ]
+  "extends": ["next/core-web-vitals", "prettier"],
+  "rules": {
+    "@next/next/no-img-element": "off",
+    "react/prop-types": "off",
+    "react/display-name": "off",
+    "no-var": "error",
+    "quotes": [
+      2,
+      "double",
+      {
+        "allowTemplateLiterals": true,
+        "avoidEscape": true
+      }
+    ]
+  },
+  "settings": {
+    "next": {
+      "rootDir": "./src"
     }
+  }
 }

@@ -1,148 +1,148 @@
 {
-    "id": "footer-data-01",
-    "logo-widget": {
-        "logo": [
-            {
-                "src": "/images/logo/logo-white.png",
-                "alt": "logo"
-            }
-        ],
-        "text": "Created with the collaboration of over 60 of the world's best Lootmogul collection."
-    },
-    "newsletter-widget": {
-        "title": "Subscribe to get the updates",
-        "note": "support@lootmogul.com"
-    },
-    "quicklink-widget": {
-        "title": "Marketplace",
-        "menu": [
-            {
-                "id": 1,
-                "text": "All NFT's",
-                "path": "/explore-14"
-            },
-            {
-                "id": 2,
-                "text": "Collections",
-                "path": "/collection"
-            },
-            {
-                "id": 3,
-                "text": "About Us",
-                "path": "/about"
-            },
-            {
-                "id": 5,
-                "text": "Rankings",
-                "path": "/ranking"
-            },
-            {
-                "id": 6,
-                "text": "Activity Log",
-                "path": "/activity"
-            },
-            {
-                "id": 7,
-                "text": "Create NFT",
-                "path": "/upload-variants"
-            },
-            {
-                "id": 8,
-                "text": "Create Collection",
-                "path": "/upload-variants-collection"
-            }
-        ]
-    },
-    "information-widget": {
-        "title": "Quick Links",
-        "menu": [
-            {
-                "id": 1,
-                "text": "What is Metaverse?",
-                "path": "https://metaverse.lootmogul.com/what-is-metaverse/"
-            },
-            {
-                "id": 2,
-                "text": "What are Digital Collectibles?",
-                "path": "https://metaverse.lootmogul.com/what-is-nft/"
-            },
-            {
-                "id": 3,
-                "text": "Contact",
-                "path": "/contact"
-            },
-            {
-                "id": 4,
-                "text": "Press Releases",
-                "path": "https://lootmogulstg.wpengine.com/press-releases/"
-            },
-            {
-                "id": 5,
-                "text": "FAQs",
-                "path": "https://metaverse.lootmogul.com/faq/"
-            },
-            {
-                "id": 6,
-                "text": "Privacy Policy",
-                "path": "https://metaverse.lootmogul.com/privacy-policy/"
-            },
-            {
-                "id": 7,
-                "text": "Terms of Services",
-                "path": "https://metaverse.lootmogul.com/terms-conditions/"
-            }
-        ]
-    },
-    "soldout-widget": {
-        "title": "Download Our App",
-        "link": "https://apps.apple.com/in/app/lootmogul/id1619785065",
-        "image": "/images/contact/app.jpg",
-        "products": [
-            {
-                "id": 1,
-                "title": "#21 The Wonder",
-                "path": "/product",
-                "highestBid": "Highest bid 1/20",
-                "price": "0.244wETH",
-                "image": {
-                    "src": "/images/portfolio/portfolio-01.jpg"
-                }
-            },
-            {
-                "id": 2,
-                "title": "Diamond Dog",
-                "path": "/product",
-                "highestBid": "Highest bid 1/20",
-                "price": "0.022wETH",
-                "image": {
-                    "src": "/images/portfolio/portfolio-02.jpg"
-                }
-            },
-            {
-                "id": 3,
-                "title": "Morgan11",
-                "path": "/product",
-                "highestBid": "Highest bid 1/20",
-                "price": "0.892wETH",
-                "image": {
-                    "src": "/images/portfolio/portfolio-03.jpg"
-                }
-            }
-        ]
-    },
-    "footer-link-widget": {
-        "menu": [
-            {
-                "id": 1,
-                "text": "Terms",
-                "path": "/terms-condition"
-            },
-            {
-                "id": 2,
-                "text": "Privacy Policy",
-                "path": "/privacy-policy"
-            }
-        ]
-    },
-    "copyright_text": "© 2023 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States"
+  "id": "footer-data-01",
+  "logo-widget": {
+    "logo": [
+      {
+        "src": "/images/logo/logo-white.png",
+        "alt": "logo"
+      }
+    ],
+    "text": "Created with the collaboration of over 60 of the world's best Lootmogul collection."
+  },
+  "newsletter-widget": {
+    "title": "Subscribe to get the updates",
+    "note": "support@lootmogul.com"
+  },
+  "quicklink-widget": {
+    "title": "Marketplace",
+    "menu": [
+      {
+        "id": 1,
+        "text": "All NFT's",
+        "path": "/explore-14"
+      },
+      {
+        "id": 2,
+        "text": "Collections",
+        "path": "/collection"
+      },
+      {
+        "id": 3,
+        "text": "About Us",
+        "path": "/about"
+      },
+      {
+        "id": 5,
+        "text": "Rankings",
+        "path": "/ranking"
+      },
+      {
+        "id": 6,
+        "text": "Activity Log",
+        "path": "/activity"
+      },
+      {
+        "id": 7,
+        "text": "Create NFT",
+        "path": "/upload-variants"
+      },
+      {
+        "id": 8,
+        "text": "Create Collection",
+        "path": "/upload-variants-collection"
+      }
+    ]
+  },
+  "information-widget": {
+    "title": "Quick Links",
+    "menu": [
+      {
+        "id": 1,
+        "text": "What is Metaverse?",
+        "path": "https://metaverse.lootmogul.com/what-is-metaverse/"
+      },
+      {
+        "id": 2,
+        "text": "What are Digital Collectibles?",
+        "path": "https://metaverse.lootmogul.com/what-is-nft/"
+      },
+      {
+        "id": 3,
+        "text": "Contact",
+        "path": "/contact"
+      },
+      {
+        "id": 4,
+        "text": "Press Releases",
+        "path": "https://lootmogulstg.wpengine.com/press-releases/"
+      },
+      {
+        "id": 5,
+        "text": "FAQs",
+        "path": "https://metaverse.lootmogul.com/faq/"
+      },
+      {
+        "id": 6,
+        "text": "Privacy Policy",
+        "path": "https://metaverse.lootmogul.com/privacy-policy/"
+      },
+      {
+        "id": 7,
+        "text": "Terms of Services",
+        "path": "https://metaverse.lootmogul.com/terms-conditions/"
+      }
+    ]
+  },
+  "soldout-widget": {
+    "title": "Download Our App",
+    "link": "https://apps.apple.com/in/app/lootmogul/id1619785065",
+    "image": "/images/contact/app.jpg",
+    "products": [
+      {
+        "id": 1,
+        "title": "#21 The Wonder",
+        "path": "/product",
+        "highestBid": "Highest bid 1/20",
+        "price": "0.244wETH",
+        "image": {
+          "src": "/images/portfolio/portfolio-01.jpg"
+        }
+      },
+      {
+        "id": 2,
+        "title": "Diamond Dog",
+        "path": "/product",
+        "highestBid": "Highest bid 1/20",
+        "price": "0.022wETH",
+        "image": {
+          "src": "/images/portfolio/portfolio-02.jpg"
+        }
+      },
+      {
+        "id": 3,
+        "title": "Morgan11",
+        "path": "/product",
+        "highestBid": "Highest bid 1/20",
+        "price": "0.892wETH",
+        "image": {
+          "src": "/images/portfolio/portfolio-03.jpg"
+        }
+      }
+    ]
+  },
+  "footer-link-widget": {
+    "menu": [
+      {
+        "id": 1,
+        "text": "Terms",
+        "path": "/terms-condition"
+      },
+      {
+        "id": 2,
+        "text": "Privacy Policy",
+        "path": "/privacy-policy"
+      }
+    ]
+  },
+  "copyright_text": "© 2023 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States"
 }

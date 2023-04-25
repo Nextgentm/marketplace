@@ -1,61 +1,61 @@
 {
-    "address": {
-        "Ethereum": null,
-        "Polygon": "0x9e7bf88C5BDeBcd74C36a8aC07bb5fa002173A12"
-    },
-    "abi": [
+  "address": {
+    "Ethereum": null,
+    "Polygon": "0x9e7bf88C5BDeBcd74C36a8aC07bb5fa002173A12"
+  },
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
         {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": false,
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "address",
-                    "name": "contractAddress",
-                    "type": "address"
-                }
-            ],
-            "name": "Deployed",
-            "type": "event"
+          "indexed": false,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
         },
         {
-            "inputs": [
-                {
-                    "internalType": "bytes32",
-                    "name": "_salt",
-                    "type": "bytes32"
-                },
-                {
-                    "internalType": "string",
-                    "name": "name",
-                    "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "symbol",
-                    "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "tokenURIPrefix",
-                    "type": "string"
-                }
-            ],
-            "name": "deploy",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "addr",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "nonpayable",
-            "type": "function"
+          "indexed": false,
+          "internalType": "address",
+          "name": "contractAddress",
+          "type": "address"
         }
-    ]
+      ],
+      "name": "Deployed",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_salt",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "symbol",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "tokenURIPrefix",
+          "type": "string"
+        }
+      ],
+      "name": "deploy",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
 }

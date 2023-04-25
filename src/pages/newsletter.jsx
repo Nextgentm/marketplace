@@ -6,19 +6,19 @@ import Breadcrumb from "@components/breadcrumb";
 import NewsletterArea from "@containers/newsletter/layout-02";
 
 export async function getStaticProps() {
-    return { props: { className: "template-color-1" } };
+  return { props: { className: "template-color-1" } };
 }
 
 const Newsletter = () => (
-    <Wrapper>
-        <SEO pageTitle="Privacy Policy" />
-        <Header />
-        <main id="main-content">
-            <Breadcrumb pageTitle="Newsletter" currentPage="Newsletter" />
-            <NewsletterArea />
-        </main>
-        <Footer />
-    </Wrapper>
+  <Wrapper>
+    <SEO pageTitle="Privacy Policy" />
+    <Header />
+    <main id="main-content">
+      <Breadcrumb pageTitle="Newsletter" currentPage="Newsletter" />
+      <NewsletterArea />
+    </main>
+    <Footer />
+  </Wrapper>
 );
 
 export default Newsletter;
