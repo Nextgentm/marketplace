@@ -60,7 +60,8 @@
     "remark-html": "^15.0.1",
     "sal.js": "^0.8.5",
     "sass": "^1.45.0",
-    "web3": "^1.7.4"
+    "web3": "^1.7.4",
+    "rsuite": "^5.32.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
