@@ -192,14 +192,14 @@ const Header = ({ className }) => {
                   <UserDropdown onDisconnect={onDisconnect} ethBalance={ethBalance} />
                 </div>
               )}
-              <div className="setting-option rn-icon-list notification-badge">
+              {/*<div className="setting-option rn-icon-list notification-badge">
                 <div className="icon-box">
                   <Anchor path={headerData.activity_link}>
                     <i className="feather-bell" />
                     <span className="badge">6</span>
                   </Anchor>
                 </div>
-              </div>
+              </div>*/}
               <div className="setting-option mobile-menu-bar d-block d-xl-none">
                 <div className="hamberger">
                   <BurgerButton onClick={offcanvasHandler} />
