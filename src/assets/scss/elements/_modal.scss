@@ -238,3 +238,16 @@ body.modal-open {
         }
     }
 }
+
+.modal-title,.rs-picker-daterange-predefined .rs-btn {color: #fff;}
+.placebid-modal-wrapper .modal-body .placebid-form-box h5.title { color: #fff;}
+.rs-picker-daterange-panel{background: var(--background-color-1);}
+.rs-anim-fade.rs-anim-in.placement-bottom-start.rs-picker-daterange-menu.rs-picker-menu {z-index: 9999;}
+input.rs-picker-toggle-textbox,.rs-picker-default .rs-picker-toggle.rs-btn {background-color: #200a3e !important; color: #fff !important;}
+.placebid-modal-wrapper .bid-content-mid span{margin-bottom: 5px;    margin-top: 5px;}
+.rs-picker-daterange-predefined, .rs-picker-daterange-header{border-right: 1px solid #333;}
+.rs-picker-menu .rs-calendar .rs-calendar-table-cell-content{color: #fff;}
+.rs-picker-daterange-menu .rs-calendar:first-child{border-right: 0px solid #333}
+.rs-btn-icon.rs-btn-xs>.rs-icon {font-size: 16px;vertical-align: middle;}
+.rs-calendar-header-month-toolbar button {display: contents;}
+span.rs-picker-toggle-value {color: #fff !important;}
