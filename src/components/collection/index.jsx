@@ -3,6 +3,7 @@ import Anchor from "@ui/anchor";
 import Image from "next/image";
 
 const Collection = ({ title, total_item, image, thumbnails, profile_image, path }) => (
+
   <Anchor target="_self" path={path} className="rn-collection-inner-one">
     <div className="collection-wrapper">
       {image?.url && (
@@ -12,7 +13,7 @@ const Collection = ({ title, total_item, image, thumbnails, profile_image, path 
       )}
 
       {thumbnails && (
-        <div className="collenction-small-thumbnail">
+        <div className="collection-small-thumbnail">
           {thumbnails.data?.map((thumb) => (
             <div key={thumb?.src}>
               <Image src={thumbnails?.url} alt={thumbnails?.alt || "Nft_Profile"} width={164} height={110} />
@@ -23,7 +24,7 @@ const Collection = ({ title, total_item, image, thumbnails, profile_image, path 
 
       {profile_image?.url && (
         <div className="collection-profile">
-          <Image src={profile_image.url} alt={profile_image?.alt || "Nft_Profile"} width={80} height={80} />
+          <Image src={profile_image.url} alt={profile_image?.alt || "Nft_Profile"} width={70} height={70} />
         </div>
       )}
 
