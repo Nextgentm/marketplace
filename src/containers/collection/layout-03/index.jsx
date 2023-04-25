@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
@@ -5,41 +6,46 @@ import Collection from "@components/collection";
 import Pagination from "@components/pagination-02";
 import { CollectionType } from "@utils/types";
 import { normalize } from "@utils/methods";
-
-const POSTS_PER_PAGE = 8;
+import { useLazyQuery } from "@apollo/client";
+import { ALL_COLLECTION_QUERY } from "src/graphql/query/collection/getCollection";
+import _ from "lodash";
 
 const CollectionArea = ({ className, space, id, data }) => {
-    const [collections, setCollections] = useState([]);
+    const [collectionsRecords, setCollectionsRecords] = useState([]);
     const [pagination, setPagination] = useState({
         page: 1,
         pageCount: 1,
-        pageSize: 100,
-        total: 6,
+        pageSize: 0,
+        total: 0,
     });
 
+    const [getCollection, { data: collectionPagination }] = useLazyQuery(
+        ALL_COLLECTION_QUERY,
+        { fetchPolicy: "cache-and-network" }
+    );
+
     useEffect(() => {
-        console.log("data", data);
         if (data?.collections) {
-            console.log("Collection", data?.collections);
-            setCollections(normalize(data?.collections));
-            setPagination(data.collections.meta.pagination);
+            setCollectionsData(data);
         }
     }, [data]);
 
-    // const numberOfPages = Math.ceil(data.collections.length / POSTS_PER_PAGE);
-    // const paginationHandler = (page) => {
-    //     setCurrentPage(page);
-    //     window.scrollTo({ top: 0, behavior: "smooth" });
-    // };
+    useEffect(() => {
+        if (collectionPagination?.collections) {
+            setCollectionsData(collectionPagination);
+        }
+    }, [collectionPagination]);
 
-    // const creatorHandler = useCallback(() => {
-    //     const start = (currentPage - 1) * POSTS_PER_PAGE;
-    //     setCollections(data.collections.slice(start, start + POSTS_PER_PAGE));
-    // }, [currentPage, data.collections]);
+    const setCollectionsData = ({ collections }) => {
+        setCollectionsRecords(normalize(collections));
+        setPagination(collections.meta.pagination);
+    };
 
-    // useEffect(() => {
-    //     creatorHandler();
-    // }, [currentPage, creatorHandler]);
+    const getCollectionPaginationRecord = (page) => {
+        getCollection({
+            variables: { pagination: { page, pageSize: 4 } },
+        });
+    };
     return (
         <div
             className={clsx(
@@ -50,9 +56,9 @@ const CollectionArea = ({ className, space, id, data }) => {
             id={id}
         >
             <div className="container">
-                {collections && (
+                {collectionsRecords && (
                     <div className="row g-5">
-                        {collections.map((collection) => (
+                        {collectionsRecords.map((collection) => (
                             <div
                                 key={collection.id}
                                 className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12"
@@ -78,10 +84,8 @@ const CollectionArea = ({ className, space, id, data }) => {
                     >
                         <Pagination
                             currentPage={pagination.page}
-                            numberOfPages={Math.ceil(
-                                pagination.total / pagination.pageSize
-                            )}
-                            onClick={() => { }}
+                            numberOfPages={pagination.pageCount}
+                            onClick={getCollectionPaginationRecord}
                         />
                     </div>
                 </div>
