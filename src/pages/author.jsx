@@ -29,7 +29,7 @@ const Author = () => {
             setAllProductsData(null);
             toast.error("Please connect wallet first");
         }
-    }, [walletData.isConnected]);
+    }, [walletData]);
 
     const getAllCollectionsData = async () => {
         const res = await fetch(

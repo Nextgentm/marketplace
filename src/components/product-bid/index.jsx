@@ -29,8 +29,8 @@ ProductBid.propTypes = {
     price: PropTypes.shape({
         amount: PropTypes.number.isRequired,
         currency: PropTypes.string.isRequired,
-    }).isRequired,
-    likeCount: PropTypes?.number?.isRequired,
+    }),
+    likeCount: PropTypes?.number,
     symbol: PropTypes?.string,
 };
 
