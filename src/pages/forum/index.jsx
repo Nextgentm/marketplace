@@ -11,52 +11,40 @@ import { getAllForums } from "../../lib/forum";
 const POSTS_PER_PAGE = 3;
 
 const Forum = ({ forums, pagiData }) => (
-    <Wrapper>
-        <SEO pageTitle="Forum & Community" />
-        <Header />
-        <main id="main-content">
-            <Breadcrumb
-                pageTitle="Forum & Community"
-                currentPage="Forum & Community"
-            />
-            <ForumTop />
-            <CommunityArea forums={forums} pagiData={pagiData} />
-        </main>
-        <Footer />
-    </Wrapper>
+  <Wrapper>
+    <SEO pageTitle="Forum & Community" />
+    <Header />
+    <main id="main-content">
+      <Breadcrumb pageTitle="Forum & Community" currentPage="Forum & Community" />
+      <ForumTop />
+      <CommunityArea forums={forums} pagiData={pagiData} />
+    </main>
+    <Footer />
+  </Wrapper>
 );
 
 export async function getStaticProps() {
-    const { forums, count } = getAllForums(
-        [
-            "title",
-            "thumbnail",
-            "published_at",
-            "tags",
-            "total_comments",
-            "likes",
-            "views",
-            "excerpt",
-        ],
-        0,
-        POSTS_PER_PAGE
-    );
+  const { forums, count } = getAllForums(
+    ["title", "thumbnail", "published_at", "tags", "total_comments", "likes", "views", "excerpt"],
+    0,
+    POSTS_PER_PAGE
+  );
 
-    return {
-        props: {
-            forums,
-            className: "template-color-1",
-            pagiData: {
-                currentPage: 1,
-                numberOfPages: Math.ceil(count / POSTS_PER_PAGE),
-            },
-        },
-    };
+  return {
+    props: {
+      forums,
+      className: "template-color-1",
+      pagiData: {
+        currentPage: 1,
+        numberOfPages: Math.ceil(count / POSTS_PER_PAGE)
+      }
+    }
+  };
 }
 
 Forum.propTypes = {
-    forums: PropTypes.arrayOf(PropTypes.shape({})),
-    pagiData: PropTypes.shape({}),
+  forums: PropTypes.arrayOf(PropTypes.shape({})),
+  pagiData: PropTypes.shape({})
 };
 
 export default Forum;

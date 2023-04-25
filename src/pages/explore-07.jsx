@@ -9,30 +9,27 @@ import ExploreProductArea from "@containers/explore-product/layout-02";
 import productData from "../data/products.json";
 
 export async function getStaticProps() {
-    return { props: { className: "template-color-1" } };
+  return { props: { className: "template-color-1" } };
 }
 
 const Home02 = () => (
-    <Wrapper>
-        <SEO pageTitle="Place Bid With Isotope" />
-        <Header />
-        <main id="main-content">
-            <Breadcrumb
-                pageTitle="Place Bid With Isotope"
-                currentPage="Place Bid With Isotope"
-            />
-            <ExploreProductArea
-                data={{
-                    section_title: {
-                        title: "Explore Product",
-                    },
-                    products: productData,
-                    placeBid: true,
-                }}
-            />
-        </main>
-        <Footer />
-    </Wrapper>
+  <Wrapper>
+    <SEO pageTitle="Place Bid With Isotope" />
+    <Header />
+    <main id="main-content">
+      <Breadcrumb pageTitle="Place Bid With Isotope" currentPage="Place Bid With Isotope" />
+      <ExploreProductArea
+        data={{
+          section_title: {
+            title: "Explore Product"
+          },
+          products: productData,
+          placeBid: true
+        }}
+      />
+    </main>
+    <Footer />
+  </Wrapper>
 );
 
 export default Home02;

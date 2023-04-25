@@ -7,23 +7,20 @@ import ServiceArea from "@containers/services/layout-01";
 import SupportArea from "@containers/support";
 
 export async function getStaticProps() {
-    return { props: { className: "template-color-1" } };
+  return { props: { className: "template-color-1" } };
 }
 
 const Support = () => (
-    <Wrapper>
-        <SEO pageTitle="Support" />
-        <Header />
-        <main id="main-content">
-            <Breadcrumb
-                pageTitle="Support Center"
-                currentPage="Support Center"
-            />
-            <ServiceArea />
-            <SupportArea />
-        </main>
-        <Footer />
-    </Wrapper>
+  <Wrapper>
+    <SEO pageTitle="Support" />
+    <Header />
+    <main id="main-content">
+      <Breadcrumb pageTitle="Support Center" currentPage="Support Center" />
+      <ServiceArea />
+      <SupportArea />
+    </main>
+    <Footer />
+  </Wrapper>
 );
 
 export default Support;

@@ -15,42 +15,42 @@ import authorData from "../data/author.json";
 // import productData from "../data/products.json";
 
 export async function getStaticProps() {
-    return { props: { className: "template-color-1" } };
+  return { props: { className: "template-color-1" } };
 }
 
 const Author = () => {
-    const [allProductsData, setAllProductsData] = useState(null);
-    const { walletData, setWalletData } = useContext(WalletData);
+  const [allProductsData, setAllProductsData] = useState(null);
+  const { walletData, setWalletData } = useContext(WalletData);
 
-    useEffect(() => {
-        if (walletData.isConnected) {
-            getAllCollectionsData();
-        } else {
-            setAllProductsData(null);
-            toast.error("Please connect wallet first");
-        }
-    }, [walletData]);
+  useEffect(() => {
+    if (walletData.isConnected) {
+      getAllCollectionsData();
+    } else {
+      setAllProductsData(null);
+      toast.error("Please connect wallet first");
+    }
+  }, [walletData]);
 
-    const getAllCollectionsData = async () => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=image&filter[owner][$eq]=${walletData.account}`
-        );
-        const productData = await res.json();
-        console.log(productData.data);
-        setAllProductsData(productData.data);
-    };
-
-    return (
-        <Wrapper>
-            <SEO pageTitle="Author" />
-            <Header />
-            <main id="main-content">
-                <AuthorIntroArea data={authorData} />
-                <AuthorProfileArea productData={allProductsData} />
-            </main>
-            <Footer />
-        </Wrapper>
+  const getAllCollectionsData = async () => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=image&filter[owner][$eq]=${walletData.account}`
     );
+    const productData = await res.json();
+    console.log(productData.data);
+    setAllProductsData(productData.data);
+  };
+
+  return (
+    <Wrapper>
+      <SEO pageTitle="Author" />
+      <Header />
+      <main id="main-content">
+        <AuthorIntroArea data={authorData} />
+        <AuthorProfileArea productData={allProductsData} />
+      </main>
+      <Footer />
+    </Wrapper>
+  );
 };
 
 export default Author;

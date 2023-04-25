@@ -6,22 +6,19 @@ import Breadcrumb from "@components/breadcrumb";
 import PrivacyPolicyArea from "@containers/privacy-policy";
 
 export async function getStaticProps() {
-    return { props: { className: "template-color-1" } };
+  return { props: { className: "template-color-1" } };
 }
 
 const PrivacyPolicy = () => (
-    <Wrapper>
-        <SEO pageTitle="Privacy Policy" />
-        <Header />
-        <main id="main-content">
-            <Breadcrumb
-                pageTitle="Follow Privacy Policy"
-                currentPage="Follow Privacy Policy"
-            />
-            <PrivacyPolicyArea />
-        </main>
-        <Footer />
-    </Wrapper>
+  <Wrapper>
+    <SEO pageTitle="Privacy Policy" />
+    <Header />
+    <main id="main-content">
+      <Breadcrumb pageTitle="Follow Privacy Policy" currentPage="Follow Privacy Policy" />
+      <PrivacyPolicyArea />
+    </main>
+    <Footer />
+  </Wrapper>
 );
 
 export default PrivacyPolicy;

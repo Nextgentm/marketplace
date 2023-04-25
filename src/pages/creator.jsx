@@ -8,18 +8,18 @@ import CreatorArea from "@containers/creator/layout-03";
 import creatorData from "../data/sellers.json";
 
 const Creator = () => (
-    <Wrapper>
-        <SEO pageTitle="Creator" />
-        <Header />
-        <main id="main-content">
-            <CreatorArea data={{ creators: creatorData }} />
-        </main>
-        <Footer />
-    </Wrapper>
+  <Wrapper>
+    <SEO pageTitle="Creator" />
+    <Header />
+    <main id="main-content">
+      <CreatorArea data={{ creators: creatorData }} />
+    </main>
+    <Footer />
+  </Wrapper>
 );
 
 export async function getStaticProps() {
-    return { props: { className: "template-color-1" } };
+  return { props: { className: "template-color-1" } };
 }
 
 export default Creator;

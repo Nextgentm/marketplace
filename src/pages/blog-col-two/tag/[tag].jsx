@@ -9,58 +9,46 @@ import { flatDeep } from "@utils/methods";
 import { getPostsByTag, getAllPosts } from "../../../lib/api";
 
 const BlogTwoColumn = ({ posts, title }) => (
-    <Wrapper>
-        <SEO pageTitle="Blog Two Column" />
-        <Header />
-        <main id="main-content">
-            <Breadcrumb pageTitle={title} currentPage="Blog Two Column" />
-            <BlogArea data={{ posts }} rootPage="/blog-col-two" />
-        </main>
-        <Footer />
-    </Wrapper>
+  <Wrapper>
+    <SEO pageTitle="Blog Two Column" />
+    <Header />
+    <main id="main-content">
+      <Breadcrumb pageTitle={title} currentPage="Blog Two Column" />
+      <BlogArea data={{ posts }} rootPage="/blog-col-two" />
+    </main>
+    <Footer />
+  </Wrapper>
 );
 
 export async function getStaticPaths() {
-    const posts = getAllPosts(["tags"]);
-    const tagss = [
-        ...new Set(
-            flatDeep(posts.map(({ tags }) => tags.map((tag) => tag.slug)))
-        ),
-    ];
+  const posts = getAllPosts(["tags"]);
+  const tagss = [...new Set(flatDeep(posts.map(({ tags }) => tags.map((tag) => tag.slug))))];
 
-    return {
-        paths: tagss.map((tag) => ({
-            params: {
-                tag,
-            },
-        })),
-        fallback: false,
-    };
+  return {
+    paths: tagss.map((tag) => ({
+      params: {
+        tag
+      }
+    })),
+    fallback: false
+  };
 }
 
 export async function getStaticProps({ params }) {
-    const posts = getPostsByTag(params.tag, [
-        "title",
-        "date",
-        "slug",
-        "image",
-        "category",
-        "timeToRead",
-        "tags",
-    ]);
+  const posts = getPostsByTag(params.tag, ["title", "date", "slug", "image", "category", "timeToRead", "tags"]);
 
-    return {
-        props: {
-            posts,
-            title: params.tag,
-            className: "template-color-1",
-        },
-    };
+  return {
+    props: {
+      posts,
+      title: params.tag,
+      className: "template-color-1"
+    }
+  };
 }
 
 BlogTwoColumn.propTypes = {
-    posts: PropTypes.arrayOf(PropTypes.shape({})),
-    title: PropTypes.string,
+  posts: PropTypes.arrayOf(PropTypes.shape({})),
+  title: PropTypes.string
 };
 
 export default BlogTwoColumn;

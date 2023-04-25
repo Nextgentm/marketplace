@@ -1,35 +1,35 @@
 {
-    "address": "0xF96692f1F41BD35A8FAa3093BD5dFda989d935ca",
-    "abi": [
+  "address": "0xF96692f1F41BD35A8FAa3093BD5dFda989d935ca",
+  "abi": [
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Deployed",
+      "inputs": [
         {
-            "type": "event",
-            "anonymous": false,
-            "name": "Deployed",
-            "inputs": [
-                {
-                    "type": "address",
-                    "name": "owner",
-                    "indexed": false
-                },
-                {
-                    "type": "address",
-                    "name": "contractAddress",
-                    "indexed": false
-                }
-            ]
+          "type": "address",
+          "name": "owner",
+          "indexed": false
         },
         {
-            "type": "function",
-            "name": "deploy",
-            "constant": false,
-            "payable": false,
-            "inputs": [],
-            "outputs": [
-                {
-                    "type": "address",
-                    "name": "addr"
-                }
-            ]
+          "type": "address",
+          "name": "contractAddress",
+          "indexed": false
         }
-    ]
+      ]
+    },
+    {
+      "type": "function",
+      "name": "deploy",
+      "constant": false,
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "address",
+          "name": "addr"
+        }
+      ]
+    }
+  ]
 }

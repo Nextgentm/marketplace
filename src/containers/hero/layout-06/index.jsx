@@ -5,39 +5,39 @@ import Image from "next/image";
 import { ButtonType, IDType, ImageType } from "@utils/types";
 
 const SliderOptions = {
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    dots: false,
-    arrows: true,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  dots: false,
+  arrows: true
 };
 
 const HeroArea = ({ data }) => (
-    <div className="rn-banner-area rn-section-gapTop">
-        <div className="container">
-            {data?.banners && (
-                <Slider
-                    options={SliderOptions}
-                    className="slider-style-6 wide-wrapper slick-activation-06 slick-arrow-between desktop-slider"
-                >
-                    {data.banners.map((banner) => (
-                        <SliderItem key={banner.id}>
-                            <div className="slide">
-                                {banner.image?.src && (
-                                    <Image
-                                        src={banner.image.src}
-                                        alt="Slider BG"
-                                        quality={100}
-                                        priority
-                                        fill
-                                        sizes="100vw"
-                                        style={{
-                                            objectFit: "cover",
-                                        }}
-                                    />
-                                )}
+  <div className="rn-banner-area rn-section-gapTop">
+    <div className="container">
+      {data?.banners && (
+        <Slider
+          options={SliderOptions}
+          className="slider-style-6 wide-wrapper slick-activation-06 slick-arrow-between desktop-slider"
+        >
+          {data.banners.map((banner) => (
+            <SliderItem key={banner.id}>
+              <div className="slide">
+                {banner.image?.src && (
+                  <Image
+                    src={banner.image.src}
+                    alt="Slider BG"
+                    quality={100}
+                    priority
+                    fill
+                    sizes="100vw"
+                    style={{
+                      objectFit: "cover"
+                    }}
+                  />
+                )}
 
-                                <div className="banner-read-thumb-lg">
-                                    {/* <h4
+                <div className="banner-read-thumb-lg">
+                  {/* <h4
                                         dangerouslySetInnerHTML={{
                                             __html: banner?.title,
                                         }}
@@ -47,7 +47,7 @@ const HeroArea = ({ data }) => (
                                             __html: banner?.description,
                                         }}
                                     /> */}
-                                    {/* banner?.buttons && (
+                  {/* banner?.buttons && (
                                         <div className="button-group">
                                             {banner.buttons.map(
                                                 (
@@ -72,54 +72,54 @@ const HeroArea = ({ data }) => (
                                             )}
                                         </div>
                                                     ) */}
-                                </div>
-                            </div>
-                        </SliderItem>
-                    ))}
-                </Slider>
-            )}
-            {data?.banners && (
-                <Slider
-                    options={SliderOptions}
-                    className="slider-style-6 wide-wrapper slick-activation-06 slick-arrow-between mobile-slider"
-                >
-                    {data.banners.map((banner) => (
-                        <SliderItem key={banner.id}>
-                            <div className="slide">
-                                {banner.mobile?.src && (
-                                    <Image
-                                        src={banner.mobile.src}
-                                        alt="Slider BG"
-                                        quality={100}
-                                        priority
-                                        width="600"
-                                        height="700"
-                                        style={{
-                                            objectFit: "cover",
-                                        }}
-                                    />
-                                )}
-                            </div>
-                        </SliderItem>
-                    ))}
-                </Slider>
-            )}
-        </div>
+                </div>
+              </div>
+            </SliderItem>
+          ))}
+        </Slider>
+      )}
+      {data?.banners && (
+        <Slider
+          options={SliderOptions}
+          className="slider-style-6 wide-wrapper slick-activation-06 slick-arrow-between mobile-slider"
+        >
+          {data.banners.map((banner) => (
+            <SliderItem key={banner.id}>
+              <div className="slide">
+                {banner.mobile?.src && (
+                  <Image
+                    src={banner.mobile.src}
+                    alt="Slider BG"
+                    quality={100}
+                    priority
+                    width="600"
+                    height="700"
+                    style={{
+                      objectFit: "cover"
+                    }}
+                  />
+                )}
+              </div>
+            </SliderItem>
+          ))}
+        </Slider>
+      )}
     </div>
+  </div>
 );
 
 HeroArea.propTypes = {
-    data: PropTypes.shape({
-        banners: PropTypes.arrayOf(
-            PropTypes.shape({
-                id: IDType,
-                title: PropTypes.string.isRequired,
-                description: PropTypes.string.isRequired,
-                buttons: PropTypes.arrayOf(ButtonType),
-                image: ImageType,
-            })
-        ),
-    }),
+  data: PropTypes.shape({
+    banners: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: IDType,
+        title: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+        buttons: PropTypes.arrayOf(ButtonType),
+        image: ImageType
+      })
+    )
+  })
 };
 
 export default HeroArea;

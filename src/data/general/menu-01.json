@@ -1,68 +1,68 @@
 [
-    {
-        "id": 1,
-        "text": "Home",
-        "path": "/"
-    },
-    {
-        "id": 2,
-        "text": "About",
-        "path": "/about"
-    },
-    {
-        "id": 3,
-        "text": "Explore",
-        "path": "#!",
-        "submenu": [
-            {
-                "id": 11,
-                "text": "Collection",
-                "path": "/collection"
-            },
-            {
-                "id": 31,
-                "text": "NFT",
-                "path": "/explore-14"
-            }
-        ]
-    },
-    {
-        "id": 4,
-        "text": "Create",
-        "path": "#!",
-        "submenu": [
-            {
-                "id": 11,
-                "text": "NFT",
-                "path": "/upload-variants"
-            },
-            {
-                "id": 31,
-                "text": "Collection",
-                "path": "/upload-variants-collection"
-            }
-        ]
-    },
-    {
-        "id": 5,
-        "text": "Stats",
-        "path": "#!",
-        "submenu": [
-            {
-                "id": 412,
-                "text": "Activity",
-                "path": "/activity"
-            },
-            {
-                "id": 432,
-                "text": "NFT Ranking",
-                "path": "/ranking"
-            }
-        ]
-    },
-    {
-        "id": 6,
-        "text": "Contact",
-        "path": "/contact"
-    }
+  {
+    "id": 1,
+    "text": "Home",
+    "path": "/"
+  },
+  {
+    "id": 2,
+    "text": "About",
+    "path": "/about"
+  },
+  {
+    "id": 3,
+    "text": "Explore",
+    "path": "#!",
+    "submenu": [
+      {
+        "id": 11,
+        "text": "Collection",
+        "path": "/collection"
+      },
+      {
+        "id": 31,
+        "text": "NFT",
+        "path": "/explore-14"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "text": "Create",
+    "path": "#!",
+    "submenu": [
+      {
+        "id": 11,
+        "text": "NFT",
+        "path": "/upload-variants"
+      },
+      {
+        "id": 31,
+        "text": "Collection",
+        "path": "/upload-variants-collection"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "text": "Stats",
+    "path": "#!",
+    "submenu": [
+      {
+        "id": 412,
+        "text": "Activity",
+        "path": "/activity"
+      },
+      {
+        "id": 432,
+        "text": "NFT Ranking",
+        "path": "/ranking"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "text": "Contact",
+    "path": "/contact"
+  }
 ]

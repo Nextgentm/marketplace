@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import PropTypes from "prop-types";
 import { useRouter } from "next/router";
 import sal from "sal.js";
@@ -14,34 +14,34 @@ import { ApolloProvider } from "@apollo/client";
 import client from "@utils/apollo-client";
 
 const MyApp = ({ Component, pageProps }) => {
-    const router = useRouter();
-    useEffect(() => {
-        sal({ threshold: 0.1, once: true });
-    }, [router.asPath]);
+  const router = useRouter();
+  useEffect(() => {
+    sal({ threshold: 0.1, once: true });
+  }, [router.asPath]);
 
-    useEffect(() => {
-        sal();
-    }, []);
-    useEffect(() => {
-        document.body.className = `${pageProps.className}`;
-    });
+  useEffect(() => {
+    sal();
+  }, []);
+  useEffect(() => {
+    document.body.className = `${pageProps.className}`;
+  });
 
-    return (
-        <ApolloProvider client={client}>
-            <WalletDataContext>
-                <ThemeProvider defaultTheme="dark">
-                    <Component {...pageProps} />
-                </ThemeProvider>
-            </WalletDataContext>
-        </ApolloProvider>
-    );
+  return (
+    <ApolloProvider client={client}>
+      <WalletDataContext>
+        <ThemeProvider defaultTheme="dark">
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </WalletDataContext>
+    </ApolloProvider>
+  );
 };
 
 MyApp.propTypes = {
-    Component: PropTypes.elementType,
-    pageProps: PropTypes.shape({
-        className: PropTypes.string,
-    }),
+  Component: PropTypes.elementType,
+  pageProps: PropTypes.shape({
+    className: PropTypes.string
+  })
 };
 
 export default MyApp;
