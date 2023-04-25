@@ -118,24 +118,21 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product }) => {
                     </div>
                 )}
                 <div className="top-seller-content">
-                    <div className="row">
-                        <div className="col-md-7">
-                            <span>
-                                {eth && (
-                                    <>
-                                        {eth} wETH
-                                        {/* {product.auction.data.priceCurrency} by {name} */}
-                                    </>
-                                )}
-                                {/* <Anchor path={path}>{name}</Anchor> */}
-                            </span>
-                            {name && <span className="count-number">{name.substr(0, 5) + "..." + name.substr(-5)}</span>}
-                            {time && <span className="count-number">{new Date(time).toLocaleString()}</span>}
-                        </div>
-                        <div className="col-md-5">
-                            {product.owner === walletData.account && <Button onClick={acceptBid}> Accept Bid </Button>}
-                        </div>
-                    </div>
+                    <span>
+                        {eth && (
+                            <>
+                                {eth} wETH By
+                                {/* {product.auction.data.priceCurrency} by {name} */}
+                                {name && <span className="count-number">{name.substr(0, 5) + "..." + name.substr(-5)}</span>}
+                            </>
+                        )}
+                        {/* <Anchor path={path}>{name}</Anchor> */}
+                    </span>
+                    {time && <span className="count-number">{new Date(time).toLocaleString()}</span>}
+
+                </div>
+                <div className="ms-4 accept-bid-button-div">
+                    {product.owner === walletData.account && <Button size="lg" onClick={acceptBid}> Accept Bid </Button>}
                 </div>
             </div>
         </div>

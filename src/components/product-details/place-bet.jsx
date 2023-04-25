@@ -185,23 +185,25 @@ const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) =
             <div className={clsx("place-bet-area", className)}>
                 <div className="rn-bet-create">
                     <div className="bid-list winning-bid">
-                        <h6 className="title">{product.auction.data.sellType == "Bidding" ? "Winning bit" : "Buy Now"}</h6>
+                        <h6 className="title">{product.auction.data.sellType == "Bidding" ? "Auction Details" : "Buy Now"}</h6>
                         {product.auction.data.sellType == "Bidding" && (
                             <div className="top-seller-inner-one">
                                 <div className="top-seller-wrapper">
                                     {highest_bid?.bidder?.image?.src && (
                                         <div className="thumbnail">
-                                            <Anchor path={highest_bid.bidder.slug}>
-                                                <Image src={highest_bid.bidder.image.src} alt="Nft_Profile" width={44} height={44} />
+                                            <Anchor path={highest_bid?.bidder?.slug}>
+                                                <Image src={highest_bid?.bidder?.image?.src} alt="Nft_Profile" width={44} height={44} />
                                             </Anchor>
                                         </div>
                                     )}
 
                                     <div className="top-seller-content">
-                                        <span className="heighest-bid">
-                                            Heighest bid <Anchor path={highest_bid?.bidder.slug}>{highest_bid?.bidder.name}</Anchor>
-                                        </span>
-                                        <span className="count-number">{highest_bid?.amount}</span>
+                                        {/* <span className="heighest-bid">
+                                            Bid Price
+                                            Heighest bid <Anchor path={highest_bid?.bidder?.slug}>{highest_bid?.bidder?.name}</Anchor>
+                                        </span> */}
+                                        <span className="count-number">{highest_bid?.amount ? "Bid Amount :" + highest_bid?.amount : ""}{highest_bid?.priceCurrency}</span>
+                                        <span className="count-number">{highest_bid?.quantity ? "Quantity :" + highest_bid?.quantity : ""}</span>
                                     </div>
                                 </div>
                             </div>

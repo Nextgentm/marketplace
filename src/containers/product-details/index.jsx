@@ -283,7 +283,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
             <div className="rn-pd-content-area">
               <ProductTitle title={product?.name || "Untitled NFT"} likeCount={product?.size} />
               <span className="bid">
-                Height bid{" "}
+                Price {" "}
                 <span className="price">
                   {product.price}
                   {product.symbol}
@@ -347,8 +347,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                     />
                     {product.putOnSale && product.owner != walletData.account && (
                       <PlaceBet
-                        highest_bid={product?.highest_bid}
-                        auction_date={product?.auction_date}
+                        highest_bid={{ amount: product.auction?.data?.bidPrice, priceCurrency: product.auction?.data?.priceCurrency, quantity: product.auction?.data?.quantity }}
+                        auction_date={product.auction?.data?.endTimeStamp}
                         product={product}
                       />
                     )}
