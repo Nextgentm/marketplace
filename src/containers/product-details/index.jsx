@@ -502,7 +502,6 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                                             </Button>
                                         )}
                                     <div className="rn-bid-details">
-                                        {console.log(bids)}
                                         <BidTab
                                             bids={
                                                 product.putOnSale &&

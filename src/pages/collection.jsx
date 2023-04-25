@@ -13,7 +13,7 @@ const Collection = (props) => (
         <Header />
         <main id="main-content">
             <Breadcrumb pageTitle="Our Collection" currentPage="Collection" />
-            <CollectionArea data={props.data} />
+            <CollectionArea {...props} />
         </main>
         <Footer />
     </Wrapper>
@@ -27,6 +27,7 @@ export const getStaticProps = async () => {
                 pageSize: 5,
             },
         },
+        fetchPolicy: "network-only",
     });
     return {
         props: {
