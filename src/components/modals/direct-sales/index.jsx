@@ -17,7 +17,7 @@ const DirectSalesModal = ({ show, handleModal, supply, handleSubmit }) => {
         <p>Enter price. Your NFT will be pushed in top of marketplace</p>
         <div className="placebid-form-box">
           <form onSubmit={handleSubmit}>
-            <h5 className="title">Your bid</h5>
+            <h5 className="title">Enter Price</h5>
             <div className="bid-content">
               <div className="bid-content-top">
                 <div className="bid-content-left">

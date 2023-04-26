@@ -103,17 +103,18 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         contractAddress = product.collection.data.contractAddress1155;
         // Pull the deployed contract instance
         const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
-        if (sellType === "nav-direct-sale") {
+         // commented the timed auction part for erc1155 token
+        // if (sellType === "nav-direct-sale") {
           // approval for fixed price
           const transaction = await contract1155.setApprovalForAll(TradeContract.address, true);
           const receipt = await transaction.wait();
           // console.log(receipt);
-        } else if (sellType === "nav-timed-auction") {
-          // approval for timed auction
-          const transaction = await contract1155.setApprovalForAll(TransferProxy.address, true);
-          const receipt = await transaction.wait();
-          // console.log(receipt);
-        }
+        // } else if (sellType === "nav-timed-auction") {
+        //   // approval for timed auction
+        //   const transaction = await contract1155.setApprovalForAll(TransferProxy.address, true);
+        //   const receipt = await transaction.wait();
+        //   // console.log(receipt);
+        // }
       }
       return true;
     } catch (error) {
@@ -289,13 +290,13 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                     <div className={clsx("tab-wrapper-one", className)}>
                       <nav className="tab-button-one">
                         <Nav as="div" className="nav-tabs">
-                          <Nav.Link as="button" eventKey="nav-direct-sale" onClick={() => handleDirectSaleModal(true)}>
+                          <Nav.Link as="button" eventKey="nav-direct-sale" onClick={() => { setSellType("nav-direct-sale"); handleDirectSaleModal(true);}}>
                             Direct Sale
                           </Nav.Link>
                           <Nav.Link
                             as="button"
                             eventKey="nav-timed-auction"
-                            onClick={() => handleTimeAuctionModal(true)}
+                            onClick={() => { setSellType("nav-timed-auction"); handleTimeAuctionModal(true) }}
                           >
                             Timed Auction
                           </Nav.Link>
@@ -309,7 +310,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                   {!product.putOnSale && product.owner === walletData.account && (
                     <div className="row">
                       <div className="col-md-6">
-                        <Button color="primary-alta" onClick={() => setShowAuctionInputModel(true)}>
+                        <Button color="primary-alta" onClick={() => product.collection.data.collectionType === "Multiple" ? setShowDirectSalesModal(true) : setShowAuctionInputModel(true)}>
                           Put on Sale
                         </Button>
                       </div>
@@ -330,7 +331,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                       tags={product?.tags}
                       history={product?.history}
                     />
-                    {product.putOnSale && product.owner != walletData.account && (
+                    {product.putOnSale && (
                       <PlaceBet
                         highest_bid={{
                           amount: product.auction?.data?.bidPrice,
@@ -339,6 +340,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                         }}
                         auction_date={product.auction?.data?.endTimeStamp}
                         product={product}
+                        isOwner={product.auction?.data?.walletAddress == walletData.account}
                       />
                     )}
                   </div>
