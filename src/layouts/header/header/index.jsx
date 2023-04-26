@@ -101,6 +101,7 @@ const Header = ({ className }) => {
       // }
     } catch (err) {
       console.log(err);
+      localStorage.setItem("isWalletConnected", false);
     }
   };
 
