@@ -3,7 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
 
 const TransferPopupModal = ({ show, handleModal, product, handleSubmit }) => {
-    console.log("emial");
+    // console.log("emial");
     return (
         <Modal
             className="rn-popup-modal placebid-modal-wrapper"

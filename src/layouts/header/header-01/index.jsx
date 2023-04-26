@@ -50,15 +50,15 @@ const Header = ({ className }) => {
         */
 
     // check if previously connected
-    // if (isPreviouslyConnected()) {
-    //     onConnect();
-    // }
+    if (isPreviouslyConnected()) {
+      onConnect();
+    }
     // Render wallet details
     setIsAuthenticated(walletData.isConnected);
     if (walletData.isConnected) {
       setEthBalance(walletData.balance);
     }
-  }, [ethBalance]);
+  }, []);
 
   const detectCurrentProvider = () => {
     let provider;
@@ -73,9 +73,12 @@ const Header = ({ className }) => {
   };
 
   const isPreviouslyConnected = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const accounts = await provider.listAccounts();
-    return accounts.length > 0;
+    if (localStorage?.getItem("isWalletConnected") === "true") {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const accounts = await provider.listAccounts();
+      return accounts.length > 0;
+    }
+    return false;
   };
 
   const switchNetwork = async () => {
@@ -127,6 +130,7 @@ const Header = ({ className }) => {
         ethers,
         isConnected: true
       });
+      localStorage.setItem("isWalletConnected", true);
       // console.log(walletData);
       setEthBalance(getEthBalance);
       setIsAuthenticated(walletData.isConnected);
@@ -144,6 +148,7 @@ const Header = ({ className }) => {
       ethers,
       isConnected: false
     });
+    localStorage.setItem("isWalletConnected", false);
     setIsAuthenticated(false);
   };
 
@@ -192,14 +197,14 @@ const Header = ({ className }) => {
                   <UserDropdown onDisconnect={onDisconnect} ethBalance={ethBalance} />
                 </div>
               )}
-              <div className="setting-option rn-icon-list notification-badge">
+              {/*<div className="setting-option rn-icon-list notification-badge">
                 <div className="icon-box">
                   <Anchor path={headerData.activity_link}>
                     <i className="feather-bell" />
                     <span className="badge">6</span>
                   </Anchor>
                 </div>
-              </div>
+              </div>*/}
               <div className="setting-option mobile-menu-bar d-block d-xl-none">
                 <div className="hamberger">
                   <BurgerButton onClick={offcanvasHandler} />

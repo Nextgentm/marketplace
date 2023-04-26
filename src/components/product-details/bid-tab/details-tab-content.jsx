@@ -2,10 +2,14 @@ import PropTypes from "prop-types";
 import TopSeller from "@components/top-seller/layout-01";
 import { IDType, ImageType } from "@utils/types";
 
-const DetailsTabContent = ({ owner, properties, tags }) => (
+const DetailsTabContent = ({ owner, properties, tags, supply }) => (
   <div className="rn-pd-bd-wrapper mt--20">
-    <TopSeller name={owner.name} total_sale={owner.total_sale} slug={owner.slug} image={owner.image} />
-    {properties && (
+    {/* <TopSeller name={owner.name} total_sale={owner.total_sale} slug={owner.slug} image={owner.image} /> */}
+    <div className="row">
+      <span>NFT Owner : {owner}</span>
+      <span>Supply : {supply}</span>
+    </div>
+    {properties && properties?.length > 0 && (
       <div className="rn-pd-sm-property-wrapper">
         <h6 className="pd-property-title">Property</h6>
         <div className="property-wrapper">

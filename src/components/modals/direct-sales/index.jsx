@@ -4,7 +4,7 @@ import Button from "@ui/button";
 
 
 
-const DirectSalesModal = ({ show, handleModal, product, handleSubmit }) => {
+const DirectSalesModal = ({ show, handleModal, supply, handleSubmit }) => {
 
     return (
         <Modal
@@ -60,13 +60,16 @@ const DirectSalesModal = ({ show, handleModal, product, handleSubmit }) => {
                                         <input type="date" id="endDate" name="endDate" />
                                     </div>
                                 </div>
-                                {product?.supply > 1 && (
+                            </div>
+
+                            {supply > 1 && (
+                                <div className="bid-content-mid">
                                     <div className="row">
                                         <label htmlFor="quantity">Quantity</label>
                                         <input type="number" id="quantity" min="1" placeholder="e.g. 10" />
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </div>
                         <div className="bit-continue-button">
                             <Button size="medium" type="submit" fullwidth>

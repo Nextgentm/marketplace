@@ -129,7 +129,7 @@ contract Trade is AccessControl {
             order
         );
         require(
-            (fee.price >= order.unitPrice * order.qty),
+            (fee.price <= order.unitPrice * order.qty),
             "Paid invalid amount"
         );
         address buyer = msg.sender;

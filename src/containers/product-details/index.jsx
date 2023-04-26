@@ -39,11 +39,13 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   const router = useRouter();
   const [showDirectSalesModal, setShowDirectSalesModal] = useState(false);
   const handleDirectSaleModal = () => {
+    setShowAuctionInputModel(!showDirectSalesModal); // close model close on sale buttons option
     setShowDirectSalesModal((prev) => !prev);
   };
 
   const [showTimeAuctionModal, setShowTimeAuctionModal] = useState(false);
   const handleTimeAuctionModal = () => {
+    setShowAuctionInputModel(!showTimeAuctionModal); // close model close on sale buttons option 
     setShowTimeAuctionModal((prev) => !prev);
   };
 
@@ -104,9 +106,23 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         contractAddress = product.collection.data.contractAddress1155;
         // Pull the deployed contract instance
         const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
-        const transaction = await contract1155.setApprovalForAll(TradeContract.address, true);
-        const receipt = await transaction.wait();
-        // console.log(receipt);
+        if (sellType === "nav-direct-sale") {
+          // approval for fixed price
+          const transaction = await contract1155.setApprovalForAll(
+            TradeContract.address,
+            true
+          );
+          const receipt = await transaction.wait();
+          // console.log(receipt);
+        } else if (sellType === "nav-timed-auction") {
+          // approval for timed auction
+          const transaction = await contract1155.setApprovalForAll(
+            TransferProxy.address,
+            true
+          );
+          const receipt = await transaction.wait();
+          // console.log(receipt);
+        }
       }
       return true;
     } catch (error) {
@@ -189,6 +205,71 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     StoreData(data);
   };
 
+
+  const handleSubmitTransfer = async (event) => {
+    // const { target } = e;
+    event.preventDefault();
+    // console.log(event);
+    // console.log(product);
+    if (!walletData.isConnected) {
+      toast.error("Please connect wallet first");
+      return;
+    } // chnage network
+    if (product.collection.data.networkType === "Ethereum") {
+      if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+        // ethereum testnet
+        return;
+      }
+    } else if (product.collection.data.networkType === "Polygon") {
+      if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    }
+    // transfer NFT to other user
+    const receiver = event.target.receiver.value;
+    // console.log(receiver);
+    try {
+      if (walletData.ethers.utils.isAddress(receiver)) {
+        // console.log("valid address");
+
+        const signer = walletData.provider.getSigner();
+        if (product.collection.data.collectionType === "Single") {
+          const contractAddress = product.collection.data.contractAddress;
+          // console.log(contractAddress);
+
+          // Pull the deployed contract instance
+          const contract721 = new walletData.ethers.Contract(contractAddress, ERC721Contract.abi, signer);
+
+          // approve nft first
+          const transaction = await contract721.transferFrom(walletData.account, receiver, product.nftID);
+          const receipt = await transaction.wait();
+          // console.log(receipt);
+
+        } else if (product.collection.data.collectionType === "Multiple") {
+          const contractAddress = product.collection.data.contractAddress1155;
+          // Pull the deployed contract instance
+          const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
+
+          // transfer token
+          const transaction = await contract1155.safeTransferFrom(
+            walletData.account,
+            receiver,
+            product.nftID,
+            product.supply,
+            []
+          );
+          const receipt = await transaction.wait();
+          // console.log(receipt);
+        }
+      } else {
+        toast.error("Invalid address");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className={clsx("product-details-area", space === 1 && "rn-section-gapTop", className)}>
       <div className="container">
@@ -202,7 +283,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
             <div className="rn-pd-content-area">
               <ProductTitle title={product?.name || "Untitled NFT"} likeCount={product?.size} />
               <span className="bid">
-                Height bid{" "}
+                Price {" "}
                 <span className="price">
                   {product.price}
                   {product.symbol}
@@ -215,145 +296,45 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
               </div>
               {showAuctionInputModel ? (
                 <div className="rn-bid-details">
-                  <TabContainer defaultActiveKey="nav-direct-sale">
+                  <TabContainer defaultActiveKey="nav-direct-sale1">
                     <div className={clsx("tab-wrapper-one", className)}>
                       <nav className="tab-button-one">
                         <Nav as="div" className="nav-tabs">
                           <Nav.Link
                             as="button"
-                            eventKey="nav-direct-sale1"
+                            eventKey="nav-direct-sale"
                             onClick={() => handleDirectSaleModal(true)}
                           >
                             Direct Sale
                           </Nav.Link>
                           <Nav.Link
                             as="button"
-                            eventKey="nav-timed-auction1"
+                            eventKey="nav-timed-auction"
                             onClick={() => handleTimeAuctionModal(true)}
                           >
                             Timed Auction
                           </Nav.Link>
                         </Nav>
                       </nav>
-
-                      <TabContent className="rn-bid-content">
-                        <TabPane eventKey="nav-direct-sale">
-                          <div className="rn-pd-bd-wrapper mt--20">
-                            <div className="">
-                              <form onSubmit={handleSubmit}>
-                                <div className="row">
-                                  <label htmlFor="price">Set a price</label>
-                                  <input
-                                    type="number"
-                                    // step="0.000001"
-                                    id="price"
-                                    min="1"
-                                    placeholder="e.g. 1"
-                                  />
-                                </div>
-                                <div className="row">
-                                  <label htmlFor="price">Set currencyType</label>
-                                  <select id="currency">
-                                    <option value="wETH">WETH</option>
-                                    {/* <option value="wMatic">
-                                                                            WMatic
-                                                                        </option> */}
-                                  </select>
-                                </div>
-                                <div className="row">
-                                  <div className="col-md-6">
-                                    <label htmlFor="startDate">Start Date</label>
-                                    <input type="date" id="startDate" name="startDate" />
-                                  </div>
-                                  <div className="col-md-6">
-                                    <label htmlFor="startDate">End Date</label>
-                                    <input type="date" id="endDate" name="endDate" />
-                                  </div>
-                                </div>
-                                {product.supply > 1 && (
-                                  <div className="row">
-                                    <label htmlFor="quantity">Quantity</label>
-                                    <input type="number" id="quantity" min="1" placeholder="e.g. 10" />
-                                  </div>
-                                )}
-                                <div className="row">
-                                  <div className="col-md-6">
-                                    <Button onClick={() => setShowAuctionInputModel(false)}>Close</Button>
-                                  </div>
-                                  <div className="col-md-6">
-                                    <Button type="submit">Submit</Button>
-                                  </div>
-                                </div>
-                              </form>
-                            </div>
-                          </div>
-                        </TabPane>
-                        <TabPane eventKey="nav-timed-auction">
-                          <div className="rn-pd-bd-wrapper mt--20">
-                            <div className="">
-                              <h6 className="">This is direct Sale page</h6>
-                              <form onSubmit={handleSubmit}>
-                                <div className="row">
-                                  <label htmlFor="price">Set initial bid price</label>
-                                  <input
-                                    type="number"
-                                    // step="0.000001"
-                                    id="price"
-                                    min="1"
-                                    placeholder="e.g. 1"
-                                  />
-                                </div>
-                                <div className="row">
-                                  <label htmlFor="price">Set currencyType</label>
-                                  <select id="currency">
-                                    <option value="wETH">WETH</option>
-                                    {/* <option value="wMatic">
-                                                                            WMatic
-                                                                        </option> */}
-                                  </select>
-                                </div>
-                                <div className="row">
-                                  <div className="col-md-6">
-                                    <label htmlFor="startDate">Start Date</label>
-                                    <input type="date" id="startDate" name="startDate" />
-                                  </div>
-                                  <div className="col-md-6">
-                                    <label htmlFor="startDate">End Date</label>
-                                    <input type="date" id="endDate" name="endDate" />
-                                  </div>
-                                </div>
-                                {product.supply > 1 && (
-                                  <div className="row">
-                                    <label htmlFor="quantity">Quantity</label>
-                                    <input type="number" id="quantity" min="1" placeholder="e.g. 10" />
-                                  </div>
-                                )}
-                                <div className="row">
-                                  <div className="col-md-6">
-                                    <Button onClick={() => setShowAuctionInputModel(false)}>Close</Button>
-                                  </div>
-                                  <div className="col-md-6">
-                                    <Button type="submit">Submit</Button>
-                                  </div>
-                                </div>
-                              </form>
-                            </div>
-                          </div>
-                        </TabPane>
-                      </TabContent>
                     </div>
                   </TabContainer>
                 </div>
               ) : (
                 <>
                   {!product.putOnSale && product.owner === walletData.account && (
-                    <Button color="primary-alta" onClick={() => setShowAuctionInputModel(true)}>
-                      Put on Sale
-                    </Button>
+                    <div className="row">
+                      <div className="col-md-6">
+                        <Button color="primary-alta" onClick={() => setShowAuctionInputModel(true)}>
+                          Put on Sale
+                        </Button>
+                      </div>
+                      <div className="col-md-6">
+                        <Button color="primary-alta" onClick={() => handleShowTransferModal(true)}>
+                          Transfer
+                        </Button>
+                      </div>
+                    </div>
                   )}
-                  <Button color="primary-alta" onClick={() => handleShowTransferModal(true)}>
-                    Transfer
-                  </Button>
 
                   <div className="rn-bid-details">
                     <BidTab
@@ -366,8 +347,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                     />
                     {product.putOnSale && product.owner != walletData.account && (
                       <PlaceBet
-                        highest_bid={product?.highest_bid}
-                        auction_date={product?.auction_date}
+                        highest_bid={{ amount: product.auction?.data?.bidPrice, priceCurrency: product.auction?.data?.priceCurrency, quantity: product.auction?.data?.quantity }}
+                        auction_date={product.auction?.data?.endTimeStamp}
                         product={product}
                       />
                     )}
@@ -381,14 +362,19 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       <DirectSalesModal
         show={showDirectSalesModal}
         handleModal={handleDirectSaleModal}
+        supply={product?.supply}
+        handleSubmit={handleSubmit}
       />
       <TimeAuctionModal
         show={showTimeAuctionModal}
         handleModal={handleTimeAuctionModal}
+        supply={product?.supply}
+        handleSubmit={handleSubmit}
       />
       <TransferPopupModal
         show={showTransferModal}
         handleModal={handleShowTransferModal}
+        handleSubmit={handleSubmitTransfer}
       />
     </div>
   );

@@ -52,7 +52,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections/?populate=*`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections/?populate[collectibles][populate][0]=image`);
   const productData = await res.json();
   const collections = productData.data.find(({ slug }) => slug === params.slug);
   return {
