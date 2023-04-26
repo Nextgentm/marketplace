@@ -54,22 +54,21 @@ const MyApp = ({ Component, pageProps }) => {
     document.body.className = `${pageProps.className}`;
   }, [pageProps]);
 
-
   const handleRouteStart = async () => {
     const NProgress = await loadNProgress();
-    NProgress.configure({ showSpinner: false })
+    NProgress.configure({ showSpinner: false });
 
     setTimeout(() => {
       NProgress && NProgress.start();
     }, 10);
-  }
+  };
 
   const handleRouteDone = async () => {
     const NProgress = await loadNProgress();
     setTimeout(() => {
       NProgress && NProgress.done();
     }, 20);
-  }
+  };
   return (
     <ApolloProvider client={client}>
       <AppDataContext>

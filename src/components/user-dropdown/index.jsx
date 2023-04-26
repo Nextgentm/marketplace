@@ -8,8 +8,15 @@ import { doLogOut } from "src/lib/user";
 import { useRouter } from "next/router";
 
 const UserDropdown = () => {
-  const router = useRouter()
-  const { userData, setWalletData, walletData, loadUserData, isAuthenticatedCryptoWallet, setIsAuthenticatedCryptoWallet } = useContext(AppData);
+  const router = useRouter();
+  const {
+    userData,
+    setWalletData,
+    walletData,
+    loadUserData,
+    isAuthenticatedCryptoWallet,
+    setIsAuthenticatedCryptoWallet
+  } = useContext(AppData);
   const [ethBalance, setEthBalance] = useState("");
 
   const onConnect = async () => {
@@ -54,18 +61,18 @@ const UserDropdown = () => {
       isConnected: false
     });
     setIsAuthenticatedCryptoWallet(false);
-    await doLogOut()
-    await loadUserData()
-    router.push("/")
-
+    await doLogOut();
+    await loadUserData();
+    router.push("/");
   };
   return (
     <div className="icon-box">
       <Anchor path="/author">
-        {userData?.photoURL ?
-          <img src={userData?.photoURL} alt="Images" width={38} height={38} /> :
-          <Image src="/images/icons/boy-avater.png" alt="Images" width={38} height={38} />}
-
+        {userData?.photoURL ? (
+          <img src={userData?.photoURL} alt="Images" width={38} height={38} />
+        ) : (
+          <Image src="/images/icons/boy-avater.png" alt="Images" width={38} height={38} />
+        )}
       </Anchor>
       <div className="rn-dropdown">
         <div className="rn-inner-top">
@@ -76,51 +83,54 @@ const UserDropdown = () => {
             <Anchor path="/product">Set Display Name</Anchor>
           </span>
         </div>
-        {!isAuthenticatedCryptoWallet &&
+        {!isAuthenticatedCryptoWallet && (
           <div className="setting-option header-btn">
             <Button color="primary" className="connectBtn" onClick={onConnect} fullwidth="true">
               Wallet Connect
             </Button>
-          </div>}
-        {isAuthenticatedCryptoWallet && <><div className="rn-product-inner">
-          <ul className="product-list">
-            <li className="single-product-list">
-              <div className="thumbnail">
-                <Anchor path="/product">
-                  <Image src="/images/portfolio/portfolio-07.jpg" alt="Nft Product Images" width={50} height={50} />
-                </Anchor>
-              </div>
-              <div className="content">
-                <h6 className="title">
-                  <Anchor path="/product">Balance</Anchor>
-                </h6>
-                <span className="price">{ethBalance} ETH</span>
-              </div>
-              <div className="button" />
-            </li>
-            <li className="single-product-list">
-              <div className="thumbnail">
-                <Anchor path="/product">
-                  <Image src="/images/portfolio/portfolio-01.jpg" alt="Nft Product Images" width={50} height={50} />
-                </Anchor>
-              </div>
-              <div className="content">
-                <h6 className="title">
-                  <Anchor path="/product">Balance</Anchor>
-                </h6>
-                <span className="price">{ethBalance} ETH</span>
-              </div>
-              <div className="button" />
-            </li>
-          </ul>
-        </div>
-          <div className="add-fund-button mt--20 pb--20">
-            <Anchor className="btn btn-primary-alta w-100" path="/connect">
-              Add Your More Funds
-            </Anchor>
           </div>
-        </>
-        }
+        )}
+        {isAuthenticatedCryptoWallet && (
+          <>
+            <div className="rn-product-inner">
+              <ul className="product-list">
+                <li className="single-product-list">
+                  <div className="thumbnail">
+                    <Anchor path="/product">
+                      <Image src="/images/portfolio/portfolio-07.jpg" alt="Nft Product Images" width={50} height={50} />
+                    </Anchor>
+                  </div>
+                  <div className="content">
+                    <h6 className="title">
+                      <Anchor path="/product">Balance</Anchor>
+                    </h6>
+                    <span className="price">{ethBalance} ETH</span>
+                  </div>
+                  <div className="button" />
+                </li>
+                <li className="single-product-list">
+                  <div className="thumbnail">
+                    <Anchor path="/product">
+                      <Image src="/images/portfolio/portfolio-01.jpg" alt="Nft Product Images" width={50} height={50} />
+                    </Anchor>
+                  </div>
+                  <div className="content">
+                    <h6 className="title">
+                      <Anchor path="/product">Balance</Anchor>
+                    </h6>
+                    <span className="price">{ethBalance} ETH</span>
+                  </div>
+                  <div className="button" />
+                </li>
+              </ul>
+            </div>
+            <div className="add-fund-button mt--20 pb--20">
+              <Anchor className="btn btn-primary-alta w-100" path="/connect">
+                Add Your More Funds
+              </Anchor>
+            </div>
+          </>
+        )}
 
         <ul className="list-inner">
           <li>
@@ -138,7 +148,6 @@ const UserDropdown = () => {
       </div>
     </div>
   );
-}
-
+};
 
 export default UserDropdown;

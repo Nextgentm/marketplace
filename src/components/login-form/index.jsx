@@ -26,23 +26,20 @@ const LoginForm = ({ className }) => {
         let loginResponse = await strapi.login({
           identifier: data.identifier,
           password: data.password
-        })
-        console.log("data", loginResponse)
-        setCookie("token", loginResponse.jwt)
-        localStorage.setItem("user", JSON.stringify(loginResponse.user))
-        toast.success("Logged In Successfully")
+        });
+        console.log("data", loginResponse);
+        setCookie("token", loginResponse.jwt);
+        localStorage.setItem("user", JSON.stringify(loginResponse.user));
+        toast.success("Logged In Successfully");
         router.push("/");
-      }
-      catch ({ error }) {
-        toast.error("Invalid login information")
+      } catch ({ error }) {
+        toast.error("Invalid login information");
         console.log(error);
         return;
       }
       console.log(data);
-
-    };
-  }
-
+    }
+  };
 
   return (
     <div className={clsx("form-wrapper-one", className)}>

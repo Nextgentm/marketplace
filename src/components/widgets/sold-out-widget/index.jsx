@@ -17,24 +17,14 @@ const SoldOutWidget = ({ data }) => (
             {product.image?.src && (
               <div className="thumbnail">
                 <Anchor path={product.path}>
-                  <Image
-                    src={product.image.src}
-                    alt={
-                      product.image?.alt ||
-                      "Product Images"
-                    }
-                    width={60}
-                    height={60}
-                  />
+                  <Image src={product.image.src} alt={product.image?.alt || "Product Images"} width={60} height={60} />
                 </Anchor>
               </div>
             )}
 
             <div className="content">
               <h6 className="title">
-                <Anchor path={product.path}>
-                  {product.title}
-                </Anchor>
+                <Anchor path={product.path}>{product.title}</Anchor>
               </h6>
               <p>{product.highestBid}</p>
               <span className="price">{product.price}</span>

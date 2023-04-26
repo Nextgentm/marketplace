@@ -7,8 +7,6 @@ import { userSessionData } from "src/lib/user";
 import { isServer } from "@utils/methods";
 import Router from "next/router";
 
-
-
 const Login = () => (
   <Wrapper>
     <SEO pageTitle="Log In" />
@@ -21,19 +19,17 @@ const Login = () => (
 );
 
 Login.getInitialProps = async (ctx) => {
-  const { isAuthenticated } = await userSessionData(ctx)
+  const { isAuthenticated } = await userSessionData(ctx);
   if (!isServer() && isAuthenticated) {
-    Router.push("/")
-  }
-  else if (isAuthenticated) {
+    Router.push("/");
+  } else if (isAuthenticated) {
     ctx.res.writeHead(302, {
       Location: "/"
     });
     ctx.res.end();
-
   }
 
   return { className: "template-color-1" };
-}
+};
 
 export default Login;

@@ -20,19 +20,17 @@ const SignUp = () => (
 );
 
 SignUp.getInitialProps = async (ctx) => {
-  const { isAuthenticated } = await userSessionData(ctx)
+  const { isAuthenticated } = await userSessionData(ctx);
   if (!isServer() && isAuthenticated) {
-    Router.push("/")
-  }
-  else if (isAuthenticated) {
+    Router.push("/");
+  } else if (isAuthenticated) {
     ctx.res.writeHead(302, {
       Location: "/"
     });
     ctx.res.end();
-
   }
 
   return { className: "template-color-1" };
-}
+};
 
 export default SignUp;

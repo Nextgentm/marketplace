@@ -566,15 +566,15 @@ const CreateCollectionArea = () => {
                           options={
                             walletData.isConnected
                               ? [
-                                {
-                                  value: "Ethereum",
-                                  text: "Ethereum"
-                                },
-                                {
-                                  value: "Polygon",
-                                  text: "Polygon"
-                                }
-                              ]
+                                  {
+                                    value: "Ethereum",
+                                    text: "Ethereum"
+                                  },
+                                  {
+                                    value: "Polygon",
+                                    text: "Polygon"
+                                  }
+                                ]
                               : []
                           }
                           onChange={blockchainNetworkHandler}

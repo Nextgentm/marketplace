@@ -27,21 +27,19 @@ const SignupForm = ({ className }) => {
           username: data.username,
           identifier: data.identifier,
           password: data.password
-        })
-        console.log("data", loginResponse)
-        setCookie("token", loginResponse.jwt)
-        localStorage.setItem("user", JSON.stringify(loginResponse.user))
-        toast.success("Registration Successfully")
+        });
+        console.log("data", loginResponse);
+        setCookie("token", loginResponse.jwt);
+        localStorage.setItem("user", JSON.stringify(loginResponse.user));
+        toast.success("Registration Successfully");
         router.push("/");
-      }
-      catch ({ error }) {
-        toast.error(error.message)
+      } catch ({ error }) {
+        toast.error(error.message);
         console.log(error);
         return;
       }
       console.log(data);
-
-    };
+    }
   };
 
   return (

@@ -19,7 +19,6 @@ const Collection = (props) => (
   </Wrapper>
 );
 
-
 Collection.getInitialProps = async () => {
   const { data } = await client.query({
     query: ALL_COLLECTION_QUERY,

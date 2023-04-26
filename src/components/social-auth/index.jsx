@@ -8,7 +8,7 @@ import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props
 import { useRouter } from "next/router";
 
 const SocialAuth = ({ className, title }) => {
-  const router = useRouter()
+  const router = useRouter();
 
   const { signIn, signOut } = useGoogleLogin({
     clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
@@ -16,24 +16,25 @@ const SocialAuth = ({ className, title }) => {
     onSuccess: (data) => {
       callAuthService("google", data.accessToken);
     }
-  })
+  });
   const callAuthService = async (provider, token) => {
     try {
       const loginResponse = await strapi.authenticateProvider(provider, token);
-      setCookie("token", loginResponse.jwt)
-      localStorage.setItem("user", JSON.stringify(loginResponse.user))
-      toast.success(`${router.pathname == "/sign-up" ? "Registration" : "Logged In"} Successfully`)
-      if (provider == "google") { signOut() }
+      setCookie("token", loginResponse.jwt);
+      localStorage.setItem("user", JSON.stringify(loginResponse.user));
+      toast.success(`${router.pathname == "/sign-up" ? "Registration" : "Logged In"} Successfully`);
+      if (provider == "google") {
+        signOut();
+      }
       setTimeout(() => {
-
         router.push("/");
-      }, 500)
+      }, 500);
     } catch ({ error }) {
-      toast.error("Invalid login information")
+      toast.error("Invalid login information");
       console.log(error);
       return;
     }
-  }
+  };
   return (
     <div className={clsx("social-share-media form-wrapper-one", className)}>
       <h6>{title}</h6>
@@ -42,18 +43,12 @@ const SocialAuth = ({ className, title }) => {
         <span className="small-image">
           <Image src="/images/icons/google.png" alt="google login" width={26} height={27} />
         </span>
-        <span>{router.pathname == "/sign-up" ? "Signup" : "Login"}  with Google</span>
+        <span>{router.pathname == "/sign-up" ? "Signup" : "Login"} with Google</span>
       </button>
       <FacebookLogin
-        appId={
-          process.env
-            .NEXT_PUBLIC_FACEBOOK_CLIENT_ID
-        }
+        appId={process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}
         callback={({ accessToken }) => {
-          callAuthService(
-            "facebook",
-            accessToken
-          );
+          callAuthService("facebook", accessToken);
         }}
         render={(renderProps) => (
           <button type="button" className="another-login login-facebook" onClick={renderProps.onClick}>
@@ -61,10 +56,11 @@ const SocialAuth = ({ className, title }) => {
               <Image src="/images/icons/facebook.png" alt="facebook login" width={26} height={27} />
             </span>
             <span>{router.pathname == "/sign-up" ? "Signup" : "Login"} with Facebook</span>
-          </button>)} />
-
+          </button>
+        )}
+      />
     </div>
-  )
+  );
 };
 
 SocialAuth.propTypes = {

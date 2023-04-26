@@ -26,7 +26,6 @@ const Header = ({ className }) => {
   const { offcanvas, offcanvasHandler } = useOffcanvas();
   const { search, searchHandler } = useFlyoutSearch();
 
-
   const { walletData, setWalletData, userData } = useContext(AppData);
 
   const detectCurrentProvider = () => {
@@ -191,7 +190,7 @@ const Header = ({ className }) => {
             </div>
           </div>
         </div>
-      </header >
+      </header>
       <MobileMenu isOpen={offcanvas} onClick={offcanvasHandler} menu={menuData} logo={headerData.logo} />
     </>
   );

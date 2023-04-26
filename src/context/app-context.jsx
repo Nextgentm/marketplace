@@ -6,7 +6,7 @@ import { userSessionData } from "src/lib/user";
 export const AppData = createContext(null);
 
 const AppDataContext = ({ children }) => {
-  const router = useRouter()
+  const router = useRouter();
   const [walletData, setWalletData] = useState({
     provider: null,
     account: null,
@@ -14,31 +14,22 @@ const AppDataContext = ({ children }) => {
     ethers: null,
     isConnected: false
   });
-  const [userData, setUserData] = useState()
+  const [userData, setUserData] = useState();
   const [isAuthenticatedCryptoWallet, setIsAuthenticatedCryptoWallet] = useState(false);
 
-
   useEffect(() => {
-
-    (async () =>
-      await loadUserData()
-    )()
+    (async () => await loadUserData())();
     console.log("*-*-*-*-*-*appcontext");
-
-  }, [router.asPath])
+  }, [router.asPath]);
 
   const loadUserData = async () => {
-
-    const { isAuthenticated } = await userSessionData()
-    console.log("isAuthenticated")
+    const { isAuthenticated } = await userSessionData();
+    console.log("isAuthenticated");
     if (!isServer() && isAuthenticated) {
-      const user = JSON.parse(localStorage.getItem("user"))
-      setUserData(user)
-    }
-    else if (!isAuthenticated)
-      setUserData()
-
-  }
+      const user = JSON.parse(localStorage.getItem("user"));
+      setUserData(user);
+    } else if (!isAuthenticated) setUserData();
+  };
   const value = useMemo(
     () => ({
       walletData,
