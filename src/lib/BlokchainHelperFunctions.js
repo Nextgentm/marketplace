@@ -58,3 +58,13 @@ export async function changeNetwork(networkType) {
   }
   return null;
 }
+
+// convert values
+export function convertEthertoWei(ethers, value) {
+  const amount = ethers.utils.parseUnits(value.toString(), "ether");
+  return parseInt(amount._hex, 16).toString();
+}
+
+export function convertWeitoEther(ethers, weiValue) {
+  return ethers.utils.formatEther(weiValue);
+}

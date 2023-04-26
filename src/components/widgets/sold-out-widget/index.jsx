@@ -5,44 +5,44 @@ import Image from "next/image";
 const SoldOutWidget = ({ data }) => (
   <div className="footer-widget">
     <h6 className="widget-title">{data.title}</h6>
-    {data?.image && (
+    {/*data?.image && (
       <Anchor className="logo-light" path={data.link}>
         <Image src={data.image} alt="nft-logo" width={250} height={70} priority />
       </Anchor>
-    )}
-    {/* data?.products && (
-            <ul className="footer-recent-post">
-                {data.products.map((product) => (
-                    <li key={product.id} className="recent-post">
-                        {product.image?.src && (
-                            <div className="thumbnail">
-                                <Anchor path={product.path}>
-                                    <Image
-                                        src={product.image.src}
-                                        alt={
-                                            product.image?.alt ||
-                                            "Product Images"
-                                        }
-                                        width={60}
-                                        height={60}
-                                    />
-                                </Anchor>
-                            </div>
-                        )}
+    )*/}
+    {data?.products && (
+      <ul className="footer-recent-post">
+        {data.products.map((product) => (
+          <li key={product.id} className="recent-post">
+            {product.image?.src && (
+              <div className="thumbnail">
+                <Anchor path={product.path}>
+                  <Image
+                    src={product.image.src}
+                    alt={
+                      product.image?.alt ||
+                      "Product Images"
+                    }
+                    width={60}
+                    height={60}
+                  />
+                </Anchor>
+              </div>
+            )}
 
-                        <div className="content">
-                            <h6 className="title">
-                                <Anchor path={product.path}>
-                                    {product.title}
-                                </Anchor>
-                            </h6>
-                            <p>{product.highestBid}</p>
-                            <span className="price">{product.price}</span>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-                                    ) */}
+            <div className="content">
+              <h6 className="title">
+                <Anchor path={product.path}>
+                  {product.title}
+                </Anchor>
+              </h6>
+              <p>{product.highestBid}</p>
+              <span className="price">{product.price}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
   </div>
 );
 
