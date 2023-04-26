@@ -84,17 +84,17 @@
       {
         "id": 6,
         "text": "Privacy Policy",
-        "path": "https://metaverse.lootmogul.com/privacy-policy/"
+        "path": "/privacy-policy/"
       },
       {
         "id": 7,
         "text": "Terms of Services",
-        "path": "https://metaverse.lootmogul.com/terms-conditions/"
+        "path": "/terms-condition"
       }
     ]
   },
   "soldout-widget": {
-    "title": "Download Our App",
+    "title": "Sold Out NFT",
     "link": "https://apps.apple.com/in/app/lootmogul/id1619785065",
     "image": "/images/contact/app.jpg",
     "products": [
