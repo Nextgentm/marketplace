@@ -5,9 +5,12 @@ import { useGoogleLogin } from "react-google-login";
 import strapi from "@utils/strapi";
 import { toast } from "react-toastify";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
+import { useRouter } from "next/router";
 
 const SocialAuth = ({ className, title }) => {
-  const { signIn } = useGoogleLogin({
+  const router = useRouter()
+
+  const { signIn, signOut } = useGoogleLogin({
     clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
 
     onSuccess: (data) => {
@@ -19,8 +22,12 @@ const SocialAuth = ({ className, title }) => {
       const loginResponse = await strapi.authenticateProvider(provider, token);
       setCookie("token", loginResponse.jwt)
       localStorage.setItem("user", JSON.stringify(loginResponse.user))
-      toast.success("Logged In Successfully")
-      router.push("/");
+      toast.success(`${router.pathname == "/sign-up" ? "Registration" : "Logged In"} Successfully`)
+      if (provider == "google") { signOut() }
+      setTimeout(() => {
+
+        router.push("/");
+      }, 500)
     } catch ({ error }) {
       toast.error("Invalid login information")
       console.log(error);
@@ -35,7 +42,7 @@ const SocialAuth = ({ className, title }) => {
         <span className="small-image">
           <Image src="/images/icons/google.png" alt="google login" width={26} height={27} />
         </span>
-        <span>Log in with Google</span>
+        <span>{router.pathname == "/sign-up" ? "Signup" : "Login"}  with Google</span>
       </button>
       <FacebookLogin
         appId={
@@ -53,7 +60,7 @@ const SocialAuth = ({ className, title }) => {
             <span className="small-image">
               <Image src="/images/icons/facebook.png" alt="facebook login" width={26} height={27} />
             </span>
-            <span>Sign in with Facebook</span>
+            <span>{router.pathname == "/sign-up" ? "Signup" : "Login"} with Facebook</span>
           </button>)} />
 
     </div>

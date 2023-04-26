@@ -22,7 +22,6 @@ const Login = () => (
 
 Login.getInitialProps = async (ctx) => {
   const { isAuthenticated } = await userSessionData(ctx)
-  console.log("Liogin isAuthenticated", isAuthenticated)
   if (!isServer() && isAuthenticated) {
     Router.push("/")
   }

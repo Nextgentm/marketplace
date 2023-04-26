@@ -15,6 +15,8 @@ const AppDataContext = ({ children }) => {
     isConnected: false
   });
   const [userData, setUserData] = useState()
+  const [isAuthenticatedCryptoWallet, setIsAuthenticatedCryptoWallet] = useState(false);
+
 
   useEffect(() => {
 
@@ -42,9 +44,11 @@ const AppDataContext = ({ children }) => {
       walletData,
       setWalletData,
       loadUserData,
-      userData
+      userData,
+      isAuthenticatedCryptoWallet,
+      setIsAuthenticatedCryptoWallet
     }),
-    [walletData, userData]
+    [walletData, userData, isAuthenticatedCryptoWallet]
   );
   return <AppData.Provider value={value}>{children}</AppData.Provider>;
 };

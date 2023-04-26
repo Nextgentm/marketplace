@@ -4,9 +4,6 @@ import Button from "@ui/button";
 import ErrorText from "@ui/error-text";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { DO_LOGIN } from "src/graphql/mutation/login";
-import { useMutation } from "@apollo/client";
-import { useEffect } from "react";
 import { setCookie } from "@utils/cookies";
 import strapi from "@utils/strapi";
 import { toast } from "react-toastify";
@@ -20,15 +17,6 @@ const LoginForm = ({ className }) => {
   } = useForm({
     mode: "onChange"
   });
-
-  const [doLogin, { loading, data: loginResponse, error }] = useMutation(DO_LOGIN)
-
-  useEffect(() => {
-    console.log("loginResponse", loginResponse)
-    if (!loading && loginResponse && loginResponse.login) {
-
-    }
-  }, [loginResponse, loading])
 
   const onSubmit = async (data, e) => {
     e.preventDefault();

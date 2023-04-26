@@ -9,8 +9,7 @@ import { useRouter } from "next/router";
 
 const UserDropdown = () => {
   const router = useRouter()
-  const { userData, setWalletData, walletData, loadUserData } = useContext(AppData);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { userData, setWalletData, walletData, loadUserData, isAuthenticatedCryptoWallet, setIsAuthenticatedCryptoWallet } = useContext(AppData);
   const [ethBalance, setEthBalance] = useState("");
 
   const onConnect = async () => {
@@ -40,7 +39,7 @@ const UserDropdown = () => {
       });
       // console.log(walletData);
       setEthBalance(getEthBalance);
-      setIsAuthenticated(walletData.isConnected);
+      setIsAuthenticatedCryptoWallet(walletData.isConnected);
       // }
     } catch (err) {
       console.log(err);
@@ -54,7 +53,7 @@ const UserDropdown = () => {
       ethers,
       isConnected: false
     });
-    setIsAuthenticated(false);
+    setIsAuthenticatedCryptoWallet(false);
     await doLogOut()
     await loadUserData()
     router.push("/")
@@ -63,7 +62,10 @@ const UserDropdown = () => {
   return (
     <div className="icon-box">
       <Anchor path="/author">
-        <img src={userData?.photoURL} alt="Images" width={38} height={38} />
+        {userData?.photoURL ?
+          <img src={userData?.photoURL} alt="Images" width={38} height={38} /> :
+          <Image src="/images/icons/boy-avater.png" alt="Images" width={38} height={38} />}
+
       </Anchor>
       <div className="rn-dropdown">
         <div className="rn-inner-top">
@@ -74,15 +76,13 @@ const UserDropdown = () => {
             <Anchor path="/product">Set Display Name</Anchor>
           </span>
         </div>
-        {!isAuthenticated &&
+        {!isAuthenticatedCryptoWallet &&
           <div className="setting-option header-btn">
-            <div className="">
-              <Button color="primary" className="connectBtn" onClick={onConnect} fullwidth>
-                Wallet Connect
-              </Button>
-            </div>
+            <Button color="primary" className="connectBtn" onClick={onConnect} fullwidth="true">
+              Wallet Connect
+            </Button>
           </div>}
-        {isAuthenticated && <><div className="rn-product-inner">
+        {isAuthenticatedCryptoWallet && <><div className="rn-product-inner">
           <ul className="product-list">
             <li className="single-product-list">
               <div className="thumbnail">
