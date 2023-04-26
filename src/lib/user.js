@@ -1,4 +1,8 @@
+import client from "@utils/apollo-client";
+import { getClientCookie, getCookie, setCookie } from "@utils/cookies";
+import { isServer } from "@utils/methods";
 import path from "path";
+import { GET_LOGIN_USER } from "src/graphql/query/me/getLoginuser";
 import { authenticationData } from "src/graphql/reactive/authentication";
 
 const directory = path.join(process.cwd(), "src/data/authors");
@@ -44,14 +48,74 @@ export function getAuthorByID(id, fields) {
   return user || {};
 }
 
-export const userSessionData = () => {
-  const user = JSON.parse(localStorage.getItem("user")) || {};
-  const token = localStorage.getItem("user") || "";
-  const isAuthenticated = localStorage.getItem("user") || "";
+export const getAuthenticatedUser = async (ctx) => {
+  console.log("data =-========");
+  const { isAuthenticated } = await getLoginToken(ctx);
+  console.log("isAuthenticated*-*-*-*-*-", isAuthenticated);
+  if (isAuthenticated) {
+    let data = await client.query({
+      query: GET_LOGIN_USER,
+      fetchPolicy: "network-only"
+    });
+    console.log("data", data);
+  } else {
+    return {};
+  }
+};
+export const getLoginToken = async (ctx) => {
+  if (isServer()) {
+    if (ctx && ctx.req && ctx.req.headers && ctx.req.headers.cookie) {
+      const token = getCookie("token", ctx.req.headers.cookie);
+      const isAuthenticated = token ? true : false;
 
-  return {
-    isAuthenticated,
-    token,
-    user
-  };
+      return {
+        isAuthenticated,
+        token
+      };
+    } else {
+      return {
+        isAuthenticated: false,
+        token: null
+      };
+    }
+  } else {
+    const token = (await getClientCookie("token")) || null;
+    const isAuthenticated = token ? true : false;
+
+    return {
+      isAuthenticated,
+      token
+    };
+  }
+};
+export const userSessionData = async (ctx) => {
+  if (isServer()) {
+    if (ctx && ctx.req && ctx.req.headers && ctx.req.headers.cookie) {
+      const token = await getCookie("token", ctx.req.headers.cookie);
+      const isAuthenticated = token ? true : false;
+      const user = {};
+      return {
+        isAuthenticated,
+        token,
+        user
+      };
+    }
+  } else {
+    const token = await getClientCookie("token");
+    console.log("token", token);
+    const isAuthenticated = token ? true : false;
+    const user = {};
+
+    return {
+      isAuthenticated,
+      token
+    };
+  }
+};
+
+export const doLogOut = async () => {
+  if (!isServer()) {
+    localStorage.clear();
+    await setCookie("token", "", { expires: new Date(0) });
+  }
 };

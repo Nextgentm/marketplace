@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useRouter } from "next/router";
 import sal from "sal.js";
@@ -9,12 +9,10 @@ import "../assets/css/modal-video.css";
 import "react-toastify/dist/ReactToastify.css";
 import "../assets/scss/style.scss";
 import "nprogress/nprogress.css";
-import WalletDataContext from "src/context/wallet-context";
-// eslint-disable-next-line import/no-extraneous-dependencies
+import AppDataContext from "src/context/app-context";
 import { ApolloProvider } from "@apollo/client";
-import client from "@utils/apollo-client";
 import { loadNProgress } from "@utils/nprogress";
-// import { loadNProgress } from "@utils/nprogress";
+import client from "@utils/apollo-client";
 
 const MyApp = ({ Component, pageProps }) => {
   const router = useRouter();
@@ -74,11 +72,11 @@ const MyApp = ({ Component, pageProps }) => {
   }
   return (
     <ApolloProvider client={client}>
-      <WalletDataContext>
+      <AppDataContext>
         <ThemeProvider defaultTheme="dark">
           <Component {...pageProps} />
         </ThemeProvider>
-      </WalletDataContext>
+      </AppDataContext>
     </ApolloProvider>
   );
 };

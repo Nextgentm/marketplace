@@ -10,7 +10,7 @@ import { ImageType } from "@utils/types";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { WalletData } from "src/context/wallet-context";
+import { AppData } from "src/context/app-context";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 import ERC721Contract from "../../contracts/json/erc721.json";
 import ERC1155Contract from "../../contracts/json/erc1155.json";
@@ -23,7 +23,7 @@ const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
 });
 
 const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) => {
-  const { walletData, setWalletData } = useContext(WalletData);
+  const { walletData, setWalletData } = useContext(AppData);
   const [showBidModal, setShowBidModal] = useState(false);
   const handleBidModal = () => {
     if (!walletData.isConnected) {

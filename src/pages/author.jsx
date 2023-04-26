@@ -7,7 +7,7 @@ import AuthorProfileArea from "@containers/author-profile";
 import { useEffect, useState, useContext } from "react";
 import { toast } from "react-toastify";
 import client from "@utils/apollo-client";
-import { WalletData } from "../context/wallet-context";
+import { AppData } from "../context/app-context";
 import { ALL_COLLECTION_QUERY } from "../graphql/query/collection/getCollection";
 
 // Demo data
@@ -20,7 +20,7 @@ export async function getStaticProps() {
 
 const Author = () => {
   const [allProductsData, setAllProductsData] = useState(null);
-  const { walletData, setWalletData } = useContext(WalletData);
+  const { walletData, setWalletData } = useContext(AppData);
 
   useEffect(() => {
     if (walletData.isConnected) {

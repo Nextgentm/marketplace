@@ -26,3 +26,17 @@ export const getCookie = async (cookiename, cookiestring) => {
   }
   return "";
 };
+
+export const getClientCookie = async (name) => {
+  const cookieStr = document.cookie || "";
+  const cookies = cookie.parse(cookieStr);
+  const serializedValue = cookies[name];
+  if (!serializedValue) {
+    return null;
+  }
+  try {
+    return JSON.parse(serializedValue);
+  } catch (err) {
+    return serializedValue;
+  }
+};

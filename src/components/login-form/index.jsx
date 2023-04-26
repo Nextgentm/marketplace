@@ -7,8 +7,9 @@ import { useRouter } from "next/router";
 import { DO_LOGIN } from "src/graphql/mutation/login";
 import { useMutation } from "@apollo/client";
 import { useEffect } from "react";
-import { authenticationData } from "src/graphql/reactive/authentication";
 import { setCookie } from "@utils/cookies";
+import strapi from "@utils/strapi";
+import { toast } from "react-toastify";
 
 const LoginForm = ({ className }) => {
   const router = useRouter();
@@ -25,32 +26,34 @@ const LoginForm = ({ className }) => {
   useEffect(() => {
     console.log("loginResponse", loginResponse)
     if (!loading && loginResponse && loginResponse.login) {
-      setCookie("token", loginResponse.login.jwt)
-      authenticationData({
-        isAuthenticated: true,
-        token: loginResponse.login.jwt,
-        user: loginResponse.login.user
-      })
+
     }
   }, [loginResponse, loading])
 
-  const onSubmit = (data, e) => {
+  const onSubmit = async (data, e) => {
     e.preventDefault();
     // eslint-disable-next-line no-console
     if (data.identifier && data.password) {
-      doLogin({
-        variables: {
-          input: {
-            identifier: data.identifier,
-            password: data.password,
-            provider: "local"
-          }
-        }
-      })
-    }
-    console.log(data);
+      try {
+        let loginResponse = await strapi.login({
+          identifier: data.identifier,
+          password: data.password
+        })
+        console.log("data", loginResponse)
+        setCookie("token", loginResponse.jwt)
+        localStorage.setItem("user", JSON.stringify(loginResponse.user))
+        toast.success("Logged In Successfully")
+        router.push("/");
+      }
+      catch ({ error }) {
+        toast.error("Invalid login information")
+        console.log(error);
+        return;
+      }
+      console.log(data);
 
-  };
+    };
+  }
 
 
   return (

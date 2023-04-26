@@ -14,7 +14,7 @@ import BurgerButton from "@ui/burger-button";
 import Anchor from "@ui/anchor";
 import Button from "@ui/button";
 import { useOffcanvas, useSticky, useFlyoutSearch } from "@hooks";
-import { WalletData } from "src/context/wallet-context";
+import { AppData } from "src/context/app-context";
 import { ethers } from "ethers";
 import headerData from "../../../data/general/header-01.json";
 import menuData from "../../../data/general/menu-01.json";
@@ -25,42 +25,9 @@ const Header = ({ className }) => {
   const sticky = useSticky();
   const { offcanvas, offcanvasHandler } = useOffcanvas();
   const { search, searchHandler } = useFlyoutSearch();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [ethBalance, setEthBalance] = useState("");
 
-  const { walletData, setWalletData } = useContext(WalletData);
-  const isLoggedIn = authenticationData().isAuthenticated
-  useEffect(() => {
-    /* code for runtime metamask events */
-    /* const handleAccountsChanged = (accounts) => {
-            console.log("accountsChanged", accounts);
-            if (accounts) setAccount(accounts[0]);
-        };
 
-        const handleChainChanged = (_hexChainId) => {
-            setChainId(_hexChainId);
-        };
-
-        const handleDisconnect = () => {
-            console.log("disconnect", error);
-            disconnect();
-        };
-
-        provider.on("accountsChanged", handleAccountsChanged);
-        provider.on("chainChanged", handleChainChanged);
-        provider.on("disconnect", handleDisconnect);
-        */
-
-    // check if previously connected
-    // if (isPreviouslyConnected()) {
-    //     onConnect();
-    // }
-    // Render wallet details
-    setIsAuthenticated(walletData.isConnected);
-    if (walletData.isConnected) {
-      setEthBalance(walletData.balance);
-    }
-  }, [ethBalance]);
+  const { walletData, setWalletData, userData } = useContext(AppData);
 
   const detectCurrentProvider = () => {
     let provider;
@@ -180,7 +147,7 @@ const Header = ({ className }) => {
                 </div>
                 <FlyoutSearchForm isOpen={search} />
               </div>
-              {!isAuthenticated && !isLoggedIn && (
+              {!userData && (
                 <div className="setting-option header-btn">
                   <div className="icon-box">
                     <Link href="/login">
@@ -191,7 +158,7 @@ const Header = ({ className }) => {
                   </div>
                 </div>
               )}
-              {!isAuthenticated && isLoggedIn && (
+              {/* {!isAuthenticated && userData && (
                 <div className="setting-option header-btn">
                   <div className="icon-box">
                     <Button color="primary" className="connectBtn" size="small" onClick={onConnect}>
@@ -199,10 +166,10 @@ const Header = ({ className }) => {
                     </Button>
                   </div>
                 </div>
-              )}
-              {isAuthenticated && (
+              )} */}
+              {userData && (
                 <div className="setting-option rn-icon-list user-account">
-                  <UserDropdown onDisconnect={onDisconnect} ethBalance={ethBalance} />
+                  <UserDropdown />
                 </div>
               )}
               <div className="setting-option rn-icon-list notification-badge">

@@ -47,6 +47,8 @@
     "react-countdown": "^2.3.2",
     "react-countup": "^6.1.1",
     "react-dom": "^18.2.0",
+    "react-facebook-login": "^4.1.1",
+    "react-google-login": "^5.2.2",
     "react-hook-form": "^7.27.1",
     "react-intersection-observer": "^8.33.1",
     "react-modal-video": "^1.2.8",
@@ -64,6 +66,7 @@
     "sal.js": "^0.8.5",
     "sass": "^1.45.0",
     "sharp": "^0.32.0",
+    "strapi-sdk-js": "^2.2.0",
     "web3": "^1.7.4"
   },
   "devDependencies": {

@@ -20,8 +20,7 @@ const Collection = (props) => (
 );
 
 
-Collection.getInitialProps = async (nextAppContext) => {
-  console.log("nextAppContext", nextAppContext.req.headers)
+Collection.getInitialProps = async () => {
   const { data } = await client.query({
     query: ALL_COLLECTION_QUERY,
     variables: {

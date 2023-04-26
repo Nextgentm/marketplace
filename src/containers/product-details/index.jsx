@@ -14,7 +14,7 @@ import { TabContainer, TabContent, Nav, TabPane } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { WalletData } from "src/context/wallet-context";
+import { AppData } from "src/context/app-context";
 import {
   ETHEREUM_NETWORK_CHAIN_ID,
   POLYGON_NETWORK_CHAIN_ID,
@@ -33,7 +33,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   const [showAuctionInputModel, setShowAuctionInputModel] = useState(false);
   const [sellType, setSellType] = useState("nav-direct-sale");
 
-  const { walletData, setWalletData } = useContext(WalletData);
+  const { walletData, setWalletData } = useContext(AppData);
 
   const router = useRouter();
   const [showDirectSalesModal, setShowDirectSalesModal] = useState(false);
