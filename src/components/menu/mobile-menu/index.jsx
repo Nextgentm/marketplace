@@ -35,47 +35,48 @@ const MobileMenu = ({ isOpen, onClick, menu, logo, isAdmin }) => {
           <ul className="mainmenu">
             {menu?.map((nav) => {
               const hasChildren = !!nav.submenu || !!nav.megamenu;
-              return (
-                nav.id != 4 ?
-                  <li
-                    className={clsx(
-                      !!nav.submenu && "has-droupdown",
-                      !!nav.megamenu && "with-megamenu",
-                      hasChildren && "has-children"
-                    )}
-                    id={nav.id}
-                    key={nav.id}
+              return nav.id != 4 ? (
+                <li
+                  className={clsx(
+                    !!nav.submenu && "has-droupdown",
+                    !!nav.megamenu && "with-megamenu",
+                    hasChildren && "has-children"
+                  )}
+                  id={nav.id}
+                  key={nav.id}
+                >
+                  <Anchor
+                    className="nav-link its_new"
+                    path={hasChildren ? "#!" : nav.path}
+                    onClick={hasChildren ? onClickHandler : (e) => e}
                   >
-                    <Anchor
-                      className="nav-link its_new"
-                      path={hasChildren ? "#!" : nav.path}
-                      onClick={hasChildren ? onClickHandler : (e) => e}
-                    >
-                      {nav.text}
-                    </Anchor>
-                    {nav?.submenu && <SubMenu menu={nav.submenu} />}
-                    {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
-                  </li> :
-                  isAdmin ?
-                    <li
-                      className={clsx(
-                        !!nav.submenu && "has-droupdown",
-                        !!nav.megamenu && "with-megamenu",
-                        hasChildren && "has-children"
-                      )}
-                      id={nav.id}
-                      key={nav.id}
-                    >
-                      <Anchor
-                        className="nav-link its_new"
-                        path={hasChildren ? "#!" : nav.path}
-                        onClick={hasChildren ? onClickHandler : (e) => e}
-                      >
-                        {nav.text}
-                      </Anchor>
-                      {nav?.submenu && <SubMenu menu={nav.submenu} />}
-                      {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
-                    </li> : <></>
+                    {nav.text}
+                  </Anchor>
+                  {nav?.submenu && <SubMenu menu={nav.submenu} />}
+                  {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
+                </li>
+              ) : isAdmin ? (
+                <li
+                  className={clsx(
+                    !!nav.submenu && "has-droupdown",
+                    !!nav.megamenu && "with-megamenu",
+                    hasChildren && "has-children"
+                  )}
+                  id={nav.id}
+                  key={nav.id}
+                >
+                  <Anchor
+                    className="nav-link its_new"
+                    path={hasChildren ? "#!" : nav.path}
+                    onClick={hasChildren ? onClickHandler : (e) => e}
+                  >
+                    {nav.text}
+                  </Anchor>
+                  {nav?.submenu && <SubMenu menu={nav.submenu} />}
+                  {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
+                </li>
+              ) : (
+                <></>
               );
             })}
           </ul>
