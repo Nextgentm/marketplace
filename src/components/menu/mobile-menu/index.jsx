@@ -7,7 +7,7 @@ import { slideToggle, slideUp } from "@utils/methods";
 import SubMenu from "./submenu";
 import MegaMenu from "./megamenu";
 
-const MobileMenu = ({ isOpen, onClick, menu, logo }) => {
+const MobileMenu = ({ isOpen, onClick, menu, logo, isAdmin }) => {
   const onClickHandler = (e) => {
     e.preventDefault();
     const { target } = e;
@@ -36,25 +36,46 @@ const MobileMenu = ({ isOpen, onClick, menu, logo }) => {
             {menu?.map((nav) => {
               const hasChildren = !!nav.submenu || !!nav.megamenu;
               return (
-                <li
-                  className={clsx(
-                    !!nav.submenu && "has-droupdown",
-                    !!nav.megamenu && "with-megamenu",
-                    hasChildren && "has-children"
-                  )}
-                  id={nav.id}
-                  key={nav.id}
-                >
-                  <Anchor
-                    className="nav-link its_new"
-                    path={hasChildren ? "#!" : nav.path}
-                    onClick={hasChildren ? onClickHandler : (e) => e}
+                nav.id != 4 ?
+                  <li
+                    className={clsx(
+                      !!nav.submenu && "has-droupdown",
+                      !!nav.megamenu && "with-megamenu",
+                      hasChildren && "has-children"
+                    )}
+                    id={nav.id}
+                    key={nav.id}
                   >
-                    {nav.text}
-                  </Anchor>
-                  {nav?.submenu && <SubMenu menu={nav.submenu} />}
-                  {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
-                </li>
+                    <Anchor
+                      className="nav-link its_new"
+                      path={hasChildren ? "#!" : nav.path}
+                      onClick={hasChildren ? onClickHandler : (e) => e}
+                    >
+                      {nav.text}
+                    </Anchor>
+                    {nav?.submenu && <SubMenu menu={nav.submenu} />}
+                    {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
+                  </li> :
+                  isAdmin ?
+                    <li
+                      className={clsx(
+                        !!nav.submenu && "has-droupdown",
+                        !!nav.megamenu && "with-megamenu",
+                        hasChildren && "has-children"
+                      )}
+                      id={nav.id}
+                      key={nav.id}
+                    >
+                      <Anchor
+                        className="nav-link its_new"
+                        path={hasChildren ? "#!" : nav.path}
+                        onClick={hasChildren ? onClickHandler : (e) => e}
+                      >
+                        {nav.text}
+                      </Anchor>
+                      {nav?.submenu && <SubMenu menu={nav.submenu} />}
+                      {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
+                    </li> : <></>
               );
             })}
           </ul>
