@@ -20,6 +20,7 @@ import headerData from "../../../data/general/header-01.json";
 import menuData from "../../../data/general/menu-01.json";
 import Link from "next/link";
 import { authenticationData } from "src/graphql/reactive/authentication";
+import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 
 const Header = ({ className }) => {
   const sticky = useSticky();
@@ -27,6 +28,19 @@ const Header = ({ className }) => {
   const { search, searchHandler } = useFlyoutSearch();
 
   const { walletData, setWalletData, userData } = useContext(AppData);
+
+  const [isAdminWallet, setIsAdminWallet] = useState(false);
+
+  useEffect(() => {
+    if (walletData.isConnected) {
+      const signer = walletData.provider.getSigner();
+      addressIsAdmin(walletData.ethers, walletData.account, "Polygon", signer).then((validationValue) => {
+        setIsAdminWallet(validationValue);
+      });
+    } else {
+      setIsAdminWallet(false);
+    }
+  }, [walletData]);
 
   const detectCurrentProvider = () => {
     let provider;
@@ -131,7 +145,7 @@ const Header = ({ className }) => {
               <Logo logo={headerData.logo} />
               <div className="mainmenu-wrapper">
                 <nav id="sideNav" className="mainmenu-nav d-none d-xl-block">
-                  <MainMenu menu={menuData} />
+                  <MainMenu menu={menuData} isAdmin={isAdminWallet} />
                 </nav>
               </div>
             </div>
@@ -192,7 +206,13 @@ const Header = ({ className }) => {
           </div>
         </div>
       </header>
-      <MobileMenu isOpen={offcanvas} onClick={offcanvasHandler} menu={menuData} logo={headerData.logo} />
+      <MobileMenu
+        isOpen={offcanvas}
+        onClick={offcanvasHandler}
+        menu={menuData}
+        logo={headerData.logo}
+        isAdmin={isAdminWallet}
+      />
     </>
   );
 };
