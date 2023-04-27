@@ -6,11 +6,12 @@ import strapi from "@utils/strapi";
 import { toast } from "react-toastify";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import { useRouter } from "next/router";
+import { setCookie } from "@utils/cookies";
 
 const SocialAuth = ({ className, title }) => {
   const router = useRouter();
 
-  const { signIn, signOut } = useGoogleLogin({
+  const { signIn, signOut, isSignedIn } = useGoogleLogin({
     clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
 
     onSuccess: (data) => {
@@ -23,7 +24,7 @@ const SocialAuth = ({ className, title }) => {
       setCookie("token", loginResponse.jwt);
       localStorage.setItem("user", JSON.stringify(loginResponse.user));
       toast.success(`${router.pathname == "/sign-up" ? "Registration" : "Logged In"} Successfully`);
-      if (provider == "google") {
+      if (provider == "google" && isSignedIn) {
         signOut();
       }
       setTimeout(() => {
@@ -31,6 +32,8 @@ const SocialAuth = ({ className, title }) => {
       }, 500);
     } catch ({ error }) {
       toast.error("Invalid login information");
+      signOut();
+
       console.log(error);
       return;
     }
