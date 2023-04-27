@@ -24,11 +24,17 @@ const AppDataContext = ({ children }) => {
 
   const loadUserData = async () => {
     const { isAuthenticated } = await userSessionData();
-    console.log("isAuthenticated");
     if (!isServer() && isAuthenticated) {
       const user = JSON.parse(localStorage.getItem("user"));
       setUserData(user);
     } else if (!isAuthenticated) setUserData();
+  };
+
+  const setUserDataLocal = (user) => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+      loadUserData;
+    }
   };
   const value = useMemo(
     () => ({
@@ -38,7 +44,8 @@ const AppDataContext = ({ children }) => {
       userData,
       isAuthenticatedCryptoWallet,
       setIsAuthenticatedCryptoWallet,
-      setUserData
+      setUserData,
+      setUserDataLocal
     }),
     [walletData, userData, isAuthenticatedCryptoWallet]
   );

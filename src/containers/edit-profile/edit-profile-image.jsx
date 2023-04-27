@@ -3,27 +3,50 @@ import { useState, useEffect, useRef, useContext } from "react";
 import Image from "next/image";
 import Modal from "react-bootstrap/Modal";
 import { AppData } from "src/context/app-context";
+import { useMutation } from "@apollo/client";
+import { UPDATE_USER_PROFILE } from "src/graphql/mutation/userProfile/updateUserProfile";
+import { toast } from "react-toastify";
+import { normalize } from "@utils/methods";
+
+const subdomain = "lootmogul";
 
 const EditProfileImage = () => {
-  const { userData } = useContext(AppData);
-  const authorData = userData;
-  console.log("userDatauserDatauserData", userData);
-  let imageAvtar = "";
-  if (typeof window !== "undefined") {
-    imageAvtar = localStorage.getItem("image3dAvtar");
-  }
+  const { userData: authorData, setUserDataLocal } = useContext(AppData);
   const [selectedImage, setSelectedImage] = useState({
-    profile: imageAvtar,
+    profile: "",
     cover: ""
   });
 
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const shareModalHandler = () => setIsShareModalOpen((prev) => !prev);
   const [showIFrame, setShowIFrame] = useState(true);
-  const subdomain = "lootmogul";
   const iFrameRef = useRef(null);
   const [avatarUrl, setAvatarUrl] = useState("");
-  console.log("avatarUrl", avatarUrl);
+  const [updateUserProfile, { data: updatedUserProfile, loading }] = useMutation(UPDATE_USER_PROFILE, {
+    fetchPolicy: "network-only"
+  });
+
+  useEffect(() => {
+    if (avatarUrl) {
+      setSelectedImage({ ...selectedImage, profile: avatarUrl });
+      updateUserProfile({
+        variables: {
+          updateUsersPermissionsUserId: authorData.id,
+          data: {
+            ready_player_me_url: avatarUrl,
+            photoURL: avatarUrl
+          }
+        }
+      });
+    }
+  }, [avatarUrl]);
+
+  useEffect(() => {
+    if (updatedUserProfile) {
+      setUserDataLocal(normalize(updatedUserProfile).updateUsersPermissionsUser);
+      toast.success("Profile Image Updated Successfully");
+    }
+  }, [updatedUserProfile]);
 
   const imageChange = (e) => {
     setIsShareModalOpen(true);
@@ -33,7 +56,6 @@ const EditProfileImage = () => {
         ...prev,
         [e.target.name]: avatarUrl
       }));
-      console.log("selectedImage", selectedImage);
     }
   };
 
@@ -78,11 +100,9 @@ const EditProfileImage = () => {
       console.log(`Avatar URL: ${json.data.url}`);
       let text = json.data.url;
       let result = text.replace("glb", "png");
-      localStorage.setItem("image3dAvtar", result);
 
       setAvatarUrl(result);
       setShowIFrame(false);
-      setIsShareModalOpen(false);
       setIsShareModalOpen(false);
     }
     // Get user id
@@ -136,8 +156,8 @@ const EditProfileImage = () => {
           <div className="profile-image mb--30">
             <h6 className="title">Change Your Profile Picture</h6>
             <div className="img-wrap">
-              {authorData?.photoURL ? (
-                <img src={authorData?.photoURL} alt="" data-black-overlay="6" />
+              {authorData?.photoURL || avatarUrl ? (
+                <img src={avatarUrl || authorData?.photoURL} alt="" data-black-overlay="6" />
               ) : (
                 <Image
                   id="rbtinput1"
