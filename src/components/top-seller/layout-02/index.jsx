@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import clsx from "clsx";
 import Anchor from "@ui/anchor";
 
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { Button } from "react-bootstrap";
@@ -16,28 +16,57 @@ import ERC1155Contract from "../../../contracts/json/erc1155.json";
 import TradeContract from "../../../contracts/json/trade.json";
 import TransferProxy from "../../../contracts/json/TransferProxy.json";
 import TokenContract from "../../../contracts/json/ERC20token.json";
+import { useMutation } from "@apollo/client";
+import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
+import { UPDATE_BIDDING } from "src/graphql/mutation/bidding.js/updateBidding";
 
 const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) => {
   const { walletData, setWalletData } = useContext(AppData);
 
   const router = useRouter();
+  const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
+  const [updateBidding, { data: updatedBidding }] = useMutation(UPDATE_BIDDING);
+
+  useEffect(() => {
+    // if (updatedCollectible) {
+    //   console.log(updatedCollectible);
+    // }
+    // console.log(updatedCollectible);
+  }, [updatedCollectible]);
 
   async function completeAuction() {
     // update collectible putOnSale, saleType to true
-    const response = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/${product.id}`, {
-      data: {
-        putOnSale: false,
-        owner: name
+    // const response = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/${product.id}`, {
+    //   data: {
+    //     putOnSale: false,
+    //     owner: name
+    //   }
+    // });
+    // console.log(response);
+    updateCollectible({
+      variables: {
+        "data": {
+          putOnSale: false,
+          owner: walletData.account
+        },
+        "updateCollectibleId": product.id
       }
     });
-    console.log(response);
     // update collectible putOnSale, saleType to true
-    const response2 = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/biddings/${id}`, {
-      data: {
-        isAccepted: true
+    // const response2 = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/biddings/${id}`, {
+    //   data: {
+    //     isAccepted: true
+    //   }
+    // });
+    // console.log(response2);
+    updateBidding({
+      variables: {
+        "data": {
+          isAccepted: true
+        },
+        "updateBiddingId": id
       }
     });
-    console.log(response2);
   }
 
   async function acceptBid() {
@@ -53,7 +82,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
       const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
       const skipRoyalty = true;
       const unitPrice = `${convertEthertoWei(walletData.ethers, eth)}`;
-            const amount = `${parseFloat(product.auction.data.quantity) * parseFloat(unitPrice)}`;
+      const amount = `${parseFloat(product.auction.data.quantity) * parseFloat(unitPrice)}`;
       const tokenId = `${product.nftID}`;
       const tokenURI = "";
       const supply = `${product.supply ? product.supply : 1}`;
@@ -81,8 +110,20 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
       ]);
       const receipt = await transaction.wait();
       console.log(receipt);
+      const transactionHash = receipt.transactionHash;
       if (receipt) {
         completeAuction();
+        // create owner history for Timed Auction
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
+          data: {
+            event: "TimeAuction",
+            toWalletAddress: buyer,
+            transactionHash: transactionHash,
+            quantity: qty,
+            fromWalletAddress: seller,
+            collectible: product.id
+          }
+        });
       }
       // console.log(res);
       if (product.auction.data.sellType === "FixedPrice") {

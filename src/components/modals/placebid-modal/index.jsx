@@ -33,13 +33,18 @@ const PlaceBidModal = ({ show, handleModal, product, handleSubmit }) => {
             <h5 className="title">{product?.supply > 1 ? "Checkout" : "Your bid"}</h5>
             <div className="bid-content">
               <div className="bid-content-top">
-
-                {product?.supply > 1 ?
+                {product?.supply > 1 ? (
                   <div className="row">
                     <label htmlFor="quantity">Quantity</label>
-                    <input type="number" id="quantity" min="1" placeholder="e.g. 10" max={product.auction.data.quantity} />
+                    <input
+                      type="number"
+                      id="quantity"
+                      min="1"
+                      placeholder="e.g. 10"
+                      max={product.auction.data.quantity}
+                    />
                   </div>
-                  :
+                ) : (
                   <div className="bid-content-left">
                     <input
                       id="price"
@@ -51,7 +56,7 @@ const PlaceBidModal = ({ show, handleModal, product, handleSubmit }) => {
                     />
                     <span>wETH</span>
                   </div>
-                }
+                )}
               </div>
 
               <div className="bid-content-mid">

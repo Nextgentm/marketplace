@@ -19,7 +19,6 @@ const UserDropdown = () => {
   } = useContext(AppData);
   const [ethBalance, setEthBalance] = useState("");
 
-
   useEffect(() => {
     /* code for runtime metamask events */
     /* const handleAccountsChanged = (accounts) => {
@@ -185,7 +184,9 @@ const UserDropdown = () => {
               </ul>
             </div>
             <div className="add-fund-button mt--20 pb--20">
-              <Button className="w-100" onClick={onDisconnectWallet}>Disconnect Wallet</Button>
+              <Button className="w-100" onClick={onDisconnectWallet}>
+                Disconnect Wallet
+              </Button>
               {/* <Anchor className="btn btn-primary-alta w-100" path="/connect">
                 Add Your More Funds
               </Anchor> */}

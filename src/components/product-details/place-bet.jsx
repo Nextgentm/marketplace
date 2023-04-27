@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 import PropTypes from "prop-types";
@@ -19,6 +19,8 @@ import ERC1155Contract from "../../contracts/json/erc1155.json";
 import TradeContract from "../../contracts/json/trade.json";
 import TransferProxy from "../../contracts/json/TransferProxy.json";
 import TokenContract from "../../contracts/json/ERC20token.json";
+import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
+import { useMutation } from "@apollo/client";
 
 const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
   ssr: false
@@ -36,6 +38,15 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
   };
 
   const router = useRouter();
+
+  const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
+
+  useEffect(() => {
+    // if (updatedCollectible) {
+    //   console.log(updatedCollectible);
+    // }
+    // console.log(updatedCollectible);
+  }, [updatedCollectible]);
 
   async function switchNetwork(chainId) {
     if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
@@ -58,13 +69,22 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
 
   async function completeAuction() {
     // update collectible putOnSale, saleType to true
-    const response = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/${product.id}`, {
-      data: {
-        putOnSale: false,
-        owner: walletData.account
+    // const response = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/${product.id}`, {
+    //   data: {
+    //     putOnSale: false,
+    //     owner: walletData.account
+    //   }
+    // });
+    // console.log(response);
+    updateCollectible({
+      variables: {
+        "data": {
+          putOnSale: false,
+          owner: walletData.account
+        },
+        "updateCollectibleId": product.id
       }
     });
-    console.log(response);
   }
 
   async function StoreData(price, quantity) {
@@ -84,8 +104,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
       const allowance = await tokenContract.allowance(walletData.account, TransferProxy.address);
       const allowanceAmount = parseInt(allowance._hex, 16);
       const requireAllowanceAmount = "" + parseInt(convertedPrice * quantity);
-            console.log(allowanceAmount, parseInt(requireAllowanceAmount));
-            if (allowanceAmount < parseInt(requireAllowanceAmount)) {
+      console.log(allowanceAmount, parseInt(requireAllowanceAmount));
+      if (allowanceAmount < parseInt(requireAllowanceAmount)) {
         // approve nft first
         const transaction = await tokenContract.approve(TransferProxy.address, requireAllowanceAmount);
         const receipt = await transaction.wait();
@@ -100,12 +120,12 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
         const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
         const skipRoyalty = true;
         const unitPrice = `${convertedPrice}`;
-                const amount = `${parseFloat(product.auction.data.quantity) * parseFloat(unitPrice)}`;
+        const amount = `${parseFloat(product.auction.data.quantity) * parseFloat(unitPrice)}`;
         const tokenId = `${product.nftID}`;
         const tokenURI = "";
         const supply = `${product.supply ? product.supply : 1}`;
         const royaltyFee = `${product?.royalty ? product?.royalty : 10}`;
-                const qty = `${quantity ? quantity: 1}`;
+        const qty = `${quantity ? quantity : 1}`;
 
         // Pull the deployed contract instance
         const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
@@ -128,9 +148,21 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
         ]);
         const receipt = await transaction.wait();
         console.log(receipt);
+        const transactionHash = receipt.transactionHash;
         if (receipt) {
           isAccepted = true;
           completeAuction();
+          // create owner history for Fixed Price
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
+            data: {
+              event: "FixedPrice",
+              toWalletAddress: buyer,
+              transactionHash: transactionHash,
+              quantity: qty,
+              fromWalletAddress: seller,
+              collectible: product.id
+            }
+          });
         }
       }
 
@@ -175,14 +207,14 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
     }
     if (product.auction.data.sellType == "Bidding") {
       const price = event.target.price?.value;
-            const quantity = product.auction.data.quantity;
+      const quantity = product.auction.data.quantity;
       // console.log(price);
       StoreData(price, quantity);
     } else {
       const price = product.auction.data.bidPrice;
       const quantity = event.target.quantity?.value ? event.target.quantity?.value : product.auction.data.quantity;
       // console.log(price);
-      StoreData(price,quantity);
+      StoreData(price, quantity);
     }
   };
 
@@ -231,8 +263,14 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
         <Button
           color={btnColor || "primary-alta"}
           className="mt--30"
-          onClick={product.auction.data.sellType == "Bidding" ? handleBidModal : product.auction.data.quantity > 1 ? handleBidModal : handleSubmit}
-                    disabled={isOwner}
+          onClick={
+            product.auction.data.sellType == "Bidding"
+              ? handleBidModal
+              : product.auction.data.quantity > 1
+              ? handleBidModal
+              : handleSubmit
+          }
+          disabled={isOwner}
         >
           {product.auction.data.sellType == "Bidding" ? "Place a Bid" : "Buy Now"}
         </Button>
