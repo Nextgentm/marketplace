@@ -121,8 +121,8 @@ const CreateNewArea = ({ className, space }) => {
       const { price, royality } = data;
       const supply = data?.supply ? Number(data?.supply) : 1;
 
-      const tokenID = await MintNFT(contractAddress, metadataURL, price, royality, supply);
-      if (!tokenID) {
+      const { tokenID, transactionHash } = await MintNFT(contractAddress, metadataURL, price, royality, supply);
+      if (!tokenID || !transactionHash) {
         return;
       }
 
@@ -158,7 +158,7 @@ const CreateNewArea = ({ className, space }) => {
       // Add collectible properties
       for (let i = 0; i < formValues.length; i++) {
         if (formValues[i].properties_name && formValues[i].properties_type) {
-          axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectible-properties`, {
+          await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectible-properties`, {
             data: {
               name: formValues[i].properties_name,
               type: formValues[i].properties_type,
@@ -167,6 +167,19 @@ const CreateNewArea = ({ className, space }) => {
           });
         }
       }
+      // create owner history for minting
+      const response2 = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
+        data: {
+          event: "Minted",
+          toWalletAddress: walletData.account,
+          transactionHash: transactionHash,
+          quantity: supply,
+          fromWalletAddress: "0x0000000000000000000000000000000000000000",
+          collectible: collectiblesId
+        }
+      });
+      // console.log(response2);
+
       notify();
       reset();
       setSelectedImage();
@@ -202,10 +215,11 @@ const CreateNewArea = ({ className, space }) => {
         );
         const receipt = await transaction.wait();
         // console.log(receipt);
+        const transactionHash = receipt.transactionHash;
         const correctEvent = receipt.events.find((event) => event.event === "Transfer");
         const tokenID = parseInt(correctEvent.args.tokenId._hex, 16);
         console.log("tokenID is ", tokenID);
-        return tokenID;
+        return { tokenID, transactionHash };
       }
       if (router.query.type === "multiple") {
         // Pull the deployed contract instance
@@ -213,17 +227,18 @@ const CreateNewArea = ({ className, space }) => {
         const transaction = await contract1155.mint(metadataURL, royalty, supply);
         const receipt = await transaction.wait();
         // console.log(receipt);
+        const transactionHash = receipt.transactionHash;
         const correctEvent = receipt.events.find((event) => event.event === "TransferSingle");
         const tokenID = parseInt(correctEvent.args.id._hex, 16);
         console.log("tokenID is ", tokenID);
-        return tokenID;
+        return { tokenID, transactionHash };
       }
       toast.error("Please select proper collection type");
-      return null;
+      return { tokenID: null, transactionHash: null };
     } catch (error) {
       console.log(error);
       toast.error("Error while creating NFT");
-      return null;
+      return { tokenID: null, transactionHash: null };
     }
   }
 
@@ -407,17 +422,27 @@ const CreateNewArea = ({ className, space }) => {
       // setDataCollection(response.data.data);
       let paramCollection = null;
       const results = [];
-      response.data.data.map((ele, i) => {
-        results.push({
-          value: ele,
-          text: ele.name
+      if (router.query.collection) {
+        response.data.data.map((ele, i) => {
+          if (router.query.collection === ele.slug) {
+            paramCollection = ele;
+            paramCollection.index = i;
+            results.push({
+              value: ele,
+              text: ele.name
+            });
+          }
+          // console.log(ele.slug);
         });
-        if (router.query.collection === ele.slug) {
-          paramCollection = ele;
-          paramCollection.index = i;
-        }
-        // console.log(ele.slug);
-      });
+      } else {
+        response.data.data.map((ele, i) => {
+          results.push({
+            value: ele,
+            text: ele.name
+          });
+          // console.log(ele.slug);
+        });
+      }
       setDataCollection(results);
       // console.log(paramCollection);
       if (paramCollection) {
@@ -512,7 +537,7 @@ const CreateNewArea = ({ className, space }) => {
 
                 <div className="mt--100 mt_sm--30 mt_md--30 d-none d-lg-block">
                   {router.query?.type && <h5>Selected Variants: {router.query?.type.toUpperCase()}</h5>}
-                  <h5> Note: </h5>
+                  {/* <h5> Note: </h5>
                   <span>
                     {" "}
                     Service fee : <strong>2.5%</strong>{" "}
@@ -521,7 +546,7 @@ const CreateNewArea = ({ className, space }) => {
                   <span>
                     {" "}
                     You will receive : <strong>25.00 ETH $50,000</strong>
-                  </span>
+                  </span> */}
                 </div>
               </div>
               <div className="col-lg-7">
@@ -587,7 +612,7 @@ const CreateNewArea = ({ className, space }) => {
                               placeholder="Select Collection"
                               options={dataCollection}
                               onChange={selectedCollectionHandler}
-                              defaultCurrent={selectedCollection?.index}
+                              defaultCurrent={router.query?.type ? 0 : null}
                             />
                           )}
                         </div>

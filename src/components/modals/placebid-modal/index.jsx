@@ -24,26 +24,39 @@ const PlaceBidModal = ({ show, handleModal, product, handleSubmit }) => {
         </button>
       )}
       <Modal.Header>
-        <h3 className="modal-title">Place a bid</h3>
+        <h3 className="modal-title">{product?.supply > 1 ? "Direct Buy" : "Place a bid"}</h3>
       </Modal.Header>
       <Modal.Body>
         <p>You are about to purchase this product</p>
         <div className="placebid-form-box">
           <form onSubmit={handleSubmit}>
-            <h5 className="title">Your bid</h5>
+            <h5 className="title">{product?.supply > 1 ? "Checkout" : "Your bid"}</h5>
             <div className="bid-content">
               <div className="bid-content-top">
-                <div className="bid-content-left">
-                  <input
-                    id="price"
-                    type="number"
-                    name="price"
-                    step="0.0000001"
-                    min={product?.auction?.data?.bidPrice}
-                    required
-                  />
-                  <span>wETH</span>
-                </div>
+                {product?.supply > 1 ? (
+                  <div className="row">
+                    <label htmlFor="quantity">Quantity</label>
+                    <input
+                      type="number"
+                      id="quantity"
+                      min="1"
+                      placeholder="e.g. 10"
+                      max={product.auction.data.quantity}
+                    />
+                  </div>
+                ) : (
+                  <div className="bid-content-left">
+                    <input
+                      id="price"
+                      type="number"
+                      name="price"
+                      step="0.0000001"
+                      min={product?.auction?.data?.bidPrice}
+                      required
+                    />
+                    <span>wETH</span>
+                  </div>
+                )}
               </div>
 
               <div className="bid-content-mid">

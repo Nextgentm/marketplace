@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 import PropTypes from "prop-types";
@@ -13,18 +13,20 @@ import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 
-import { convertEthertoWei } from "../../lib/BlokchainHelperFunctions";
+import { convertEthertoWei, convertWeitoEther } from "../../lib/BlokchainHelperFunctions";
 import ERC721Contract from "../../contracts/json/erc721.json";
 import ERC1155Contract from "../../contracts/json/erc1155.json";
 import TradeContract from "../../contracts/json/trade.json";
 import TransferProxy from "../../contracts/json/TransferProxy.json";
 import TokenContract from "../../contracts/json/ERC20token.json";
+import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
+import { useMutation } from "@apollo/client";
 
 const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
   ssr: false
 });
 
-const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) => {
+const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, className }) => {
   const { walletData, setWalletData } = useContext(AppData);
   const [showBidModal, setShowBidModal] = useState(false);
   const handleBidModal = () => {
@@ -36,6 +38,15 @@ const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) =
   };
 
   const router = useRouter();
+
+  const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
+
+  useEffect(() => {
+    // if (updatedCollectible) {
+    //   console.log(updatedCollectible);
+    // }
+    // console.log(updatedCollectible);
+  }, [updatedCollectible]);
 
   async function switchNetwork(chainId) {
     if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
@@ -58,16 +69,25 @@ const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) =
 
   async function completeAuction() {
     // update collectible putOnSale, saleType to true
-    const response = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/${product.id}`, {
-      data: {
-        putOnSale: false,
-        owner: walletData.account
+    // const response = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/${product.id}`, {
+    //   data: {
+    //     putOnSale: false,
+    //     owner: walletData.account
+    //   }
+    // });
+    // console.log(response);
+    updateCollectible({
+      variables: {
+        "data": {
+          putOnSale: false,
+          owner: walletData.account
+        },
+        "updateCollectibleId": product.id
       }
     });
-    console.log(response);
   }
 
-  async function StoreData(price) {
+  async function StoreData(price, quantity) {
     try {
       const signer = walletData.provider.getSigner();
       let contractAddress;
@@ -76,15 +96,18 @@ const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) =
       } else if (product.collection.data.collectionType === "Multiple") {
         contractAddress = product.collection.data.contractAddress1155;
       }
+      //convert price
+      const convertedPrice = convertEthertoWei(walletData.ethers, price);
       // Pull the deployed contract instance
       const tokenContract = new walletData.ethers.Contract(TokenContract.address, TokenContract.abi, signer);
 
       const allowance = await tokenContract.allowance(walletData.account, TransferProxy.address);
       const allowanceAmount = parseInt(allowance._hex, 16);
-      console.log(allowanceAmount, parseInt(price));
-      if (allowanceAmount < parseInt(price)) {
+      const requireAllowanceAmount = "" + parseInt(convertedPrice * quantity);
+      console.log(allowanceAmount, parseInt(requireAllowanceAmount));
+      if (allowanceAmount < parseInt(requireAllowanceAmount)) {
         // approve nft first
-        const transaction = await tokenContract.approve(TransferProxy.address, price);
+        const transaction = await tokenContract.approve(TransferProxy.address, requireAllowanceAmount);
         const receipt = await transaction.wait();
         console.log(receipt);
       }
@@ -96,13 +119,13 @@ const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) =
         const nftAddress = contractAddress;
         const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
         const skipRoyalty = true;
-        const amount = `${price}`;
+        const unitPrice = `${convertedPrice}`;
+        const amount = `${parseFloat(product.auction.data.quantity) * parseFloat(unitPrice)}`;
         const tokenId = `${product.nftID}`;
         const tokenURI = "";
         const supply = `${product.supply ? product.supply : 1}`;
-        const royaltyFee = `${10}`;
-        const qty = `${product.auction.data.quantity ? product.auction.data.quantity : 1}`;
-        const unitPrice = `${parseFloat(amount) / parseFloat(product.auction.data.quantity)}`;
+        const royaltyFee = `${product?.royalty ? product?.royalty : 10}`;
+        const qty = `${quantity ? quantity : 1}`;
 
         // Pull the deployed contract instance
         const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
@@ -125,9 +148,21 @@ const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) =
         ]);
         const receipt = await transaction.wait();
         console.log(receipt);
+        const transactionHash = receipt.transactionHash;
         if (receipt) {
           isAccepted = true;
           completeAuction();
+          // create owner history for Fixed Price
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
+            data: {
+              event: "FixedPrice",
+              toWalletAddress: buyer,
+              transactionHash: transactionHash,
+              quantity: qty,
+              fromWalletAddress: seller,
+              collectible: product.id
+            }
+          });
         }
       }
 
@@ -171,13 +206,15 @@ const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) =
       }
     }
     if (product.auction.data.sellType == "Bidding") {
-      const price = convertEthertoWei(walletData.ethers, event.target.price?.value);
+      const price = event.target.price?.value;
+      const quantity = product.auction.data.quantity;
       // console.log(price);
-      StoreData(price);
+      StoreData(price, quantity);
     } else {
-      const price = convertEthertoWei(walletData.ethers, product.auction.data.bidPrice);
+      const price = product.auction.data.bidPrice;
+      const quantity = event.target.quantity?.value ? event.target.quantity?.value : product.auction.data.quantity;
       // console.log(price);
-      StoreData(price);
+      StoreData(price, quantity);
     }
   };
 
@@ -222,10 +259,18 @@ const PlaceBet = ({ highest_bid, auction_date, product, btnColor, className }) =
             </div>
           )}
         </div>
+        <span>{isOwner && "You are the owner of this auction"}</span>
         <Button
           color={btnColor || "primary-alta"}
           className="mt--30"
-          onClick={product.auction.data.sellType == "Bidding" ? handleBidModal : handleSubmit}
+          onClick={
+            product.auction.data.sellType == "Bidding"
+              ? handleBidModal
+              : product.auction.data.quantity > 1
+              ? handleBidModal
+              : handleSubmit
+          }
+          disabled={isOwner}
         >
           {product.auction.data.sellType == "Bidding" ? "Place a Bid" : "Buy Now"}
         </Button>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Anchor from "@ui/anchor";
-import { useContext, useState } from "react";
+import { useEffect, useContext, useState } from "react";
 import { AppData } from "src/context/app-context";
 import { ethers } from "ethers";
 import Button from "@ui/button";
@@ -18,6 +18,48 @@ const UserDropdown = () => {
     setIsAuthenticatedCryptoWallet
   } = useContext(AppData);
   const [ethBalance, setEthBalance] = useState("");
+
+  useEffect(() => {
+    /* code for runtime metamask events */
+    /* const handleAccountsChanged = (accounts) => {
+            console.log("accountsChanged", accounts);
+            if (accounts) setAccount(accounts[0]);
+        };
+
+        const handleChainChanged = (_hexChainId) => {
+            setChainId(_hexChainId);
+        };
+
+        const handleDisconnect = () => {
+            console.log("disconnect", error);
+            disconnect();
+        };
+
+        provider.on("accountsChanged", handleAccountsChanged);
+        provider.on("chainChanged", handleChainChanged);
+        provider.on("disconnect", handleDisconnect);
+        */
+
+    // check if previously connected
+    if (localStorage?.getItem("isWalletConnected") === "true") {
+      if (isPreviouslyConnected()) {
+        onConnect();
+      } else {
+        localStorage.setItem("isWalletConnected", false);
+      }
+    }
+    // Render wallet details
+    setIsAuthenticatedCryptoWallet(walletData.isConnected);
+    if (walletData.isConnected) {
+      setEthBalance(walletData.balance);
+    }
+  }, []);
+
+  const isPreviouslyConnected = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const accounts = await provider.listAccounts();
+    return accounts.length > 0;
+  };
 
   const onConnect = async () => {
     try {
@@ -44,14 +86,29 @@ const UserDropdown = () => {
         ethers,
         isConnected: true
       });
+      localStorage.setItem("isWalletConnected", true);
       // console.log(walletData);
       setEthBalance(getEthBalance);
       setIsAuthenticatedCryptoWallet(walletData.isConnected);
       // }
     } catch (err) {
       console.log(err);
+      localStorage.setItem("isWalletConnected", false);
     }
   };
+
+  const onDisconnectWallet = async () => {
+    setWalletData({
+      provider: null,
+      accounts: null,
+      balance: null,
+      ethers,
+      isConnected: false
+    });
+    localStorage.setItem("isWalletConnected", false);
+    setIsAuthenticatedCryptoWallet(false);
+  };
+
   const onDisconnect = async () => {
     setWalletData({
       provider: null,
@@ -60,11 +117,13 @@ const UserDropdown = () => {
       ethers,
       isConnected: false
     });
+    localStorage.setItem("isWalletConnected", false);
     setIsAuthenticatedCryptoWallet(false);
     await doLogOut();
     await loadUserData();
     router.push("/");
   };
+
   return (
     <div className="icon-box">
       <Anchor path="/author">
@@ -83,14 +142,14 @@ const UserDropdown = () => {
             <Anchor path="/product">Set Display Name</Anchor>
           </span>
         </div>
-        {!isAuthenticatedCryptoWallet && (
+        {!walletData.isConnected && (
           <div className="setting-option header-btn">
             <Button color="primary" className="connectBtn" onClick={onConnect} fullwidth="true">
               Wallet Connect
             </Button>
           </div>
         )}
-        {isAuthenticatedCryptoWallet && (
+        {walletData.isConnected && (
           <>
             <div className="rn-product-inner">
               <ul className="product-list">
@@ -125,9 +184,12 @@ const UserDropdown = () => {
               </ul>
             </div>
             <div className="add-fund-button mt--20 pb--20">
-              <Anchor className="btn btn-primary-alta w-100" path="/connect">
+              <Button className="w-100" onClick={onDisconnectWallet}>
+                Disconnect Wallet
+              </Button>
+              {/* <Anchor className="btn btn-primary-alta w-100" path="/connect">
                 Add Your More Funds
-              </Anchor>
+              </Anchor> */}
             </div>
           </>
         )}
