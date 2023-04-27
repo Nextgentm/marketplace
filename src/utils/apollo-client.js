@@ -4,8 +4,7 @@ import { getLoginToken } from "src/lib/user";
 import { isServer } from "./methods";
 
 const httpLink = createHttpLink({
-  uri: `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/graphql`,
-  credentials: "include"
+  uri: `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/graphql`
 });
 
 const authLink = setContext(async (_, req) => {
