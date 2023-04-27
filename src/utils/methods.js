@@ -181,7 +181,9 @@ const normalize = (data) => {
 
   return data;
 };
-
+const isServer = () => {
+  return typeof window === "undefined";
+};
 module.exports = {
   slideUp,
   slideDown,
@@ -194,5 +196,6 @@ module.exports = {
   shuffleArray,
   hasKey,
   isEmpty,
-  normalize
+  normalize,
+  isServer
 };

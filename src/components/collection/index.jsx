@@ -3,7 +3,6 @@ import Anchor from "@ui/anchor";
 import Image from "next/image";
 
 const Collection = ({ title, total_item, image, thumbnails, profile_image, path }) => (
-
   <Anchor target="_self" path={path} className="rn-collection-inner-one">
     <div className="collection-wrapper">
       {image?.url && (

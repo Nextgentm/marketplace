@@ -10,6 +10,7 @@ import { ALL_COLLECTION_QUERY } from "src/graphql/query/collection/getCollection
 import _ from "lodash";
 
 const CollectionArea = ({ className, space, id, data }) => {
+  console.log("className", className);
   const [collectionsRecords, setCollectionsRecords] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -18,7 +19,7 @@ const CollectionArea = ({ className, space, id, data }) => {
     total: 0
   });
 
-  const [getCollection, { data: collectionPagination }] = useLazyQuery(ALL_COLLECTION_QUERY, {
+  const [getCollection, { data: collectionPagination, error }] = useLazyQuery(ALL_COLLECTION_QUERY, {
     fetchPolicy: "cache-and-network"
   });
 
@@ -29,10 +30,12 @@ const CollectionArea = ({ className, space, id, data }) => {
   }, [data]);
 
   useEffect(() => {
+    console.log("error", error);
+    console.log("collectionPagination", collectionPagination);
     if (collectionPagination?.collections) {
       setCollectionsData(collectionPagination);
     }
-  }, [collectionPagination]);
+  }, [collectionPagination, error]);
 
   const setCollectionsData = ({ collections }) => {
     setCollectionsRecords(normalize(collections));
@@ -41,7 +44,7 @@ const CollectionArea = ({ className, space, id, data }) => {
 
   const getCollectionPaginationRecord = (page) => {
     getCollection({
-      variables: { pagination: { page, pageSize: 4 } }
+      variables: { pagination: { page, pageSize: 5 } }
     });
   };
   return (

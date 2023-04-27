@@ -7,6 +7,7 @@ const BidsTabContent = ({ bids, product }) => (
     {bids?.map((bid) => (
       <TopSeller
         key={bid?.id}
+        id={bid?.id}
         name={bid?.bidderAddress}
         eth={bid?.bidPrice}
         path={bid?.user?.slug}

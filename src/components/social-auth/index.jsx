@@ -1,37 +1,67 @@
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import Image from "next/image";
+import { useGoogleLogin } from "react-google-login";
+import strapi from "@utils/strapi";
+import { toast } from "react-toastify";
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
+import { useRouter } from "next/router";
 
-const SocialAuth = ({ className, title }) => (
-  <div className={clsx("social-share-media form-wrapper-one", className)}>
-    <h6>{title}</h6>
-    <p>Lorem ipsum dolor sit, amet sectetur adipisicing elit.cumque.</p>
-    <button type="button" className="another-login login-facebook">
-      <span className="small-image">
-        <Image src="/images/icons/google.png" alt="google login" width={26} height={27} />
-      </span>
-      <span>Log in with Google</span>
-    </button>
-    <button type="button" className="another-login login-facebook">
-      <span className="small-image">
-        <Image src="/images/icons/facebook.png" alt="facebook login" width={26} height={27} />
-      </span>
-      <span>Log in with Facebook</span>
-    </button>
-    <button type="button" className="another-login login-twitter">
-      <span className="small-image">
-        <Image src="/images/icons/tweeter.png" alt="tweeter login" width={26} height={27} />
-      </span>
-      <span>Log in with Twitter</span>
-    </button>
-    <button type="button" className="another-login login-linkedin">
-      <span className="small-image">
-        <Image src="/images/icons/linkedin.png" alt="linkedin login" width={26} height={27} />
-      </span>
-      <span>Log in with linkedin</span>
-    </button>
-  </div>
-);
+const SocialAuth = ({ className, title }) => {
+  const router = useRouter();
+
+  const { signIn, signOut } = useGoogleLogin({
+    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+
+    onSuccess: (data) => {
+      callAuthService("google", data.accessToken);
+    }
+  });
+  const callAuthService = async (provider, token) => {
+    try {
+      const loginResponse = await strapi.authenticateProvider(provider, token);
+      setCookie("token", loginResponse.jwt);
+      localStorage.setItem("user", JSON.stringify(loginResponse.user));
+      toast.success(`${router.pathname == "/sign-up" ? "Registration" : "Logged In"} Successfully`);
+      if (provider == "google") {
+        signOut();
+      }
+      setTimeout(() => {
+        router.push("/");
+      }, 500);
+    } catch ({ error }) {
+      toast.error("Invalid login information");
+      console.log(error);
+      return;
+    }
+  };
+  return (
+    <div className={clsx("social-share-media form-wrapper-one", className)}>
+      <h6>{title}</h6>
+      <p>Lorem ipsum dolor sit, amet sectetur adipisicing elit.cumque.</p>
+      <button type="button" className="another-login login-facebook" onClick={signIn}>
+        <span className="small-image">
+          <Image src="/images/icons/google.png" alt="google login" width={26} height={27} />
+        </span>
+        <span>{router.pathname == "/sign-up" ? "Signup" : "Login"} with Google</span>
+      </button>
+      <FacebookLogin
+        appId={process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}
+        callback={({ accessToken }) => {
+          callAuthService("facebook", accessToken);
+        }}
+        render={(renderProps) => (
+          <button type="button" className="another-login login-facebook" onClick={renderProps.onClick}>
+            <span className="small-image">
+              <Image src="/images/icons/facebook.png" alt="facebook login" width={26} height={27} />
+            </span>
+            <span>{router.pathname == "/sign-up" ? "Signup" : "Login"} with Facebook</span>
+          </button>
+        )}
+      />
+    </div>
+  );
+};
 
 SocialAuth.propTypes = {
   className: PropTypes.string,

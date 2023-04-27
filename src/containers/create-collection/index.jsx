@@ -8,7 +8,7 @@ import Button from "@ui/button";
 import ErrorText from "@ui/error-text";
 import { isEmpty } from "@utils/methods";
 import axios from "axios";
-import { WalletData } from "src/context/wallet-context";
+import { AppData } from "src/context/app-context";
 import { useRouter } from "next/router";
 import Multiselect from "multiselect-react-dropdown";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
@@ -35,7 +35,7 @@ const CreateCollectionArea = () => {
   const [paymentTokensData, setPaymentTokensData] = useState(null);
   const [selectedPaymentTokens, setSelectedPaymentTokens] = useState([]);
   // Get Wallet data
-  const { walletData, setWalletData } = useContext(WalletData);
+  const { walletData, setWalletData } = useContext(AppData);
   // Get url param
   const router = useRouter();
 

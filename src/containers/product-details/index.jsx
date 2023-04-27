@@ -14,11 +14,8 @@ import { TabContainer, TabContent, Nav, TabPane } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { WalletData } from "src/context/wallet-context";
-import {
-  ETHEREUM_NETWORK_CHAIN_ID,
-  POLYGON_NETWORK_CHAIN_ID,
-} from "src/lib/constants";
+import { AppData } from "src/context/app-context";
+import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
 import TransferPopupModal from "@components/modals/transfer";
@@ -34,7 +31,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   const [showAuctionInputModel, setShowAuctionInputModel] = useState(false);
   const [sellType, setSellType] = useState("nav-direct-sale");
 
-  const { walletData, setWalletData } = useContext(WalletData);
+  const { walletData, setWalletData } = useContext(AppData);
 
   const router = useRouter();
   const [showDirectSalesModal, setShowDirectSalesModal] = useState(false);
@@ -45,7 +42,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
 
   const [showTimeAuctionModal, setShowTimeAuctionModal] = useState(false);
   const handleTimeAuctionModal = () => {
-    setShowAuctionInputModel(!showTimeAuctionModal); // close model close on sale buttons option 
+    setShowAuctionInputModel(!showTimeAuctionModal); // close model close on sale buttons option
     setShowTimeAuctionModal((prev) => !prev);
   };
 
@@ -106,23 +103,18 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         contractAddress = product.collection.data.contractAddress1155;
         // Pull the deployed contract instance
         const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
-        if (sellType === "nav-direct-sale") {
+         // commented the timed auction part for erc1155 token
+        // if (sellType === "nav-direct-sale") {
           // approval for fixed price
-          const transaction = await contract1155.setApprovalForAll(
-            TradeContract.address,
-            true
-          );
+          const transaction = await contract1155.setApprovalForAll(TradeContract.address, true);
           const receipt = await transaction.wait();
           // console.log(receipt);
-        } else if (sellType === "nav-timed-auction") {
-          // approval for timed auction
-          const transaction = await contract1155.setApprovalForAll(
-            TransferProxy.address,
-            true
-          );
-          const receipt = await transaction.wait();
-          // console.log(receipt);
-        }
+        // } else if (sellType === "nav-timed-auction") {
+        //   // approval for timed auction
+        //   const transaction = await contract1155.setApprovalForAll(TransferProxy.address, true);
+        //   const receipt = await transaction.wait();
+        //   // console.log(receipt);
+        // }
       }
       return true;
     } catch (error) {
@@ -205,7 +197,6 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     StoreData(data);
   };
 
-
   const handleSubmitTransfer = async (event) => {
     // const { target } = e;
     event.preventDefault();
@@ -245,7 +236,6 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           const transaction = await contract721.transferFrom(walletData.account, receiver, product.nftID);
           const receipt = await transaction.wait();
           // console.log(receipt);
-
         } else if (product.collection.data.collectionType === "Multiple") {
           const contractAddress = product.collection.data.contractAddress1155;
           // Pull the deployed contract instance
@@ -283,7 +273,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
             <div className="rn-pd-content-area">
               <ProductTitle title={product?.name || "Untitled NFT"} likeCount={product?.size} />
               <span className="bid">
-                Price {" "}
+                Price{" "}
                 <span className="price">
                   {product.price}
                   {product.symbol}
@@ -300,17 +290,13 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                     <div className={clsx("tab-wrapper-one", className)}>
                       <nav className="tab-button-one">
                         <Nav as="div" className="nav-tabs">
-                          <Nav.Link
-                            as="button"
-                            eventKey="nav-direct-sale"
-                            onClick={() => handleDirectSaleModal(true)}
-                          >
+                          <Nav.Link as="button" eventKey="nav-direct-sale" onClick={() => { setSellType("nav-direct-sale"); handleDirectSaleModal(true);}}>
                             Direct Sale
                           </Nav.Link>
                           <Nav.Link
                             as="button"
                             eventKey="nav-timed-auction"
-                            onClick={() => handleTimeAuctionModal(true)}
+                            onClick={() => { setSellType("nav-timed-auction"); handleTimeAuctionModal(true) }}
                           >
                             Timed Auction
                           </Nav.Link>
@@ -324,7 +310,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                   {!product.putOnSale && product.owner === walletData.account && (
                     <div className="row">
                       <div className="col-md-6">
-                        <Button color="primary-alta" onClick={() => setShowAuctionInputModel(true)}>
+                        <Button color="primary-alta" onClick={() => product.collection.data.collectionType === "Multiple" ? setShowDirectSalesModal(true) : setShowAuctionInputModel(true)}>
                           Put on Sale
                         </Button>
                       </div>
@@ -345,11 +331,16 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                       tags={product?.tags}
                       history={product?.history}
                     />
-                    {product.putOnSale && product.owner != walletData.account && (
+                    {product.putOnSale && (
                       <PlaceBet
-                        highest_bid={{ amount: product.auction?.data?.bidPrice, priceCurrency: product.auction?.data?.priceCurrency, quantity: product.auction?.data?.quantity }}
+                        highest_bid={{
+                          amount: product.auction?.data?.bidPrice,
+                          priceCurrency: product.auction?.data?.priceCurrency,
+                          quantity: product.auction?.data?.quantity
+                        }}
                         auction_date={product.auction?.data?.endTimeStamp}
                         product={product}
+                        isOwner={product.auction?.data?.walletAddress == walletData.account}
                       />
                     )}
                   </div>

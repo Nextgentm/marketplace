@@ -1,6 +1,6 @@
 import SEO from "@components/seo";
 import Wrapper from "@layout/wrapper";
-import Header from "@layout/header/header-01";
+import Header from "@layout/header/header";
 import Footer from "@layout/footer/footer-01";
 import Breadcrumb from "@components/breadcrumb";
 import ExploreProductArea from "@containers/explore-product/layout-10";
@@ -52,7 +52,9 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections/?populate[collectibles][populate][0]=image`);
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections/?populate[collectibles][populate][0]=image`
+  );
   const productData = await res.json();
   const collections = productData.data.find(({ slug }) => slug === params.slug);
   return {

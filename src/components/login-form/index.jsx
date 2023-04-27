@@ -4,6 +4,9 @@ import Button from "@ui/button";
 import ErrorText from "@ui/error-text";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import { setCookie } from "@utils/cookies";
+import strapi from "@utils/strapi";
+import { toast } from "react-toastify";
 
 const LoginForm = ({ className }) => {
   const router = useRouter();
@@ -14,13 +17,28 @@ const LoginForm = ({ className }) => {
   } = useForm({
     mode: "onChange"
   });
-  const onSubmit = (data, e) => {
+
+  const onSubmit = async (data, e) => {
     e.preventDefault();
     // eslint-disable-next-line no-console
-    console.log(data);
-    router.push({
-      pathname: "/"
-    });
+    if (data.identifier && data.password) {
+      try {
+        let loginResponse = await strapi.login({
+          identifier: data.identifier,
+          password: data.password
+        });
+        console.log("data", loginResponse);
+        setCookie("token", loginResponse.jwt);
+        localStorage.setItem("user", JSON.stringify(loginResponse.user));
+        toast.success("Logged In Successfully");
+        router.push("/");
+      } catch ({ error }) {
+        toast.error("Invalid login information");
+        console.log(error);
+        return;
+      }
+      console.log(data);
+    }
   };
 
   return (
@@ -28,13 +46,13 @@ const LoginForm = ({ className }) => {
       <h4>Login</h4>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-5">
-          <label htmlFor="exampleInputEmail1" className="form-label">
+          <label htmlFor="identifier" className="form-label">
             Email address
           </label>
           <input
             type="email"
-            id="exampleInputEmail1"
-            {...register("exampleInputEmail1", {
+            id="identifier"
+            {...register("identifier", {
               required: "Email is required",
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
@@ -42,24 +60,24 @@ const LoginForm = ({ className }) => {
               }
             })}
           />
-          {errors.exampleInputEmail1 && <ErrorText>{errors.exampleInputEmail1?.message}</ErrorText>}
+          {errors.identifier && <ErrorText>{errors.identifier?.message}</ErrorText>}
         </div>
         <div className="mb-5">
-          <label htmlFor="exampleInputPassword1" className="form-label">
+          <label htmlFor="password" className="form-label">
             Password
           </label>
           <input
             type="password"
-            id="exampleInputPassword1"
-            {...register("exampleInputPassword1", {
+            id="password"
+            {...register("password", {
               required: "Password is required"
             })}
           />
-          {errors.exampleInputPassword1 && <ErrorText>{errors.exampleInputPassword1?.message}</ErrorText>}
+          {errors.password && <ErrorText>{errors.password?.message}</ErrorText>}
         </div>
         <div className="mb-5 rn-check-box">
-          <input type="checkbox" className="rn-check-box-input" id="exampleCheck1" {...register("exampleCheck1")} />
-          <label className="rn-check-box-label" htmlFor="exampleCheck1">
+          <input type="checkbox" className="rn-check-box-input" id="rememberMe" {...register("rememberMe")} />
+          <label className="rn-check-box-label" htmlFor="rememberMe">
             Remember me leter
           </label>
         </div>

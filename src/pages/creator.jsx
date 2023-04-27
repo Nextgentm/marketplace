@@ -1,6 +1,6 @@
 import SEO from "@components/seo";
 import Wrapper from "@layout/wrapper";
-import Header from "@layout/header/header-01";
+import Header from "@layout/header/header";
 import Footer from "@layout/footer/footer-01";
 import CreatorArea from "@containers/creator/layout-03";
 
