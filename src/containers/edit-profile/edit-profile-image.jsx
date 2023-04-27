@@ -1,17 +1,53 @@
 /* eslint-disable @next/next/no-img-element */
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import Image from "next/image";
 import Modal from "react-bootstrap/Modal";
+import { AppData } from "src/context/app-context";
+import { useMutation } from "@apollo/client";
+import { UPDATE_USER_PROFILE } from "src/graphql/mutation/userProfile/updateUserProfile";
+import { toast } from "react-toastify";
+import { normalize } from "@utils/methods";
+
+const subdomain = "lootmogul";
 
 const EditProfileImage = () => {
-  let imageAvtar = "";
-  if (typeof window !== "undefined") {
-    imageAvtar = localStorage.getItem("image3dAvtar");
-  }
+  const { userData: authorData, setUserDataLocal } = useContext(AppData);
   const [selectedImage, setSelectedImage] = useState({
-    profile: imageAvtar,
+    profile: "",
     cover: ""
   });
+
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const shareModalHandler = () => setIsShareModalOpen((prev) => !prev);
+  const [showIFrame, setShowIFrame] = useState(true);
+  const iFrameRef = useRef(null);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [updateUserProfile, { data: updatedUserProfile, loading }] = useMutation(UPDATE_USER_PROFILE, {
+    fetchPolicy: "network-only"
+  });
+
+  useEffect(() => {
+    if (avatarUrl) {
+      setSelectedImage({ ...selectedImage, profile: avatarUrl });
+      updateUserProfile({
+        variables: {
+          updateUsersPermissionsUserId: authorData.id,
+          data: {
+            ready_player_me_url: avatarUrl,
+            photoURL: avatarUrl
+          }
+        }
+      });
+    }
+  }, [avatarUrl]);
+
+  useEffect(() => {
+    if (updatedUserProfile) {
+      setUserDataLocal(normalize(updatedUserProfile).updateUsersPermissionsUser);
+      toast.success("Profile Image Updated Successfully");
+    }
+  }, [updatedUserProfile]);
+
   const imageChange = (e) => {
     setIsShareModalOpen(true);
     setIsShareModalOpen(true);
@@ -22,12 +58,6 @@ const EditProfileImage = () => {
       }));
     }
   };
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const shareModalHandler = () => setIsShareModalOpen((prev) => !prev);
-  const [showIFrame, setShowIFrame] = useState(true);
-  const subdomain = "lootmogul";
-  const iFrameRef = useRef(null);
-  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
     let iFrame = iFrameRef.current;
@@ -70,11 +100,9 @@ const EditProfileImage = () => {
       console.log(`Avatar URL: ${json.data.url}`);
       let text = json.data.url;
       let result = text.replace("glb", "png");
-      localStorage.setItem("image3dAvtar", result);
 
       setAvatarUrl(result);
       setShowIFrame(false);
-      setIsShareModalOpen(false);
       setIsShareModalOpen(false);
     }
     // Get user id
@@ -128,8 +156,8 @@ const EditProfileImage = () => {
           <div className="profile-image mb--30">
             <h6 className="title">Change Your Profile Picture</h6>
             <div className="img-wrap">
-              {selectedImage?.profile ? (
-                <img src={selectedImage?.profile} alt="" data-black-overlay="6" />
+              {authorData?.photoURL || avatarUrl ? (
+                <img src={avatarUrl || authorData?.photoURL} alt="" data-black-overlay="6" />
               ) : (
                 <Image
                   id="rbtinput1"
@@ -147,7 +175,7 @@ const EditProfileImage = () => {
           </div>
           <div className="button-area">
             <div className="brows-file-wrapper">
-              <input name="profile" id="fatima" type="button" onClick={imageChange} />
+              <input name="profile" id="fatima" type="button" onClick={(e) => imageChange(e)} />
               <label htmlFor="fatima" title="No File Choosen">
                 <span className="text-center color-white">Upload Profile</span>
               </label>
@@ -159,8 +187,8 @@ const EditProfileImage = () => {
           <div className="profile-image mb--30">
             <h6 className="title">Change Your Cover Photo</h6>
             <div className="img-wrap">
-              {selectedImage?.cover ? (
-                <img src={URL.createObjectURL(selectedImage.cover)} alt="" data-black-overlay="6" />
+              {authorData?.banner?.url ? (
+                <img src={authorData?.banner?.url} alt="" data-black-overlay="6" />
               ) : (
                 <Image
                   id="rbtinput2"
@@ -178,7 +206,7 @@ const EditProfileImage = () => {
           </div>
           <div className="button-area">
             <div className="brows-file-wrapper">
-              <input name="cover" id="nipa" type="file" onChange={imageChange} />
+              <input name="cover" id="nipa" type="file" onChange={(e) => imageChange(e)} />
               <label htmlFor="nipa" title="No File Choosen">
                 <span className="text-center color-white">Upload Cover</span>
               </label>

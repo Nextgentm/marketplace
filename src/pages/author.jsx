@@ -19,6 +19,7 @@ export async function getStaticProps() {
 }
 
 const Author = () => {
+  const { userData: authorData } = useContext(AppData);
   const [allProductsData, setAllProductsData] = useState(null);
   const { walletData, setWalletData } = useContext(AppData);
 
