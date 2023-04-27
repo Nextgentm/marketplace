@@ -17,7 +17,7 @@ import TradeContract from "../../../contracts/json/trade.json";
 import TransferProxy from "../../../contracts/json/TransferProxy.json";
 import TokenContract from "../../../contracts/json/ERC20token.json";
 
-const TopSeller = ({ name, time, path, image, eth, isVarified, product }) => {
+const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) => {
   const { walletData, setWalletData } = useContext(AppData);
 
   const router = useRouter();
@@ -32,7 +32,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product }) => {
     });
     console.log(response);
     // update collectible putOnSale, saleType to true
-    const response2 = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/biddings/${key}`, {
+    const response2 = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/biddings/${id}`, {
       data: {
         isAccepted: true
       }
@@ -52,13 +52,13 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product }) => {
           : product.collection.data.contractAddress1155;
       const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
       const skipRoyalty = true;
-      const amount = convertEthertoWei(walletData.ethers, eth);
+      const unitPrice = `${convertEthertoWei(walletData.ethers, eth)}`;
+            const amount = `${parseFloat(product.auction.data.quantity) * parseFloat(unitPrice)}`;
       const tokenId = `${product.nftID}`;
       const tokenURI = "";
       const supply = `${product.supply ? product.supply : 1}`;
-      const royaltyFee = `${10}`;
+      const royaltyFee = `${product?.royalty ? product?.royalty : 10}`;
       const qty = `${product.auction.data.quantity ? product.auction.data.quantity : 1}`;
-      const unitPrice = `${parseFloat(amount) / parseFloat(product.auction.data.quantity)}`;
 
       // Pull the deployed contract instance
       const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
