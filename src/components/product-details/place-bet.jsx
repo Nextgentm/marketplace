@@ -115,7 +115,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
       if (product.auction.data.sellType == "FixedPrice") {
         const seller = product.auction.data.walletAddress;
         const buyer = walletData.account;
-        const erc20Address = TokenContract.address;
+        const erc20Address = product.auction.data.paymentToken?.data?.blockchain;
         const nftAddress = contractAddress;
         const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
         const skipRoyalty = true;
@@ -267,8 +267,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
             product.auction.data.sellType == "Bidding"
               ? handleBidModal
               : product.auction.data.quantity > 1
-              ? handleBidModal
-              : handleSubmit
+                ? handleBidModal
+                : handleSubmit
           }
           disabled={isOwner}
         >
