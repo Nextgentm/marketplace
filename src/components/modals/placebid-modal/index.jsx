@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { WalletData } from "src/context/wallet-context";
+import { AppData } from "src/context/app-context";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 import ERC721Contract from "../../../contracts/json/erc721.json";
 import ERC1155Contract from "../../../contracts/json/erc1155.json";
@@ -14,7 +14,7 @@ import TransferProxy from "../../../contracts/json/TransferProxy.json";
 import TokenContract from "../../../contracts/json/ERC20token.json";
 
 const PlaceBidModal = ({ show, handleModal, product, handleSubmit }) => {
-  const { walletData, setWalletData } = useContext(WalletData);
+  const { walletData, setWalletData } = useContext(AppData);
 
   return (
     <Modal className="rn-popup-modal placebid-modal-wrapper" show={show} onHide={handleModal} centered>

@@ -111,7 +111,7 @@ const TopBarArea = () => {
             <div className="setting-option">
               <div className="icon-box">
                 <Button size="small" color="primary-alta" onClick={onConnect}>
-                  Wallet connect
+                  Login/Sign up
                 </Button>
               </div>
             </div>
