@@ -40,7 +40,7 @@ const Header = ({ className }) => {
     } else {
       setIsAdminWallet(false);
     }
-  }, [walletData])
+  }, [walletData]);
 
   const detectCurrentProvider = () => {
     let provider;
@@ -206,7 +206,13 @@ const Header = ({ className }) => {
           </div>
         </div>
       </header>
-      <MobileMenu isOpen={offcanvas} onClick={offcanvasHandler} menu={menuData} logo={headerData.logo} isAdmin={isAdminWallet} />
+      <MobileMenu
+        isOpen={offcanvas}
+        onClick={offcanvasHandler}
+        menu={menuData}
+        logo={headerData.logo}
+        isAdmin={isAdminWallet}
+      />
     </>
   );
 };
