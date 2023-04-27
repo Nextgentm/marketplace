@@ -37,7 +37,8 @@ const AppDataContext = ({ children }) => {
       loadUserData,
       userData,
       isAuthenticatedCryptoWallet,
-      setIsAuthenticatedCryptoWallet
+      setIsAuthenticatedCryptoWallet,
+      setUserData
     }),
     [walletData, userData, isAuthenticatedCryptoWallet]
   );
