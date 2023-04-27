@@ -1,21 +1,45 @@
 import PropTypes from "prop-types";
-import TopSeller from "@components/top-seller/layout-02";
 import { IDType, ImageType } from "@utils/types";
+import { Table } from "react-bootstrap";
 
-const HistoryTabContent = ({ history }) => (
-  <div>
-    {history?.map((item) => (
-      <TopSeller
-        key={item.id}
-        name={item.user.name}
-        eth={item.amount}
-        path={item.user.slug}
-        time={item.bidAt}
-        image={item.user.image}
-      />
-    ))}
-  </div>
-);
+const HistoryTabContent = ({ history }) => {
+  const convertWalletAddress = (value) => {
+    return value.substr(0, 5) + "....";
+  };
+
+  const convertTransactionHash = (value) => {
+    return value.substr(0, 5) + "....";
+  };
+
+  return (
+    <div className="history-table pt-4">
+      <Table striped responsive variant="dark">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>From WalletAddress</th>
+            <th>To WalletAddress</th>
+            <th>Quantity</th>
+            <th>Transaction Hash</th>
+            {/* <th>Created At</th> */}
+          </tr>
+        </thead>
+        <tbody>
+          {history?.map((item, index) => (
+            <tr key={index}>
+              <td>{item?.event}</td>
+              <td>{convertWalletAddress(item?.fromWalletAddress)}</td>
+              <td>{convertWalletAddress(item?.toWalletAddress)}</td>
+              <td>{item?.quantity}</td>
+              <td>{convertTransactionHash(item?.transactionHash)}</td>
+              {/* <td>{item?.createdAt}</td> */}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div>
+  );
+};
 
 HistoryTabContent.propTypes = {
   history: PropTypes.arrayOf(
