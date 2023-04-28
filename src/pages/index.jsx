@@ -62,12 +62,12 @@ const Home = () => {
             }
           }
         />
-        <CreatorArea
+        {/* <CreatorArea
           data={{
             ...content["top-sller-section"],
             creators: sellerData
           }}
-        />
+        /> */}
         {/* <ServiceArea data={content["service-section"]} /> */}
       </main>
       <Footer />
