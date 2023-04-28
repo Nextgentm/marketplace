@@ -16,19 +16,21 @@ const ProductArea = ({ space, className, data }) => (
           </div>
         )}
 
-        <div className="col-lg-6 col-md-6 col-sm-6 col-12 mt_mobile--15">
-          <div
-            className="view-more-btn text-start text-sm-end"
-            data-sal-delay="150"
-            data-sal="slide-up"
-            data-sal-duration="800"
-          >
-            <Anchor className="btn-transparent" path="/product">
-              VIEW ALL
-              <i className="feather feather-arrow-right" />
-            </Anchor>
+        {data?.products?.length > 4 &&
+          <div className="col-lg-6 col-md-6 col-sm-6 col-12 mt_mobile--15">
+            <div
+              className="view-more-btn text-start text-sm-end"
+              data-sal-delay="150"
+              data-sal="slide-up"
+              data-sal-duration="800"
+            >
+              <Anchor className="btn-transparent" path="/product">
+                VIEW ALL
+                <i className="feather feather-arrow-right" />
+              </Anchor>
+            </div>
           </div>
-        </div>
+        }
       </div>
       {data?.products && (
         <div className="row g-5">

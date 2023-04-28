@@ -26,6 +26,7 @@ import TradeContract from "../../contracts/json/trade.json";
 import TransferProxy from "../../contracts/json/TransferProxy.json";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
+import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 
 // Demo Image
 
@@ -36,6 +37,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   const { walletData, setWalletData } = useContext(AppData);
 
   const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
+  const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   const router = useRouter();
   const [showDirectSalesModal, setShowDirectSalesModal] = useState(false);
@@ -294,19 +296,31 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         });
 
         // create owner history for Transfer
-        const response2 = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
-          data: {
-            event: "Transferred",
-            toWalletAddress: receiver.toLowerCase(),
-            transactionHash: transactionHash,
-            quantity: product.supply,
-            fromWalletAddress: walletData.account,
-            collectible: product.id
+        // const response2 = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
+        //   data: {
+        //     event: "Transferred",
+        //     toWalletAddress: receiver.toLowerCase(),
+        //     transactionHash: transactionHash,
+        //     quantity: product.supply,
+        //     fromWalletAddress: walletData.account,
+        //     collectible: product.id
+        //   }
+        // });
+        createOwnerHistory({
+          variables: {
+            data: {
+              collectible: product.id,
+              event: "Transferred",
+              fromWalletAddress: walletData.account,
+              quantity: product.supply,
+              toWalletAddress: receiver.toLowerCase(),
+              transactionHash: transactionHash
+            }
           }
         });
 
         toast.success("NFT transfered succesfully");
-        // router.reload();
+        router.reload();
         setShowTransferModal(false);
       } else {
         toast.error("Invalid address");

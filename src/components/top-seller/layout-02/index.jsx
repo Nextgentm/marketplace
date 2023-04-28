@@ -19,6 +19,7 @@ import TokenContract from "../../../contracts/json/ERC20token.json";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { UPDATE_BIDDING } from "src/graphql/mutation/bidding.js/updateBidding";
+import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 
 const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) => {
   const { walletData, setWalletData } = useContext(AppData);
@@ -26,6 +27,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
   const router = useRouter();
   const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
   const [updateBidding, { data: updatedBidding }] = useMutation(UPDATE_BIDDING);
+  const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   useEffect(() => {
     // if (updatedCollectible) {
@@ -114,14 +116,27 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
       if (receipt) {
         completeAuction();
         // create owner history for Timed Auction
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
-          data: {
-            event: "TimeAuction",
-            toWalletAddress: buyer,
-            transactionHash: transactionHash,
-            quantity: qty,
-            fromWalletAddress: seller,
-            collectible: product.id
+        // const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
+        //   data: {
+        //     event: "TimeAuction",
+        //     toWalletAddress: buyer,
+        //     transactionHash: transactionHash,
+        //     quantity: qty,
+        //     fromWalletAddress: seller,
+        //     collectible: product.id
+        //   }
+        // });
+        createOwnerHistory({
+          variables: {
+            data: {
+              auction: product.auction.id,
+              collectible: product.id,
+              event: "TimeAuction",
+              fromWalletAddress: seller,
+              quantity: qty,
+              toWalletAddress: buyer,
+              transactionHash: transactionHash
+            }
           }
         });
       }
