@@ -24,7 +24,7 @@ Collection.getInitialProps = async () => {
     query: ALL_COLLECTION_QUERY,
     variables: {
       pagination: {
-        pageSize: 5
+        pageSize: 8
       }
     },
     fetchPolicy: "network-only"
