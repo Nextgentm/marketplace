@@ -6,10 +6,11 @@ import Anchor from "@ui/anchor";
 import { ProductType, SectionTitleType } from "@utils/types";
 
 const ProductArea = ({ space, className, data }) => (
+  data?.products &&
   <div className={clsx("rn-new-items", space === 1 && "rn-section-gapTop", className)}>
     <div className="container">
       <div className="row mb--50 align-items-center">
-        {data?.section_title && (
+        {data?.products && (
           <div className="col-lg-6 col-md-6 col-sm-6 col-12">
             <SectionTitle {...data.section_title} className="mb-0" />
           </div>
@@ -40,12 +41,14 @@ const ProductArea = ({ space, className, data }) => (
               className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
             >
               <Product
-                title={prod.title}
-                slug={prod.slug}
+                title={prod.attributes.name}
+                slug={prod.attributes.slug}
+                price={prod.attributes?.auction?.data?.attributes?.bidPrice}
+                symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
+                image={prod.attributes?.image?.data?.attributes?.url}
+                collectionName={prod.attributes?.collection?.data?.attributes?.name}
                 latestBid={prod.latestBid}
-                price={prod.price}
                 likeCount={prod.likeCount}
-                image={prod.images?.[0]}
                 authors={prod.authors}
                 bitCount={prod.bitCount}
               />

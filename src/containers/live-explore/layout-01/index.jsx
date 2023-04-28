@@ -45,9 +45,10 @@ const SliderOptions = {
 };
 
 const LiveExploreArea = ({ data, className, space }) => (
+  data?.products &&
   <div className={clsx("rn-live-bidding-area", space === 1 && "rn-section-gapTop", className)}>
     <div className="container">
-      {data?.section_title && (
+      {data?.products && (
         <div className="row mb--50">
           <div className="col-lg-12">
             <SectionTitle {...data.section_title} />
@@ -61,18 +62,20 @@ const LiveExploreArea = ({ data, className, space }) => (
               options={SliderOptions}
               className="banner-one-slick slick-arrow-style-one rn-slick-dot-style slick-gutter-15"
             >
-              {data.products.map((prod) => (
-                <SliderItem key={prod.id} className="single-slide-product">
+              {data.products.map((prod, index) => (
+                <SliderItem key={prod.index} className="single-slide-product">
                   <Product
                     overlay
-                    placeBid={!!data.placeBid}
-                    title={prod.title}
-                    slug={prod.slug}
+                    placeBid={false}
+                    title={prod.attributes.name}
+                    slug={prod.attributes.slug}
+                    price={prod.attributes?.auction?.data?.attributes?.bidPrice}
+                    symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
+                    auction_date={prod.attributes?.auction?.data?.attributes?.endTimeStamp}
+                    image={prod.attributes?.image?.data?.attributes?.url}
+                    collectionName={prod.attributes?.collection?.data?.attributes?.name}
                     latestBid={prod.latestBid}
-                    price={prod.price}
                     likeCount={prod.likeCount}
-                    auction_date={prod.auction_date}
-                    image={prod.images?.[0]}
                     authors={prod.authors}
                     bitCount={prod.bitCount}
                   />

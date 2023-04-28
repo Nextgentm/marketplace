@@ -9,7 +9,7 @@ import { flatDeep } from "@utils/methods";
 import { SectionTitleType, ProductType } from "@utils/types";
 
 const ExploreProductArea = ({ className, space, data }) => {
-  const filters = [...new Set(flatDeep(data?.products.map((item) => item.collection.data?.name) || []))];
+  const filters = [...new Set(flatDeep(data?.products.map((item) => item.attributes?.collection?.data?.attributes?.name) || []))];
   const [products, setProducts] = useState([]);
   useEffect(() => {
     setProducts(data?.products);
@@ -21,7 +21,7 @@ const ExploreProductArea = ({ className, space, data }) => {
       setProducts(data?.products);
       return;
     }
-    const filterProds = prods.filter((prod) => prod.collection.data?.name.includes(filterKey));
+    const filterProds = prods.filter((prod) => prod.attributes?.collection?.data?.attributes?.name.includes(filterKey));
     setProducts(filterProds);
   };
   return (
@@ -40,14 +40,14 @@ const ExploreProductArea = ({ className, space, data }) => {
             {products?.slice(0, 10)?.map((prod) => (
               <motion.div key={prod.id} className={clsx("grid-item")} layout>
                 <Product
-                  placeBid={!!data.placeBid}
-                  title={prod.name || "Untitled NFT"}
-                  slug={prod.slug || "#"}
-                  latestBid={prod.latestBid || "N/A"}
-                  price={prod.price || "0"}
-                  symbol={prod.symbol || ""}
-                  likeCount={500}
-                  image={prod.image.data ? prod.image.data.url : "/images/portfolio/lg/portfolio-01.jpg"}
+                  title={prod.attributes.name}
+                  slug={prod.attributes.slug}
+                  price={prod.attributes?.auction?.data?.attributes?.bidPrice}
+                  symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
+                  image={prod.attributes?.image?.data?.attributes?.url}
+                  collectionName={prod.attributes?.collection?.data?.attributes?.name}
+                  latestBid={prod.latestBid}
+                  likeCount={prod.likeCount}
                   authors={prod.authors}
                   bitCount={prod.bitCount}
                 />
