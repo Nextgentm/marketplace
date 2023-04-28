@@ -27,8 +27,6 @@ import LiveExploreArea from "@containers/live-explore/layout-01";
 
 const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection }) => {
   const content = normalizedData(homepageData?.content || []);
-  console.log(dataCollection);
-
   return (
     <Wrapper>
       <SEO pageTitle="NFT Marketplace" />
