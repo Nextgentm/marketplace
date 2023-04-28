@@ -1,15 +1,9 @@
 import PropTypes from "prop-types";
 import { IDType, ImageType } from "@utils/types";
 import { Table } from "react-bootstrap";
+import { walletAddressShortForm, transactionHashShortForm } from "../../../utils/blockchain";
 
 const HistoryTabContent = ({ history }) => {
-  const convertWalletAddress = (value) => {
-    return value.substr(0, 5) + "....";
-  };
-
-  const convertTransactionHash = (value) => {
-    return value.substr(0, 5) + "....";
-  };
 
   return (
     <div className="history-table pt-4">
@@ -28,10 +22,10 @@ const HistoryTabContent = ({ history }) => {
           {history?.map((item, index) => (
             <tr key={index}>
               <td>{item?.event}</td>
-              <td>{convertWalletAddress(item?.fromWalletAddress)}</td>
-              <td>{convertWalletAddress(item?.toWalletAddress)}</td>
+              <td>{walletAddressShortForm(item?.fromWalletAddress)}</td>
+              <td>{walletAddressShortForm(item?.toWalletAddress)}</td>
               <td>{item?.quantity}</td>
-              <td>{convertTransactionHash(item?.transactionHash)}</td>
+              <td>{transactionHashShortForm(item?.transactionHash)}</td>
               {/* <td>{item?.createdAt}</td> */}
             </tr>
           ))}
