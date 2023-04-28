@@ -17,6 +17,8 @@ import { AppData } from "src/context/app-context";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 import ERC721Contract from "../../contracts/json/erc721.json";
 import ERC1155Contract from "../../contracts/json/erc1155.json";
+import { useMutation } from "@apollo/client";
+import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 
 const CreateNewArea = ({ className, space }) => {
   const [showProductModal, setShowProductModal] = useState(false);
@@ -26,6 +28,7 @@ const CreateNewArea = ({ className, space }) => {
   const [dataCollection, setDataCollection] = useState(null);
 
   const { walletData, setWalletData } = useContext(AppData);
+  const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   const router = useRouter();
 
@@ -168,17 +171,28 @@ const CreateNewArea = ({ className, space }) => {
         }
       }
       // create owner history for minting
-      const response2 = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
-        data: {
-          event: "Minted",
-          toWalletAddress: walletData.account,
-          transactionHash: transactionHash,
-          quantity: supply,
-          fromWalletAddress: "0x0000000000000000000000000000000000000000",
-          collectible: collectiblesId
+      // const response2 = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
+      //   data: {
+      //     event: "Minted",
+      //     toWalletAddress: walletData.account,
+      //     transactionHash: transactionHash,
+      //     quantity: supply,
+      //     fromWalletAddress: "0x0000000000000000000000000000000000000000",
+      //     collectible: collectiblesId
+      //   }
+      // });
+      createOwnerHistory({
+        variables: {
+          data: {
+            collectible: collectiblesId,
+            event: "Minted",
+            fromWalletAddress: "0x0000000000000000000000000000000000000000",
+            quantity: supply,
+            toWalletAddress: walletData.account,
+            transactionHash: transactionHash
+          }
         }
       });
-      // console.log(response2);
 
       notify();
       reset();

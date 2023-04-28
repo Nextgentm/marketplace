@@ -20,6 +20,7 @@ import TradeContract from "../../contracts/json/trade.json";
 import TransferProxy from "../../contracts/json/TransferProxy.json";
 import TokenContract from "../../contracts/json/ERC20token.json";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
+import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import { useMutation } from "@apollo/client";
 
 const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
@@ -40,6 +41,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
   const router = useRouter();
 
   const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
+  const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   useEffect(() => {
     // if (updatedCollectible) {
@@ -153,14 +155,27 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
           isAccepted = true;
           completeAuction();
           // create owner history for Fixed Price
-          const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
-            data: {
-              event: "FixedPrice",
-              toWalletAddress: buyer,
-              transactionHash: transactionHash,
-              quantity: qty,
-              fromWalletAddress: seller,
-              collectible: product.id
+          // const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
+          //   data: {
+          //     event: "FixedPrice",
+          //     toWalletAddress: buyer,
+          //     transactionHash: transactionHash,
+          //     quantity: qty,
+          //     fromWalletAddress: seller,
+          //     collectible: product.id
+          //   }
+          // });
+          createOwnerHistory({
+            variables: {
+              data: {
+                auction: product.auction.id,
+                collectible: product.id,
+                event: "FixedPrice",
+                fromWalletAddress: seller,
+                quantity: qty,
+                toWalletAddress: buyer,
+                transactionHash: transactionHash
+              }
             }
           });
         }
