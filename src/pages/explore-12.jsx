@@ -22,11 +22,11 @@ const Home02 = () => {
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Live Explore Carousel" currentPage="Live Explore Carousel" />
-        <LiveExploreArea
+        {/* <LiveExploreArea
           data={{
             products: liveAuctionData
           }}
-        />
+        /> */}
       </main>
       <Footer />
     </Wrapper>

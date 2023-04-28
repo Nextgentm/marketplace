@@ -44,7 +44,7 @@ const CollectionArea = ({ className, space, id, data }) => {
 
   const getCollectionPaginationRecord = (page) => {
     getCollection({
-      variables: { pagination: { page, pageSize: 5 } }
+      variables: { pagination: { page, pageSize: 8 } }
     });
   };
   return (

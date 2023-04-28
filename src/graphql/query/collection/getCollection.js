@@ -163,3 +163,56 @@ export const ALL_COLLECTION_QUERY = gql`
         }
     }
 `;
+
+export const ALL_COLLECTION_LISTDATA_QUERY = gql`
+query collections(
+    $pagination: PaginationArg
+    $filter: CollectionFiltersInput
+    $sort: [String]
+) {
+    collections(pagination: $pagination, filters: $filter, sort: $sort) {
+        data {
+            attributes {
+                name
+                logo {
+                    data {
+                        attributes {
+                            url
+                        }
+                    }
+                }
+                cover {
+                    data {
+                        attributes {
+                            url
+                        }
+                    }
+                }
+                featured {
+                    data {
+                        attributes {
+                            url
+                        }
+                    }
+                }
+                category
+                collectionType
+                slug
+              collectibles{
+                data{
+                  id
+                }
+              }
+            }
+        }
+        meta {
+            pagination {
+                total
+                page
+                pageSize
+                pageCount
+            }
+        }
+    }
+}
+`;

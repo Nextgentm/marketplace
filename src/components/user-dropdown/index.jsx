@@ -56,7 +56,7 @@ const UserDropdown = () => {
     //   onDisconnectWallet();
     // };
 
-    window.ethereum.on("accountsChanged", handleAccountsChanged);
+    window?.ethereum?.on("accountsChanged", handleAccountsChanged);
     // window.ethereum.on("chainChanged", handleChainChanged);
     // window.ethereum.on("disconnect", handleDisconnect);
     // check if previously connected

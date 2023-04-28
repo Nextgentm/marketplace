@@ -79,6 +79,18 @@
       ]
     },
     {
+      "section": "live-explore-section",
+      "section_title": {
+        "title": "Live Bidding"
+      }
+    },
+    {
+      "section": "newest-section",
+      "section_title": {
+        "title": "Newest Items"
+      }
+    },
+    {
       "section": "collection-section",
       "section_title": {
         "title": "Top Collection"
