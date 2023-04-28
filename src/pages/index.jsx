@@ -4,6 +4,7 @@ import Header from "@layout/header/header";
 import Footer from "@layout/footer/footer-01";
 import HeroArea from "@containers/hero/layout-06";
 import CollectionArea from "@containers/collection/layout-01";
+import NewestItmesArea from "@containers/product/layout-04";
 import ExploreProductArea from "@containers/explore-product/layout-02";
 import CreatorArea from "@containers/creator/layout-01";
 import ServiceArea from "@containers/services/layout-01";
@@ -15,29 +16,18 @@ import axios from "axios";
 import homepageData from "../data/homepages/home-06.json";
 import sellerData from "../data/sellers.json";
 import productData from "../data/products.json";
+import client from "@utils/apollo-client";
+import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
+import { ALL_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getCollection";
+import LiveExploreArea from "@containers/live-explore/layout-01";
 
-export async function getStaticProps() {
-  return { props: { className: "template-color-1" } };
-}
+// export async function getStaticProps() {
+//   return { props: { className: "template-color-1" } };
+// }
 
-const Home = () => {
+const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection }) => {
   const content = normalizedData(homepageData?.content || []);
-  const [dataCollection, setDataCollection] = useState(null);
-  const [dataCollectibles, setDataCollectibles] = useState(null);
-
-  useEffect(() => {
-    axios.get(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections?populate=*`).then((response) => {
-      setDataCollection(response.data.data);
-    });
-  }, []);
-
-  useEffect(() => {
-    axios.get(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?populate=*`).then((response) => {
-      setDataCollectibles(response.data.data);
-    });
-  }, []);
-
-  console.log(dataCollectibles);
+  console.log(dataCollection);
 
   return (
     <Wrapper>
@@ -45,7 +35,19 @@ const Home = () => {
       <Header />
       <main id="main-content">
         <HeroArea data={content["hero-section"]} />
+        <LiveExploreArea
+          data={{
+            ...content["live-explore-section"],
+            products: liveAuctionData,
+          }}
+        />
 
+        <NewestItmesArea
+          data={{
+            ...content["newest-section"],
+            products: newestData,
+          }}
+        />
         <CollectionArea
           data={
             dataCollection && {
@@ -62,17 +64,89 @@ const Home = () => {
             }
           }
         />
-        <CreatorArea
+        {/* <CreatorArea
           data={{
             ...content["top-sller-section"],
             creators: sellerData
           }}
-        />
+        /> */}
         {/* <ServiceArea data={content["service-section"]} /> */}
       </main>
       <Footer />
     </Wrapper>
   );
+};
+
+Home.getInitialProps = async () => {
+  const liveAuctionData = await client.query({
+    query: ALL_COLLECTIBLE_LISTDATA_QUERY,
+    variables: {
+      filter: {
+        putOnSale: {
+          eq: true
+        }
+      },
+      pagination: {
+        pageSize: 5
+      }
+    },
+    fetchPolicy: "network-only"
+  });
+
+  const newestItems = await client.query({
+    query: ALL_COLLECTIBLE_LISTDATA_QUERY,
+    variables: {
+      filter: {
+        putOnSale: {
+          eq: true
+        }
+      },
+      pagination: {
+        pageSize: 5
+      },
+      sort: "createdAt"
+    },
+    fetchPolicy: "network-only"
+  });
+
+  const dataCollectibles = await client.query({
+    query: ALL_COLLECTIBLE_LISTDATA_QUERY,
+    variables: {
+      filter: {
+        putOnSale: {
+          eq: true
+        }
+      },
+      sort: "createdAt"
+    },
+    fetchPolicy: "network-only"
+  });
+
+  const dataCollection = await client.query({
+    query: ALL_COLLECTION_LISTDATA_QUERY,
+    variables: {
+      filter: {
+        collectibles: {
+          putOnSale: {
+            eq: true
+          }
+        }
+      },
+      pagination: {
+        pageSize: 4
+      },
+      sort: "createdAt"
+    },
+    fetchPolicy: "network-only"
+  });
+
+  return {
+    className: "template-color-1",
+    liveAuctionData: liveAuctionData.data.collectibles?.data,
+    newestData: newestItems.data.collectibles?.data,
+    dataCollectibles: dataCollectibles.data.collectibles?.data,
+    dataCollection: dataCollection.data.collections.data
+  };
 };
 
 export default Home;

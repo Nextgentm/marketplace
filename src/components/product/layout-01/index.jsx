@@ -31,6 +31,7 @@ const Product = ({
   bitCount,
   authors,
   placeBid,
+  collectionName,
   disableShareDropdown
 }) => {
   const [showBidModal, setShowBidModal] = useState(false);
@@ -72,7 +73,8 @@ const Product = ({
         <Anchor path={`/product/${slug}`}>
           <span className="product-name">{title}</span>
         </Anchor>
-        <span className="latest-bid">Highest bid {latestBid}</span>
+        {/* <span className="latest-bid">Highest bid {latestBid}</span> */}
+        <span className="latest-bid">From {collectionName}</span>
         <ProductBid symbol={symbol} price={price} likeCount={likeCount} />
       </div>
       <PlaceBidModal show={showBidModal} handleModal={handleBidModal} />

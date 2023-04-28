@@ -36,12 +36,12 @@ const TopCollectionArea = ({ className, id, space, data }) => (
               className="col-lg-4 col-xl-3 col-md-6 col-sm-6 col-12"
             >
               <Collection
-                title={collection.name}
-                total_item={collection.total_item}
-                path={`collection/${collection.slug}`}
-                image={collection.cover.data}
-                thumbnails={collection.featured.data}
-                profile_image={collection.logo.data}
+                title={collection?.attributes.name}
+                total_item={collection?.attributes?.collectibles?.data?.length}
+                path={`collection/${collection?.attributes.slug}`}
+                image={collection?.attributes.cover?.data?.attributes}
+                thumbnails={collection?.attributes.featured?.data?.attributes}
+                profile_image={collection?.attributes.logo?.data?.attributes}
               />
             </div>
           ))}
