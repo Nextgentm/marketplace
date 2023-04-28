@@ -72,6 +72,14 @@ export async function getStaticProps({ params }) {
   const product = productData.data.find(({ slug }) => slug === params.slug);
   let bids = null;
 
+  if (product) {
+    // Get All Bids
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections/${product.collection?.data?.id}?populate[0]=paymentTokens`
+    );
+    const collection = await response.json();
+    product.collection.data.paymentTokens = collection.data.paymentTokens;
+  }
   if (product.putOnSale) {
     // Get All Bids
     const response = await fetch(
@@ -79,6 +87,7 @@ export async function getStaticProps({ params }) {
     );
     const auction = await response.json();
     bids = auction.data.biddings.data;
+    product.auction.data.paymentToken = auction.data.paymentToken;
   }
   const recentViewProducts = shuffleArray(productData.data).slice(0, 5);
   const relatedProducts = [];

@@ -74,7 +74,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
       const signer = walletData.provider.getSigner();
       const seller = product.auction.data.walletAddress;
       const buyer = name;
-      const erc20Address = TokenContract.address;
+      const erc20Address = product.auction.data.paymentToken?.data?.blockchain;
       const nftAddress =
         product.collection.data.collectionType === "Single"
           ? product.collection.data.contractAddress

@@ -6,6 +6,9 @@ import { ethers } from "ethers";
 import Button from "@ui/button";
 import { doLogOut } from "src/lib/user";
 import { useRouter } from "next/router";
+import { POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { toast } from "react-toastify";
+import { switchNetwork } from "src/lib/BlokchainHelperFunctions";
 
 const UserDropdown = () => {
   const router = useRouter();
@@ -21,25 +24,29 @@ const UserDropdown = () => {
 
   useEffect(() => {
     /* code for runtime metamask events */
-    /* const handleAccountsChanged = (accounts) => {
-            console.log("accountsChanged", accounts);
-            if (accounts) setAccount(accounts[0]);
-        };
+    const handleAccountsChanged = (accounts) => {
+      if (walletData.isConnected) {
+        console.log("accountsChanged", accounts);
+        if (accounts) {
+          setWalletData({ ...walletData, account: accounts[0] });
+        } else {
+          onDisconnectWallet();
+        }
+      }
+    };
 
-        const handleChainChanged = (_hexChainId) => {
-            setChainId(_hexChainId);
-        };
+    // const handleChainChanged = (_hexChainId) => {
+    //   console.log(_hexChainId);
+    // };
 
-        const handleDisconnect = () => {
-            console.log("disconnect", error);
-            disconnect();
-        };
+    // const handleDisconnect = (error) => {
+    //   console.log("disconnect", error);
+    //   onDisconnectWallet();
+    // };
 
-        provider.on("accountsChanged", handleAccountsChanged);
-        provider.on("chainChanged", handleChainChanged);
-        provider.on("disconnect", handleDisconnect);
-        */
-
+    window.ethereum.on("accountsChanged", handleAccountsChanged);
+    // window.ethereum.on("chainChanged", handleChainChanged);
+    // window.ethereum.on("disconnect", handleDisconnect);
     // check if previously connected
     if (localStorage?.getItem("isWalletConnected") === "true") {
       if (isPreviouslyConnected()) {
@@ -63,16 +70,11 @@ const UserDropdown = () => {
 
   const onConnect = async () => {
     try {
-      // const currentProvider = detectCurrentProvider();
-      // if (currentProvider) {
-      //     await currentProvider.request({
-      //         method: "eth_requestAccounts",
-      //     });
-      //     const web3 = new Web3(currentProvider);
-      //     const userAccount = await web3.eth.getAccounts();
-      //     const account = userAccount[0];
-      //     const getEthBalance = await web3.eth.getBalance(account);
-
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        toast.error("Change network first");
+        return;
+      }
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const accounts = await provider.send("eth_requestAccounts", []);

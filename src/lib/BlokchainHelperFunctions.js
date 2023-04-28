@@ -56,6 +56,19 @@ export async function getTransferProxyContract(ethers, signer) {
 }
 
 //_______________________________________________//
+// get value from smart contracts
+//_______________________________________________//
+
+export async function addressIsAdmin(ethers, walletAddress, blockchainNetwork, signer) {
+  const factoryContract721 = await getERC721FactoryContract(ethers, blockchainNetwork, signer);
+  // console.log(factoryContract721);
+  const validationValue = await factoryContract721.hasRole(ADMIN_ROLE, walletAddress);
+  return validationValue;
+}
+
+// ================================================//
+
+//_______________________________________________//
 // Network Helper functions
 //_______________________________________________//
 export async function switchNetwork(chainId) {
@@ -71,8 +84,8 @@ export async function switchNetwork(chainId) {
     // console.log(res);
     return true;
   } catch (switchError) {
-    // console.log(switchError);
-    toast.error("Failed to change the network.");
+    console.log(switchError);
+    // toast.error("Failed to change the network.");
   }
   return false;
 }
@@ -85,17 +98,6 @@ export async function changeNetwork(networkType) {
     return switchNetwork(POLYGON_NETWORK_CHAIN_ID);
   }
   return null;
-}
-
-//_______________________________________________//
-// get value from smart contracts
-//_______________________________________________//
-
-export async function addressIsAdmin(ethers, walletAddress, blockchainNetwork, signer) {
-  const factoryContract721 = await getERC721FactoryContract(ethers, blockchainNetwork, signer);
-  console.log(factoryContract721);
-  const validationValue = await factoryContract721.hasRole(ADMIN_ROLE, walletAddress);
-  return validationValue;
 }
 
 //_______________________________________________//

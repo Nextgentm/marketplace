@@ -149,6 +149,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           startTimestamp: data.startTimestamp,
           endTimeStamp: data.endTimeStamp,
           collectible: product.id,
+          paymentToken: data.paymentToken,
           quantity: data.quantity ? data.quantity : 1
         }
       });
@@ -209,6 +210,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       startTimestamp: event.target.startDate.value,
       endTimeStamp: event.target.endDate.value,
       sellType: _sellType,
+      paymentToken: event.target.paymentToken.value,
       currency: event.target.currency.value,
       quantity: event.target.quantity?.value ? event.target.quantity?.value : 1
     };
@@ -426,12 +428,14 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         handleModal={handleDirectSaleModal}
         supply={product?.supply}
         handleSubmit={handleSubmit}
+        paymentTokensList={product.collection?.data?.paymentTokens?.data}
       />
       <TimeAuctionModal
         show={showTimeAuctionModal}
         handleModal={handleTimeAuctionModal}
         supply={product?.supply}
         handleSubmit={handleSubmit}
+        paymentTokensList={product.collection?.data?.paymentTokens?.data}
       />
       <TransferPopupModal
         show={showTransferModal}
