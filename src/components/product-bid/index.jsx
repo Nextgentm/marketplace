@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 const ProductBid = ({ price, symbol, likeCount }) => (
   <div className="bid-react-area">
     <div className="last-bid">
-      {price.amount ? price.amount : price}
-      {price.currency ? price.currency : symbol}
+      {price?.amount ? price?.amount : price}
+      {price?.currency ? price?.currency : symbol}
     </div>
     <div className="react-area">
       <svg viewBox="0 0 17 16" fill="none" width="16" height="16" className="sc-bdnxRM sc-hKFxyN kBvkOu">

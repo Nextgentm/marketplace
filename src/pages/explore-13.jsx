@@ -23,7 +23,7 @@ const Home02 = () => {
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Live With Place Bid" currentPage="Live With Place Bid" />
-        <LiveExploreArea
+        {/* <LiveExploreArea
           data={{
             products: liveAuctionData.slice(0, 5),
             placeBid: true
@@ -37,7 +37,7 @@ const Home02 = () => {
             products: liveAuctionData,
             placeBid: true
           }}
-        />
+        /> */}
       </main>
       <Footer />
     </Wrapper>
