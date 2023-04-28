@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Anchor from "@ui/anchor";
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState, useRef } from "react";
 import { AppData } from "src/context/app-context";
 import { ethers } from "ethers";
 import Button from "@ui/button";
@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 import { toast } from "react-toastify";
 import { switchNetwork } from "src/lib/BlokchainHelperFunctions";
+import { walletAddressShortForm } from "../../utils/blockchain";
 
 const UserDropdown = () => {
   const router = useRouter();
@@ -21,17 +22,28 @@ const UserDropdown = () => {
     setIsAuthenticatedCryptoWallet
   } = useContext(AppData);
   const [ethBalance, setEthBalance] = useState("");
+  // For acount change event handle using useRef
+  const [account, _setAccount] = useState("");
+  const accountRef = useRef(account);
+  function setAccount(data) {
+    accountRef.current = data; // Updates the ref
+    _setAccount(data);
+  }
+
+  useEffect(() => {
+    if (walletData.isConnected)
+      setWalletData({ ...walletData, account: account });
+  }, [account])
 
   useEffect(() => {
     /* code for runtime metamask events */
     const handleAccountsChanged = (accounts) => {
-      if (walletData.isConnected) {
-        console.log("accountsChanged", accounts);
-        if (accounts) {
-          setWalletData({ ...walletData, account: accounts[0] });
-        } else {
-          onDisconnectWallet();
-        }
+      // console.log("accountsChanged", accounts);
+      if (accounts.length > 0) {
+        setAccount(accounts[0]);
+      } else {
+        onDisconnectWallet();
+        console.log("No accounts connected");
       }
     };
 
@@ -141,7 +153,7 @@ const UserDropdown = () => {
             <Anchor path="/product">{userData?.fullName || userData?.username || userData.email}</Anchor>
           </h4>
           <span>
-            <Anchor path="/product">Set Display Name</Anchor>
+            <Anchor path="#">{walletData.isConnected && walletAddressShortForm(walletData.account)}</Anchor>
           </span>
         </div>
         {!walletData.isConnected && (
