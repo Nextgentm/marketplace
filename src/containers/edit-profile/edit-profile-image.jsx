@@ -7,15 +7,19 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_USER_PROFILE } from "src/graphql/mutation/userProfile/updateUserProfile";
 import { toast } from "react-toastify";
 import { normalize } from "@utils/methods";
+import { CREATE_UPLOAD_MUTATION } from "src/graphql/mutation/userProfile/createuploadbanner";
 
 const subdomain = "lootmogul";
 
 const EditProfileImage = () => {
   const { userData: authorData, setUserDataLocal } = useContext(AppData);
+  console.log("authorData", authorData);
   const [selectedImage, setSelectedImage] = useState({
     profile: "",
-    cover: ""
+    cover: {}
   });
+  const [bannerimg, setBannerImg] = useState(null);
+  const [createUpload, { data: file }] = useMutation(CREATE_UPLOAD_MUTATION, { fetchPolicy: "network-only" });
 
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const shareModalHandler = () => setIsShareModalOpen((prev) => !prev);
@@ -42,11 +46,45 @@ const EditProfileImage = () => {
   }, [avatarUrl]);
 
   useEffect(() => {
+    if (bannerimg) {
+      console.log("bannerimage useeffect", bannerimg);
+      setSelectedImage({ ...selectedImage, cover: normalize(bannerimg) });
+
+      console.log("normalize banner image", normalize(bannerimg));
+      console.log("selectedImage?.cover ", selectedImage?.cover);
+      updateUserProfile({
+        variables: {
+          updateUsersPermissionsUserId: authorData.id,
+          data: {
+            banner: bannerimg
+          }
+        }
+      });
+    }
+  }, [bannerimg]);
+
+  useEffect(() => {
     if (updatedUserProfile) {
       setUserDataLocal(normalize(updatedUserProfile).updateUsersPermissionsUser);
       toast.success("Profile Image Updated Successfully");
     }
   }, [updatedUserProfile]);
+
+  useEffect(() => {
+    if (file) {
+      setUserDataLocal(normalize(file).updateUsersPermissionsUser);
+      toast.success("Banner Image Updated Successfully");
+    }
+  }, [file]);
+
+  const handleFileChange = async (event) => {
+    setBannerImg(event.target.files[0]);
+    console.log("event.target.files[0]", event.target.files[0]);
+    const response = await createUpload({
+      variables: { file: bannerimg }
+    });
+    console.log("response.data.createUpload", response.data.createUpload);
+  };
 
   const imageChange = (e) => {
     setIsShareModalOpen(true);
@@ -206,7 +244,7 @@ const EditProfileImage = () => {
           </div>
           <div className="button-area">
             <div className="brows-file-wrapper">
-              <input name="cover" id="nipa" type="file" onChange={(e) => imageChange(e)} />
+              <input name="cover" id="nipa" type="file" onChange={(e) => handleFileChange(e)} />
               <label htmlFor="nipa" title="No File Choosen">
                 <span className="text-center color-white">Upload Cover</span>
               </label>
