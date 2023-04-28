@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
 
-const TimeAuctionModal = ({ show, handleModal, supply, handleSubmit }) => {
+const TimeAuctionModal = ({ show, handleModal, supply, handleSubmit, paymentTokensList }) => {
   return (
     <Modal className="rn-popup-modal placebid-modal-wrapper" show={show} onHide={handleModal} centered>
       {show && (
@@ -23,7 +23,7 @@ const TimeAuctionModal = ({ show, handleModal, supply, handleSubmit }) => {
                 <div className="bid-content-left">
                   <input id="price" type="number" name="price" step="0.0000001" min="1" required />
                   <input id="currency" type="hidden" value="wETH" />
-                  <span>wETH</span>
+                  {/* <span>wETH</span> */}
                 </div>
               </div>
 
@@ -38,6 +38,18 @@ const TimeAuctionModal = ({ show, handleModal, supply, handleSubmit }) => {
                     <input type="date" id="endDate" name="endDate" />
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div className="bid-content-mid">
+              <div className="row w-100">
+                <label htmlFor="paymentToken">Payment Token</label>
+                <select id="paymentToken">
+                  {paymentTokensList &&
+                    paymentTokensList.map((item, index) => (
+                      <option value={item.id} key={index}> {item.name} </option>
+                    ))}
+                </select>
               </div>
             </div>
 
