@@ -60,6 +60,7 @@ export async function getTransferProxyContract(ethers, signer) {
 //_______________________________________________//
 
 export async function addressIsAdmin(ethers, walletAddress, blockchainNetwork, signer) {
+  if (!walletAddress) return false;
   const factoryContract721 = await getERC721FactoryContract(ethers, blockchainNetwork, signer);
   // console.log(factoryContract721);
   const validationValue = await factoryContract721.hasRole(ADMIN_ROLE, walletAddress);

@@ -216,3 +216,117 @@ query collections(
     }
 }
 `;
+
+export const GET_COLLECTION_LISTDATA_QUERY = gql`
+query Collections($filters: CollectionFiltersInput, $collectiblesFilters: CollectibleFiltersInput) {
+  collections(filters: $filters) {
+    data {
+      id
+      attributes {
+        category
+        collectionType
+        cover {
+          data {
+            attributes {
+              url
+            }
+          }
+        }
+        logo {
+          data {
+            attributes {
+              url
+            }
+          }
+        }
+        slug
+        symbol
+        url
+        name
+        networkType
+        createdAt
+        collectibles(filters: $collectiblesFilters) {
+          data {
+            id
+            attributes {
+              
+          nftID
+          name
+          image {
+            data{
+              attributes{
+                url
+              }
+            }
+          }
+          description
+          external_url
+          price
+          symbol
+          royalty
+          supply
+          creator
+          owner
+          collectionContractAddress
+          putOnSale
+          saleType
+          instantSalePrice
+          unlockPurchased
+          slug
+          collection{
+            data{
+              id
+              attributes{
+                name
+                slug
+              }
+            }
+          }
+          auction{
+            data{
+              id
+              attributes{
+                walletAddress
+                bidPrice
+                priceCurrency
+                startTimestamp
+                endTimeStamp
+                sellType
+                biddings{
+                  data{
+                    attributes{
+                      bidPrice
+                      bidderAddress
+                      timeStamp
+                      auction{
+                        data{
+                          id
+                        }
+                      }
+                      isAccepted
+                      createdAt
+                    }
+                  }
+                }
+                quantity
+                createdAt 
+              }
+            }
+          }
+          createdAt
+            }
+          }
+        }
+      }
+    }
+    meta {
+      pagination {
+        page
+        pageCount
+        pageSize
+        total
+      }
+    }
+  }
+}
+`;

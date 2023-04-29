@@ -19,16 +19,18 @@ const TopCollectionArea = ({ className, id, space, data }) => (
             data-sal="slide-up"
             data-sal-duration="800"
           >
-            <Anchor className="btn-transparent" path="/collection">
-              VIEW ALL
-              <i className="feather feather-arrow-right" />
-            </Anchor>
+            {data.collections.length > 4 &&
+              <Anchor className="btn-transparent" path="/collection">
+                VIEW ALL
+                <i className="feather feather-arrow-right" />
+              </Anchor>
+            }
           </div>
         </div>
       </div>
       {data?.collections && (
         <div className="row g-5">
-          {data.collections.map((collection) => (
+          {data.collections.slice(0, 4).map((collection) => (
             <div
               key={collection.id}
               data-sal-delay="150"

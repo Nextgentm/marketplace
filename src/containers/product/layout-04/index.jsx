@@ -24,7 +24,7 @@ const ProductArea = ({ space, className, data }) => (
               data-sal="slide-up"
               data-sal-duration="800"
             >
-              <Anchor className="btn-transparent" path="/product">
+              <Anchor className="btn-transparent" path="/explore-14?sort=newest">
                 VIEW ALL
                 <i className="feather feather-arrow-right" />
               </Anchor>
@@ -34,7 +34,7 @@ const ProductArea = ({ space, className, data }) => (
       </div>
       {data?.products && (
         <div className="row g-5">
-          {data.products.map((prod) => (
+          {data.products.slice(0, 5).map((prod) => (
             <div
               key={prod.id}
               data-sal="slide-up"
