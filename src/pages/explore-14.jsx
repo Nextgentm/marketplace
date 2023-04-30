@@ -9,18 +9,15 @@ import ExploreProductArea from "@containers/explore-product/layout-10";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import productData from "../data/products.json";
+import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
+import client from "@utils/apollo-client";
 
-export async function getStaticProps() {
-  return { props: { className: "template-color-1" } };
-}
+// export async function getStaticProps() {
+//   return { props: { className: "template-color-1" } };
+// }
 
-const Explore14 = () => {
-  const [dataCollectibles, setDataCollectibles] = useState(null);
-  useEffect(() => {
-    axios.get(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?populate=*`).then((response) => {
-      setDataCollectibles(response.data.data);
-    });
-  }, []);
+const Explore14 = ({ dataCollectibles }) => {
+
   return (
     <Wrapper>
       <SEO pageTitle="Explore Simple" />
@@ -43,4 +40,26 @@ const Explore14 = () => {
     </Wrapper>
   );
 };
+
+Explore14.getInitialProps = async () => {
+  const { data } = await client.query({
+    query: ALL_COLLECTIBLE_LISTDATA_QUERY,
+    variables: {
+      filter: {
+        putOnSale: {
+          eq: true
+        }
+      },
+      pagination: {
+        pageSize: 8
+      }
+    },
+    fetchPolicy: "network-only"
+  });
+  return {
+    className: "template-color-1",
+    dataCollectibles: data.collectibles.data
+  };
+};
+
 export default Explore14;

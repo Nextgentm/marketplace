@@ -34,7 +34,7 @@ const Author = () => {
 
   const getAllCollectionsData = async () => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=image&filter[owner][$eq]=${walletData.account}`
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=image&filters[owner][$eq]=${walletData.account}`
     );
     const productData = await res.json();
     console.log(productData.data);

@@ -9,23 +9,25 @@ import ExploreProductArea from "@containers/explore-product/layout-10";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import client from "@utils/apollo-client";
+import { GET_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getCollection";
 // import productData from "../data/products.json";
 
 const CollectionDetail = ({ collections }) => {
-  console.log(collections);
+
   return (
     <Wrapper>
-      <SEO pageTitle={collections.name} />
+      <SEO pageTitle={collections?.name} />
       <Header />
       <main id="main-content">
-        <Breadcrumb pageTitle={collections.name} currentPage={collections.name} />
-        {collections && (
+        <Breadcrumb pageTitle={collections?.name} currentPage={collections?.name} />
+        {collections?.collectibles.data && (
           <ExploreProductArea
             data={{
               section_title: {
                 title: "Find Your Non Replaceable Token"
               },
-              products: collections.collectibles.data,
+              products: collections?.collectibles.data,
               placeBid: true,
               collectionPage: true,
               collectionData: collections
@@ -52,15 +54,29 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections/?populate[collectibles][populate][0]=image`
-  );
-  const productData = await res.json();
-  const collections = productData.data.find(({ slug }) => slug === params.slug);
+  const { data } = await client.query({
+    query: GET_COLLECTION_LISTDATA_QUERY,
+    variables: {
+      filters: {
+        slug: {
+          eq: params.slug
+        },
+      },
+      collectiblesFilters: {
+        putOnSale: {
+          eq: true
+        },
+      },
+      pagination: {
+        pageSize: 8
+      }
+    },
+    fetchPolicy: "network-only"
+  });
   return {
     props: {
       className: "template-color-1",
-      collections
+      collections: data.collections.data[0].attributes
     } // will be passed to the page component as props
   };
 }

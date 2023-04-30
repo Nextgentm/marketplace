@@ -32,7 +32,7 @@ const SortWidget = ({ onChange, value }) => {
             />
             <label htmlFor="short-check2">Oldest</label>
           </div>
-          <div className="nuron-form-check">
+          {/* <div className="nuron-form-check">
             <input
               type="radio"
               value="most-liked"
@@ -53,7 +53,7 @@ const SortWidget = ({ onChange, value }) => {
               onChange={changeHandler}
             />
             <label htmlFor="short-check4">Least Liked</label>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

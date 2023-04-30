@@ -123,14 +123,14 @@ const ExploreProductArea = ({
   // Filter Method, this function is responsible for filtering the products
   const itemFilterHandler = useCallback(() => {
     let filteredItems = [];
-
-    filteredItems = itemsToFilter.filter((item) => {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const key in state.inputs) {
-        if (filterMethods(item, key, state.inputs[key])) return false;
-      }
-      return true;
-    });
+    filteredItems = itemsToFilter;
+    // filteredItems = itemsToFilter.filter((item) => {
+    //   // eslint-disable-next-line no-restricted-syntax
+    //   for (const key in state.inputs) {
+    //     if (filterMethods(item, key, state.inputs[key])) return false;
+    //   }
+    //   return true;
+    // });
     dispatch({ type: "SET_ALL_PRODUCTS", payload: filteredItems });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.inputs]);
@@ -160,7 +160,7 @@ const ExploreProductArea = ({
   // Generate data from products data
   let categories = [];
   if (!collectionPage) {
-    const cats = flatDeep(products.map((prod) => prod.collection.data?.name));
+    const cats = flatDeep(products.map((prod) => prod.attributes.collection.data?.attributes.name));
     categories = cats.reduce((obj, b) => {
       const newObj = { ...obj };
       newObj[b] = obj[b] + 1 || 1;
@@ -186,6 +186,7 @@ const ExploreProductArea = ({
               categories={categories}
               filterHandler={filterHandler}
               priceHandler={priceHandler}
+              collectionPage={collectionPage}
             />
           </div>
           <div className="col-lg-9 order-1 order-lg-2">
@@ -195,13 +196,15 @@ const ExploreProductArea = ({
                   {state.products.map((prod) => (
                     <div key={prod.id} className="col-lg-4 col-md-6 col-sm-12">
                       <Product
-                        placeBid={!!placeBid}
-                        title={prod.name || ""}
-                        slug={prod.slug}
+                        placeBid={prod.attributes?.auction?.data?.attributes?.sellType == "Bidding"}
+                        title={prod.attributes.name}
+                        slug={prod.attributes.slug}
+                        price={prod.attributes?.auction?.data?.attributes?.bidPrice}
+                        symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
+                        image={prod.attributes?.image?.data?.attributes?.url}
+                        collectionName={prod.attributes?.collection?.data?.attributes?.name}
                         latestBid={prod.latestBid}
-                        price={`${prod.price}${prod.symbol}`}
                         likeCount={prod.likeCount}
-                        image={prod.image?.data.url || "/images/portfolio/lg/portfolio-01.jpg"}
                         authors={prod.authors}
                         bitCount={prod.bitCount}
                       />
