@@ -10,7 +10,7 @@ import { ALL_COLLECTION_QUERY } from "src/graphql/query/collection/getCollection
 import _ from "lodash";
 
 const CollectionArea = ({ className, space, id, data }) => {
-  console.log("className", className);
+  // console.log("className", className);
   const [collectionsRecords, setCollectionsRecords] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -38,7 +38,7 @@ const CollectionArea = ({ className, space, id, data }) => {
   }, [collectionPagination, error]);
 
   const setCollectionsData = ({ collections }) => {
-    setCollectionsRecords(normalize(collections));
+    setCollectionsRecords(collections);//normalize(collections));
     setPagination(collections.meta.pagination);
   };
 
@@ -50,17 +50,17 @@ const CollectionArea = ({ className, space, id, data }) => {
   return (
     <div className={clsx("rn-collection-area", space === 1 && "rn-section-gapTop", className)} id={id}>
       <div className="container">
-        {collectionsRecords && (
+        {data && (
           <div className="row g-5">
-            {collectionsRecords.map((collection) => (
+            {data.map((collection) => (
               <div key={collection.id} className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12">
                 <Collection
-                  title={collection.name}
-                  total_item={collection.total_item}
-                  path={`collection/${collection.slug}`}
-                  image={collection.cover}
-                  thumbnails={collection.featured}
-                  profile_image={collection.logo}
+                  title={collection?.attributes.name}
+                  total_item={collection?.attributes?.collectibles?.data?.length}
+                  path={`collection/${collection?.attributes.slug}`}
+                  image={collection?.attributes.cover?.data?.attributes}
+                  thumbnails={collection?.attributes.featured?.data?.attributes}
+                  profile_image={collection?.attributes.logo?.data?.attributes}
                 />
               </div>
             ))}

@@ -4,7 +4,7 @@ import Header from "@layout/header/header";
 import Footer from "@layout/footer/footer-01";
 import Breadcrumb from "@components/breadcrumb";
 import CollectionArea from "@containers/collection/layout-03";
-import { ALL_COLLECTION_QUERY } from "src/graphql/query/collection/getCollection";
+import { GET_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getCollection";
 import client from "@utils/apollo-client";
 
 const Collection = (props) => (
@@ -21,8 +21,20 @@ const Collection = (props) => (
 
 Collection.getInitialProps = async () => {
   const { data } = await client.query({
-    query: ALL_COLLECTION_QUERY,
+    query: GET_COLLECTION_LISTDATA_QUERY,
     variables: {
+      filters: {
+        collectibles: {
+          putOnSale: {
+            eq: true
+          }
+        }
+      },
+      collectiblesFilters: {
+        putOnSale: {
+          eq: true
+        },
+      },
       pagination: {
         pageSize: 8
       }
@@ -31,7 +43,7 @@ Collection.getInitialProps = async () => {
   });
   return {
     className: "template-color-1",
-    data
+    data: data.collections.data
   };
 };
 

@@ -285,7 +285,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
                 ? handleBidModal
                 : handleSubmit
           }
-          disabled={isOwner}
+          disabled={isOwner || (auction_date && new Date() > new Date(auction_date))}
         >
           {product.auction.data.sellType == "Bidding" ? "Place a Bid" : "Buy Now"}
         </Button>

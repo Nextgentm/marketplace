@@ -36,7 +36,7 @@ const Header = ({ className }) => {
       const signer = walletData.provider.getSigner();
       addressIsAdmin(walletData.ethers, walletData.account, "Polygon", signer).then((validationValue) => {
         setIsAdminWallet(validationValue);
-      });
+      }).catch((error) => { console.log("Error while factory call " + error) });
     } else {
       setIsAdminWallet(false);
     }

@@ -18,7 +18,7 @@ import sellerData from "../data/sellers.json";
 import productData from "../data/products.json";
 import client from "@utils/apollo-client";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
-import { ALL_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getCollection";
+import { GET_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getCollection";
 import LiveExploreArea from "@containers/live-explore/layout-01";
 
 // export async function getStaticProps() {
@@ -50,7 +50,7 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection })
           data={
             dataCollection && {
               ...content["collection-section"],
-              collections: dataCollection.slice(0, 4)
+              collections: dataCollection
             }
           }
         />
@@ -82,11 +82,14 @@ Home.getInitialProps = async () => {
       filter: {
         putOnSale: {
           eq: true
+        },
+        auction: {
+          sellType: {
+            eq: "Bidding"
+          }
         }
       },
-      pagination: {
-        pageSize: 5
-      }
+      sort: "auction.startTimestamp:desc"
     },
     fetchPolicy: "network-only"
   });
@@ -100,9 +103,9 @@ Home.getInitialProps = async () => {
         }
       },
       pagination: {
-        pageSize: 5
+        pageSize: 10
       },
-      sort: "createdAt"
+      sort: "auction.startTimestamp:desc"
     },
     fetchPolicy: "network-only"
   });
@@ -121,17 +124,22 @@ Home.getInitialProps = async () => {
   });
 
   const dataCollection = await client.query({
-    query: ALL_COLLECTION_LISTDATA_QUERY,
+    query: GET_COLLECTION_LISTDATA_QUERY,
     variables: {
-      filter: {
+      filters: {
         collectibles: {
           putOnSale: {
             eq: true
           }
         }
       },
+      collectiblesFilters: {
+        putOnSale: {
+          eq: true
+        },
+      },
       pagination: {
-        pageSize: 4
+        pageSize: 5
       },
       sort: "createdAt"
     },
