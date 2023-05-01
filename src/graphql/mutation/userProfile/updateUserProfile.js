@@ -29,17 +29,24 @@ mutation UpdateUsersPermissionsUser($updateUsersPermissionsUserId: ID!, $data: U
           }
         }
         banner {
-          data {
-            attributes {
-              name
-              alternativeText
-              caption
-              size
-              url
-              previewUrl
+            data {
+            id
+              attributes {
+                name
+                alternativeText
+                caption
+                hash
+                ext
+                mime
+                size
+                url
+                previewUrl
+                provider
+                createdAt
+                provider_metadata
+              }
             }
           }
-        }
         about
         tagline
         fullName
