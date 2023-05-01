@@ -71,8 +71,16 @@ const EditProfileImage = () => {
 
   const handleFileChange = async (event) => {
 
+    let reader = new FileReader();
+    let url = reader.readAsDataURL(event.target.files[0]);
+
+    reader.onloadend = function (e) {
+      console.log(e)
+      setFile(e.target.result)
+    }
     const formUpdateImage = new FormData();
     formUpdateImage.append("files", event.target.files[0]);
+
     await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
       method: "post",
       body: formUpdateImage
@@ -231,8 +239,8 @@ const EditProfileImage = () => {
           <div className="profile-image mb--30">
             <h6 className="title">Change Your Cover Photo</h6>
             <div className="img-wrap">
-              {authorData?.banner?.url ? (
-                <img src={authorData?.banner?.url} alt="" data-black-overlay="6" />
+              {authorData?.banner?.url || file ? (
+                <img src={file || authorData?.banner?.url} alt="" data-black-overlay="6" />
               ) : (
                 <Image
                   id="rbtinput2"
