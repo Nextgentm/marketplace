@@ -70,34 +70,35 @@ const EditProfileImage = () => {
   }, [data]);
 
   const handleFileChange = async (event) => {
+    if (event.target.files[0]) {
+      const reader = new FileReader();
+      const url = reader.readAsDataURL(event.target.files[0]);
 
-    let reader = new FileReader();
-    let url = reader.readAsDataURL(event.target.files[0]);
+      reader.onloadend = function (e) {
+        console.log(e)
+        setFile(e.target.result)
+      }
+      const formUpdateImage = new FormData();
+      formUpdateImage.append("files", event.target.files[0]);
 
-    reader.onloadend = function (e) {
-      console.log(e)
-      setFile(e.target.result)
-    }
-    const formUpdateImage = new FormData();
-    formUpdateImage.append("files", event.target.files[0]);
-
-    await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
-      method: "post",
-      body: formUpdateImage
-    })
-      .then((response) => response.json())
-      .then((res) => {
-        if (res[0]) {
-          updateUserProfile({
-            variables: {
-              updateUsersPermissionsUserId: authorData.id,
-              data: {
-                banner: res[0]?.id
+      await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+        method: "post",
+        body: formUpdateImage
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res[0]) {
+            updateUserProfile({
+              variables: {
+                updateUsersPermissionsUserId: authorData.id,
+                data: {
+                  banner: res[0]?.id
+                }
               }
-            }
-          });
-        }
-      });
+            });
+          }
+        });
+    }
   }
 
   const imageChange = (e) => {
