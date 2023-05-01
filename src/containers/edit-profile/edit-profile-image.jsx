@@ -7,15 +7,19 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_USER_PROFILE } from "src/graphql/mutation/userProfile/updateUserProfile";
 import { toast } from "react-toastify";
 import { normalize } from "@utils/methods";
+import { CREATE_UPLOAD_MUTATION } from "src/graphql/mutation/userProfile/createuploadbanner";
 
 const subdomain = "lootmogul";
 
 const EditProfileImage = () => {
   const { userData: authorData, setUserDataLocal } = useContext(AppData);
+  console.log("authorData", authorData);
   const [selectedImage, setSelectedImage] = useState({
     profile: "",
-    cover: ""
+    cover: {}
   });
+  const [file, setFile] = useState(null);
+  const [createUpload, { data, error }] = useMutation(CREATE_UPLOAD_MUTATION, { fetchPolicy: "network-only" });
 
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const shareModalHandler = () => setIsShareModalOpen((prev) => !prev);
@@ -25,6 +29,7 @@ const EditProfileImage = () => {
   const [updateUserProfile, { data: updatedUserProfile, loading }] = useMutation(UPDATE_USER_PROFILE, {
     fetchPolicy: "network-only"
   });
+  console.log("loading", loading)
 
   useEffect(() => {
     if (avatarUrl) {
@@ -42,11 +47,50 @@ const EditProfileImage = () => {
   }, [avatarUrl]);
 
   useEffect(() => {
+    if (data) {
+      setSelectedImage({ ...selectedImage, cover: normalize(data) });
+
+
+    }
+  }, [data]);
+
+  useEffect(() => {
     if (updatedUserProfile) {
+      console.log("normalize(updatedUserProfile", normalize(updatedUserProfile));
       setUserDataLocal(normalize(updatedUserProfile).updateUsersPermissionsUser);
       toast.success("Profile Image Updated Successfully");
     }
   }, [updatedUserProfile]);
+
+  useEffect(() => {
+    if (data) {
+      toast.success("Banner Image Updated Successfully");
+      // setUserDataLocal(normalize(createUpload)?.updateUsersPermissionsUser);
+    }
+  }, [data]);
+
+  const handleFileChange = async (event) => {
+
+    const formUpdateImage = new FormData();
+    formUpdateImage.append("files", event.target.files[0]);
+    await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+      method: "post",
+      body: formUpdateImage
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        if (res[0]) {
+          updateUserProfile({
+            variables: {
+              updateUsersPermissionsUserId: authorData.id,
+              data: {
+                banner: res[0]?.id
+              }
+            }
+          });
+        }
+      });
+  }
 
   const imageChange = (e) => {
     setIsShareModalOpen(true);
@@ -64,7 +108,7 @@ const EditProfileImage = () => {
     if (iFrame) {
       iFrame.src = `https://${subdomain}.readyplayer.me/avatar?frameApi`;
     }
-  });
+  }, [isShareModalOpen]);
 
   useEffect(() => {
     window.addEventListener("message", subscribe);
@@ -73,7 +117,7 @@ const EditProfileImage = () => {
       window.removeEventListener("message", subscribe);
       document.removeEventListener("message", subscribe);
     };
-  });
+  }, [isShareModalOpen]);
 
   function subscribe(event) {
     const json = parse(event);
@@ -206,7 +250,7 @@ const EditProfileImage = () => {
           </div>
           <div className="button-area">
             <div className="brows-file-wrapper">
-              <input name="cover" id="nipa" type="file" onChange={(e) => imageChange(e)} />
+              <input name="cover" id="nipa" type="file" onChange={(e) => handleFileChange(e)} />
               <label htmlFor="nipa" title="No File Choosen">
                 <span className="text-center color-white">Upload Cover</span>
               </label>

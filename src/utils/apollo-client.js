@@ -1,11 +1,8 @@
-import { ApolloClient, InMemoryCache, createHttpLink, split } from "@apollo/client";
+import { ApolloClient, InMemoryCache, createHttpLink, split, ApolloLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { getLoginToken } from "src/lib/user";
 import { isServer } from "./methods";
-
-const httpLink = createHttpLink({
-  uri: `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/graphql`
-});
+import { createUploadLink } from "apollo-upload-client";
 
 const authLink = setContext(async (_, req) => {
   const { headers } = req;
@@ -20,9 +17,13 @@ const authLink = setContext(async (_, req) => {
   };
 });
 
+const uploadLink = createUploadLink({
+  uri: `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/graphql`
+});
+
 const client = new ApolloClient({
   ssrMode: isServer() ? true : false,
-  link: authLink.concat(httpLink),
+  link: authLink.concat(uploadLink),
   cache: new InMemoryCache()
 });
 
