@@ -70,26 +70,35 @@ const EditProfileImage = () => {
   }, [data]);
 
   const handleFileChange = async (event) => {
+    if (event.target.files[0]) {
+      const reader = new FileReader();
+      const url = reader.readAsDataURL(event.target.files[0]);
 
-    const formUpdateImage = new FormData();
-    formUpdateImage.append("files", event.target.files[0]);
-    await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
-      method: "post",
-      body: formUpdateImage
-    })
-      .then((response) => response.json())
-      .then((res) => {
-        if (res[0]) {
-          updateUserProfile({
-            variables: {
-              updateUsersPermissionsUserId: authorData.id,
-              data: {
-                banner: res[0]?.id
+      reader.onloadend = function (e) {
+        console.log(e)
+        setFile(e.target.result)
+      }
+      const formUpdateImage = new FormData();
+      formUpdateImage.append("files", event.target.files[0]);
+
+      await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+        method: "post",
+        body: formUpdateImage
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res[0]) {
+            updateUserProfile({
+              variables: {
+                updateUsersPermissionsUserId: authorData.id,
+                data: {
+                  banner: res[0]?.id
+                }
               }
-            }
-          });
-        }
-      });
+            });
+          }
+        });
+    }
   }
 
   const imageChange = (e) => {
@@ -231,8 +240,8 @@ const EditProfileImage = () => {
           <div className="profile-image mb--30">
             <h6 className="title">Change Your Cover Photo</h6>
             <div className="img-wrap">
-              {authorData?.banner?.url ? (
-                <img src={authorData?.banner?.url} alt="" data-black-overlay="6" />
+              {authorData?.banner?.url || file ? (
+                <img src={file || authorData?.banner?.url} alt="" data-black-overlay="6" />
               ) : (
                 <Image
                   id="rbtinput2"
