@@ -4,10 +4,6 @@ import { getLoginToken } from "src/lib/user";
 import { isServer } from "./methods";
 import { createUploadLink } from "apollo-upload-client";
 
-const httpLink = createHttpLink({
-  uri: `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/graphql`
-});
-
 const authLink = setContext(async (_, req) => {
   const { headers } = req;
   const { isAuthenticated, token } = await getLoginToken();
@@ -22,7 +18,7 @@ const authLink = setContext(async (_, req) => {
 });
 
 const uploadLink = createUploadLink({
-  uri: httpLink
+  uri: `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/graphql`
 });
 
 const client = new ApolloClient({

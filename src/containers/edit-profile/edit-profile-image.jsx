@@ -18,8 +18,8 @@ const EditProfileImage = () => {
     profile: "",
     cover: {}
   });
-  const [bannerimg, setBannerImg] = useState(null);
-  const [createUpload, { data: file }] = useMutation(CREATE_UPLOAD_MUTATION, { fetchPolicy: "network-only" });
+  const [file, setFile] = useState(null);
+  const [createUpload, { data, error }] = useMutation(CREATE_UPLOAD_MUTATION, { fetchPolicy: "network-only" });
 
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const shareModalHandler = () => setIsShareModalOpen((prev) => !prev);
@@ -29,6 +29,7 @@ const EditProfileImage = () => {
   const [updateUserProfile, { data: updatedUserProfile, loading }] = useMutation(UPDATE_USER_PROFILE, {
     fetchPolicy: "network-only"
   });
+  console.log("loading", loading)
 
   useEffect(() => {
     if (avatarUrl) {
@@ -46,45 +47,50 @@ const EditProfileImage = () => {
   }, [avatarUrl]);
 
   useEffect(() => {
-    if (bannerimg) {
-      console.log("bannerimage useeffect", bannerimg);
-      setSelectedImage({ ...selectedImage, cover: normalize(bannerimg) });
+    if (data) {
+      setSelectedImage({ ...selectedImage, cover: normalize(data) });
 
-      console.log("normalize banner image", normalize(bannerimg));
-      console.log("selectedImage?.cover ", selectedImage?.cover);
-      updateUserProfile({
-        variables: {
-          updateUsersPermissionsUserId: authorData.id,
-          data: {
-            banner: bannerimg
-          }
-        }
-      });
+
     }
-  }, [bannerimg]);
+  }, [data]);
 
   useEffect(() => {
     if (updatedUserProfile) {
+      console.log("normalize(updatedUserProfile", normalize(updatedUserProfile));
       setUserDataLocal(normalize(updatedUserProfile).updateUsersPermissionsUser);
       toast.success("Profile Image Updated Successfully");
     }
   }, [updatedUserProfile]);
 
   useEffect(() => {
-    if (file) {
-      setUserDataLocal(normalize(file).updateUsersPermissionsUser);
+    if (data) {
       toast.success("Banner Image Updated Successfully");
+      // setUserDataLocal(normalize(createUpload)?.updateUsersPermissionsUser);
     }
-  }, [file]);
+  }, [data]);
 
   const handleFileChange = async (event) => {
-    setBannerImg(event.target.files[0]);
-    console.log("event.target.files[0]", event.target.files[0]);
-    const response = await createUpload({
-      variables: { file: bannerimg }
-    });
-    console.log("response.data.createUpload", response.data.createUpload);
-  };
+
+    const formUpdateImage = new FormData();
+    formUpdateImage.append("files", event.target.files[0]);
+    await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/upload`, {
+      method: "post",
+      body: formUpdateImage
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        if (res[0]) {
+          updateUserProfile({
+            variables: {
+              updateUsersPermissionsUserId: authorData.id,
+              data: {
+                banner: res[0]?.id
+              }
+            }
+          });
+        }
+      });
+  }
 
   const imageChange = (e) => {
     setIsShareModalOpen(true);
@@ -102,7 +108,7 @@ const EditProfileImage = () => {
     if (iFrame) {
       iFrame.src = `https://${subdomain}.readyplayer.me/avatar?frameApi`;
     }
-  });
+  }, [isShareModalOpen]);
 
   useEffect(() => {
     window.addEventListener("message", subscribe);
@@ -111,7 +117,7 @@ const EditProfileImage = () => {
       window.removeEventListener("message", subscribe);
       document.removeEventListener("message", subscribe);
     };
-  });
+  }, [isShareModalOpen]);
 
   function subscribe(event) {
     const json = parse(event);
