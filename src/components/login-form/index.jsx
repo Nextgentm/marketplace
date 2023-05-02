@@ -28,7 +28,9 @@ const LoginForm = ({ className }) => {
           password: data.password
         });
         console.log("data", loginResponse);
-        setCookie("token", loginResponse.jwt);
+        const cookiesDate = new Date();
+        cookiesDate.setTime(cookiesDate.getTime() + (120 * 60 * 1000));
+        setCookie("token", loginResponse.jwt, { expires: cookiesDate });
         localStorage.setItem("user", JSON.stringify(loginResponse.user));
         toast.success("Logged In Successfully");
         router.push("/");
