@@ -27,6 +27,11 @@
         "path": "/collection"
       },
       {
+        "id": 3,
+        "text": "About Us",
+        "path": "/about"
+      },
+      {
         "id": 5,
         "text": "Rankings",
         "path": "/ranking"
