@@ -18,7 +18,7 @@ const About = ({ posts }) => {
   const content = normalizedData(aboutData?.content || []);
   return (
     <Wrapper>
-      <SEO pageTitle="About" />
+      {/* <SEO pageTitle="About" />
       <Header />
       <main id="main-content">
         <AboutArea data={content["about-section"]} />
@@ -27,7 +27,7 @@ const About = ({ posts }) => {
         <CTAArea data={content["cta-section"]} />
         <BlogArea data={{ ...content["blog-section"], posts }} />
       </main>
-      <Footer />
+      <Footer /> */}
     </Wrapper>
   );
 };
