@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 
 const SortWidget = ({ onChange, value }) => {
+  console.log("value", value);
   const changeHandler = (e) => {
     const { value: currentValue } = e.target;
     onChange(currentValue);

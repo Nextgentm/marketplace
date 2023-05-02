@@ -11,8 +11,9 @@ const CategoryFilter = ({ categories, onChange }) => {
       setIsCheck(isCheck.filter((item) => item !== value));
     }
   };
+  console.log("isCheckisCheck", isCheck);
   useEffect(() => {
-    onChange("categories", isCheck);
+    onChange(isCheck);
   }, [isCheck, onChange]);
 
   return (

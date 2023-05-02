@@ -7,10 +7,22 @@ import LanguageFilter from "./language-flter";
 import RatingFilter from "./rating-filter";
 import PriceRangeFilter from "./price-range-filter";
 
-const ProductFilter = ({ sortHandler, filterHandler, priceHandler, inputs, sort, categories, collectionPage, levels, languages }) => (
+const ProductFilter = ({
+  sortHandler,
+  filterHandler,
+  priceHandler,
+  inputs,
+  sort,
+  categories,
+  collectionPage,
+  levels,
+  languages
+}) => (
   <div className="nu-course-sidebar">
+    {console.log("filterHandler", filterHandler)}
+    {console.log("inputsinputs", inputs)}
     <SortWidget onChange={sortHandler} value={sort} />
-    {!collectionPage && <CategoryFilter categories={categories} onChange={filterHandler} />}
+    {/* {!collectionPage && <CategoryFilter categories={categories} onChange={filterHandler} />} */}
     <PriceSort onChange={sortHandler} value={sort} />
     {/* <RatingFilter onChange={filterHandler} /> */}
     <PriceRangeFilter values={inputs.price} onChange={priceHandler} />
