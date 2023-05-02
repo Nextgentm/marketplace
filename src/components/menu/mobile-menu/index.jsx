@@ -33,7 +33,7 @@ const MobileMenu = ({ isOpen, onClick, menu, logo, isAdmin }) => {
       <OffcanvasBody>
         <nav>
           <ul className="mainmenu">
-            {menu?.map((nav) => {
+            {menu?.map((nav, index) => {
               const hasChildren = !!nav.submenu || !!nav.megamenu;
               return nav.id != 4 ? (
                 <li
@@ -43,7 +43,7 @@ const MobileMenu = ({ isOpen, onClick, menu, logo, isAdmin }) => {
                     hasChildren && "has-children"
                   )}
                   id={nav.id}
-                  key={nav.id}
+                  key={index}
                 >
                   <Anchor
                     className="nav-link its_new"
@@ -63,7 +63,7 @@ const MobileMenu = ({ isOpen, onClick, menu, logo, isAdmin }) => {
                     hasChildren && "has-children"
                   )}
                   id={nav.id}
-                  key={nav.id}
+                  key={index}
                 >
                   <Anchor
                     className="nav-link its_new"
@@ -76,7 +76,7 @@ const MobileMenu = ({ isOpen, onClick, menu, logo, isAdmin }) => {
                   {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
                 </li>
               ) : (
-                <></>
+                <div key={nav.id}></div>
               );
             })}
           </ul>

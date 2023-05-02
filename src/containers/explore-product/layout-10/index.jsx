@@ -193,8 +193,8 @@ const ExploreProductArea = ({
             <div className="row g-5">
               {state.products.length > 0 ? (
                 <>
-                  {state.products.map((prod) => (
-                    <div key={prod.id} className="col-lg-4 col-md-6 col-sm-12">
+                  {state.products.map((prod, index) => (
+                    <div key={index} className="col-lg-4 col-md-6 col-sm-12">
                       <Product
                         placeBid={prod.attributes?.auction?.data?.attributes?.sellType == "Bidding"}
                         title={prod.attributes.name}
@@ -235,10 +235,13 @@ ExploreProductArea.propTypes = {
   space: PropTypes.oneOf([1, 2]),
   data: PropTypes.shape({
     section_title: SectionTitleType,
-    products: PropTypes.arrayOf(ProductType),
+    products: PropTypes.arrayOf(PropTypes.shape({
+      __typename: PropTypes.string,
+      attributes: ProductType
+    })).isRequired,
     placeBid: PropTypes.bool,
     collectionPage: PropTypes.bool,
-    collectionData: PropTypes.arrayOf(ProductType)
+    // collectionData: PropTypes.arrayOf(ProductType)
   })
 };
 

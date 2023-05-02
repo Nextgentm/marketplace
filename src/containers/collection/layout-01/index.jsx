@@ -10,7 +10,7 @@ const TopCollectionArea = ({ className, id, space, data }) => (
     <div className="container">
       <div className="row mb--50 align-items-center">
         <div className="col-lg-6 col-md-6 col-sm-6 col-12">
-          {data?.section_title && <SectionTitle className="mb--0" disableAnimation="true" {...data.section_title} />}
+          {data?.section_title && <SectionTitle className="mb--0" disableAnimation={true} {...data.section_title} />}
         </div>
         <div className="col-lg-6 col-md-6 col-sm-6 col-12 mt_mobile--15">
           <div
@@ -30,9 +30,9 @@ const TopCollectionArea = ({ className, id, space, data }) => (
       </div>
       {data?.collections && (
         <div className="row g-5">
-          {data.collections.slice(0, 4).map((collection) => (
+          {data.collections.slice(0, 4).map((collection, index) => (
             <div
-              key={collection.id}
+              key={index}
               data-sal-delay="150"
               data-sal-duration="800"
               className="col-lg-4 col-xl-3 col-md-6 col-sm-6 col-12"
@@ -59,7 +59,10 @@ TopCollectionArea.propTypes = {
   space: PropTypes.oneOf([1, 2]),
   data: PropTypes.shape({
     section_title: SectionTitleType,
-    collections: PropTypes.arrayOf(CollectionType)
+    collections: PropTypes.arrayOf(PropTypes.shape({
+      __typename: PropTypes.string,
+      attributes: CollectionType
+    })).isRequired,
   })
 };
 TopCollectionArea.defaultProps = {

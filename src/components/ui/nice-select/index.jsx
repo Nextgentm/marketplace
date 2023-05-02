@@ -30,9 +30,9 @@ const NiceSelect = ({ options, defaultCurrent, placeholder, className, onChange,
     >
       <span className="current">{current?.text || placeholder}</span>
       <ul className="list" role="menubar" onClick={(e) => e.stopPropagation()} onKeyPress={(e) => e.stopPropagation()}>
-        {options?.map((item) => (
+        {options?.map((item, index) => (
           <li
-            key={item.value}
+            key={index}
             data-value={item.value}
             className={clsx("option", item.value === current?.value && "selected focus")}
             role="menuitem"
@@ -49,7 +49,7 @@ const NiceSelect = ({ options, defaultCurrent, placeholder, className, onChange,
 NiceSelect.propTypes = {
   options: PropTypes.arrayOf(
     PropTypes.shape({
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      value: PropTypes.oneOfType([PropTypes.shape({}), PropTypes.oneOfType([PropTypes.string, PropTypes.number])]).isRequired,
       text: PropTypes.string
     }).isRequired
   ).isRequired,

@@ -49,6 +49,7 @@ const GalleryTab = ({ images }) => (
 );
 
 GalleryTab.propTypes = {
-  images: PropTypes.arrayOf(ImageType)
+  images: ImageType
+  // images: PropTypes.arrayOf(ImageType)
 };
 export default GalleryTab;

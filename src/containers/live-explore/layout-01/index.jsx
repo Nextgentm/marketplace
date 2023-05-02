@@ -63,7 +63,7 @@ const LiveExploreArea = ({ data, className, space }) => (
               className="banner-one-slick slick-arrow-style-one rn-slick-dot-style slick-gutter-15"
             >
               {data.products.map((prod, index) => (
-                <SliderItem key={prod.index} className="single-slide-product">
+                <SliderItem key={index} className="single-slide-product">
                   <Product
                     overlay
                     placeBid={false}
@@ -94,7 +94,10 @@ LiveExploreArea.propTypes = {
   space: PropTypes.oneOf([1, 2]),
   data: PropTypes.shape({
     section_title: SectionTitleType,
-    products: PropTypes.arrayOf(ProductType).isRequired,
+    products: PropTypes.arrayOf(PropTypes.shape({
+      __typename: PropTypes.string,
+      attributes: ProductType
+    })).isRequired,
     placeBid: PropTypes.bool
   })
 };

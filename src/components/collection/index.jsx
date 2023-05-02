@@ -40,7 +40,8 @@ Collection.propTypes = {
   total_item: PropTypes.number.isRequired,
   path: PropTypes.string.isRequired,
   image: PropTypes.shape({
-    src: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]).isRequired,
+    url: PropTypes.string,
+    src: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]),
     alt: PropTypes.string
   }).isRequired,
   thumbnails: PropTypes.arrayOf(
@@ -48,9 +49,9 @@ Collection.propTypes = {
       src: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]).isRequired,
       alt: PropTypes.string
     }).isRequired
-  ).isRequired,
+  ),
   profile_image: PropTypes.shape({
-    src: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]).isRequired,
+    src: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]),
     alt: PropTypes.string
   }).isRequired
 };
