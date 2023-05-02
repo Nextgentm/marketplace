@@ -39,12 +39,13 @@ const DetailsTabContent = ({ owner, properties, tags, supply }) => (
 );
 
 DetailsTabContent.propTypes = {
-  owner: PropTypes.shape({
-    name: PropTypes.string,
-    total_sale: PropTypes.number,
-    slug: PropTypes.string,
-    image: ImageType
-  }),
+  owner: PropTypes.string,
+  // owner: PropTypes.shape({
+  //   name: PropTypes.string,
+  //   total_sale: PropTypes.number,
+  //   slug: PropTypes.string,
+  //   image: ImageType
+  // }),
   properties: PropTypes.arrayOf(
     PropTypes.shape({
       id: IDType,

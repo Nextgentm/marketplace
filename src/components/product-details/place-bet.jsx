@@ -297,7 +297,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
 
 PlaceBet.propTypes = {
   highest_bid: PropTypes.shape({
-    amount: PropTypes.string,
+    amount: PropTypes.number,
     bidder: PropTypes.shape({
       name: PropTypes.string,
       image: ImageType,

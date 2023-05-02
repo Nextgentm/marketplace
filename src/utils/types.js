@@ -13,7 +13,11 @@ export const TextType = PropTypes.shape({
 });
 
 export const ImageType = PropTypes.shape({
-  src: PropTypes.oneOfType([PropTypes.string, PropTypes.shape({})]).isRequired,
+  src: PropTypes.oneOfType([PropTypes.string, PropTypes.shape({})]),
+  url: PropTypes.string,
+  name: PropTypes.string,
+  caption: PropTypes.string,
+  previewUrl: PropTypes.string,
   alt: PropTypes.string,
   width: PropTypes.number,
   height: PropTypes.number,
@@ -56,14 +60,12 @@ export const ItemType = PropTypes.shape({
 });
 
 export const ProductType = PropTypes.shape({
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  title: PropTypes.string.isRequired,
+  // id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  name: PropTypes.string.isRequired,
   slug: PropTypes.string.isRequired,
-  latestBid: PropTypes.string.isRequired,
-  price: PropTypes.shape({
-    amount: PropTypes.number.isRequired,
-    currency: PropTypes.string.isRequired
-  }).isRequired,
+  latestBid: PropTypes.string,
+  price: PropTypes.number.isRequired,
+  // currency: PropTypes.string.isRequired,
   likeCount: PropTypes.number,
   image: ImageType,
   auction_date: PropTypes.string,
@@ -88,13 +90,14 @@ export const SellerType = PropTypes.shape({
 });
 
 export const CollectionType = PropTypes.shape({
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  title: PropTypes.string.isRequired,
+  // id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  name: PropTypes.string.isRequired,
   slug: PropTypes.string.isRequired,
-  total_item: PropTypes.number.isRequired,
-  image: ImageType.isRequired,
-  thumbnails: PropTypes.arrayOf(ImageType).isRequired,
-  profile_image: ImageType.isRequired
+  total_item: PropTypes.number,
+  logo: ImageType.isRequired,
+  cover: ImageType,
+  thumbnails: PropTypes.arrayOf(ImageType)
+  // profile_image: ImageType.isRequired
 });
 
 export const FeatureProductsType = PropTypes.shape({

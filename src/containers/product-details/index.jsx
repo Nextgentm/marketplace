@@ -464,22 +464,26 @@ ProductDetailsArea.propTypes = {
   space: PropTypes.oneOf([1, 2]),
   className: PropTypes.string,
   product: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string,
-    likeCount: PropTypes.number,
-    price: PropTypes.shape({
-      amount: PropTypes.number.isRequired,
-      currency: PropTypes.string.isRequired
-    }).isRequired,
-    owner: PropTypes.shape({}),
-    collection: PropTypes.shape({}),
-    properties: PropTypes.arrayOf(PropTypes.shape({})),
-    tags: PropTypes.arrayOf(PropTypes.shape({})),
-    history: PropTypes.arrayOf(PropTypes.shape({})),
-    highest_bid: PropTypes.shape({}),
-    auction_date: PropTypes.string,
-    images: PropTypes.arrayOf(ImageType)
-  }),
+    __typename: PropTypes.string,
+    attributes: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      description: PropTypes.string,
+      likeCount: PropTypes.number,
+      price: PropTypes.shape({
+        amount: PropTypes.number.isRequired,
+        currency: PropTypes.string.isRequired
+      }).isRequired,
+      owner: PropTypes.shape({}),
+      collection: PropTypes.shape({}),
+      properties: PropTypes.arrayOf(PropTypes.shape({})),
+      tags: PropTypes.arrayOf(PropTypes.shape({})),
+      history: PropTypes.arrayOf(PropTypes.shape({})),
+      highest_bid: PropTypes.shape({}),
+      auction_date: PropTypes.string,
+      images: PropTypes.arrayOf(ImageType)
+    }),
+  }).isRequired,
+
   bids: PropTypes.arrayOf(PropTypes.shape({}))
 };
 

@@ -41,9 +41,9 @@ const ProductArea = ({ className, space, data }) => (
             </Nav>
             <TabContent>
               <TabPane eventKey="nav-home" className="lg-product_tab-pane">
-                {shuffleArray(data?.products)?.map((prod) => (
+                {shuffleArray(data?.products)?.map((prod, index) => (
                   <Product
-                    key={prod.id}
+                    key={index}
                     title={prod.title}
                     slug={prod.slug}
                     latestBid={prod.latestBid}
@@ -57,9 +57,9 @@ const ProductArea = ({ className, space, data }) => (
                 ))}
               </TabPane>
               <TabPane eventKey="nav-profile" className="lg-product_tab-pane">
-                {shuffleArray(data?.products)?.map((prod) => (
+                {shuffleArray(data?.products)?.map((prod, index) => (
                   <Product
-                    key={prod.id}
+                    key={index}
                     title={prod.title}
                     slug={prod.slug}
                     latestBid={prod.latestBid}
@@ -73,9 +73,9 @@ const ProductArea = ({ className, space, data }) => (
                 ))}
               </TabPane>
               <TabPane eventKey="nav-contact" className="lg-product_tab-pane">
-                {shuffleArray(data?.products)?.map((prod) => (
+                {shuffleArray(data?.products)?.map((prod, index) => (
                   <Product
-                    key={prod.id}
+                    key={index}
                     title={prod.title}
                     slug={prod.slug}
                     latestBid={prod.latestBid}
@@ -110,7 +110,10 @@ ProductArea.propTypes = {
   space: PropTypes.oneOf([1, 2]),
   data: PropTypes.shape({
     section_title: SectionTitleType,
-    products: PropTypes.arrayOf(ProductType),
+    products: PropTypes.arrayOf(PropTypes.shape({
+      __typename: PropTypes.string,
+      attributes: ProductType
+    })).isRequired,
     notifications: PropTypes.arrayOf(NotifactionType),
     creators: PropTypes.arrayOf(SellerType)
   })

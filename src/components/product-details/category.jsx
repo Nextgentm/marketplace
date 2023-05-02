@@ -25,7 +25,7 @@ ProductCategory.propTypes = {
     slug: PropTypes.string,
     image: ImageType
   }),
-  royalty: PropTypes.string
+  royalty: PropTypes.number
 };
 
 export default ProductCategory;
