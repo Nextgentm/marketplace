@@ -37,8 +37,8 @@ const ExploreProductArea = ({ className, space, data }) => {
         </div>
         <div className="col-lg-12">
           <motion.div layout className="isotope-list item-5">
-            {products?.slice(0, 10)?.map((prod) => (
-              <motion.div key={prod.id} className={clsx("grid-item")} layout>
+            {products?.slice(0, 10)?.map((prod, index) => (
+              <motion.div key={index} className={clsx("grid-item")} layout>
                 <Product
                   title={prod.attributes.name}
                   slug={prod.attributes.slug}
@@ -65,7 +65,10 @@ ExploreProductArea.propTypes = {
   space: PropTypes.oneOf([1, 2]),
   data: PropTypes.shape({
     section_title: SectionTitleType,
-    products: PropTypes.arrayOf(ProductType),
+    products: PropTypes.arrayOf(PropTypes.shape({
+      __typename: PropTypes.string,
+      attributes: ProductType
+    })).isRequired,
     placeBid: PropTypes.bool
   })
 };

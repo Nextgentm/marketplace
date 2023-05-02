@@ -39,11 +39,11 @@ const AuthorProfileArea = ({ className, productData }) => (
         </div>
 
         <TabContent className="tab-content rn-bid-content">
-          <TabPane className="row d-flex g-5" eventKey="nav-home">
+          <TabPane className="row d-flex g-5" eventKey="nav-home" id="nav-home">
             {productData?.map(
-              (prod) =>
+              (prod, index) =>
                 prod.putOnSale && (
-                  <div key={prod.id} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
+                  <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
                     <Product
                       // overlay //only onsale && not owner
                       // placeBid //only onsale && not owner
@@ -63,11 +63,11 @@ const AuthorProfileArea = ({ className, productData }) => (
                 )
             )}
           </TabPane>
-          <TabPane className="row g-5 d-flex" eventKey="nav-profile">
+          <TabPane className="row g-5 d-flex" eventKey="nav-profile" id="nav-profile">
             {productData?.map(
-              (prod) =>
+              (prod, index) =>
                 !prod.putOnSale && (
-                  <div key={prod.id} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
+                  <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
                     <Product
                       // overlay //only onsale && not owner
                       // placeBid //only onsale && not owner
@@ -87,11 +87,11 @@ const AuthorProfileArea = ({ className, productData }) => (
                 )
             )}
           </TabPane>
-          <TabPane className="row g-5 d-flex" eventKey="nav-contact">
+          <TabPane className="row g-5 d-flex" eventKey="nav-contact" id="nav-profile">
             {productData?.map(
-              (prod) =>
+              (prod, index) =>
                 prod.owner === prod.creator && (
-                  <div key={prod.id} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
+                  <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
                     <Product
                       // overlay //only onsale && not owner
                       // placeBid //only onsale && not owner
@@ -143,6 +143,9 @@ const AuthorProfileArea = ({ className, productData }) => (
 );
 AuthorProfileArea.propTypes = {
   className: PropTypes.string,
-  productData: PropTypes.arrayOf(ProductType)
+  productData: PropTypes.arrayOf(PropTypes.shape({
+    __typename: PropTypes.string,
+    attributes: ProductType
+  })),
 };
 export default AuthorProfileArea;

@@ -30,7 +30,7 @@ const MainMenu = ({ menu, isAdmin }) => (
           {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
         </li>
       ) : (
-        <></>
+        <div key={nav.id}></div>
       )
     )}
   </ul>

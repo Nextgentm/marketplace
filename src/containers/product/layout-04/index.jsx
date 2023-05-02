@@ -34,9 +34,9 @@ const ProductArea = ({ space, className, data }) => (
       </div>
       {data?.products && (
         <div className="row g-5">
-          {data.products.slice(0, 5).map((prod) => (
+          {data.products.slice(0, 5).map((prod, index) => (
             <div
-              key={prod.id}
+              key={index}
               data-sal="slide-up"
               data-sal-delay="150"
               data-sal-duration="800"
@@ -67,7 +67,10 @@ ProductArea.propTypes = {
   className: PropTypes.string,
   data: PropTypes.shape({
     section_title: SectionTitleType,
-    products: PropTypes.arrayOf(ProductType).isRequired
+    products: PropTypes.arrayOf(PropTypes.shape({
+      __typename: PropTypes.string,
+      attributes: ProductType
+    })).isRequired,
   })
 };
 

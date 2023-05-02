@@ -50,7 +50,7 @@ const BidTab = ({ className, bids, product, owner, properties, tags, history }) 
 BidTab.propTypes = {
   className: PropTypes.string,
   bids: PropTypes.arrayOf(PropTypes.shape({})),
-  owner: PropTypes.shape({}),
+  owner: PropTypes.string,//PropTypes.shape({}),
   properties: PropTypes.arrayOf(PropTypes.shape({})),
   tags: PropTypes.arrayOf(PropTypes.shape({})),
   history: PropTypes.arrayOf(PropTypes.shape({}))

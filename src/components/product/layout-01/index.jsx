@@ -86,14 +86,15 @@ Product.propTypes = {
   overlay: PropTypes.bool,
   title: PropTypes.string.isRequired,
   slug: PropTypes.string.isRequired,
-  latestBid: PropTypes.string.isRequired,
-  price: PropTypes.shape({
-    amount: PropTypes.number.isRequired,
-    currency: PropTypes.string.isRequired
-  }).isRequired,
-  likeCount: PropTypes.number.isRequired,
+  latestBid: PropTypes.string,
+  price: PropTypes.number.isRequired,
+  // price: PropTypes.shape({
+  //   amount: PropTypes.number.isRequired,
+  //   currency: PropTypes.string.isRequired
+  // }).isRequired,
+  likeCount: PropTypes.number,
   auction_date: PropTypes.string,
-  image: ImageType.isRequired,
+  image: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]),
   authors: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,

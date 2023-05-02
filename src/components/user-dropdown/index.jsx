@@ -158,7 +158,7 @@ const UserDropdown = () => {
         </div>
         {!walletData.isConnected && (
           <div className="setting-option header-btn">
-            <Button color="primary" className="connectBtn" onClick={onConnect} fullwidth="true">
+            <Button color="primary" className="connectBtn" onClick={onConnect} fullwidth={true}>
               Wallet Connect
             </Button>
           </div>

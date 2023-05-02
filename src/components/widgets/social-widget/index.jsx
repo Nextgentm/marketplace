@@ -2,8 +2,8 @@ import PropTypes from "prop-types";
 
 const SocialWidget = ({ socials }) => (
   <ul className="social-copyright">
-    {socials?.map((social) => (
-      <li key={social.id}>
+    {socials?.map((social, index) => (
+      <li key={index}>
         {social.title === "discord" || social.title === "medium" ? (
           <a href={social.link} target="_blank" rel="noreferrer" aria-label={social.title}>
             {social.title === "discord" && (

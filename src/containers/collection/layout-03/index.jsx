@@ -84,9 +84,10 @@ CollectionArea.propTypes = {
   className: PropTypes.string,
   id: PropTypes.string,
   space: PropTypes.oneOf([1]),
-  data: PropTypes.shape({
-    collections: PropTypes.arrayOf(CollectionType)
-  })
+  data: PropTypes.arrayOf(PropTypes.shape({
+    __typename: PropTypes.string,
+    attributes: CollectionType
+  })).isRequired,
 };
 CollectionArea.defaultProps = {
   space: 1
