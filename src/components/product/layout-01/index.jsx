@@ -43,7 +43,7 @@ const Product = ({
       <div className={clsx("product-style-one", !overlay && "no-overlay", placeBid && "with-placeBid")}>
         <div className="card-thumbnail">
           {image && (
-            <Anchor path={`/product/${slug}`}>
+            <Anchor path={`/collectible/${slug}`}>
               <Image
                 src={image?.src ? image.src : image}
                 alt={image?.alt || "NFT_portfolio"}
@@ -64,13 +64,13 @@ const Product = ({
             {authors?.map((client) => (
               <ClientAvatar key={client.name} slug={client.slug} name={client.name} image={client.image} />
             ))}
-            <Anchor className="more-author-text" path={`/product/${slug}`}>
+            <Anchor className="more-author-text" path={`/collectible/${slug}`}>
               {bitCount}+ Place Bit.
             </Anchor>
           </div>
           {!disableShareDropdown && <ShareDropdown />}
         </div>
-        <Anchor path={`/product/${slug}`}>
+        <Anchor path={`/collectible/${slug}`}>
           <span className="product-name">{title}</span>
         </Anchor>
         {/* <span className="latest-bid">Highest bid {latestBid}</span> */}
