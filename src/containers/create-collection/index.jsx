@@ -14,6 +14,7 @@ import Multiselect from "multiselect-react-dropdown";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 import Factory721Contract from "../../contracts/json/Factory721.json";
 import Factory1155Contract from "../../contracts/json/Factory1155.json";
+import strapi from "@utils/strapi";
 
 const CreateCollectionArea = () => {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -214,7 +215,7 @@ const CreateCollectionArea = () => {
       // console.log(selectedPaymentTokens);
 
       const slug = data.title ? data.title.toLowerCase().split(" ").join("-") : null;
-      const resp = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`, {
+      const resp = await strapi.create('collections', {
         data: {
           name: data.title ? data.title : null,
           logo: logoImagePathObject || "Null",
@@ -566,15 +567,15 @@ const CreateCollectionArea = () => {
                           options={
                             walletData.isConnected
                               ? [
-                                  // {
-                                  //   value: "Ethereum",
-                                  //   text: "Ethereum"
-                                  // },
-                                  {
-                                    value: "Polygon",
-                                    text: "Polygon"
-                                  }
-                                ]
+                                // {
+                                //   value: "Ethereum",
+                                //   text: "Ethereum"
+                                // },
+                                {
+                                  value: "Polygon",
+                                  text: "Polygon"
+                                }
+                              ]
                               : []
                           }
                           onChange={blockchainNetworkHandler}
