@@ -42,6 +42,7 @@ query UsersPermissionsUser {
           }
           banner {
             data {
+            id
               attributes {
                 name
                 alternativeText
