@@ -22,6 +22,7 @@ import TokenContract from "../../contracts/json/ERC20token.json";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import { useMutation } from "@apollo/client";
+import strapi from "@utils/strapi";
 
 const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
   ssr: false
@@ -44,10 +45,6 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   useEffect(() => {
-    // if (updatedCollectible) {
-    //   console.log(updatedCollectible);
-    // }
-    // console.log(updatedCollectible);
   }, [updatedCollectible]);
 
   async function switchNetwork(chainId) {
@@ -60,24 +57,14 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
         method: "wallet_switchEthereumChain",
         params: [{ chainId }]
       });
-      // console.log(res);
       return true;
     } catch (switchError) {
-      // console.log(switchError);
       toast.error("Failed to change the network.");
     }
     return false;
   }
 
   async function completeAuction() {
-    // update collectible putOnSale, saleType to true
-    // const response = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/${product.id}`, {
-    //   data: {
-    //     putOnSale: false,
-    //     owner: walletData.account
-    //   }
-    // });
-    // console.log(response);
     updateCollectible({
       variables: {
         "data": {
@@ -154,17 +141,6 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
         if (receipt) {
           isAccepted = true;
           completeAuction();
-          // create owner history for Fixed Price
-          // const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
-          //   data: {
-          //     event: "FixedPrice",
-          //     toWalletAddress: buyer,
-          //     transactionHash: transactionHash,
-          //     quantity: qty,
-          //     fromWalletAddress: seller,
-          //     collectible: product.id
-          //   }
-          // });
           createOwnerHistory({
             variables: {
               data: {
@@ -182,16 +158,14 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
       }
 
       // create bidding
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/biddings`, {
-        data: {
-          bidPrice: price,
-          bidderAddress: walletData.account,
-          timeStamp: new Date(),
-          auction: product.auction.data.id,
-          isAccepted
-        }
+      const res = await strapi.create("biddings", {
+        bidPrice: price,
+        bidderAddress: walletData.account,
+        timeStamp: new Date(),
+        auction: product.auction.data.id,
+        isAccepted
       });
-      // console.log(res);
+      console.log(res);
       if (product.auction.data.sellType === "FixedPrice") {
         toast.success("NFT purchased successfully!");
       } else {
@@ -251,10 +225,6 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
                   )}
 
                   <div className="top-seller-content">
-                    {/* <span className="heighest-bid">
-                                            Bid Price
-                                            Heighest bid <Anchor path={highest_bid?.bidder?.slug}>{highest_bid?.bidder?.name}</Anchor>
-                                        </span> */}
                     <span className="count-number">
                       {highest_bid?.amount ? "Bid Amount :" + highest_bid?.amount : ""}
                       {highest_bid?.priceCurrency}

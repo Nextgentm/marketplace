@@ -57,7 +57,7 @@ const Header = ({ className }) => {
               <Logo logo={headerData.logo} />
               <div className="mainmenu-wrapper">
                 <nav id="sideNav" className="mainmenu-nav d-none d-xl-block">
-                  <MainMenu menu={menuData} isAdmin={isAdminWallet} />
+                  <MainMenu menu={menuData} isAdmin={true} />
                 </nav>
               </div>
             </div>
