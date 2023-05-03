@@ -92,10 +92,10 @@ const CreateCollectionArea = () => {
   }, [blockchainNetwork]);
 
   useEffect(() => {
-    axios.get(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/payment-tokens`).then((response) => {
-      // console.log(response.data.data);
+    strapi.find("payment-tokens").then((response) => {
+      debugger;
       const results = [];
-      response.data.data.map((data) =>
+      response.data.map((data) =>
         results.push({
           value: data.id,
           key: data.name
@@ -215,32 +215,31 @@ const CreateCollectionArea = () => {
       // console.log(selectedPaymentTokens);
 
       const slug = data.title ? data.title.toLowerCase().split(" ").join("-") : null;
-      const resp = await strapi.create('collections', {
-        data: {
-          name: data.title ? data.title : null,
-          logo: logoImagePathObject || "Null",
-          logoID: Number(logoImageId),
-          cover: coverImagePathObject || "Null",
-          coverID: Number(coverImageId),
-          featured: featureImagePathObject || "Null",
-          featuredID: Number(featureImageId),
-          symbol: data.symbol,
-          url: data.url ? data.url : null,
-          description: data.description ? data.description : null,
-          category,
-          slug,
-          // creatorEarning: data.earning
-          //     ? Number(data.earning)
-          //     : null,
-          networkType: blockchainNetwork,
-          paymentTokens: selectedPaymentTokensList,
-          contractAddress: deployed721ContractAddress, // may be null
-          contractAddress1155: deployed1155ContractAddress, // may be null
-          ownerAddress: walletData.account,
-          collectionType: router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1), // convert "single" to "Single"
-          payoutWalletAddress: data.wallet ? data.wallet : null,
-          explicitAndSensitiveContent: data.themeSwitch
-        }
+      const resp = await strapi.create("collections", {
+        name: data.title ? data.title : null,
+        logo: logoImagePathObject || "Null",
+        logoID: Number(logoImageId),
+        cover: coverImagePathObject || "Null",
+        coverID: Number(coverImageId),
+        featured: featureImagePathObject || "Null",
+        featuredID: Number(featureImageId),
+        symbol: data.symbol,
+        url: data.url ? data.url : null,
+        description: data.description ? data.description : null,
+        category,
+        slug,
+        // creatorEarning: data.earning
+        //     ? Number(data.earning)
+        //     : null,
+        networkType: blockchainNetwork,
+        paymentTokens: selectedPaymentTokensList,
+        contractAddress: deployed721ContractAddress, // may be null
+        contractAddress1155: deployed1155ContractAddress, // may be null
+        ownerAddress: walletData.account,
+        collectionType: router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1), // convert "single" to "Single"
+        payoutWalletAddress: data.wallet ? data.wallet : null,
+        explicitAndSensitiveContent: data.themeSwitch
+
       });
       console.log(resp);
       notify();
