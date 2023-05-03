@@ -261,3 +261,20 @@ span.rs-picker-toggle-value {color: #fff !important;}
 .placebid-modal-wrapper .switch-network-form-box :checked+label img {transform: scale(0.9);z-index: -1;}
 .placebid-modal-wrapper .switch-network-form-box label:after {display: none;}
 /*Switch Network Popup*/
+
+/*Connect Wallets Popup*/
+.connect-wallets-wrapper .connect-wallets label.term {font-size: 16px;}
+.connect-wallets-wrapper .connect-wallets label.term a{color: #E90A63;font-weight: 500;}
+.connect-wallets-wrapper.placebid-modal-wrapper .switch-network-form-box label {margin: 5px;font-size: 12px;width: 100%;}
+.connect-wallets-wrapper.placebid-modal-wrapper .switch-network-form-box label img {margin: 5px auto;}
+.connect-wallets-wrapper.placebid-modal-wrapper .switch-network-form-box.choose-network img {width: 35px;display: block;}
+.connect-wallets-wrapper.placebid-modal-wrapper .switch-network-form-box.choose-wallet .nuron-form-check label{background: #200a3e;border-radius: 10px;}
+.connect-wallets-wrapper.placebid-modal-wrapper .switch-network-form-box.choose-wallet .nuron-form-check img{width: 50px;display: block;}
+.connect-wallets-wrapper.placebid-modal-wrapper .switch-network-form-box.choose-wallet .nuron-form-check label {margin: 0px;font-size: 13px;}
+
+@media (min-width: 768px)
+{
+    .connect-wallets-wrapper .modal-dialog {max-width: 650px;}
+    .connect-wallets-wrapper.placebid-modal-wrapper .switch-network-form-box.choose-wallet .nuron-form-check {margin: 4px;}
+}
+/*Connect Wallets Popup*/

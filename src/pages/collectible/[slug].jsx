@@ -62,7 +62,10 @@ export async function getStaticPaths() {
         slug
       }
     })),
-    fallback: false
+    fallback: false,
+    // Re-generate the post at most once per second
+    // if a request comes in
+    revalidate: 1,
   };
 }
 
