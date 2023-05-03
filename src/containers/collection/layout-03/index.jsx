@@ -38,7 +38,7 @@ const CollectionArea = ({ className, space, id, data }) => {
   }, [collectionPagination, error]);
 
   const setCollectionsData = ({ collections }) => {
-    setCollectionsRecords(collections);//normalize(collections));
+    setCollectionsRecords(collections); //normalize(collections));
     setPagination(collections.meta.pagination);
   };
 
@@ -84,10 +84,12 @@ CollectionArea.propTypes = {
   className: PropTypes.string,
   id: PropTypes.string,
   space: PropTypes.oneOf([1]),
-  data: PropTypes.arrayOf(PropTypes.shape({
-    __typename: PropTypes.string,
-    attributes: CollectionType
-  })).isRequired,
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      __typename: PropTypes.string,
+      attributes: CollectionType
+    })
+  ).isRequired
 };
 CollectionArea.defaultProps = {
   space: 1

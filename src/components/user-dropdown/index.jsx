@@ -123,7 +123,7 @@ const UserDropdown = () => {
         toast.error("Metamask wallet is not installed");
         return;
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
       if (currentNetwork) {
         if (!await switchNetwork(currentNetwork)) {
           // polygon testnet
