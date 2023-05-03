@@ -156,7 +156,7 @@ const CreateNewArea = ({ className, space }) => {
         collection: selectedCollection.id
       });
       console.log(res);
-      const collectiblesId = res.data.data.id;
+      const collectiblesId = res.data.id;
 
       for (let i = 0; i < formValues.length; i++) {
         if (formValues[i].properties_name && formValues[i].properties_type) {
