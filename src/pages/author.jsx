@@ -14,6 +14,7 @@ import { ALL_COLLECTION_QUERY } from "../graphql/query/collection/getCollection"
 import authorData from "../data/author.json";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import { useLazyQuery } from "@apollo/client";
+import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 // import productData from "../data/products.json";
 
 export async function getStaticProps() {
@@ -24,6 +25,7 @@ const Author = () => {
   const { userData: authorData } = useContext(AppData);
   const [allProductsData, setAllProductsData] = useState(null);
   const { walletData, setWalletData } = useContext(AppData);
+  const [isAdminWallet, setIsAdminWallet] = useState(false);
 
   const [getCollectible, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
     fetchPolicy: "cache-and-network"
@@ -41,9 +43,17 @@ const Author = () => {
       if (walletData.isConnected) {
         if (walletData.account) {
           getAllCollectionsData();
+          // check is Admin
+          const signer = walletData.provider.getSigner();
+          addressIsAdmin(walletData.ethers, walletData.account, "Polygon", signer).then((validationValue) => {
+            setIsAdminWallet(validationValue);
+          }).catch((error) => { console.log("Error while factory call " + error) });
+        } else {
+          setIsAdminWallet(false);
         }
       } else {
         setAllProductsData(null);
+        setIsAdminWallet(false);
         // toast.error("Please connect wallet first");
       }
     }
@@ -73,7 +83,7 @@ const Author = () => {
       <Header />
       <main id="main-content">
         <AuthorIntroArea data={authorData} />
-        <AuthorProfileArea productData={allProductsData} />
+        <AuthorProfileArea productData={allProductsData} isAdminWallet={isAdminWallet} />
       </main>
       <Footer />
     </Wrapper>

@@ -30,7 +30,7 @@ const AuthorIntroArea = ({ className, space, data }) => {
       <ShareModal show={isShareModalOpen} handleModal={shareModalHandler} />
       <div className="rn-author-bg-area position-relative ptb--150">
         <Image
-          src={data?.banner?.url}
+          src={data?.banner?.url ? data?.banner?.url : "/images/profile/cover-04.jpg"}
           alt="Slider BG"
           quality={100}
           priority
@@ -40,6 +40,7 @@ const AuthorIntroArea = ({ className, space, data }) => {
             objectFit: "cover"
           }}
         />
+
       </div>
       <div className={clsx("rn-author-area", space === 1 && "mb--30 mt_dec--120", className)}>
         <div className="container">
