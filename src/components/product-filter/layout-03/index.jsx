@@ -6,6 +6,7 @@ import PriceSort from "./price-sort";
 import LanguageFilter from "./language-flter";
 import RatingFilter from "./rating-filter";
 import PriceRangeFilter from "./price-range-filter";
+import SalesTypeSort from "./salestype-sort";
 
 const ProductFilter = ({
   sortHandler,
@@ -21,7 +22,6 @@ const ProductFilter = ({
   languages
 }) => (
   <div className="nu-course-sidebar">
-    {console.log("inputcheck", inputcheck)}
     <SortWidget onChange={sortHandler} value={sort} />
     {!collectionPage && (
       <CategoryFilter
@@ -32,6 +32,7 @@ const ProductFilter = ({
       />
     )}
     <PriceSort onChange={sortHandler} value={sort} />
+    <SalesTypeSort onChange={sortHandler} value={sort} />
     {/* <RatingFilter onChange={filterHandler} /> */}
     <PriceRangeFilter values={inputs.price} onChange={priceHandler} />
   </div>
