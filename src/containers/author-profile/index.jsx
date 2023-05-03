@@ -42,22 +42,23 @@ const AuthorProfileArea = ({ className, productData }) => (
           <TabPane className="row d-flex g-5" eventKey="nav-home" id="nav-home">
             {productData?.map(
               (prod, index) =>
-                prod.putOnSale && (
+                prod.attributes.putOnSale && (
                   <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
                     <Product
                       // overlay //only onsale && not owner
                       // placeBid //only onsale && not owner
-                      title={prod.name}
-                      slug={prod.slug}
+                      title={prod.attributes.name}
+                      slug={prod.attributes.slug}
+                      price={prod.attributes?.auction?.data?.attributes?.bidPrice}
+                      symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
+                      image={prod.attributes?.image?.data?.attributes?.url}
+                      collectionName={prod.attributes?.collection?.data?.attributes?.name}
+                      auction_date={prod.attributes?.auction?.data?.attributes?.endTimeStamp}
                       latestBid={prod.latestBid}
-                      price={prod.price}
                       likeCount={prod.likeCount}
-                      auction_date={prod.auction_date}
-                      image={{
-                        src: prod.image?.data?.url
-                      }}
-                      owner={prod.owner}
+                      authors={prod.authors}
                       bitCount={prod.bitCount}
+                      owner={prod.attributes.owner}
                     />
                   </div>
                 )
@@ -66,22 +67,23 @@ const AuthorProfileArea = ({ className, productData }) => (
           <TabPane className="row g-5 d-flex" eventKey="nav-profile" id="nav-profile">
             {productData?.map(
               (prod, index) =>
-                !prod.putOnSale && (
+                !prod.attributes.putOnSale && (
                   <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
                     <Product
                       // overlay //only onsale && not owner
                       // placeBid //only onsale && not owner
-                      title={prod.name}
-                      slug={prod.slug}
+                      title={prod.attributes.name}
+                      slug={prod.attributes.slug}
+                      price={prod.attributes?.auction?.data?.attributes?.bidPrice}
+                      symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
+                      image={prod.attributes?.image?.data?.attributes?.url}
+                      collectionName={prod.attributes?.collection?.data?.attributes?.name}
+                      auction_date={prod.attributes?.auction?.data?.attributes?.endTimeStamp}
                       latestBid={prod.latestBid}
-                      price={prod.price}
                       likeCount={prod.likeCount}
-                      auction_date={prod.auction_date}
-                      image={{
-                        src: prod.image?.data?.url
-                      }}
-                      owner={prod.owner}
+                      authors={prod.authors}
                       bitCount={prod.bitCount}
+                      owner={prod.attributes.owner}
                     />
                   </div>
                 )
@@ -90,22 +92,22 @@ const AuthorProfileArea = ({ className, productData }) => (
           <TabPane className="row g-5 d-flex" eventKey="nav-contact" id="nav-profile">
             {productData?.map(
               (prod, index) =>
-                prod.owner === prod.creator && (
+                prod.attributes.owner === prod.attributes.creator && (
                   <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
                     <Product
                       // overlay //only onsale && not owner
                       // placeBid //only onsale && not owner
-                      title={prod.name}
-                      slug={prod.slug}
+                      title={prod.attributes.name}
+                      slug={prod.attributes.slug}
+                      price={prod.attributes?.auction?.data?.attributes?.bidPrice}
+                      symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
+                      image={prod.attributes?.image?.data?.attributes?.url}
+                      collectionName={prod.attributes?.collection?.data?.attributes?.name}
+                      auction_date={prod.attributes?.auction?.data?.attributes?.endTimeStamp}
                       latestBid={prod.latestBid}
-                      price={prod.price}
                       likeCount={prod.likeCount}
-                      auction_date={prod.auction_date}
-                      image={{
-                        src: prod.image?.data?.url
-                      }}
-                      owner={prod.owner}
-                      bitCount={prod.bitCount}
+                      authors={prod.authors}
+                      owner={prod.attributes.owner}
                     />
                   </div>
                 )

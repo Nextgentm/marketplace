@@ -20,7 +20,7 @@ const ProductBid = ({ price, symbol, likeCount }) => (
 );
 
 ProductBid.propTypes = {
-  price: PropTypes.number.isRequired,
+  price: PropTypes.number,
   //price: PropTypes.oneOfType([PropTypes.number.isRequired, PropTypes.shape({})]),
   // price: PropTypes.shape({
   //   amount: PropTypes.number.isRequired,
