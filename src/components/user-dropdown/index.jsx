@@ -6,9 +6,9 @@ import { ethers } from "ethers";
 import Button from "@ui/button";
 import { doLogOut } from "src/lib/user";
 import { useRouter } from "next/router";
-import { POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { POLYGON_NETWORK_CHAIN_ID, NETWORKS } from "src/lib/constants";
 import { toast } from "react-toastify";
-import { switchNetwork } from "src/lib/BlokchainHelperFunctions";
+import { getNetworkNameByChainId, isValidNetwork, switchNetwork } from "src/lib/BlokchainHelperFunctions";
 import { walletAddressShortForm } from "../../utils/blockchain";
 
 const UserDropdown = () => {
@@ -29,11 +29,40 @@ const UserDropdown = () => {
     accountRef.current = data; // Updates the ref
     _setAccount(data);
   }
+  // For network change event handle using useRef
+  const [currentNetwork, _setCurrentNetwork] = useState();
+  const currentNetworkRef = useRef(currentNetwork);
+  function setCurrentNetwork(data) {
+    currentNetworkRef.current = data; // Updates the ref
+    _setCurrentNetwork(data);
+  }
 
   useEffect(() => {
     if (walletData.isConnected)
       setWalletData({ ...walletData, account: account });
   }, [account])
+
+  useEffect(() => {
+    if (walletData.isConnected && currentNetwork) {
+      changeNetwork(currentNetwork);
+      localStorage.setItem("currentNetwork", currentNetwork);
+    }
+  }, [currentNetwork])
+
+  const changeNetwork = async (_chainId) => {
+    try {
+      const { chainId } = await walletData.provider.getNetwork();
+      if (!await switchNetwork(_chainId)) {
+        // polygon testnet
+        _chainId = "0x" + chainId.toString(16);
+        _setCurrentNetwork(_chainId);
+        toast.error("Allow change network request");
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     /* code for runtime metamask events */
@@ -47,9 +76,15 @@ const UserDropdown = () => {
       }
     };
 
-    // const handleChainChanged = (_hexChainId) => {
-    //   console.log(_hexChainId);
-    // };
+    const handleChainChanged = (_hexChainId) => {
+      // console.log(_hexChainId);
+      if (isValidNetwork(_hexChainId)) {
+        setCurrentNetwork(_hexChainId);
+      } else {
+        onDisconnectWallet();
+      }
+
+    };
 
     // const handleDisconnect = (error) => {
     //   console.log("disconnect", error);
@@ -57,11 +92,13 @@ const UserDropdown = () => {
     // };
 
     window?.ethereum?.on("accountsChanged", handleAccountsChanged);
-    // window.ethereum.on("chainChanged", handleChainChanged);
+    window?.ethereum?.on("chainChanged", handleChainChanged);
     // window.ethereum.on("disconnect", handleDisconnect);
     // check if previously connected
     if (localStorage?.getItem("isWalletConnected") === "true") {
       if (isPreviouslyConnected()) {
+        const oldChainId = localStorage?.getItem("currentNetwork");
+        _setCurrentNetwork(oldChainId);
         onConnect();
       } else {
         localStorage.setItem("isWalletConnected", false);
@@ -82,12 +119,28 @@ const UserDropdown = () => {
 
   const onConnect = async () => {
     try {
-      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        toast.error("Change network first");
+      if (!window.ethereum) {
+        toast.error("Metamask wallet is not installed");
         return;
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+      if (currentNetwork) {
+        if (!await switchNetwork(currentNetwork)) {
+          // polygon testnet
+          toast.error("Allow network change first");
+          return;
+        }
+      }
+      const { chainId } = await provider.getNetwork();
+      let _chainId = "0x" + chainId.toString(16);
+      if (isValidNetwork(_chainId)) {
+        setCurrentNetwork(_chainId);
+      } else {
+        const selctedChainId = document.getElementById("current-wallet-network").value;
+        _setCurrentNetwork(selctedChainId);
+        toast.error("Network is not correct");
+        return;
+      }
       const signer = provider.getSigner();
       const accounts = await provider.send("eth_requestAccounts", []);
       const balance = await provider.getBalance(accounts[0]);
@@ -156,9 +209,17 @@ const UserDropdown = () => {
             <Anchor path="#">{walletData.isConnected && walletAddressShortForm(walletData.account)}</Anchor>
           </span>
         </div>
+        {/* Select network */}
+        <div className="setting-option header-btn">
+          <select id="current-wallet-network" onChange={(event) => _setCurrentNetwork(event.target.value)} defaultValue={"0x5"} value={currentNetwork}>
+            {Object.keys(NETWORKS).map(element =>
+              <option value={NETWORKS[element]} key={element}>{element}</option>
+            )}
+          </select>
+        </div>
         {!walletData.isConnected && (
           <div className="setting-option header-btn">
-            <Button color="primary" className="connectBtn" onClick={onConnect} fullwidth={true}>
+            <Button color="primary" className="connectBtn" onClick={() => onConnect()} fullwidth={true}>
               Wallet Connect
             </Button>
           </div>
