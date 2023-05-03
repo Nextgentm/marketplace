@@ -23,14 +23,15 @@ const Collectibles = ({ dataCollectibles }) => {
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Explore NFT" currentPage="Explore NFT" />
-        {dataCollectibles && (
+        {dataCollectibles.data && (
           <ExploreProductArea
             data={{
               section_title: {
                 title: "Find Your Non Replaceable Token"
               },
-              products: dataCollectibles,
-              placeBid: true
+              products: dataCollectibles.data,
+              placeBid: true,
+              paginationdata: dataCollectibles.meta.pagination
             }}
           />
         )}
@@ -50,16 +51,16 @@ Collectibles.getInitialProps = async () => {
         }
       },
       pagination: {
-        pageSize: 8
+        pageSize: 6
       },
       sort: ["createdAt:desc"]
     },
     fetchPolicy: "network-only"
   });
-
+  console.log("data123456897", data);
   return {
     className: "template-color-1",
-    dataCollectibles: data.collectibles.data
+    dataCollectibles: data.collectibles
   };
 };
 

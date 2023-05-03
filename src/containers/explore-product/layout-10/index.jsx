@@ -10,40 +10,64 @@ import { flatDeep } from "@utils/methods";
 import { useLazyQuery } from "@apollo/client";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 
-function reducer(state, action) {
-  switch (action.type) {
-    case "SET_INPUTS":
-      return { ...state, inputs: { ...state.inputs, ...action.payload } };
-    case "SET_SORT":
-      return { ...state, sort: action.payload };
-    case "SET_ALL_PRODUCTS":
-      return { ...state, allProducts: action.payload };
-    case "SET_PRODUCTS":
-      return { ...state, products: action.payload };
-    case "SET_PAGE":
-      return { ...state, currentPage: action.payload };
-    default:
-      return state;
-  }
-}
+// function reducer(state, action) {
+//   switch (action.type) {
+//     case "SET_INPUTS":
+//       return { ...state, inputs: { ...state.inputs, ...action.payload } };
+//     case "SET_SORT":
+//       return { ...state, sort: action.payload };
+//     case "SET_ALL_PRODUCTS":
+//       return { ...state, allProducts: action.payload };
+//     case "SET_PRODUCTS":
+//       return { ...state, products: action.payload };
+//     case "SET_PAGE":
+//       return { ...state, currentPage: action.payload };
+//     default:
+//       return state;
+//   }
+// }
 
-const POSTS_PER_PAGE = 12;
+// const POSTS_PER_PAGE = 12;
 
 const ExploreProductArea = ({
   className,
   space,
-  data: { section_title, products, placeBid, collectionPage, collectionData }
+  data: { section_title, products, placeBid, collectionPage, paginationdata, collectionData }
 }) => {
+  console.log("paginationdata", paginationdata);
   const [getCollectible, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
     fetchPolicy: "cache-and-network"
   });
   const [collectionsData, setCollectionsData] = useState();
+  const [pagination, setPagination] = useState(paginationdata);
+
+  // useEffect(() => {
+  //   if (collectiblesFilters?.collections) {
+  //     setPagination(collectiblesFilters.collectibles.meta.pagination);
+  //     setCollectionsData(collectiblesFilters);
+  //   }
+  // }, [collectiblesFilters, error]);
+
   useEffect(() => {
     if (collectiblesFilters?.collectibles) {
       console.log("collectiblesFilters?.collectibles", collectiblesFilters?.collectibles);
+      setPagination(collectiblesFilters.collectibles.meta.pagination);
       setCollectionsData(collectiblesFilters?.collectibles);
     }
   }, [collectiblesFilters, error]);
+
+  // useEffect(() => {
+  //   getCollectible({
+  //     variables: { pagination: { pageSize: 3 } }
+  //   });
+  // }, []);
+
+  const getCollectionPaginationRecord = (page) => {
+    console.log("pagepagepagepage", page);
+    getCollectible({
+      variables: { pagination: { page, pageSize: 6 } }
+    });
+  };
 
   useEffect(() => {
     getCollectible({
@@ -52,7 +76,8 @@ const ExploreProductArea = ({
           putOnSale: {
             eq: true
           }
-        }
+        },
+        pagination: { pageSize: 6 }
       }
     });
   }, []);
@@ -60,6 +85,7 @@ const ExploreProductArea = ({
   const [onChangeValue, setOnChangeValue] = useState("newest");
 
   const getCollectibleSortData = (onchangeSort) => {
+    console.log("onchangeSort*-*-*-*-*-*-*-*-*-*-*-*-*-*", onchangeSort);
     setOnChangeValue(onchangeSort);
     if (onchangeSort == "oldest") {
       getCollectible({
@@ -69,6 +95,7 @@ const ExploreProductArea = ({
               eq: true
             }
           },
+          pagination: { pageSize: 6 },
           sort: ["createdAt:desc"]
         }
       });
@@ -81,7 +108,8 @@ const ExploreProductArea = ({
               eq: true
             }
           },
-          sort: ["createdAt:asc"]
+          sort: ["createdAt:asc"],
+          pagination: { pageSize: 6 }
         }
       });
     }
@@ -93,7 +121,8 @@ const ExploreProductArea = ({
               eq: true
             }
           },
-          sort: ["price:asc"]
+          sort: ["price:asc"],
+          pagination: { pageSize: 6 }
         }
       });
     }
@@ -105,7 +134,38 @@ const ExploreProductArea = ({
               eq: true
             }
           },
-          sort: ["price:desc"]
+          sort: ["price:desc"],
+          pagination: { pageSize: 6 }
+        }
+      });
+    }
+    if (onchangeSort == "Fixed-price") {
+      getCollectible({
+        variables: {
+          filter: {
+            putOnSale: {
+              eq: true
+            }
+          },
+          sort: ["createdAt:asc"],
+          pagination: { pageSize: 6 }
+        }
+      });
+    }
+    if (onchangeSort == "Auction") {
+      getCollectible({
+        variables: {
+          filter: {
+            putOnSale: {
+              eq: true
+            },
+            auction: {
+              sellType: {
+                eq: "Bidding"
+              }
+            }
+          },
+          sort: "auction.startTimestamp:desc"
         }
       });
     }
@@ -124,7 +184,8 @@ const ExploreProductArea = ({
             putOnSale: {
               eq: true
             }
-          }
+          },
+          pagination: { pageSize: 6 }
         }
       });
   };
@@ -147,7 +208,8 @@ const ExploreProductArea = ({
             putOnSale: {
               eq: true
             }
-          }
+          },
+          pagination: { pageSize: 6 }
         }
       });
     else {
@@ -162,43 +224,44 @@ const ExploreProductArea = ({
             putOnSale: {
               eq: true
             }
-          }
+          },
+          pagination: { pageSize: 6 }
         }
       });
     }
   };
 
-  const itemsToFilter = [...products];
-  const [state, dispatch] = useReducer(reducer, {
-    products: [],
-    allProducts: products || [],
-    inputs: { price: [0, 100] },
-    sort: "newest",
-    currentPage: 1
-  });
+  // const itemsToFilter = [...products];
+  // const [state, dispatch] = useReducer(reducer, {
+  //   products: [],
+  //   allProducts: products || [],
+  //   inputs: { price: [0, 100] },
+  //   sort: "newest",
+  //   currentPage: 1
+  // });
 
-  const numberOfPages = Math.ceil(state.allProducts.length / POSTS_PER_PAGE);
-  const paginationHandler = (page) => {
-    dispatch({ type: "SET_PAGE", payload: page });
-    const start = (page - 1) * POSTS_PER_PAGE;
-    dispatch({
-      type: "SET_PRODUCTS",
-      payload: state.allProducts.slice(start, start + POSTS_PER_PAGE)
-    });
-    document.getElementById("explore-id").scrollIntoView({ behavior: "smooth" });
-  };
+  // const numberOfPages = Math.ceil(state.allProducts.length / POSTS_PER_PAGE);
+  // const paginationHandler = (page) => {
+  //   dispatch({ type: "SET_PAGE", payload: page });
+  //   const start = (page - 1) * POSTS_PER_PAGE;
+  //   dispatch({
+  //     type: "SET_PRODUCTS",
+  //     payload: state.allProducts.slice(start, start + POSTS_PER_PAGE)
+  //   });
+  //   document.getElementById("explore-id").scrollIntoView({ behavior: "smooth" });
+  // };
 
-  const itemFilterHandler = useCallback(() => {
-    let filteredItems = [];
-    filteredItems = itemsToFilter;
+  // const itemFilterHandler = useCallback(() => {
+  //   let filteredItems = [];
+  //   filteredItems = itemsToFilter;
 
-    dispatch({ type: "SET_ALL_PRODUCTS", payload: filteredItems });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.inputs]);
+  //   dispatch({ type: "SET_ALL_PRODUCTS", payload: filteredItems });
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [state.inputs]);
 
-  useEffect(() => {
-    itemFilterHandler();
-  }, [itemFilterHandler]);
+  // useEffect(() => {
+  //   itemFilterHandler();
+  // }, [itemFilterHandler]);
 
   return (
     <div className={clsx("explore-area", space === 1 && "rn-section-gapTop", className)} id="explore-id">
@@ -245,12 +308,21 @@ const ExploreProductArea = ({
               ) : (
                 <p>No item to show</p>
               )}
-              {numberOfPages > 1 ? (
+              {/* {numberOfPages > 1 ? (
                 <Pagination
                   className="single-column-blog"
                   currentPage={state.currentPage}
                   numberOfPages={numberOfPages}
                   onClick={paginationHandler}
+                />
+              ) : null} */}
+              {console.log("paginationpagination", pagination)}
+              {pagination.pageCount > 1 ? (
+                <Pagination
+                  className="single-column-blog"
+                  currentPage={pagination.page}
+                  numberOfPages={pagination.pageCount}
+                  onClick={getCollectionPaginationRecord}
                 />
               ) : null}
             </div>

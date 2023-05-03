@@ -75,6 +75,14 @@ query collectibles(
             createdAt
           }
       }
+      meta {
+        pagination {
+            total
+            page
+            pageSize
+            pageCount
+        }
+    }
   }
 }
 `;

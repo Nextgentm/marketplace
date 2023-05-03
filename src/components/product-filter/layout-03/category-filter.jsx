@@ -11,7 +11,6 @@ const CategoryFilter = ({ categories, onChange, products, collectionPage }) => {
       setIsCheck(isCheck.filter((item) => item !== value));
     }
   };
-  console.log("categories", categories);
   useEffect(() => {
     onChange(isCheck);
   }, [isCheck]);
