@@ -19,6 +19,7 @@ import ERC721Contract from "../../contracts/json/erc721.json";
 import ERC1155Contract from "../../contracts/json/erc1155.json";
 import { useMutation } from "@apollo/client";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
+import strapi from "@utils/strapi";
 
 const CreateNewArea = ({ className, space }) => {
   const [showProductModal, setShowProductModal] = useState(false);
@@ -130,57 +131,42 @@ const CreateNewArea = ({ className, space }) => {
       }
 
       const nft_url_4 = JSON.parse(nftImagePath);
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles`, {
-        data: {
-          name: data.name ? data.name : null,
-          image: nft_url_4 || "ImagePath",
-          imageID: nftImageId || 0,
-          description: data.discription ? data.discription : null,
-          price: data.price ? Number(data.price) : null,
-          size: 1, // data.size ? Number(data.size) : null,
-          symbol: "wETH",
-          nftID: tokenID.toString(),
-          external_url: data?.external_url,
-          properties: formValues || null,
-          royalty: data.royality ? Number(data.royality) : null,
-          supply,
-          imageHash: "String",
-          metadataHash: "String",
-          creator: walletData.account,
-          owner: walletData.account,
-          collectionContractAddress: data.collectionContractAddress ? data.collectionContractAddress : null,
-          putOnSale: false, // data.putonsale,
-          instantSalePrice: data.instantsaleprice,
-          unlockPurchased: data.unlockpurchased,
-          slug: data.name ? data.name.toLowerCase().split(" ").join("-") : null,
-          collection: selectedCollection.id
-        }
+      const res = await strapi.create("collectibles", {
+        name: data.name ? data.name : null,
+        image: nft_url_4 || "ImagePath",
+        imageID: nftImageId || 0,
+        description: data.discription ? data.discription : null,
+        price: data.price ? Number(data.price) : null,
+        size: 1,
+        symbol: "wETH",
+        nftID: tokenID.toString(),
+        external_url: data?.external_url,
+        properties: formValues || null,
+        royalty: data.royality ? Number(data.royality) : null,
+        supply,
+        imageHash: "String",
+        metadataHash: "String",
+        creator: walletData.account,
+        owner: walletData.account,
+        collectionContractAddress: data.collectionContractAddress ? data.collectionContractAddress : null,
+        putOnSale: false,
+        instantSalePrice: data.instantsaleprice,
+        unlockPurchased: data.unlockpurchased,
+        slug: data.name ? data.name.toLowerCase().split(" ").join("-") : null,
+        collection: selectedCollection.id
       });
       console.log(res);
       const collectiblesId = res.data.data.id;
-      // Add collectible properties
+
       for (let i = 0; i < formValues.length; i++) {
         if (formValues[i].properties_name && formValues[i].properties_type) {
-          await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectible-properties`, {
-            data: {
-              name: formValues[i].properties_name,
-              type: formValues[i].properties_type,
-              collectibles: collectiblesId
-            }
+          await strapi.create("collectible-properties", {
+            name: formValues[i].properties_name,
+            type: formValues[i].properties_type,
+            collectibles: collectiblesId
           });
         }
       }
-      // create owner history for minting
-      // const response2 = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
-      //   data: {
-      //     event: "Minted",
-      //     toWalletAddress: walletData.account,
-      //     transactionHash: transactionHash,
-      //     quantity: supply,
-      //     fromWalletAddress: "0x0000000000000000000000000000000000000000",
-      //     collectible: collectiblesId
-      //   }
-      // });
       createOwnerHistory({
         variables: {
           data: {
@@ -430,39 +416,46 @@ const CreateNewArea = ({ className, space }) => {
   useEffect(() => {
     const collectionType = router.query.type
       ? router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1)
-      : null; // make first letter capital single to Single
-    const collectionURL = collectionType ? `?filters[collectionType][$eq]=${collectionType}` : "";
-    axios.get(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections${collectionURL}`).then((response) => {
-      // setDataCollection(response.data.data);
-      let paramCollection = null;
-      const results = [];
-      if (router.query.collection) {
-        response.data.data.map((ele, i) => {
-          if (router.query.collection === ele.slug) {
-            paramCollection = ele;
-            paramCollection.index = i;
+      : null;
+
+    const filter = {
+      filters: {
+        collectionType: {
+          $eq: collectionType
+        }
+      }
+    }
+    strapi.find("collections", collectionType ? filter : null)
+      .then((response) => {
+        let paramCollection = null;
+        const results = [];
+        if (router.query.collection) {
+          response.data.map((ele, i) => {
+            if (router.query.collection === ele.slug) {
+              paramCollection = ele;
+              paramCollection.index = i;
+              results.push({
+                value: ele,
+                text: ele.name
+              });
+            }
+            // console.log(ele.slug);
+          });
+        } else {
+          response.data.map((ele, i) => {
             results.push({
               value: ele,
               text: ele.name
             });
-          }
-          // console.log(ele.slug);
-        });
-      } else {
-        response.data.data.map((ele, i) => {
-          results.push({
-            value: ele,
-            text: ele.name
+            // console.log(ele.slug);
           });
-          // console.log(ele.slug);
-        });
-      }
-      setDataCollection(results);
-      // console.log(paramCollection);
-      if (paramCollection) {
-        setSelectedCollection(paramCollection);
-      }
-    });
+        }
+        setDataCollection(results);
+        // console.log(paramCollection);
+        if (paramCollection) {
+          setSelectedCollection(paramCollection);
+        }
+      });
   }, [router.query.type]);
   // console.log(dataCollection);
 

@@ -30,21 +30,9 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   useEffect(() => {
-    // if (updatedCollectible) {
-    //   console.log(updatedCollectible);
-    // }
-    // console.log(updatedCollectible);
   }, [updatedCollectible]);
 
   async function completeAuction() {
-    // update collectible putOnSale, saleType to true
-    // const response = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/${product.id}`, {
-    //   data: {
-    //     putOnSale: false,
-    //     owner: name
-    //   }
-    // });
-    // console.log(response);
     updateCollectible({
       variables: {
         "data": {
@@ -54,13 +42,6 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
         "updateCollectibleId": product.id
       }
     });
-    // update collectible putOnSale, saleType to true
-    // const response2 = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/biddings/${id}`, {
-    //   data: {
-    //     isAccepted: true
-    //   }
-    // });
-    // console.log(response2);
     updateBidding({
       variables: {
         "data": {
@@ -115,17 +96,6 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
       const transactionHash = receipt.transactionHash;
       if (receipt) {
         completeAuction();
-        // create owner history for Timed Auction
-        // const response = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
-        //   data: {
-        //     event: "TimeAuction",
-        //     toWalletAddress: buyer,
-        //     transactionHash: transactionHash,
-        //     quantity: qty,
-        //     fromWalletAddress: seller,
-        //     collectible: product.id
-        //   }
-        // });
         createOwnerHistory({
           variables: {
             data: {

@@ -27,6 +27,7 @@ import TransferProxy from "../../contracts/json/TransferProxy.json";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
+import strapi from "@utils/strapi";
 
 // Demo Image
 
@@ -116,18 +117,10 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         contractAddress = product.collection.data.contractAddress1155;
         // Pull the deployed contract instance
         const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
-        // commented the timed auction part for erc1155 token
-        // if (sellType === "nav-direct-sale") {
-        // approval for fixed price
+
         const transaction = await contract1155.setApprovalForAll(TradeContract.address, true);
         const receipt = await transaction.wait();
-        // console.log(receipt);
-        // } else if (sellType === "nav-timed-auction") {
-        //   // approval for timed auction
-        //   const transaction = await contract1155.setApprovalForAll(TransferProxy.address, true);
-        //   const receipt = await transaction.wait();
-        //   // console.log(receipt);
-        // }
+
       }
       return true;
     } catch (error) {
@@ -142,27 +135,18 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         return;
       }
       // update auction to complete
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions`, {
-        data: {
-          walletAddress: walletData.account,
-          bidPrice: data.price,
-          priceCurrency: data.currency,
-          sellType: data.sellType,
-          startTimestamp: data.startTimestamp,
-          endTimeStamp: data.endTimeStamp,
-          collectible: product.id,
-          paymentToken: data.paymentToken,
-          quantity: data.quantity ? data.quantity : 1
-        }
+      const res = await strapi.create("auctions", {
+        walletAddress: walletData.account,
+        bidPrice: data.price,
+        priceCurrency: data.currency,
+        sellType: data.sellType,
+        startTimestamp: data.startTimestamp,
+        endTimeStamp: data.endTimeStamp,
+        collectible: product.id,
+        paymentToken: data.paymentToken,
+        quantity: data.quantity ? data.quantity : 1
       });
       console.log(res);
-      // update collectible putOnSale, saleType to true
-      // const response = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/${product.id}`, {
-      //   data: {
-      //     putOnSale: true
-      //     // saleType: data.sellType,
-      //   }
-      // });
       updateCollectible({
         variables: {
           "data": {
@@ -278,14 +262,6 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           console.log(receipt);
           transactionHash = receipt.transactionHash;
         }
-
-        // update collectible putOnSale, saleType to true
-        // const response = await axios.put(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/${product.id}`, {
-        //   data: {
-        //     owner: receiver.toLowerCase()
-        //   }
-        // });
-        // console.log(response);
         updateCollectible({
           variables: {
             "data": {
@@ -294,18 +270,6 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
             "updateCollectibleId": product.id
           }
         });
-
-        // create owner history for Transfer
-        // const response2 = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/owner-histories`, {
-        //   data: {
-        //     event: "Transferred",
-        //     toWalletAddress: receiver.toLowerCase(),
-        //     transactionHash: transactionHash,
-        //     quantity: product.supply,
-        //     fromWalletAddress: walletData.account,
-        //     collectible: product.id
-        //   }
-        // });
         createOwnerHistory({
           variables: {
             data: {
