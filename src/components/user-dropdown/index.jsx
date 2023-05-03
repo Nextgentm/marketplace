@@ -137,7 +137,9 @@ const UserDropdown = () => {
         setCurrentNetwork(_chainId);
       } else {
         const selctedChainId = document.getElementById("current-wallet-network").value;
-        _setCurrentNetwork(selctedChainId);
+        if (selctedChainId) {
+          _setCurrentNetwork(selctedChainId);
+        }
         toast.error("Network is not correct");
         return;
       }

@@ -12,6 +12,8 @@ import { ALL_COLLECTION_QUERY } from "../graphql/query/collection/getCollection"
 
 // Demo data
 import authorData from "../data/author.json";
+import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
+import { useLazyQuery } from "@apollo/client";
 // import productData from "../data/products.json";
 
 export async function getStaticProps() {
@@ -23,22 +25,46 @@ const Author = () => {
   const [allProductsData, setAllProductsData] = useState(null);
   const { walletData, setWalletData } = useContext(AppData);
 
+  const [getCollectible, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
+    fetchPolicy: "cache-and-network"
+  });
+
   useEffect(() => {
-    if (walletData.isConnected) {
-      getAllCollectionsData();
-    } else {
-      setAllProductsData(null);
-      toast.error("Please connect wallet first");
+    if (collectiblesFilters?.collectibles) {
+      console.log("collectiblesFilters?.collectibles", collectiblesFilters?.collectibles);
+      setAllProductsData(collectiblesFilters?.collectibles.data);
+    }
+  }, [collectiblesFilters, error]);
+
+  useEffect(() => {
+    if (authorData) {
+      if (walletData.isConnected) {
+        if (walletData.account) {
+          getAllCollectionsData();
+        }
+      } else {
+        setAllProductsData(null);
+        // toast.error("Please connect wallet first");
+      }
     }
   }, [walletData]);
 
   const getAllCollectionsData = async () => {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=image&filters[owner][$eq]=${walletData.account}`
-    );
-    const productData = await res.json();
-    console.log(productData.data);
-    setAllProductsData(productData.data);
+    getCollectible({
+      variables: {
+        filter: {
+          owner: {
+            eq: walletData.account
+          }
+        }
+      }
+    });
+    // const res = await fetch(
+    //   `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=image&filters[owner][$eq]=${walletData.account}`
+    // );
+    // const productData = await res.json();
+    // console.log(productData.data);
+    // setAllProductsData(productData.data);
   };
 
   return (
