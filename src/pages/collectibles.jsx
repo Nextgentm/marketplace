@@ -16,8 +16,7 @@ import client from "@utils/apollo-client";
 //   return { props: { className: "template-color-1" } };
 // }
 
-const Explore14 = ({ dataCollectibles }) => {
-
+const Collectibles = ({ dataCollectibles }) => {
   return (
     <Wrapper>
       <SEO pageTitle="Explore Simple" />
@@ -41,7 +40,7 @@ const Explore14 = ({ dataCollectibles }) => {
   );
 };
 
-Explore14.getInitialProps = async () => {
+Collectibles.getInitialProps = async () => {
   const { data } = await client.query({
     query: ALL_COLLECTIBLE_LISTDATA_QUERY,
     variables: {
@@ -62,4 +61,4 @@ Explore14.getInitialProps = async () => {
   };
 };
 
-export default Explore14;
+export default Collectibles;

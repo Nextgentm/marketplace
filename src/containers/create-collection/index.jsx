@@ -14,6 +14,7 @@ import Multiselect from "multiselect-react-dropdown";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 import Factory721Contract from "../../contracts/json/Factory721.json";
 import Factory1155Contract from "../../contracts/json/Factory1155.json";
+import strapi from "@utils/strapi";
 
 const CreateCollectionArea = () => {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -91,10 +92,9 @@ const CreateCollectionArea = () => {
   }, [blockchainNetwork]);
 
   useEffect(() => {
-    axios.get(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/payment-tokens`).then((response) => {
-      // console.log(response.data.data);
+    strapi.find("payment-tokens").then((response) => {
       const results = [];
-      response.data.data.map((data) =>
+      response.data.map((data) =>
         results.push({
           value: data.id,
           key: data.name
@@ -214,32 +214,31 @@ const CreateCollectionArea = () => {
       // console.log(selectedPaymentTokens);
 
       const slug = data.title ? data.title.toLowerCase().split(" ").join("-") : null;
-      const resp = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`, {
-        data: {
-          name: data.title ? data.title : null,
-          logo: logoImagePathObject || "Null",
-          logoID: Number(logoImageId),
-          cover: coverImagePathObject || "Null",
-          coverID: Number(coverImageId),
-          featured: featureImagePathObject || "Null",
-          featuredID: Number(featureImageId),
-          symbol: data.symbol,
-          url: data.url ? data.url : null,
-          description: data.description ? data.description : null,
-          category,
-          slug,
-          // creatorEarning: data.earning
-          //     ? Number(data.earning)
-          //     : null,
-          networkType: blockchainNetwork,
-          paymentTokens: selectedPaymentTokensList,
-          contractAddress: deployed721ContractAddress, // may be null
-          contractAddress1155: deployed1155ContractAddress, // may be null
-          ownerAddress: walletData.account,
-          collectionType: router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1), // convert "single" to "Single"
-          payoutWalletAddress: data.wallet ? data.wallet : null,
-          explicitAndSensitiveContent: data.themeSwitch
-        }
+      const resp = await strapi.create("collections", {
+        name: data.title ? data.title : null,
+        logo: logoImagePathObject || "Null",
+        logoID: Number(logoImageId),
+        cover: coverImagePathObject || "Null",
+        coverID: Number(coverImageId),
+        featured: featureImagePathObject || "Null",
+        featuredID: Number(featureImageId),
+        symbol: data.symbol,
+        url: data.url ? data.url : null,
+        description: data.description ? data.description : null,
+        category,
+        slug,
+        // creatorEarning: data.earning
+        //     ? Number(data.earning)
+        //     : null,
+        networkType: blockchainNetwork,
+        paymentTokens: selectedPaymentTokensList,
+        contractAddress: deployed721ContractAddress, // may be null
+        contractAddress1155: deployed1155ContractAddress, // may be null
+        ownerAddress: walletData.account,
+        collectionType: router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1), // convert "single" to "Single"
+        payoutWalletAddress: data.wallet ? data.wallet : null,
+        explicitAndSensitiveContent: data.themeSwitch
+
       });
       console.log(resp);
       notify();
@@ -566,15 +565,15 @@ const CreateCollectionArea = () => {
                           options={
                             walletData.isConnected
                               ? [
-                                  // {
-                                  //   value: "Ethereum",
-                                  //   text: "Ethereum"
-                                  // },
-                                  {
-                                    value: "Polygon",
-                                    text: "Polygon"
-                                  }
-                                ]
+                                // {
+                                //   value: "Ethereum",
+                                //   text: "Ethereum"
+                                // },
+                                {
+                                  value: "Polygon",
+                                  text: "Polygon"
+                                }
+                              ]
                               : []
                           }
                           onChange={blockchainNetworkHandler}

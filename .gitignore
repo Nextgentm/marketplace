@@ -39,3 +39,4 @@ yarn-error.log*
 .vercel
 /.env
 .eslintrc.json
+/yarn.lock
