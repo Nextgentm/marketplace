@@ -93,7 +93,6 @@ const CreateCollectionArea = () => {
 
   useEffect(() => {
     strapi.find("payment-tokens").then((response) => {
-      debugger;
       const results = [];
       response.data.map((data) =>
         results.push({
