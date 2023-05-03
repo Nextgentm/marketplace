@@ -8,27 +8,8 @@ import ProductDetailsArea from "@containers/product-details";
 import ProductArea from "@containers/product/layout-03";
 import { shuffleArray } from "@utils/methods";
 
-// import { useRouter } from "next/router";
-// import { useState, useEffect } from "react";
-// import axios from "axios";
-
-// demo data
-// import productData from "../../data/products.json";
-
 const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) => (
-  // const router = useRouter();
 
-  /* const [dataCollectibles, setDataCollectibles] = useState(null);
-    useEffect(() => {
-        axios
-            .get(
-                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/3?populate=*`
-            )
-            .then((response) => {
-                setDataCollectibles(response.data.data);
-            });
-    }, []);
-    console.log(dataCollectibles); */
   <Wrapper>
     <SEO pageTitle="Product Details" />
     <Header />
@@ -42,13 +23,7 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
           products: recentViewProducts
         }}
       />
-      {/*
-                <ProductArea
-                    data={{
-                        section_title: { title: "Related Item" },
-                        products: relatedProducts,
-                    }}
-                /> */}
+
     </main>
     <Footer />
   </Wrapper>
@@ -56,16 +31,14 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
 export async function getStaticPaths() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=*`);
   const productData = await res.json();
+  const path = productData.data.map(({ slug }) => ({
+    params: {
+      slug
+    }
+  }));
   return {
-    paths: productData.data.map(({ slug }) => ({
-      params: {
-        slug
-      }
-    })),
-    fallback: false,
-    // Re-generate the post at most once per second
-    // if a request comes in
-    revalidate: 1,
+    paths: [...path],
+    fallback: "blocking"
   };
 }
 
@@ -94,12 +67,6 @@ export async function getStaticProps({ params }) {
   }
   const recentViewProducts = shuffleArray(productData.data).slice(0, 5);
   const relatedProducts = [];
-  /* const relatedProducts = productData.data
-        .filter((prod) =>
-            prod.collection.category?.some((r) => category?.includes(r))
-        )
-        .slice(0, 5);
-    console.log(relatedProducts); */
   return {
     props: {
       className: "template-color-1",
@@ -107,7 +74,7 @@ export async function getStaticProps({ params }) {
       bids,
       recentViewProducts,
       relatedProducts
-    } // will be passed to the page component as props
+    }
   };
 }
 
