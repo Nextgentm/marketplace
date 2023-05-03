@@ -75,7 +75,7 @@ export async function getStaticProps({ params }) {
       recentViewProducts,
       relatedProducts
     },
-    revalidate: 5, // In seconds
+    revalidate: 1, // In seconds
   };
 }
 
