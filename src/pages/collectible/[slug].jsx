@@ -89,10 +89,8 @@ export async function getStaticProps({ params }) {
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions/${product.auction?.data?.id}?populate=*`
     );
     const auction = await response.json();
-    if (auction?.data?.biddings?.data)
-      bids = auction?.data?.biddings?.data;
-    if (auction?.data?.paymentToken)
-      product.auction.data.paymentToken = auction?.data?.paymentToken;
+    bids = auction.data.biddings.data;
+    product.auction.data.paymentToken = auction.data.paymentToken;
   }
   const recentViewProducts = shuffleArray(productData.data).slice(0, 5);
   const relatedProducts = [];
