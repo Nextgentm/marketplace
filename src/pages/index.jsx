@@ -22,7 +22,7 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection })
     const filter = {
       filters: {
         collectionType: {
-          $eq: 'Multiple'
+          $eq: "Multiple"
         }
       }
     }
