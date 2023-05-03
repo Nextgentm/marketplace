@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
-const CategoryFilter = ({ categories, onChange }) => {
+const CategoryFilter = ({ categories, onChange, products, collectionPage }) => {
   const [isCheck, setIsCheck] = useState([]);
 
   const handleClick = (e) => {
@@ -11,10 +11,10 @@ const CategoryFilter = ({ categories, onChange }) => {
       setIsCheck(isCheck.filter((item) => item !== value));
     }
   };
-  console.log("isCheckisCheck", isCheck);
+  console.log("categories", categories);
   useEffect(() => {
     onChange(isCheck);
-  }, [isCheck, onChange]);
+  }, [isCheck]);
 
   return (
     <div className="nuron-expo-filter-widget widget-category mt--30">
