@@ -74,7 +74,8 @@ export async function getStaticProps({ params }) {
       bids,
       recentViewProducts,
       relatedProducts
-    }
+    },
+    revalidate: 5, // In seconds
   };
 }
 
