@@ -417,37 +417,45 @@ const CreateNewArea = ({ className, space }) => {
     const collectionType = router.query.type
       ? router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1)
       : null;
-    const collectionURL = collectionType ? `?filters[collectionType][$eq]=${collectionType}` : "";
-    strapi.find(`collections${collectionURL}`).then((response) => {
-      let paramCollection = null;
-      const results = [];
-      if (router.query.collection) {
-        response.data.map((ele, i) => {
-          if (router.query.collection === ele.slug) {
-            paramCollection = ele;
-            paramCollection.index = i;
+
+    const filter = {
+      filters: {
+        collectionType: {
+          $eq: collectionType
+        }
+      }
+    }
+    strapi.find("collections", collectionType ? filter : null)
+      .then((response) => {
+        let paramCollection = null;
+        const results = [];
+        if (router.query.collection) {
+          response.data.map((ele, i) => {
+            if (router.query.collection === ele.slug) {
+              paramCollection = ele;
+              paramCollection.index = i;
+              results.push({
+                value: ele,
+                text: ele.name
+              });
+            }
+            // console.log(ele.slug);
+          });
+        } else {
+          response.data.map((ele, i) => {
             results.push({
               value: ele,
               text: ele.name
             });
-          }
-          // console.log(ele.slug);
-        });
-      } else {
-        response.data.map((ele, i) => {
-          results.push({
-            value: ele,
-            text: ele.name
+            // console.log(ele.slug);
           });
-          // console.log(ele.slug);
-        });
-      }
-      setDataCollection(results);
-      // console.log(paramCollection);
-      if (paramCollection) {
-        setSelectedCollection(paramCollection);
-      }
-    });
+        }
+        setDataCollection(results);
+        // console.log(paramCollection);
+        if (paramCollection) {
+          setSelectedCollection(paramCollection);
+        }
+      });
   }, [router.query.type]);
   // console.log(dataCollection);
 

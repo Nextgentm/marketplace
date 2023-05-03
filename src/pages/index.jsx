@@ -19,12 +19,15 @@ import strapi from "@utils/strapi";
 const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection }) => {
   const content = normalizedData(homepageData?.content || []);
   const submit = async () => {
-    const data = await strapi.create("collectible-properties", {
-      name: "test",
-      type: "test",
-      collectibles: null
-    });
-    console.log(data);
+    const filter = {
+      filters: {
+        collectionType: {
+          $eq: 'Multiple'
+        }
+      }
+    }
+    let response = await strapi.find("collections", null);
+    console.log(response);
   }
   return (
     <Wrapper>
