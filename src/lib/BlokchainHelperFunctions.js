@@ -1,4 +1,4 @@
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "./constants";
+import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, NETWORKS, NETWORKS_CHAINS } from "./constants";
 import Factory721Contract from "../contracts/json/Factory721.json";
 import Factory1155Contract from "../contracts/json/Factory1155.json";
 import ERC721Contract from "../contracts/json/erc721.json";
@@ -85,22 +85,49 @@ export async function switchNetwork(chainId) {
     // console.log(res);
     return true;
   } catch (switchError) {
+    if (switchError.code === 4001) {
+      console.log("Network change request closed");
+    }
+    if (switchError.code === 4902) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [NETWORKS_CHAINS[chainId]]
+        });
+      } catch (addError) {
+        console.error(addError);
+      }
+    }
     console.log(switchError);
     // toast.error("Failed to change the network.");
   }
   return false;
 }
 
-export async function changeNetwork(networkType) {
-  if (networkType === "Ethereum") {
-    return switchNetwork(ETHEREUM_NETWORK_CHAIN_ID);
-  }
-  if (networkType === "Polygon") {
-    return switchNetwork(POLYGON_NETWORK_CHAIN_ID);
-  }
-  return null;
+// export async function changeNetwork(networkType) {
+//   if (networkType === "Ethereum") {
+//     return switchNetwork(ETHEREUM_NETWORK_CHAIN_ID);
+//   }
+//   if (networkType === "Polygon") {
+//     return switchNetwork(POLYGON_NETWORK_CHAIN_ID);
+//   }
+//   return null;
+// }
+
+export function getNetworkNameByChainId(chainId) {
+  return Object.keys(NETWORKS).find((key) => NETWORKS[key] === chainId);
 }
 
+export function getChainIdByNetworkName(networkName) {
+  return NETWORKS[networkName];
+}
+
+export function isValidNetwork(chainId) {
+  if (Object.values(NETWORKS).includes(chainId)) {
+    return true;
+  }
+  return false;
+}
 //_______________________________________________//
 // convert values
 //_______________________________________________//
