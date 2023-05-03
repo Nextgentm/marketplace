@@ -20,6 +20,7 @@ import client from "@utils/apollo-client";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import { GET_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getCollection";
 import LiveExploreArea from "@containers/live-explore/layout-01";
+import strapi from "@utils/strapi";
 
 // export async function getStaticProps() {
 //   return { props: { className: "template-color-1" } };
@@ -27,12 +28,18 @@ import LiveExploreArea from "@containers/live-explore/layout-01";
 
 const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection }) => {
   const content = normalizedData(homepageData?.content || []);
+  const submit = () => {
+    const resp = strapi.create('payment-tokens', {
+      name: "Test"
+    })
+  }
   return (
     <Wrapper>
       <SEO pageTitle="NFT Marketplace" />
       <Header />
       <main id="main-content">
         <HeroArea data={content["hero-section"]} />
+        <button onClick={submit}>Hello</button>
         <LiveExploreArea
           data={{
             ...content["live-explore-section"],
