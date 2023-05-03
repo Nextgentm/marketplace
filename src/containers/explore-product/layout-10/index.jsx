@@ -34,6 +34,7 @@ const ExploreProductArea = ({
   space,
   data: { section_title, products, placeBid, collectionPage, paginationdata, collectionData }
 }) => {
+  debugger;
   console.log("paginationdata", paginationdata);
   const [getCollectible, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
     fetchPolicy: "cache-and-network"
@@ -317,7 +318,7 @@ const ExploreProductArea = ({
                 />
               ) : null} */}
               {console.log("paginationpagination", pagination)}
-              {pagination.pageCount > 1 ? (
+              {pagination?.pageCount > 1 ? (
                 <Pagination
                   className="single-column-blog"
                   currentPage={pagination.page}
