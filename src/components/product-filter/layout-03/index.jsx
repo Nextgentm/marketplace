@@ -7,10 +7,30 @@ import LanguageFilter from "./language-flter";
 import RatingFilter from "./rating-filter";
 import PriceRangeFilter from "./price-range-filter";
 
-const ProductFilter = ({ sortHandler, filterHandler, priceHandler, inputs, sort, categories, collectionPage, levels, languages }) => (
+const ProductFilter = ({
+  sortHandler,
+  checkHandler,
+  priceHandler,
+  inputs,
+  sort,
+  categories,
+  collectionPage,
+  levels,
+  inputcheck,
+  products,
+  languages
+}) => (
   <div className="nu-course-sidebar">
+    {console.log("inputcheck", inputcheck)}
     <SortWidget onChange={sortHandler} value={sort} />
-    {!collectionPage && <CategoryFilter categories={categories} onChange={filterHandler} />}
+    {!collectionPage && (
+      <CategoryFilter
+        categories={inputcheck}
+        onChange={checkHandler}
+        collectionPage={collectionPage}
+        products={products}
+      />
+    )}
     <PriceSort onChange={sortHandler} value={sort} />
     {/* <RatingFilter onChange={filterHandler} /> */}
     <PriceRangeFilter values={inputs.price} onChange={priceHandler} />
@@ -19,7 +39,7 @@ const ProductFilter = ({ sortHandler, filterHandler, priceHandler, inputs, sort,
 
 ProductFilter.propTypes = {
   sortHandler: PropTypes.func,
-  filterHandler: PropTypes.func,
+  checkHandler: PropTypes.func,
   priceHandler: PropTypes.func,
   inputs: PropTypes.shape({
     price: PropTypes.arrayOf(PropTypes.number)
