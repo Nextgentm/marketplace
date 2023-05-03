@@ -27,16 +27,16 @@ const InputRange = ({ values, onChange, hideButton }) => {
           <div className="price--output">
             <span>Price :</span>
             <span className="output-label">
-              ${values[0] || 0 / 100} - ${values[1] || 0 / 100}
+              ${Number(values[0]) || 0 / 100} - ${Number(values[1]) || 0 / 100}
             </span>
           </div>
-          {hideButton === false && (
+          {/* {hideButton === false && (
             <div className="price--filter">
               <Button size="small" path="#!">
                 Filter
               </Button>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>

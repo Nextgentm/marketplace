@@ -51,10 +51,12 @@ Collectibles.getInitialProps = async () => {
       },
       pagination: {
         pageSize: 8
-      }
+      },
+      sort: ["createdAt:desc"]
     },
     fetchPolicy: "network-only"
   });
+
   return {
     className: "template-color-1",
     dataCollectibles: data.collectibles.data
