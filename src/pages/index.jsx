@@ -70,7 +70,7 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection })
             creators: sellerData
           }}
         /> */}
-        {/* <ServiceArea data={content["service-section"]} /> */}
+        <ServiceArea data={content["service-section"]} />
       </main>
       <Footer />
     </Wrapper>
