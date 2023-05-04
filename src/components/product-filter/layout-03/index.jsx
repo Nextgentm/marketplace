@@ -19,6 +19,7 @@ const ProductFilter = ({
   levels,
   inputcheck,
   products,
+  routerQuery,
   languages
 }) => (
   <div className="nu-course-sidebar">
@@ -28,6 +29,7 @@ const ProductFilter = ({
       onChange={checkHandler}
       collectionPage={collectionPage}
       products={products}
+      routerQuery={routerQuery}
     />
     <PriceSort onChange={sortHandler} value={sort} />
     <SalesTypeSort onChange={sortHandler} value={sort} />

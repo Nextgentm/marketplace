@@ -19,8 +19,8 @@ import client from "@utils/apollo-client";
 const Collectibles = ({ dataCollectibles }) => {
   return (
     <Wrapper>
-      {console.log("dataCollectiblesdataCollectibles", dataCollectibles)}
       <SEO pageTitle="Explore Simple" />
+      {console.log("data=-=-Collectibles", dataCollectibles)}
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Explore NFT" currentPage="Explore NFT" />
@@ -59,7 +59,6 @@ Collectibles.getInitialProps = async () => {
     },
     fetchPolicy: "network-only"
   });
-  console.log("data123456897", data);
   return {
     className: "template-color-1",
     dataCollectibles: data.collectibles

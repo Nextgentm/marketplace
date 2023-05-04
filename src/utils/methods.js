@@ -69,7 +69,7 @@ function slideToggle(element, duration = 500) {
 }
 
 const flatDeep = (arr, d = 1) =>
-  d > 0 ? arr.reduce((acc, val) => acc.concat(Array.isArray(val) ? flatDeep(val, d - 1) : val), []) : arr.slice();
+  d > 0 ? arr?.reduce((acc, val) => acc?.concat(Array.isArray(val) ? flatDeep(val, d - 1) : val), []) : arr.slice();
 
 function slugify(text) {
   return text
