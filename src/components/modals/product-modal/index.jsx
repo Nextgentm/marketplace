@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import Modal from "react-bootstrap/Modal";
 import Product from "@components/product/layout-01";
 
-const ProductModal = ({ show, handleModal, data }) => (
+const ProductModal = ({ show, handleModal, data, collectionName }) => (
   <Modal className="rn-popup-modal upload-modal-wrapper" show={show} onHide={handleModal} centered>
     {show && (
       <button type="button" className="btn-close" aria-label="Close" onClick={handleModal}>
@@ -20,6 +20,7 @@ const ProductModal = ({ show, handleModal, data }) => (
           amount: +data.price,
           currency: "wETH"
         }}
+        collectionName={collectionName}
         likeCount={300}
         image={{ src: URL.createObjectURL(data.image) }}
         authors={[

@@ -252,12 +252,16 @@ const CreateNewArea = ({ className, space }) => {
       toast.error("Please connect wallet first");
       return;
     } // chnage network
-    if (selectedCollection.networkType === "Ethereum") {
+    if (!selectedCollection) {
+      toast.error("Select collection");
+      return;
+    }
+    if (selectedCollection?.networkType === "Ethereum") {
       if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
         // ethereum testnet
         return;
       }
-    } else if (selectedCollection.networkType === "Polygon") {
+    } else if (selectedCollection?.networkType === "Polygon") {
       if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
@@ -807,7 +811,7 @@ const CreateNewArea = ({ className, space }) => {
           </div>
         </form>
       </div>
-      {showProductModal && <ProductModal show={showProductModal} handleModal={handleProductModal} data={previewData} />}
+      {showProductModal && <ProductModal show={showProductModal} handleModal={handleProductModal} data={previewData} collectionName={selectedCollection.name} />}
     </>
   );
 };
