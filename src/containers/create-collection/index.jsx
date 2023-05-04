@@ -11,7 +11,7 @@ import axios from "axios";
 import { AppData } from "src/context/app-context";
 import { useRouter } from "next/router";
 import Multiselect from "multiselect-react-dropdown";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, BINANCE_NETWORK_CHAIN_ID } from "src/lib/constants";
 import Factory721Contract from "../../contracts/json/Factory721.json";
 import Factory1155Contract from "../../contracts/json/Factory1155.json";
 import strapi from "@utils/strapi";
@@ -87,6 +87,8 @@ const CreateCollectionArea = () => {
         switchNetwork(ETHEREUM_NETWORK_CHAIN_ID); // ethereum testnet
       } else if (blockchainNetwork === "Polygon") {
         switchNetwork(POLYGON_NETWORK_CHAIN_ID); // polygon testnet
+      } else if (blockchainNetwork === "Binance") {
+        switchNetwork(BINANCE_NETWORK_CHAIN_ID); // binance testnet
       }
     }
   }, [blockchainNetwork]);
@@ -565,14 +567,18 @@ const CreateCollectionArea = () => {
                           options={
                             walletData.isConnected
                               ? [
-                                // {
-                                //   value: "Ethereum",
-                                //   text: "Ethereum"
-                                // },
+                                {
+                                  value: "Ethereum",
+                                  text: "Ethereum"
+                                },
                                 {
                                   value: "Polygon",
                                   text: "Polygon"
-                                }
+                                },
+                                {
+                                  value: "Binance",
+                                  text: "Binance"
+                                },
                               ]
                               : []
                           }

@@ -19,6 +19,7 @@ import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/con
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
 import TransferPopupModal from "@components/modals/transfer";
+import { validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
 
 import ERC721Contract from "../../contracts/json/erc721.json";
 import ERC1155Contract from "../../contracts/json/erc1155.json";
@@ -228,7 +229,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     const receiver = event.target.receiver.value;
     // console.log(receiver);
     try {
-      if (walletData.ethers.utils.isAddress(receiver)) {
+      if (validateInputAddresses(receiver)) {
         // console.log("valid address");
 
         const signer = walletData.provider.getSigner();
