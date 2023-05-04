@@ -79,7 +79,6 @@ const AuthorProfileArea = ({ className, productData, isAdminWallet }) => (
                       symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
                       image={prod.attributes?.image?.data?.attributes?.url}
                       collectionName={prod.attributes?.collection?.data?.attributes?.name}
-                      auction_date={prod.attributes?.auction?.data?.attributes?.endTimeStamp}
                       latestBid={prod.latestBid}
                       likeCount={prod.likeCount}
                       authors={prod.authors}
