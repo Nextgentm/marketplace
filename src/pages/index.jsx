@@ -35,7 +35,6 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection })
       <Header />
       <main id="main-content">
         <HeroArea data={content["hero-section"]} />
-        <button onClick={submit}>Hello</button>
         <LiveExploreArea
           data={{
             ...content["live-explore-section"],
@@ -86,11 +85,7 @@ Home.getInitialProps = async () => {
         putOnSale: {
           eq: true
         },
-        auction: {
-          sellType: {
-            eq: "Bidding"
-          }
-        }
+
       },
       sort: "auction.startTimestamp:desc"
     },

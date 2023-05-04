@@ -10,7 +10,6 @@ import { ALL_COLLECTION_QUERY } from "src/graphql/query/collection/getCollection
 import _ from "lodash";
 
 const CollectionArea = ({ className, space, id, data }) => {
-  // console.log("className", className);
   const [collectionsRecords, setCollectionsRecords] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -22,6 +21,14 @@ const CollectionArea = ({ className, space, id, data }) => {
   const [getCollection, { data: collectionPagination, error }] = useLazyQuery(ALL_COLLECTION_QUERY, {
     fetchPolicy: "cache-and-network"
   });
+
+  useEffect(() => {
+    getCollection({
+      variables: {
+        pagination: { pageSize: 8 }
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (data?.collections) {
@@ -38,8 +45,8 @@ const CollectionArea = ({ className, space, id, data }) => {
   }, [collectionPagination, error]);
 
   const setCollectionsData = ({ collections }) => {
-    setCollectionsRecords(collections); //normalize(collections));
     setPagination(collections.meta.pagination);
+    setCollectionsRecords(collections); //normalize(collections));
   };
 
   const getCollectionPaginationRecord = (page) => {
@@ -68,11 +75,14 @@ const CollectionArea = ({ className, space, id, data }) => {
         )}
         <div className="row">
           <div className="col-lg-12" data-sal="slide-up" data-sal-delay="950" data-sal-duration="800">
-            <Pagination
-              currentPage={pagination.page}
-              numberOfPages={pagination.pageCount}
-              onClick={getCollectionPaginationRecord}
-            />
+            {pagination.pageCount > 1 ? (
+              <Pagination
+                className="single-column-blog"
+                currentPage={pagination.page}
+                numberOfPages={pagination.pageCount}
+                onClick={getCollectionPaginationRecord}
+              />
+            ) : null}
           </div>
         </div>
       </div>
