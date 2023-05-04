@@ -30,7 +30,7 @@ const ExploreProductArea = ({
   const [collectionsData, setCollectionsData] = useState(collectionData.data);
   console.log("collectionsData", collectionsData);
   const router = useRouter();
-  const routerQuery = router.query.collection.split();
+  const routerQuery = router?.query?.collection?.split();
   console.log("router.query", routerQuery);
   const [pagination, setPagination] = useState({
     page: 1,
