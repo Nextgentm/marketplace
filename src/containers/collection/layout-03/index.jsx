@@ -12,78 +12,79 @@ import _ from "lodash";
 const CollectionArea = ({ className, space, id, data }) => {
   const [collectionsRecords, setCollectionsRecords] = useState([]);
   const [collectionsData, setCollectionsData] = useState();
-  const [pagination, setPagination] = useState({
-    page: 1,
-    pageCount: 1,
-    pageSize: 0,
-    total: 0
-  });
+  // const [pagination, setPagination] = useState({
+  //   page: 1,
+  //   pageCount: 1,
+  //   pageSize: 0,
+  //   total: 0
+  // });
   useEffect(() => {
     if (data) {
+      console.log("data123465", data)
       setCollectionsData(data);
     }
   }, [data]);
 
-  const [getCollection, { data: collectionApiData, error }] = useLazyQuery(GET_COLLECTION_LISTDATA_QUERY, {
-    fetchPolicy: "cache-and-network"
-  });
+  // const [getCollection, { data: collectionApiData, error }] = useLazyQuery(GET_COLLECTION_LISTDATA_QUERY, {
+  //   fetchPolicy: "cache-and-network"
+  // });
 
-  useEffect(() => {
-    getCollection({
-      variables: {
-        filters: {
-          collectibles: {
-            putOnSale: {
-              eq: true
-            }
-          }
-        },
-        collectiblesFilters: {
-          putOnSale: {
-            eq: true
-          },
-          id: { notNull: true }
-        },
-        pagination: {
-          pageSize: 4
-        }
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   getCollection({
+  //     variables: {
+  //       filters: {
+  //         collectibles: {
+  //           putOnSale: {
+  //             eq: true
+  //           }
+  //         }
+  //       },
+  //       collectiblesFilters: {
+  //         putOnSale: {
+  //           eq: true
+  //         },
+  //         id: { notNull: true }
+  //       },
+  //       pagination: {
+  //         pageSize: 4
+  //       }
+  //     }
+  //   });
+  // }, []);
 
-  useEffect(() => {
-    console.log("error", error);
-    if (collectionApiData?.collections) {
-      setPagination(collectionApiData?.collections?.meta?.pagination);
-      setCollectionsData(collectionApiData.collections?.data);
-    }
-  }, [collectionApiData, error]);
+  // useEffect(() => {
+  //   console.log("error", error);
+  //   if (collectionApiData?.collections) {
+  //     setPagination(collectionApiData?.collections?.meta?.pagination);
+  //     setCollectionsData(collectionApiData.collections?.data);
+  //   }
+  // }, [collectionApiData, error]);
 
-  // const setCollectionsData = ({ collections }) => {
-  //   setPagination(collections.meta.pagination);
-  //   setCollectionsRecords(collections); //normalize(collections));
+  // // const setCollectionsData = ({ collections }) => {
+  // //   setPagination(collections.meta.pagination);
+  // //   setCollectionsRecords(collections); //normalize(collections));
+  // // };
+
+  // const getCollectionPaginationRecord = (page) => {
+  //   getCollection({
+  //     variables: {
+  //       filters: {
+  //         collectibles: {
+  //           putOnSale: {
+  //             eq: true
+  //           }
+  //         },
+  //         id: { notNull: true }
+  //       },
+  //       collectiblesFilters: {
+  //         putOnSale: {
+  //           eq: true
+  //         }
+  //       },
+  //       pagination: { page, pageSize: 4 }
+  //     }
+  //   });
   // };
-
-  const getCollectionPaginationRecord = (page) => {
-    getCollection({
-      variables: {
-        filters: {
-          collectibles: {
-            putOnSale: {
-              eq: true
-            }
-          },
-          id: { notNull: true }
-        },
-        collectiblesFilters: {
-          putOnSale: {
-            eq: true
-          }
-        },
-        pagination: { page, pageSize: 4 }
-      }
-    });
-  };
 
   return (
     <div className={clsx("rn-collection-area", space === 1 && "rn-section-gapTop", className)} id={id}>
@@ -91,29 +92,30 @@ const CollectionArea = ({ className, space, id, data }) => {
         {collectionsData && (
           <div className="row g-5">
             {collectionsData.map((collection) => (
-              <div key={collection.id} className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12">
-                <Collection
-                  title={collection?.attributes.name}
-                  total_item={collection?.attributes?.collectibles?.data?.length}
-                  path={`collection/${collection?.attributes.slug}`}
-                  image={collection?.attributes.cover?.data?.attributes}
-                  thumbnails={collection?.attributes.featured?.data?.attributes}
-                  profile_image={collection?.attributes.logo?.data?.attributes}
-                />
-              </div>
+              (collection?.collectibles?.data?.length ?
+                <div key={collection.id} className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12">
+                  <Collection
+                    title={collection?.name}
+                    total_item={collection?.collectibles?.data?.length}
+                    path={`collection/${collection?.slug}`}
+                    image={collection?.cover?.data}
+                    thumbnails={collection?.featured?.data}
+                    profile_image={collection?.logo?.data}
+                  />
+                </div> : null)
             ))}
           </div>
         )}
         <div className="row">
           <div className="col-lg-12" data-sal="slide-up" data-sal-delay="950" data-sal-duration="800">
-            {pagination?.pageCount > 1 ? (
+            {/* {pagination?.pageCount > 1 ? (
               <Pagination
                 className="single-column-blog"
                 currentPage={pagination.page}
                 numberOfPages={pagination.pageCount}
                 onClick={getCollectionPaginationRecord}
               />
-            ) : null}
+            ) : null} */}
           </div>
         </div>
       </div>
