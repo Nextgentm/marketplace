@@ -14,17 +14,18 @@ const Service = ({ title, subtitle, path, description, image }) => (
       <div className="subtitle">{subtitle}</div>
       <div className="content">
         <h4 className="title">
-          <Anchor path={path}>{title}</Anchor>
+          {title}
+          {/* <Anchor path={path}>{title}</Anchor> */}
         </h4>
         <p className="description">{description}</p>
-        <Anchor className="read-more-button" path={path}>
+        {/* <Anchor className="read-more-button" path={path}>
           <i className="feather-arrow-right" />
-        </Anchor>
+        </Anchor> */}
       </div>
     </div>
-    <Anchor className="over-link" path={path}>
+    {/* <Anchor className="over-link" path={path}>
       <span className="visually-hidden">Click here to read more</span>
-    </Anchor>
+    </Anchor> */}
   </div>
 );
 
