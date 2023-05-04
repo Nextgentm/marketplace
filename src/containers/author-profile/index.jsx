@@ -55,10 +55,10 @@ const AuthorProfileArea = ({ className, productData, isAdminWallet }) => (
                       image={prod.attributes?.image?.data?.attributes?.url}
                       collectionName={prod.attributes?.collection?.data?.attributes?.name}
                       auction_date={prod.attributes?.auction?.data?.attributes?.endTimeStamp}
+                      bitCount={prod.attributes?.auction?.data?.attributes?.sellType == "Bidding" ? prod.attributes?.auction?.data?.attributes?.biddings?.data.length : 0}
                       latestBid={prod.latestBid}
                       likeCount={prod.likeCount}
                       authors={prod.authors}
-                      bitCount={prod.bitCount}
                       owner={prod.attributes.owner}
                     />
                   </div>

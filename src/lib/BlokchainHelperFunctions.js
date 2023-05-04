@@ -1,4 +1,10 @@
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, NETWORKS, NETWORKS_CHAINS } from "./constants";
+import {
+  ETHEREUM_NETWORK_CHAIN_ID,
+  POLYGON_NETWORK_CHAIN_ID,
+  NETWORKS,
+  NETWORKS_CHAINS,
+  BINANCE_NETWORK_CHAIN_ID
+} from "./constants";
 import Factory721Contract from "../contracts/json/Factory721.json";
 import Factory1155Contract from "../contracts/json/Factory1155.json";
 import ERC721Contract from "../contracts/json/erc721.json";
@@ -13,12 +19,15 @@ const ADMIN_ROLE = "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693
 //_______________________________________________//
 export async function getERC721FactoryContract(ethers, blockchainNetwork, signer) {
   // Pull the deployed contract instance
-  const factoryContract721Factory = new ethers.Contract(
-    Factory721Contract.address[blockchainNetwork],
-    Factory721Contract.abi,
-    signer
-  );
-  return factoryContract721Factory;
+  if (Factory721Contract.address[blockchainNetwork]) {
+    const factoryContract721Factory = new ethers.Contract(
+      Factory721Contract.address[blockchainNetwork],
+      Factory721Contract.abi,
+      signer
+    );
+    return factoryContract721Factory;
+  }
+  return null;
 }
 
 export async function getERC1155FactoryContract(ethers, blockchainNetwork, signer) {
@@ -63,8 +72,11 @@ export async function addressIsAdmin(ethers, walletAddress, blockchainNetwork, s
   if (!walletAddress) return false;
   const factoryContract721 = await getERC721FactoryContract(ethers, blockchainNetwork, signer);
   // console.log(factoryContract721);
-  const validationValue = await factoryContract721.hasRole(ADMIN_ROLE, walletAddress);
-  return validationValue;
+  if (factoryContract721) {
+    const validationValue = await factoryContract721.hasRole(ADMIN_ROLE, walletAddress);
+    return validationValue;
+  }
+  return false;
 }
 
 // ================================================//
@@ -73,35 +85,40 @@ export async function addressIsAdmin(ethers, walletAddress, blockchainNetwork, s
 // Network Helper functions
 //_______________________________________________//
 export async function switchNetwork(chainId) {
-  if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
-    console.log(`Network is already with chain id ${chainId}`);
-    return true;
-  }
   try {
-    const res = await window.ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId }]
-    });
-    // console.log(res);
-    return true;
-  } catch (switchError) {
-    if (switchError.code === 4001) {
-      console.log("Network change request closed");
+    if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
+      console.log(`Network is already with chain id ${chainId}`);
+      return true;
     }
-    if (switchError.code === 4902) {
-      try {
-        await window.ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [NETWORKS_CHAINS[chainId]]
-        });
-      } catch (addError) {
-        console.error(addError);
+    try {
+      const res = await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId }]
+      });
+      // console.log(res);
+      return true;
+    } catch (switchError) {
+      if (switchError.code === 4001) {
+        console.log("Network change request closed");
       }
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [NETWORKS_CHAINS[chainId]]
+          });
+        } catch (addError) {
+          console.error(addError);
+        }
+      }
+      console.log(switchError);
+      // toast.error("Failed to change the network.");
     }
-    console.log(switchError);
-    // toast.error("Failed to change the network.");
+    return false;
+  } catch (error) {
+    console.log(error);
+    return false;
   }
-  return false;
 }
 
 // export async function changeNetwork(networkType) {
@@ -128,6 +145,22 @@ export function isValidNetwork(chainId) {
   }
   return false;
 }
+
+export function currenyOfCurrentNetwork(currentNetwork) {
+  if (ETHEREUM_NETWORK_CHAIN_ID == currentNetwork) {
+    return "ETH";
+  } else if (POLYGON_NETWORK_CHAIN_ID == currentNetwork) {
+    return "MATIC";
+  } else if (BINANCE_NETWORK_CHAIN_ID == currentNetwork) {
+    return "BNB";
+  }
+  return "";
+}
+
+export function validateInputAddresses(address) {
+  return /^(0x){1}[0-9a-fA-F]{40}$/i.test(address);
+}
+
 //_______________________________________________//
 // convert values
 //_______________________________________________//

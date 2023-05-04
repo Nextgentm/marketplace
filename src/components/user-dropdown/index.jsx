@@ -8,7 +8,7 @@ import { doLogOut } from "src/lib/user";
 import { useRouter } from "next/router";
 import { POLYGON_NETWORK_CHAIN_ID, NETWORKS } from "src/lib/constants";
 import { toast } from "react-toastify";
-import { getNetworkNameByChainId, isValidNetwork, switchNetwork } from "src/lib/BlokchainHelperFunctions";
+import { currenyOfCurrentNetwork, getNetworkNameByChainId, isValidNetwork, switchNetwork } from "src/lib/BlokchainHelperFunctions";
 import { walletAddressShortForm } from "../../utils/blockchain";
 
 const UserDropdown = () => {
@@ -64,6 +64,15 @@ const UserDropdown = () => {
     }
   }
 
+  const updateBalance = async () => {
+    const provider = await getProvider();
+    const signer = provider.getSigner();
+    const accounts = await provider.send("eth_requestAccounts", []);
+    const balance = await provider.getBalance(accounts[0]);
+    const getEthBalance = ethers.utils.formatEther(balance);
+    setEthBalance(getEthBalance);
+  }
+
   useEffect(() => {
     /* code for runtime metamask events */
     const handleAccountsChanged = (accounts) => {
@@ -80,6 +89,7 @@ const UserDropdown = () => {
       // console.log(_hexChainId);
       if (isValidNetwork(_hexChainId)) {
         setCurrentNetwork(_hexChainId);
+        updateBalance();
       } else {
         onDisconnectWallet();
       }
@@ -112,10 +122,18 @@ const UserDropdown = () => {
   }, []);
 
   const isPreviouslyConnected = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = await getProvider();
     const accounts = await provider.listAccounts();
     return accounts.length > 0;
   };
+
+  const getProvider = async () => {
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);//new ethers.providers.Web3Provider(window.ethereum, "any")
+      return provider;
+    }
+    return null;
+  }
 
   const onConnect = async () => {
     try {
@@ -123,7 +141,7 @@ const UserDropdown = () => {
         toast.error("Metamask wallet is not installed");
         return;
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = await getProvider();
       if (currentNetwork) {
         if (!await switchNetwork(currentNetwork)) {
           // polygon testnet
@@ -240,21 +258,7 @@ const UserDropdown = () => {
                     <h6 className="title">
                       <Anchor path="/product">Balance</Anchor>
                     </h6>
-                    <span className="price">{ethBalance} ETH</span>
-                  </div>
-                  <div className="button" />
-                </li>
-                <li className="single-product-list">
-                  <div className="thumbnail">
-                    <Anchor path="/product">
-                      <Image src="/images/portfolio/portfolio-01.jpg" alt="Nft Product Images" width={50} height={50} />
-                    </Anchor>
-                  </div>
-                  <div className="content">
-                    <h6 className="title">
-                      <Anchor path="/product">Balance</Anchor>
-                    </h6>
-                    <span className="price">{ethBalance} ETH</span>
+                    <span className="price">{ethBalance ? parseFloat(ethBalance)?.toFixed(4) : 0} {currenyOfCurrentNetwork(currentNetwork)}</span>
                   </div>
                   <div className="button" />
                 </li>
