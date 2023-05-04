@@ -34,54 +34,57 @@ const ExploreProductArea = ({
   space,
   data: { section_title, products, placeBid, collectionPage, paginationdata, collectionData }
 }) => {
-  debugger;
-  console.log("paginationdata", paginationdata);
+  console.log("collectionDa**********************", collectionData);
   const [getCollectible, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
     fetchPolicy: "cache-and-network"
   });
-  const [collectionsData, setCollectionsData] = useState();
-  const [pagination, setPagination] = useState(paginationdata);
-
-  // useEffect(() => {
-  //   if (collectiblesFilters?.collections) {
-  //     setPagination(collectiblesFilters.collectibles.meta.pagination);
-  //     setCollectionsData(collectiblesFilters);
-  //   }
-  // }, [collectiblesFilters, error]);
+  const [collectionsData, setCollectionsData] = useState(collectionData.data);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageCount: 1,
+    pageSize: 0,
+    total: 0
+  });
 
   useEffect(() => {
-    if (collectiblesFilters?.collectibles) {
+    if (collectionData.data) {
+      setCollectionsData(collectionData.data);
+    }
+  }, [collectionData.data]);
+
+  useEffect(() => {
+    if (collectiblesFilters) {
       console.log("collectiblesFilters?.collectibles", collectiblesFilters?.collectibles);
       setPagination(collectiblesFilters.collectibles.meta.pagination);
-      setCollectionsData(collectiblesFilters?.collectibles);
+      setCollectionsData(collectiblesFilters.collectibles.data);
     }
   }, [collectiblesFilters, error]);
 
-  // useEffect(() => {
-  //   getCollectible({
-  //     variables: { pagination: { pageSize: 3 } }
-  //   });
-  // }, []);
+  useEffect(() => {
+    getCollectible({
+      variables: { pagination: { pageSize: 6 } }
+    });
+  }, []);
 
   const getCollectionPaginationRecord = (page) => {
-    console.log("pagepagepagepage", page);
+    // console.log("pagepagepagepage", page);
     getCollectible({
       variables: { pagination: { page, pageSize: 6 } }
     });
   };
 
-  useEffect(() => {
-    getCollectible({
-      variables: {
-        filter: {
-          putOnSale: {
-            eq: true
-          }
-        },
-        pagination: { pageSize: 6 }
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   getCollectible({
+  //     variables: {
+  //       filter: {
+  //         putOnSale: {
+  //           eq: true
+  //         }
+  //       },
+  //       pagination: { pageSize: 6 }
+  //     }
+  //   });
+  // }, []);
 
   const [onChangeValue, setOnChangeValue] = useState("newest");
 
@@ -286,9 +289,9 @@ const ExploreProductArea = ({
           </div>
           <div className="col-lg-9 order-1 order-lg-2">
             <div className="row g-5">
-              {collectionsData?.data?.length > 0 ? (
+              {collectionsData?.length > 0 ? (
                 <>
-                  {collectionsData?.data?.map((prod, index) => (
+                  {collectionsData?.map((prod, index) => (
                     <div key={index} className="col-lg-4 col-md-6 col-sm-12">
                       <Product
                         placeBid={prod.attributes?.auction?.data?.attributes?.sellType == "Bidding"}
