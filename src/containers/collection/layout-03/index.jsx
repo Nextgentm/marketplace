@@ -4,62 +4,93 @@ import clsx from "clsx";
 import Collection from "@components/collection";
 import Pagination from "@components/pagination-02";
 import { CollectionType } from "@utils/types";
-import { normalize } from "@utils/methods";
+import { normalize, normalizedData } from "@utils/methods";
 import { useLazyQuery } from "@apollo/client";
-import { ALL_COLLECTION_QUERY } from "src/graphql/query/collection/getCollection";
+import { ALL_COLLECTION_QUERY, GET_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getCollection";
 import _ from "lodash";
 
 const CollectionArea = ({ className, space, id, data }) => {
   const [collectionsRecords, setCollectionsRecords] = useState([]);
+  const [collectionsData, setCollectionsData] = useState();
   const [pagination, setPagination] = useState({
     page: 1,
     pageCount: 1,
     pageSize: 0,
     total: 0
   });
+  useEffect(() => {
+    if (data) {
+      setCollectionsData(data);
+    }
+  }, [data]);
 
-  const [getCollection, { data: collectionPagination, error }] = useLazyQuery(ALL_COLLECTION_QUERY, {
+  const [getCollection, { data: collectionApiData, error }] = useLazyQuery(GET_COLLECTION_LISTDATA_QUERY, {
     fetchPolicy: "cache-and-network"
   });
 
   useEffect(() => {
     getCollection({
       variables: {
-        pagination: { pageSize: 8 }
+        filters: {
+          collectibles: {
+            putOnSale: {
+              eq: true
+            }
+          }
+        },
+        collectiblesFilters: {
+          putOnSale: {
+            eq: true
+          },
+          id: { notNull: true }
+        },
+        pagination: {
+          pageSize: 4
+        }
       }
     });
   }, []);
 
   useEffect(() => {
-    if (data?.collections) {
-      setCollectionsData(data);
-    }
-  }, [data]);
-
-  useEffect(() => {
     console.log("error", error);
-    console.log("collectionPagination", collectionPagination);
-    if (collectionPagination?.collections) {
-      setCollectionsData(collectionPagination);
+    if (collectionApiData?.collections) {
+      setPagination(collectionApiData?.collections?.meta?.pagination);
+      setCollectionsData(collectionApiData.collections?.data);
     }
-  }, [collectionPagination, error]);
+  }, [collectionApiData, error]);
 
-  const setCollectionsData = ({ collections }) => {
-    setPagination(collections.meta.pagination);
-    setCollectionsRecords(collections); //normalize(collections));
-  };
+  // const setCollectionsData = ({ collections }) => {
+  //   setPagination(collections.meta.pagination);
+  //   setCollectionsRecords(collections); //normalize(collections));
+  // };
 
   const getCollectionPaginationRecord = (page) => {
     getCollection({
-      variables: { pagination: { page, pageSize: 8 } }
+      variables: {
+        filters: {
+          collectibles: {
+            putOnSale: {
+              eq: true
+            }
+          },
+          id: { notNull: true }
+        },
+        collectiblesFilters: {
+          putOnSale: {
+            eq: true
+          }
+        },
+        pagination: { page, pageSize: 4 }
+      }
     });
   };
+
   return (
     <div className={clsx("rn-collection-area", space === 1 && "rn-section-gapTop", className)} id={id}>
       <div className="container">
-        {data && (
+        {collectionsData && (
           <div className="row g-5">
-            {data.map((collection) => (
+            {collectionsData.map((collection) => (
               <div key={collection.id} className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12">
                 <Collection
                   title={collection?.attributes.name}
