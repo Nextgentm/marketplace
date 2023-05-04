@@ -218,8 +218,11 @@ query collections(
 `;
 
 export const GET_COLLECTION_LISTDATA_QUERY = gql`
-query Collections($filters: CollectionFiltersInput, $collectiblesFilters: CollectibleFiltersInput) {
-  collections(filters: $filters) {
+query Collections(
+  $filters: CollectionFiltersInput
+  $pagination: PaginationArg 
+  $collectiblesFilters: CollectibleFiltersInput) {
+  collections(filters: $filters,pagination: $pagination) {
     data {
       id
       attributes {

@@ -34,9 +34,10 @@ Collection.getInitialProps = async () => {
         putOnSale: {
           eq: true
         },
+        id: { notNull: true }
       },
       pagination: {
-        pageSize: 8
+        pageSize: 4
       }
     },
     fetchPolicy: "network-only"

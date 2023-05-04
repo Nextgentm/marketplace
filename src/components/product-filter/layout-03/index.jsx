@@ -23,14 +23,12 @@ const ProductFilter = ({
 }) => (
   <div className="nu-course-sidebar">
     <SortWidget onChange={sortHandler} value={sort} />
-    {!collectionPage && (
-      <CategoryFilter
-        categories={inputcheck}
-        onChange={checkHandler}
-        collectionPage={collectionPage}
-        products={products}
-      />
-    )}
+    <CategoryFilter
+      categories={inputcheck}
+      onChange={checkHandler}
+      collectionPage={collectionPage}
+      products={products}
+    />
     <PriceSort onChange={sortHandler} value={sort} />
     <SalesTypeSort onChange={sortHandler} value={sort} />
     {/* <RatingFilter onChange={filterHandler} /> */}
