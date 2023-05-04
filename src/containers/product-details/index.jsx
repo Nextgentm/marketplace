@@ -331,7 +331,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
               <span className="bid">
                 Price{" "}
                 <span className="price">
-                  {product.price}
+                  {product.putOnSale ? product.auction?.data?.bidPrice : product.price}
                   {product.symbol}
                 </span>
               </span>
