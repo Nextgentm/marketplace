@@ -19,6 +19,7 @@ import client from "@utils/apollo-client";
 const Collectibles = ({ dataCollectibles }) => {
   return (
     <Wrapper>
+      {console.log("dataCollectiblesdataCollectibles", dataCollectibles)}
       <SEO pageTitle="Explore Simple" />
       <Header />
       <main id="main-content">
@@ -31,6 +32,7 @@ const Collectibles = ({ dataCollectibles }) => {
               },
               products: dataCollectibles.data,
               placeBid: true,
+              collectionData: dataCollectibles,
               paginationdata: dataCollectibles.meta.pagination
             }}
           />
