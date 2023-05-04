@@ -68,6 +68,19 @@ export async function getTransferProxyContract(ethers, signer) {
 // get value from smart contracts
 //_______________________________________________//
 
+export async function getERC1155Balance(ethers, walletAddress, contractAddress, tokenId, signer) {
+  if (!walletAddress || !contractAddress) return false;
+  const contract1155 = await getERC1155Contract(ethers, contractAddress, signer);
+  // console.log(contract1155);
+  if (contract1155) {
+    const balanceData = await contract1155.balanceOf(walletAddress, tokenId);
+    // console.log(balanceData);
+    const balance = parseInt(balanceData._hex, 16);
+    return balance;
+  }
+  return 0;
+}
+
 export async function addressIsAdmin(ethers, walletAddress, blockchainNetwork, signer) {
   if (!walletAddress) return false;
   const factoryContract721 = await getERC721FactoryContract(ethers, blockchainNetwork, signer);

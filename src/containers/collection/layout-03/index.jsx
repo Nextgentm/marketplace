@@ -97,7 +97,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                   <Collection
                     title={collection?.name}
                     total_item={collection?.collectibles?.data?.length}
-                    path={`collection/${collection?.slug}`}
+                    path={`collectibles?collection=${collection?.attributes.name}`}
                     image={collection?.cover?.data}
                     thumbnails={collection?.featured?.data}
                     profile_image={collection?.logo?.data}
