@@ -141,7 +141,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
           <span>
             {eth && (
               <>
-                {eth} wETH By
+                {eth} {product.auction.data.priceCurrency} By
                 {/* {product.auction.data.priceCurrency} by {name} */}
                 {name && <span className="count-number">{name.substr(0, 5) + "..." + name.substr(-5)}</span>}
               </>
