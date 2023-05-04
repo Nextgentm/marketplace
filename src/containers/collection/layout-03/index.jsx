@@ -75,7 +75,7 @@ const CollectionArea = ({ className, space, id, data }) => {
         )}
         <div className="row">
           <div className="col-lg-12" data-sal="slide-up" data-sal-delay="950" data-sal-duration="800">
-            {pagination.pageCount > 1 ? (
+            {pagination?.pageCount > 1 ? (
               <Pagination
                 className="single-column-blog"
                 currentPage={pagination.page}

@@ -39,7 +39,12 @@ const ExploreProductArea = ({
     fetchPolicy: "cache-and-network"
   });
   const [collectionsData, setCollectionsData] = useState();
-  const [pagination, setPagination] = useState(paginationdata);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageCount: 1,
+    pageSize: 0,
+    total: 0
+  });
 
   // useEffect(() => {
   //   if (collectiblesFilters?.collections) {
@@ -58,7 +63,7 @@ const ExploreProductArea = ({
 
   // useEffect(() => {
   //   getCollectible({
-  //     variables: { pagination: { pageSize: 3 } }
+  //     variables: { pagination: { pageSize: 6 } }
   //   });
   // }, []);
 
@@ -317,7 +322,7 @@ const ExploreProductArea = ({
                 />
               ) : null} */}
               {console.log("paginationpagination", pagination)}
-              {pagination.pageCount > 1 ? (
+              {pagination?.pageCount > 1 ? (
                 <Pagination
                   className="single-column-blog"
                   currentPage={pagination.page}
