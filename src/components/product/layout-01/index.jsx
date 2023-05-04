@@ -25,6 +25,7 @@ const Product = ({
   latestBid,
   price,
   symbol,
+  supply,
   likeCount,
   auction_date,
   image,
@@ -64,9 +65,9 @@ const Product = ({
             {authors?.map((client) => (
               <ClientAvatar key={client.name} slug={client.slug} name={client.name} image={client.image} />
             ))}
-            <Anchor className="more-author-text" path={`/collectible/${slug}`}>
+            {bitCount > 0 && <Anchor className="more-author-text" path={`/collectible/${slug}`}>
               {bitCount}+ Place Bit.
-            </Anchor>
+            </Anchor>}
           </div>
           {!disableShareDropdown && <ShareDropdown />}
         </div>
@@ -74,8 +75,9 @@ const Product = ({
           <span className="product-name">{title}</span>
         </Anchor>
         {/* <span className="latest-bid">Highest bid {latestBid}</span> */}
-        <span className="latest-bid">From {collectionName}</span>
-        <ProductBid symbol={symbol} price={price} likeCount={likeCount} />
+        <span className="latest-bid">From {collectionName}</span><br />
+        {supply > 1 && <span className="latest-bid">Supply {supply}</span>}
+        {likeCount && <ProductBid symbol={symbol} price={price} likeCount={likeCount} />}
       </div>
       <PlaceBidModal show={showBidModal} handleModal={handleBidModal} />
     </>

@@ -42,14 +42,15 @@ const ExploreProductArea = ({ className, space, data }) => {
                 <Product
                   title={prod.attributes.name}
                   slug={prod.attributes.slug}
+                  supply={prod.attributes.supply}
                   price={prod.attributes?.auction?.data?.attributes?.bidPrice}
                   symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
                   image={prod.attributes?.image?.data?.attributes?.url}
                   collectionName={prod.attributes?.collection?.data?.attributes?.name}
+                  bitCount={prod.attributes?.auction?.data?.attributes?.sellType == "Bidding" ? prod.attributes?.auction?.data?.attributes?.biddings?.data.length : 0}
                   latestBid={prod.latestBid}
                   likeCount={prod.likeCount}
                   authors={prod.authors}
-                  bitCount={prod.bitCount}
                 />
               </motion.div>
             ))}

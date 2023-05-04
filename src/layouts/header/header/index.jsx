@@ -31,6 +31,16 @@ const Header = ({ className }) => {
 
   const [isAdminWallet, setIsAdminWallet] = useState(false);
 
+  // const checkIsAdmin = async () => {
+  //   const { chainId } = await walletData.provider.getNetwork();
+  //   const signer = walletData.provider.getSigner();
+  //   const _chainId = "0x" + chainId.toString(16);
+  //   const networkName = getNetworkNameByChainId(_chainId);
+  //   addressIsAdmin(walletData.ethers, walletData.account, networkName, signer).then((validationValue) => {
+  //     setIsAdminWallet(validationValue);
+  //   }).catch((error) => { console.log("Error while factory call " + error) });
+  // }
+
   useEffect(() => {
     if (walletData.isConnected) {
       const signer = walletData.provider.getSigner();
