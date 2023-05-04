@@ -65,7 +65,8 @@ export async function getStaticProps({ params }) {
     bids = auction.data.biddings.data;
     product.auction.data.paymentToken = auction.data.paymentToken;
   }
-  const recentViewProducts = shuffleArray(productData.data).slice(0, 5);
+  const remaningProducts = productData.data.filter((slug) => slug !== params.slug);
+  const recentViewProducts = shuffleArray(remaningProducts).slice(0, 5);
   const relatedProducts = [];
   return {
     props: {
