@@ -19,7 +19,7 @@ import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/con
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
 import TransferPopupModal from "@components/modals/transfer";
-import { validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
+import { getERC1155Balance, validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
 
 import ERC721Contract from "../../contracts/json/erc721.json";
 import ERC1155Contract from "../../contracts/json/erc1155.json";
@@ -42,6 +42,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   const router = useRouter();
+  const [erc1155MyBalance, setERC1155MyBalance] = useState(0);
   const [showDirectSalesModal, setShowDirectSalesModal] = useState(false);
   const handleDirectSaleModal = () => {
     setShowAuctionInputModel(!showDirectSalesModal); // close model close on sale buttons option
@@ -65,6 +66,26 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     // }
     // console.log(updatedCollectible);
   }, [updatedCollectible]);
+
+  useEffect(() => {
+    if (walletData.isConnected) {
+      if (walletData.account) {
+        if (product.collection.data.collectionType === "Multiple") {
+          // check is Admin
+          const signer = walletData.provider.getSigner();
+          const contractAddress = product.collection.data.contractAddress1155;
+          getERC1155Balance(walletData.ethers, walletData.account, contractAddress, product.nftID, signer).then((balance) => {
+            setERC1155MyBalance(balance);
+          }).catch((error) => { console.log("Error while factory call " + error) });
+        }
+      } else {
+        setERC1155MyBalance(0);
+      }
+    } else {
+      setERC1155MyBalance(0);
+      // toast.error("Please connect wallet first");
+    }
+  }, [walletData])
 
   async function switchNetwork(chainId) {
     if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
@@ -382,6 +403,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                       properties={product?.collectibleProperties?.data}
                       tags={product?.tags}
                       history={product?.owner_histories?.data}
+                      erc1155MyBalance={erc1155MyBalance}
                     />
                     {product.putOnSale && (
                       <PlaceBet
