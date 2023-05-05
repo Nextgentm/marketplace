@@ -140,9 +140,12 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         // Pull the deployed contract instance
         const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
 
-        const transaction = await contract1155.setApprovalForAll(TradeContract.address, true);
-        const receipt = await transaction.wait();
-
+        const approved = await contract1155.isApprovedForAll(walletData.account, TradeContract.address);
+        // console.log(approved);
+        if (!approved) {
+          const transaction = await contract1155.setApprovalForAll(TradeContract.address, true);
+          const receipt = await transaction.wait();
+        }
       }
       return true;
     } catch (error) {
