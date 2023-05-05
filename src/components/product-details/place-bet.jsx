@@ -90,16 +90,16 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
       // Pull the deployed contract instance
       const tokenContract = new walletData.ethers.Contract(TokenContract.address, TokenContract.abi, signer);
 
-      const allowance = await tokenContract.allowance(walletData.account, TransferProxy.address);
-      const allowanceAmount = parseInt(allowance._hex, 16);
+      // const allowance = await tokenContract.allowance(walletData.account, TransferProxy.address);
+      // const allowanceAmount = parseInt(allowance._hex, 16);
       const requireAllowanceAmount = "" + parseInt(convertedPrice * quantity);
-      console.log(allowanceAmount, parseInt(requireAllowanceAmount));
-      if (allowanceAmount < parseInt(requireAllowanceAmount)) {
-        // approve nft first
-        const transaction = await tokenContract.approve(TransferProxy.address, requireAllowanceAmount);
-        const receipt = await transaction.wait();
-        console.log(receipt);
-      }
+      // console.log(allowanceAmount, parseInt(requireAllowanceAmount));
+      // if (allowanceAmount < parseInt(requireAllowanceAmount)) {
+      // approve nft first
+      const transaction = await tokenContract.increaseAllowance(TransferProxy.address, requireAllowanceAmount);
+      const receipt = await transaction.wait();
+      console.log(receipt);
+      // }
       let isAccepted = false;
       if (product.auction.data.sellType == "FixedPrice") {
         const seller = product.auction.data.walletAddress;
