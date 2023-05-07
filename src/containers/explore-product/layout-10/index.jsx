@@ -16,7 +16,7 @@ const ExploreProductArea = ({
   space,
   data: { section_title, products, placeBid, collectionPage, paginationdata, collectionData }
 }) => {
-  console.log("products**********************", products);
+  console.log("collectionPage", collectionPage);
   // console.log("paginationdata*********paginationdata*****", paginationdata);
 
   const [getCollectible, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
@@ -38,6 +38,10 @@ const ExploreProductArea = ({
     pageSize: 0,
     total: 0
   });
+
+  if (router.query.collection) {
+    collectionPage = true;
+  }
 
   useEffect(() => {
     if (router?.query?.collection) {
@@ -201,9 +205,7 @@ const ExploreProductArea = ({
       getCollectible({
         variables: {
           filter: {
-            putOnSale: {
-              eq: true
-            },
+            filter,
             auction: {
               sellType: {
                 eq: "Bidding"
