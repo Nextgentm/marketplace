@@ -59,11 +59,12 @@ export async function getStaticProps({ params }) {
   if (product.putOnSale) {
     // Get All Bids
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions/${product.auction?.data?.id}?populate=*`
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions/${product.auction?.data[0]?.id}?populate=*`
     );
     const auction = await response.json();
-    bids = auction.data.biddings.data;
-    product.auction.data.paymentToken = auction.data.paymentToken;
+    // console.log(auction);
+    bids = auction.data?.biddings?.data;
+    product.auction.data.paymentToken = auction.data?.paymentToken;
   }
   const remaningProducts = productData.data.filter((slug) => slug !== params.slug);
   const recentViewProducts = shuffleArray(remaningProducts).slice(0, 5);
