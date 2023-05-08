@@ -11,6 +11,7 @@ import _ from "lodash";
 import { getCollection } from "src/services/collections/collection";
 
 const CollectionArea = ({ className, space, id, data }) => {
+  console.log("data data ", data);
   const [collectionsRecords, setCollectionsRecords] = useState([]);
   const [collectionsData, setCollectionsData] = useState();
   const [pagination, setPagination] = useState({
@@ -54,11 +55,33 @@ const CollectionArea = ({ className, space, id, data }) => {
     setCollectionData(data, page)
   };
 
+  const getCollectionPaginationRecord = (page) => {
+    getCollection({
+      variables: {
+        filters: {
+          collectibles: {
+            putOnSale: {
+              eq: true
+            }
+          },
+          id: { notNull: true }
+        },
+        collectiblesFilters: {
+          putOnSale: {
+            eq: true
+          }
+        },
+        pagination: { page, pageSize: 8 }
+      }
+    });
+  };
+
   return (
     <div className={clsx("rn-collection-area", space === 1 && "rn-section-gapTop", className)} id={id}>
       <div className="container">
         {collectionsData && (
           <div className="row g-5">
+            {console.log("collectionsData", collectionsData)}
             {collectionsData.map((collection) => (
               (collection?.collectibles?.data?.length ?
                 <div key={collection.id} className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12">

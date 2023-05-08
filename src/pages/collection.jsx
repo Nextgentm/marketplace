@@ -12,7 +12,6 @@ const Collection = (props) => (
     <SEO pageTitle="Collection" />
     <Header />
     <main id="main-content">
-      {console.log("props", props)}
       <Breadcrumb pageTitle="Our Collection" currentPage="Collection" />
       <CollectionArea {...props} />
     </main>
@@ -37,27 +36,6 @@ Collection.getInitialProps = async () => {
       withCount: true
     }
   });
-  // }) client.query({
-  //   query: GET_COLLECTION_LISTDATA_QUERY,
-  //   variables: {
-  //     filters: {
-  //       collectibles: {
-  //         putOnSale: {
-  //           eq: true
-  //         }
-  //       }
-  //     },
-  //     collectiblesFilters: {
-  //       putOnSale: {
-  //         eq: true
-  //       },
-  //       id: { notNull: true }
-  //     },
-  //     pagination: {
-  //       pageSize: 4
-  //     }
-  //   },
-  //   fetchPolicy: "network-only"
   return {
     className: "template-color-1",
     data: data,

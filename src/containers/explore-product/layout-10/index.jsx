@@ -16,7 +16,7 @@ const ExploreProductArea = ({
   space,
   data: { section_title, products, placeBid, collectionPage, paginationdata, collectionData }
 }) => {
-  console.log("products**********************", products);
+  console.log("collectionPage", collectionPage);
   // console.log("paginationdata*********paginationdata*****", paginationdata);
 
   const [getCollectible, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
@@ -27,11 +27,11 @@ const ExploreProductArea = ({
     fetchPolicy: "cache-and-network"
   });
 
-  const [collectionsData, setCollectionsData] = useState(collectionData.data);
+  const [collectionsData, setCollectionsData] = useState();
   console.log("collectionsData", collectionsData);
   const router = useRouter();
   const routerQuery = router?.query?.collection?.split();
-  console.log("router.query", routerQuery);
+  console.log("router.query", router);
   const [pagination, setPagination] = useState({
     page: 1,
     pageCount: 1,
@@ -39,9 +39,13 @@ const ExploreProductArea = ({
     total: 0
   });
 
+  if (router.query.collection) {
+    collectionPage = true;
+  }
+
   useEffect(() => {
-    if (routerQuery) {
-      getCollectiblequery({
+    if (router?.query?.collection) {
+      getCollectible({
         variables: {
           filter: {
             collection: {
@@ -61,11 +65,13 @@ const ExploreProductArea = ({
         variables: { pagination: { pageSize: 6 } }
       });
     }
-  }, []);
+  }, [router.query.collection]);
 
   useEffect(() => {
     if (collectionData.data) {
-      setCollectionsData(collectionData.data);
+      if (!router?.query?.collection) {
+        setCollectionsData(collectionData.data);
+      }
     }
   }, [collectionData.data]);
 
@@ -75,34 +81,56 @@ const ExploreProductArea = ({
       setPagination(collectiblesFilters.collectibles.meta.pagination);
       setCollectionsData(collectiblesFilters.collectibles.data);
     }
-    if (collectiblesFiltersquery) {
-      console.log("collectiblesFiltersquery", collectiblesFiltersquery?.collectibles);
-      setPagination(collectiblesFiltersquery.collectibles.meta.pagination);
-      setCollectionsData(collectiblesFiltersquery.collectibles.data);
-    }
-  }, [collectiblesFilters, error, collectiblesFiltersquery]);
+    // if (collectiblesFiltersquery) {
+    //   console.log("collectiblesFiltersquery", collectiblesFiltersquery?.collectibles);
+    //   setPagination(collectiblesFiltersquery.collectibles.meta.pagination);
+    //   setCollectionsData(collectiblesFiltersquery.collectibles.data);
+    // }
+  }, [collectiblesFilters, error]);
 
   const getCollectionPaginationRecord = (page) => {
+    let filter = {
+      putOnSale: {
+        eq: true
+      }
+    };
+
+    if (router.query.collection) {
+      filter.collection = {
+        name: {
+          in: routerQuery
+        },
+        putOnSale: {
+          eq: true
+        }
+      };
+    }
     getCollectible({
       variables: {
-        filter: {
-          putOnSale: {
-            eq: true
-          }
-        },
+        filter: filter,
         pagination: { page, pageSize: 6 }
       }
     });
   };
 
+  let filter = {
+    putOnSale: {
+      eq: true
+    }
+  };
+
+  if (router.query.collection) {
+    filter.collection = {
+      name: {
+        in: routerQuery
+      }
+    };
+  }
+
   useEffect(() => {
     getCollectible({
       variables: {
-        filter: {
-          putOnSale: {
-            eq: true
-          }
-        },
+        filter: filter,
         pagination: { pageSize: 6 }
       }
     });
@@ -111,17 +139,28 @@ const ExploreProductArea = ({
   const [onChangeValue, setOnChangeValue] = useState("newest");
 
   const getCollectibleSortData = (onchangeSort) => {
+    let filter = {
+      putOnSale: {
+        eq: true
+      }
+    };
+
+    if (router.query.collection) {
+      filter.collection = {
+        name: {
+          in: routerQuery
+        }
+      };
+    }
+    let pagination = { pageSize: 6 };
     console.log("onchangeSort*-*-*-*-*-*-*-*-*-*-*-*-*-*", onchangeSort);
+    console.log("filter*-*-*-*-*-*-*-*-*-*-*-*-*-*", filter);
     setOnChangeValue(onchangeSort);
     if (onchangeSort == "oldest") {
       getCollectible({
         variables: {
-          filter: {
-            putOnSale: {
-              eq: true
-            }
-          },
-          pagination: { pageSize: 6 },
+          filter: filter,
+          pagination: pagination,
           sort: ["createdAt:desc"]
         }
       });
@@ -129,52 +168,36 @@ const ExploreProductArea = ({
     if (onchangeSort == "newest") {
       getCollectible({
         variables: {
-          filter: {
-            putOnSale: {
-              eq: true
-            }
-          },
+          filter: filter,
           sort: ["createdAt:asc"],
-          pagination: { pageSize: 6 }
+          pagination: pagination
         }
       });
     }
     if (onchangeSort == "low-to-high") {
       getCollectible({
         variables: {
-          filter: {
-            putOnSale: {
-              eq: true
-            }
-          },
+          filter: filter,
           sort: ["price:asc"],
-          pagination: { pageSize: 6 }
+          pagination: pagination
         }
       });
     }
     if (onchangeSort == "high-to-low") {
       getCollectible({
         variables: {
-          filter: {
-            putOnSale: {
-              eq: true
-            }
-          },
+          filter: filter,
           sort: ["price:desc"],
-          pagination: { pageSize: 6 }
+          pagination: pagination
         }
       });
     }
     if (onchangeSort == "Fixed-price") {
       getCollectible({
         variables: {
-          filter: {
-            putOnSale: {
-              eq: true
-            }
-          },
+          filter: filter,
           sort: ["createdAt:asc"],
-          pagination: { pageSize: 6 }
+          pagination: pagination
         }
       });
     }
@@ -182,15 +205,14 @@ const ExploreProductArea = ({
       getCollectible({
         variables: {
           filter: {
-            putOnSale: {
-              eq: true
-            },
+            filter,
             auction: {
               sellType: {
                 eq: "Bidding"
               }
             }
           },
+          pagination: pagination,
           sort: "auction.startTimestamp:desc"
         }
       });
@@ -199,18 +221,27 @@ const ExploreProductArea = ({
   const [onchangepriceRange, setonchangepriceRange] = useState({ price: [0, 100] });
 
   const getCollectibleFilterData = (onchangefilter) => {
+    let filter = {
+      price: {
+        between: onchangefilter
+      },
+      putOnSale: {
+        eq: true
+      }
+    };
+
+    if (router.query.collection) {
+      filter.collection = {
+        name: {
+          in: routerQuery
+        }
+      };
+    }
     setonchangepriceRange({ price: onchangefilter });
     if (onchangefilter)
       getCollectible({
         variables: {
-          filter: {
-            price: {
-              between: onchangefilter
-            },
-            putOnSale: {
-              eq: true
-            }
-          },
+          filter: filter,
           pagination: { pageSize: 6 }
         }
       });
@@ -228,14 +259,24 @@ const ExploreProductArea = ({
 
   const getCollectiblecheckData = (onchangefilter) => {
     console.log("=*=*=*=*=*=*=*=*collectioncollection", onchangefilter);
+    let filter = {
+      putOnSale: {
+        eq: true
+      }
+    };
+
+    if (router.query.collection) {
+      filter.collection = {
+        name: {
+          in: routerQuery
+        }
+      };
+    }
+
     if (onchangefilter.length <= 0)
       getCollectible({
         variables: {
-          filter: {
-            putOnSale: {
-              eq: true
-            }
-          },
+          filter: filter,
           pagination: { pageSize: 6 }
         }
       });
@@ -248,9 +289,7 @@ const ExploreProductArea = ({
                 in: onchangefilter
               }
             },
-            putOnSale: {
-              eq: true
-            }
+            filter
           },
           pagination: { pageSize: 6 }
         }

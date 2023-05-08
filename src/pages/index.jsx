@@ -15,6 +15,7 @@ import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/g
 import { GET_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getCollection";
 import LiveExploreArea from "@containers/live-explore/layout-01";
 import strapi from "@utils/strapi";
+import ServiceArea from "@containers/services/layout-01";
 
 const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection }) => {
   const content = normalizedData(homepageData?.content || []);
@@ -25,10 +26,10 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection })
           $eq: "Multiple"
         }
       }
-    }
+    };
     let response = await strapi.find("collections", null);
     console.log(response);
-  }
+  };
   return (
     <Wrapper>
       <SEO pageTitle="NFT Marketplace" />
@@ -38,14 +39,14 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection })
         <LiveExploreArea
           data={{
             ...content["live-explore-section"],
-            products: liveAuctionData,
+            products: liveAuctionData
           }}
         />
 
         <NewestItmesArea
           data={{
             ...content["newest-section"],
-            products: newestData,
+            products: newestData
           }}
         />
         <CollectionArea
@@ -70,7 +71,7 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection })
             creators: sellerData
           }}
         /> */}
-        {/* <ServiceArea data={content["service-section"]} /> */}
+        <ServiceArea data={content["service-section"]} />
       </main>
       <Footer />
     </Wrapper>
@@ -84,8 +85,7 @@ Home.getInitialProps = async () => {
       filter: {
         putOnSale: {
           eq: true
-        },
-
+        }
       },
       sort: "auction.startTimestamp:desc"
     },
@@ -134,7 +134,7 @@ Home.getInitialProps = async () => {
       collectiblesFilters: {
         putOnSale: {
           eq: true
-        },
+        }
       },
       pagination: {
         pageSize: 5
