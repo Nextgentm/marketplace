@@ -336,7 +336,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
               <span className="bid">
                 Price{" "}
                 <span className="price">
-                  {product.putOnSale ? product.auction?.data[0]?.bidPrice : product.price}
+                  {product.putOnSale ? (product.auction?.data[0]?.bidPrice / product.auction?.data[0]?.quantity) : product.price}
                   {product.symbol}
                 </span>
               </span>
@@ -361,18 +361,16 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                           >
                             Direct Sale
                           </Nav.Link>
-                          {product.collection.data.collectionType != "Single" &&
-                            <Nav.Link
-                              as="button"
-                              eventKey="nav-timed-auction"
-                              onClick={() => {
-                                setSellType("nav-timed-auction");
-                                handleTimeAuctionModal(true);
-                              }}
-                            >
-                              Timed Auction
-                            </Nav.Link>
-                          }
+                          <Nav.Link
+                            as="button"
+                            eventKey="nav-timed-auction"
+                            onClick={() => {
+                              setSellType("nav-timed-auction");
+                              handleTimeAuctionModal(true);
+                            }}
+                          >
+                            Timed Auction
+                          </Nav.Link>
                         </Nav>
                       </nav>
                     </div>
