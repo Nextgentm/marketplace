@@ -295,6 +295,7 @@ query Collections(
                 startTimestamp
                 endTimeStamp
                 sellType
+                status
                 biddings{
                   data{
                     attributes{

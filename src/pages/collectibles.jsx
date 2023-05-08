@@ -48,8 +48,8 @@ Collectibles.getInitialProps = async (ctx) => {
   let routerQuery = ctx.query.collection;
 
   let filters = {
-    putOnSale: {
-      eq: true
+    id: {
+      notNull: true
     }
   };
 
@@ -57,16 +57,13 @@ Collectibles.getInitialProps = async (ctx) => {
     filters.collection = {
       name: {
         in: routerQuery
-      },
-      auction: {
-        sellType: "Bidding"
       }
     };
   }
   const { data } = await client.query({
     query: ALL_COLLECTIBLE_LISTDATA_QUERY,
     variables: {
-      filters: filters,
+      filter: filters,
       pagination: {
         pageSize: 6
       },
@@ -74,7 +71,6 @@ Collectibles.getInitialProps = async (ctx) => {
     },
     fetchPolicy: "network-only"
   });
-  console.log("data3216540", data);
   return {
     className: "template-color-1",
     dataCollectibles: data.collectibles
