@@ -20,8 +20,9 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { UPDATE_BIDDING } from "src/graphql/mutation/bidding.js/updateBidding";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
+import strapi from "@utils/strapi";
 
-const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) => {
+const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction, id }) => {
   const { walletData, setWalletData } = useContext(AppData);
 
   const router = useRouter();
@@ -50,14 +51,18 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
         "updateBiddingId": id
       }
     });
+    //update auction
+    const res = await strapi.create("auctions", auction.data.id, {
+      status: "Completed",
+    });
   }
 
   async function acceptBid() {
     try {
       const signer = walletData.provider.getSigner();
-      const seller = product.auction.data.walletAddress;
+      const seller = auction.data.walletAddress;
       const buyer = name;
-      const erc20Address = product.auction.data.paymentToken?.data?.blockchain;
+      const erc20Address = auction.data.paymentToken?.data?.blockchain;
       const nftAddress =
         product.collection.data.collectionType === "Single"
           ? product.collection.data.contractAddress
@@ -65,12 +70,12 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
       const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
       const skipRoyalty = true;
       const unitPrice = `${convertEthertoWei(walletData.ethers, eth)}`;
-      const amount = `${parseFloat(product.auction.data.quantity) * parseFloat(unitPrice)}`;
+      const amount = `${parseFloat(auction.data.quantity) * parseFloat(unitPrice)}`;
       const tokenId = `${product.nftID}`;
       const tokenURI = "";
       const supply = `${product.supply ? product.supply : 1}`;
       const royaltyFee = `${product?.royalty ? product?.royalty : 10}`;
-      const qty = `${product.auction.data.quantity ? product.auction.data.quantity : 1}`;
+      const qty = `${auction.data.quantity ? auction.data.quantity : 1}`;
 
       // Pull the deployed contract instance
       const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
@@ -99,7 +104,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
         createOwnerHistory({
           variables: {
             data: {
-              auction: product.auction.id,
+              auction: auction.data.id,
               collectible: product.id,
               event: "TimeAuction",
               fromWalletAddress: seller,
@@ -111,12 +116,12 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
         });
       }
       // console.log(res);
-      if (product.auction.data.sellType === "FixedPrice") {
+      if (auction.data.sellType === "FixedPrice") {
         toast.success("NFT purchased successfully!");
       } else {
         toast.success("Bidding Accepted successfully!");
       }
-      router.reload();
+      // router.reload();
     } catch (error) {
       console.log(error);
     }
@@ -141,7 +146,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, id }) =>
           <span>
             {eth && (
               <>
-                {eth} {product.auction.data.priceCurrency} By
+                {eth} {auction.data?.priceCurrency} By
                 {/* {product.auction.data.priceCurrency} by {name} */}
                 {name && <span className="count-number">{name.substr(0, 5) + "..." + name.substr(-5)}</span>}
               </>
