@@ -69,7 +69,7 @@ export async function getStaticProps({ params }) {
     },
     populate: {
       collectible: {
-        populate: ["image"]
+        populate: ["image", "collection"]
       },
       biddings: {
         fields: ["id"]

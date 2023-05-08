@@ -25,13 +25,15 @@ const AuctionArea = ({ space, className, data }) => (
             <Product
               title={auction.collectible?.data?.name || "Untitled NFT"}
               slug={auction.id}
+              collectionName={auction.collectible?.data?.collection?.data?.name}
               latestBid={auction.latestBid || "N/A"}
-              price={auction.price || "-"}
-              symbol={auction.symbol || ""}
+              price={(auction.bidPrice / auction.quantity) || "-"}
+              symbol={auction.priceCurrency || ""}
               likeCount={auction.likeCount}
               auction_date={auction.auction_date}
               image={auction.collectible?.data?.image?.data ? auction.collectible?.data?.image?.data?.url : "/images/portfolio/lg/portfolio-01.jpg"}
               bitCount={auction.biddings.length}
+              isAuction={true}
             />
           </div>
         ))}
