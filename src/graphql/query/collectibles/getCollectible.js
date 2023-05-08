@@ -51,6 +51,7 @@ query collectibles(
                   startTimestamp
                   endTimeStamp
                   sellType
+                  status
                   biddings{
                     data{
                       attributes{
