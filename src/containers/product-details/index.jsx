@@ -184,7 +184,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       });
       toast.success("Auction created successfully");
       setShowAuctionInputModel(false);
-      // router.reload();
+      router.push(`/auction/${res.data.id}`);
     } catch (error) {
       toast.error("Error while creating auction");
       console.log(error);
