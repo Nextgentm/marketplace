@@ -11,6 +11,7 @@ import axios from "axios";
 import productData from "../data/products.json";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import client from "@utils/apollo-client";
+import { useRouter } from "next/router";
 
 // export async function getStaticProps() {
 //   return { props: { className: "template-color-1" } };
@@ -24,7 +25,7 @@ const Collectibles = ({ dataCollectibles }) => {
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Explore NFT" currentPage="Explore NFT" />
-        {dataCollectibles.data && (
+        {dataCollectibles && (
           <ExploreProductArea
             data={{
               section_title: {
@@ -43,15 +44,29 @@ const Collectibles = ({ dataCollectibles }) => {
   );
 };
 
-Collectibles.getInitialProps = async () => {
+Collectibles.getInitialProps = async (ctx) => {
+  let routerQuery = ctx.query.collection;
+
+  let filters = {
+    putOnSale: {
+      eq: true
+    }
+  };
+
+  if (ctx.query.collection) {
+    filters.collection = {
+      name: {
+        in: routerQuery
+      },
+      auction: {
+        sellType: "Bidding"
+      }
+    };
+  }
   const { data } = await client.query({
     query: ALL_COLLECTIBLE_LISTDATA_QUERY,
     variables: {
-      filter: {
-        putOnSale: {
-          eq: true
-        }
-      },
+      filters: filters,
       pagination: {
         pageSize: 6
       },
@@ -59,6 +74,7 @@ Collectibles.getInitialProps = async () => {
     },
     fetchPolicy: "network-only"
   });
+  console.log("data3216540", data);
   return {
     className: "template-color-1",
     dataCollectibles: data.collectibles
