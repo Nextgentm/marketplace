@@ -13,7 +13,7 @@ import TradeContract from "../../../contracts/json/trade.json";
 import TransferProxy from "../../../contracts/json/TransferProxy.json";
 import TokenContract from "../../../contracts/json/ERC20token.json";
 
-const PlaceBidModal = ({ show, handleModal, product, handleSubmit }) => {
+const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, handleSubmit }) => {
   const { walletData, setWalletData } = useContext(AppData);
 
   return (
@@ -24,16 +24,16 @@ const PlaceBidModal = ({ show, handleModal, product, handleSubmit }) => {
         </button>
       )}
       <Modal.Header>
-        <h3 className="modal-title">{product?.supply > 1 ? "Direct Buy" : "Place a bid"}</h3>
+        <h3 className="modal-title">{supply > 1 ? "Direct Buy" : "Place a bid"}</h3>
       </Modal.Header>
       <Modal.Body>
         <p>You are about to purchase this product</p>
         <div className="placebid-form-box">
           <form onSubmit={handleSubmit}>
-            <h5 className="title">{product?.supply > 1 ? "Checkout" : "Your bid"}</h5>
+            <h5 className="title">{supply > 1 ? "Checkout" : "Your bid"}</h5>
             <div className="bid-content">
               <div className="bid-content-top">
-                {product?.supply > 1 ? (
+                {supply > 1 ? (
                   <div className="row">
                     <label htmlFor="quantity">Quantity</label>
                     <input
@@ -41,7 +41,7 @@ const PlaceBidModal = ({ show, handleModal, product, handleSubmit }) => {
                       id="quantity"
                       min="1"
                       placeholder="e.g. 10"
-                      max={product.auction.data.quantity}
+                      max={maxQuantity}
                     />
                   </div>
                 ) : (
@@ -51,7 +51,7 @@ const PlaceBidModal = ({ show, handleModal, product, handleSubmit }) => {
                       type="number"
                       name="price"
                       step="0.0000001"
-                      min={product?.auction?.data?.bidPrice}
+                      min={bidPrice}
                       required
                     />
                     <span>wETH</span>

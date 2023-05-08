@@ -70,12 +70,12 @@ const LiveExploreArea = ({ data, className, space }) => (
                     title={prod.attributes.name}
                     slug={prod.attributes.slug}
                     supply={prod.attributes.supply}
-                    price={prod.attributes?.auction?.data?.attributes?.bidPrice}
-                    symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
-                    auction_date={prod.attributes?.auction?.data?.attributes?.endTimeStamp}
+                    price={prod.attributes?.auction?.data[0]?.attributes?.bidPrice}
+                    symbol={prod.attributes?.auction?.data[0]?.attributes?.priceCurrency}
+                    auction_date={prod.attributes?.auction?.data[0]?.attributes?.endTimeStamp}
                     image={prod.attributes?.image?.data?.attributes?.url}
                     collectionName={prod.attributes?.collection?.data?.attributes?.name}
-                    bitCount={prod.attributes?.auction?.data?.attributes?.biddings?.data.length}
+                    bitCount={prod.attributes?.auction?.data[0]?.attributes?.biddings?.data.length}
                     latestBid={prod.latestBid}
                     likeCount={prod.likeCount}
                     authors={prod.authors}
