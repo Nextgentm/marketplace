@@ -24,6 +24,7 @@ const ExploreProductArea = ({
   const routerQuery = router?.query?.collection?.split();
   const [onChangeValue, setOnChangeValue] = useState("newest");
   const [onchangepriceRange, setonchangepriceRange] = useState({ price: [0, 100] });
+  const [checkedCollection, setCheckedCollection] = useState([]);
   let categoriesold = [];
   const cats = flatDeep(products.map((prod) => prod.attributes.collection.data?.attributes.name));
   categoriesold = cats.reduce((obj, b) => {
@@ -47,43 +48,41 @@ const ExploreProductArea = ({
     }
   }, [collectionData.data]);
 
-  // useEffect(() => {
-  //   let filters = {};
-  //   if (router.query.collection) {
-  //     filters.collection = {
-  //       name: {
-  //         eq: routerQuery
-  //       },
-  //       id: {
-  //         notNull: true
-  //       }
-  //     };
-  //   }
-  //   getCollectible({
-  //     variables: {
-  //       filter: filters,
-  //       pagination: { pageSize: 6 }
-  //     }
-  //   });
-  // }, []);
-
   useEffect(() => {
     if (router?.query?.collection) {
-      getCollectible({
-        variables: {
-          filter: {
-            collection: {
-              name: {
-                in: routerQuery
-              },
-              id: {
-                notNull: true
+      if (checkedCollection.length) {
+        getCollectible({
+          variables: {
+            filter: {
+              collection: {
+                name: {
+                  in: checkedCollection
+                },
+                id: {
+                  notNull: true
+                }
               }
-            }
-          },
-          pagination: { pageSize: 6 }
-        }
-      });
+            },
+            pagination: { pageSize: 6 }
+          }
+        });
+      } else {
+        getCollectible({
+          variables: {
+            filter: {
+              collection: {
+                name: {
+                  in: routerQuery
+                },
+                id: {
+                  notNull: true
+                }
+              }
+            },
+            pagination: { pageSize: 6 }
+          }
+        });
+      }
     } else {
       getCollectible({
         variables: { pagination: { pageSize: 6 } }
@@ -112,6 +111,13 @@ const ExploreProductArea = ({
         }
       };
     }
+    if (checkedCollection.length) {
+      filters.collection = {
+        name: {
+          in: checkedCollection
+        }
+      };
+    }
     getCollectible({
       variables: {
         filters: filters,
@@ -121,6 +127,7 @@ const ExploreProductArea = ({
   };
 
   const getCollectibleSortData = (onchangeSort) => {
+    setOnChangeValue(onchangeSort);
     let filters = {};
 
     if (router.query.collection) {
@@ -133,8 +140,15 @@ const ExploreProductArea = ({
         }
       };
     }
+    if (checkedCollection.length) {
+      filters.collection = {
+        name: {
+          in: checkedCollection
+        }
+      };
+    }
     let pagination = { pageSize: 6 };
-    setOnChangeValue(onchangeSort);
+    console.log("filters963", filters);
     if (onchangeSort == "oldest") {
       getCollectible({
         variables: {
@@ -209,9 +223,13 @@ const ExploreProductArea = ({
       filters.collection = {
         name: {
           in: routerQuery
-        },
-        auction: {
-          sellType: "Bidding"
+        }
+      };
+    }
+    if (checkedCollection.length) {
+      filters.collection = {
+        name: {
+          in: checkedCollection
         }
       };
     }
@@ -224,14 +242,21 @@ const ExploreProductArea = ({
         }
       });
   };
-
   const getCollectiblecheckData = (onchangefilter) => {
     console.log("onchangefilter-*-*-*-*-*-*", onchangefilter);
+    setCheckedCollection(onchangefilter);
     let filters = {};
     if (router.query.collection) {
       filters.collection = {
         name: {
           eq: routerQuery
+        }
+      };
+    }
+    if (checkedCollection.length) {
+      filters.collection = {
+        name: {
+          in: checkedCollection
         }
       };
     }
