@@ -7,7 +7,7 @@ import CollectionArea from "@containers/collection/layout-03";
 import { GET_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getCollection";
 import client from "@utils/apollo-client";
 import { getCollection } from "src/services/collections/collection";
-const Collection = (props) => {
+const Collection = (props) => (
   <Wrapper>
     <SEO pageTitle="Collection" />
     <Header />
@@ -18,12 +18,24 @@ const Collection = (props) => {
     </main>
     <Footer />
   </Wrapper>
-}
+)
 
 Collection.getInitialProps = async () => {
 
   const data = await getCollection({
-    populate: ["collectibles", "cover", "featured", "logo"]
+    filters: {
+      collectibles: {
+        auction: {
+          sellType: "Bidding"
+        }
+      }
+    },
+    populate: "*",
+    pagination: {
+      limit: 8,
+      start: 0,
+      withCount: true
+    }
   });
   // }) client.query({
   //   query: GET_COLLECTION_LISTDATA_QUERY,
@@ -48,7 +60,7 @@ Collection.getInitialProps = async () => {
   //   fetchPolicy: "network-only"
   return {
     className: "template-color-1",
-    data: data.data,
+    data: data,
   };
 };
 
