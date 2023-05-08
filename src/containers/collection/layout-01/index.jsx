@@ -19,12 +19,12 @@ const TopCollectionArea = ({ className, id, space, data }) => (
             data-sal="slide-up"
             data-sal-duration="800"
           >
-            {data.collections.length > 4 &&
+            {data.collections.length > 4 && (
               <Anchor className="btn-transparent" path="/collection">
                 VIEW ALL
                 <i className="feather feather-arrow-right" />
               </Anchor>
-            }
+            )}
           </div>
         </div>
       </div>
@@ -38,12 +38,12 @@ const TopCollectionArea = ({ className, id, space, data }) => (
               className="col-lg-4 col-xl-3 col-md-6 col-sm-6 col-12"
             >
               <Collection
-                title={collection?.attributes.name}
-                total_item={collection?.attributes?.collectibles?.data?.length}
-                path={`collection/${collection?.attributes.slug}`}
-                image={collection?.attributes.cover?.data?.attributes}
-                thumbnails={collection?.attributes.featured?.data?.attributes}
-                profile_image={collection?.attributes.logo?.data?.attributes}
+                title={collection.name}
+                total_item={collection?.collectibles?.data?.length}
+                path={`collection/${collection.slug}`}
+                image={collection.cover?.data}
+                thumbnails={collection.featured?.data}
+                profile_image={collection.logo?.data}
               />
             </div>
           ))}
@@ -59,10 +59,12 @@ TopCollectionArea.propTypes = {
   space: PropTypes.oneOf([1, 2]),
   data: PropTypes.shape({
     section_title: SectionTitleType,
-    collections: PropTypes.arrayOf(PropTypes.shape({
-      __typename: PropTypes.string,
-      attributes: CollectionType
-    })).isRequired,
+    collections: PropTypes.arrayOf(
+      PropTypes.shape({
+        __typename: PropTypes.string,
+        attributes: CollectionType
+      })
+    ).isRequired
   })
 };
 TopCollectionArea.defaultProps = {
