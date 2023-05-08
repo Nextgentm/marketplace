@@ -16,22 +16,13 @@ const ExploreProductArea = ({
   space,
   data: { section_title, products, placeBid, collectionPage, paginationdata, collectionData }
 }) => {
-  console.log("collectionPage", collectionPage);
-  // console.log("paginationdata*********paginationdata*****", paginationdata);
-
   const [getCollectible, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
     fetchPolicy: "cache-and-network"
   });
-
-  const [getCollectiblequery, { data: collectiblesFiltersquery }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
-    fetchPolicy: "cache-and-network"
-  });
-
   const [collectionsData, setCollectionsData] = useState();
-  console.log("collectionsData", collectionsData);
   const router = useRouter();
   const routerQuery = router?.query?.collection?.split();
-  console.log("router.query", router);
+  console.log("routerQuery", routerQuery);
   const [pagination, setPagination] = useState({
     page: 1,
     pageCount: 1,
@@ -39,24 +30,27 @@ const ExploreProductArea = ({
     total: 0
   });
 
+  useEffect(() => {
+    if (collectionData.data) {
+      setCollectionsData(collectionData.data);
+    }
+  }, [collectionData.data]);
+
   if (router.query.collection) {
     collectionPage = true;
   }
 
-  let filters = {
-    putOnSale: {
-      eq: true
-    }
-  };
-
+  let filters = {};
   if (router.query.collection) {
     filters.collection = {
       name: {
-        in: routerQuery
+        eq: routerQuery
+      },
+      auction: {
+        sellType: "Bidding"
       }
     };
   }
-
   useEffect(() => {
     getCollectible({
       variables: {
@@ -75,9 +69,6 @@ const ExploreProductArea = ({
               name: {
                 in: routerQuery
               }
-            },
-            putOnSale: {
-              eq: true
             }
           },
           pagination: { pageSize: 6 }
@@ -91,14 +82,6 @@ const ExploreProductArea = ({
   }, [router.query.collection]);
 
   useEffect(() => {
-    if (collectionData.data) {
-      if (!router?.query?.collection) {
-        setCollectionsData(collectionData.data);
-      }
-    }
-  }, [collectionData.data]);
-
-  useEffect(() => {
     if (collectiblesFilters) {
       console.log("collectiblesFiltersDATA", collectiblesFilters?.collectibles);
       setPagination(collectiblesFilters.collectibles.meta.pagination);
@@ -107,19 +90,15 @@ const ExploreProductArea = ({
   }, [collectiblesFilters, error]);
 
   const getCollectionPaginationRecord = (page) => {
-    let filters = {
-      putOnSale: {
-        eq: true
-      }
-    };
+    let filters = {};
 
     if (router.query.collection) {
       filters.collection = {
         name: {
           in: routerQuery
         },
-        putOnSale: {
-          eq: true
+        auction: {
+          sellType: "Bidding"
         }
       };
     }
@@ -134,22 +113,19 @@ const ExploreProductArea = ({
   const [onChangeValue, setOnChangeValue] = useState("newest");
 
   const getCollectibleSortData = (onchangeSort) => {
-    let filters = {
-      putOnSale: {
-        eq: true
-      }
-    };
+    let filters = {};
 
     if (router.query.collection) {
       filters.collection = {
         name: {
           in: routerQuery
+        },
+        auction: {
+          sellType: "Bidding"
         }
       };
     }
     let pagination = { pageSize: 6 };
-    console.log("onchangeSort*-*-*-*-*-*-*-*-*-*-*-*-*-*", onchangeSort);
-    console.log("filters*-*-*-*-*-*-*-*-*-*-*-*-*-*", filters);
     setOnChangeValue(onchangeSort);
     if (onchangeSort == "oldest") {
       getCollectible({
@@ -203,7 +179,7 @@ const ExploreProductArea = ({
             filters,
             auction: {
               sellType: {
-                eq: "Bidding"
+                in: "Bidding"
               }
             }
           },
@@ -219,9 +195,6 @@ const ExploreProductArea = ({
     let filters = {
       price: {
         between: onchangefilter
-      },
-      putOnSale: {
-        eq: true
       }
     };
 
@@ -229,6 +202,9 @@ const ExploreProductArea = ({
       filters.collection = {
         name: {
           in: routerQuery
+        },
+        auction: {
+          sellType: "Bidding"
         }
       };
     }
@@ -249,21 +225,18 @@ const ExploreProductArea = ({
     newObj[b] = obj[b] + 1 || 1;
     return newObj;
   }, {});
-  console.log("categoriesold", categoriesold);
   const [onchangecheckData, setonchangecheckData] = useState(categoriesold);
 
   const getCollectiblecheckData = (onchangefilter) => {
-    console.log("=*=*=*=*=*=*=*=*collectioncollection", onchangefilter);
-    let filters = {
-      putOnSale: {
-        eq: true
-      }
-    };
+    let filters = {};
 
     if (router.query.collection) {
       filters.collection = {
         name: {
           in: routerQuery
+        },
+        auction: {
+          sellType: "Bidding"
         }
       };
     }
@@ -351,7 +324,6 @@ const ExploreProductArea = ({
                   onClick={paginationHandler}
                 />
               ) : null} */}
-              {console.log("paginationpagination", pagination)}
               {pagination?.pageCount > 1 ? (
                 <Pagination
                   className="single-column-blog"

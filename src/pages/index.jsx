@@ -16,6 +16,7 @@ import { GET_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getC
 import LiveExploreArea from "@containers/live-explore/layout-01";
 import strapi from "@utils/strapi";
 import ServiceArea from "@containers/services/layout-01";
+import { getCollection } from "src/services/collections/collection";
 
 const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection }) => {
   const content = normalizedData(homepageData?.content || []);
@@ -121,35 +122,29 @@ Home.getInitialProps = async () => {
     fetchPolicy: "network-only"
   });
 
-  const dataCollection = await client.query({
-    query: GET_COLLECTION_LISTDATA_QUERY,
-    variables: {
-      filters: {
-        collectibles: {
-          putOnSale: {
-            eq: true
-          }
+  const dataCollection = await getCollection({
+    filters: {
+      collectibles: {
+        auction: {
+          sellType: "Bidding"
         }
-      },
-      collectiblesFilters: {
-        putOnSale: {
-          eq: true
-        }
-      },
-      pagination: {
-        pageSize: 5
-      },
-      sort: "createdAt"
+      }
     },
-    fetchPolicy: "network-only"
+    populate: "*",
+    pagination: {
+      limit: 8,
+      start: 0,
+      withCount: true
+    }
   });
+  console.log("dataCollection654", dataCollection);
 
   return {
     className: "template-color-1",
     liveAuctionData: liveAuctionData.data.collectibles?.data,
     newestData: newestItems.data.collectibles?.data,
     dataCollectibles: dataCollectibles.data.collectibles?.data,
-    dataCollection: dataCollection.data.collections.data
+    dataCollection: dataCollection.data
   };
 };
 

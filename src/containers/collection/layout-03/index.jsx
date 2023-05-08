@@ -22,19 +22,19 @@ const CollectionArea = ({ className, space, id, data }) => {
   });
   useEffect(() => {
     if (data) {
-      setCollectionData(data)
+      setCollectionData(data);
     }
   }, [data]);
 
   const setCollectionData = (data, page = 1) => {
-    console.log("data123465", Math.ceil(data.meta.pagination.total / 8))
+    console.log("data123465", Math.ceil(data.meta.pagination.total / 8));
     setCollectionsData(data.data);
-    setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 8), page })
-  }
+    setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 8), page });
+  };
 
   const getCollectionPaginationRecord = async (page) => {
-    const start = (page * 8) - 8
-    const limit = 8
+    const start = page * 8 - 8;
+    const limit = 8;
 
     const data = await getCollection({
       filters: {
@@ -52,29 +52,29 @@ const CollectionArea = ({ className, space, id, data }) => {
       }
     });
 
-    setCollectionData(data, page)
+    setCollectionData(data, page);
   };
 
-  const getCollectionPaginationRecord = (page) => {
-    getCollection({
-      variables: {
-        filters: {
-          collectibles: {
-            putOnSale: {
-              eq: true
-            }
-          },
-          id: { notNull: true }
-        },
-        collectiblesFilters: {
-          putOnSale: {
-            eq: true
-          }
-        },
-        pagination: { page, pageSize: 8 }
-      }
-    });
-  };
+  // const getCollectionPaginationRecord = (page) => {
+  //   getCollection({
+  //     variables: {
+  //       filters: {
+  //         collectibles: {
+  //           putOnSale: {
+  //             eq: true
+  //           }
+  //         },
+  //         id: { notNull: true }
+  //       },
+  //       collectiblesFilters: {
+  //         putOnSale: {
+  //           eq: true
+  //         }
+  //       },
+  //       pagination: { page, pageSize: 8 }
+  //     }
+  //   });
+  // };
 
   return (
     <div className={clsx("rn-collection-area", space === 1 && "rn-section-gapTop", className)} id={id}>
@@ -82,8 +82,8 @@ const CollectionArea = ({ className, space, id, data }) => {
         {collectionsData && (
           <div className="row g-5">
             {console.log("collectionsData", collectionsData)}
-            {collectionsData.map((collection) => (
-              (collection?.collectibles?.data?.length ?
+            {collectionsData.map((collection) =>
+              collection?.collectibles?.data?.length ? (
                 <div key={collection.id} className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12">
                   <Collection
                     title={collection?.name}
@@ -93,8 +93,9 @@ const CollectionArea = ({ className, space, id, data }) => {
                     thumbnails={collection?.featured?.data}
                     profile_image={collection?.logo?.data}
                   />
-                </div> : null)
-            ))}
+                </div>
+              ) : null
+            )}
           </div>
         )}
         <div className="row">
@@ -119,9 +120,7 @@ CollectionArea.propTypes = {
   id: PropTypes.string,
   space: PropTypes.oneOf([1]),
   data: PropTypes.shape({
-    data: PropTypes.arrayOf(
-      CollectionType
-    ).isRequired
+    data: PropTypes.arrayOf(CollectionType).isRequired
   })
 };
 CollectionArea.defaultProps = {
