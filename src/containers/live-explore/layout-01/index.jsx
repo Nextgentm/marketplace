@@ -67,8 +67,9 @@ const LiveExploreArea = ({ data, className, space }) => (
                   <Product
                     overlay
                     placeBid={false}
+                    isAuction={true}
                     title={prod.attributes.name}
-                    slug={prod.attributes.slug}
+                    slug={prod.attributes?.auction?.data[0]?.id}
                     supply={prod.attributes.supply}
                     price={prod.attributes?.auction?.data[0]?.attributes?.bidPrice}
                     symbol={prod.attributes?.auction?.data[0]?.attributes?.priceCurrency}

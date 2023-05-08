@@ -19,7 +19,7 @@ const TopCollectionArea = ({ className, id, space, data }) => (
             data-sal="slide-up"
             data-sal-duration="800"
           >
-            {data.collections.length > 4 && (
+            {data.collections?.length > 4 && (
               <Anchor className="btn-transparent" path="/collection">
                 VIEW ALL
                 <i className="feather feather-arrow-right" />
@@ -28,27 +28,48 @@ const TopCollectionArea = ({ className, id, space, data }) => (
           </div>
         </div>
       </div>
-      {data?.collections && (
+
+      {data?.collections &&
         <div className="row g-5">
-          {data.collections.slice(0, 4).map((collection, index) => (
-            <div
-              key={index}
-              data-sal-delay="150"
-              data-sal-duration="800"
-              className="col-lg-4 col-xl-3 col-md-6 col-sm-6 col-12"
-            >
-              <Collection
-                title={collection.name}
-                total_item={collection?.collectibles?.data?.length}
-                path={`collection/${collection.slug}`}
-                image={collection.cover?.data}
-                thumbnails={collection.featured?.data}
-                profile_image={collection.logo?.data}
-              />
-            </div>
-          ))}
+          {data?.collections?.length > 5 ?
+            data.collections?.slice(0, 4).map((collection, index) => (
+              <div
+                key={index}
+                data-sal-delay="150"
+                data-sal-duration="800"
+                className="col-lg-4 col-xl-3 col-md-6 col-sm-6 col-12"
+              >
+                <Collection
+                  title={collection.name}
+                  total_item={collection?.collectibles?.data?.length}
+                  path={`collection/${collection.slug}`}
+                  image={collection.cover?.data}
+                  thumbnails={collection.featured?.data}
+                  profile_image={collection.logo?.data}
+                />
+              </div>
+            ))
+            :
+            data.collections.map((collection, index) => (
+              <div
+                key={index}
+                data-sal-delay="150"
+                data-sal-duration="800"
+                className="col-lg-4 col-xl-3 col-md-6 col-sm-6 col-12"
+              >
+                <Collection
+                  title={collection.name}
+                  total_item={collection?.collectibles?.data?.length}
+                  path={`collection/${collection.slug}`}
+                  image={collection.cover?.data}
+                  thumbnails={collection.featured?.data}
+                  profile_image={collection.logo?.data}
+                />
+              </div>
+            ))
+          }
         </div>
-      )}
+      }
     </div>
   </div>
 );

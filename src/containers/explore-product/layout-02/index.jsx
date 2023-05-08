@@ -40,8 +40,9 @@ const ExploreProductArea = ({ className, space, data }) => {
             {products?.slice(0, 10)?.map((prod, index) => (
               <motion.div key={index} className={clsx("grid-item")} layout>
                 <Product
+                  isAuction={true}
                   title={prod.attributes.name}
-                  slug={prod.attributes.slug}
+                  slug={prod.attributes?.auction?.data[0]?.id}
                   supply={prod.attributes.supply}
                   price={prod.attributes?.auction?.data[0]?.attributes?.bidPrice}
                   symbol={prod.attributes?.auction?.data[0]?.attributes?.priceCurrency}

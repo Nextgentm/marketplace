@@ -43,8 +43,9 @@ const ProductArea = ({ space, className, data }) =>
                 className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
               >
                 <Product
+                  isAuction={true}
                   title={prod.attributes.name}
-                  slug={prod.attributes.slug}
+                  slug={prod.attributes?.auction?.data[0]?.id}
                   supply={prod.attributes.supply}
                   price={prod.attributes?.auction?.data[0]?.attributes?.bidPrice}
                   symbol={prod.attributes?.auction?.data[0]?.attributes?.priceCurrency}

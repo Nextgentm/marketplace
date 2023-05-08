@@ -84,8 +84,13 @@ Home.getInitialProps = async () => {
     query: ALL_COLLECTIBLE_LISTDATA_QUERY,
     variables: {
       filter: {
-        putOnSale: {
-          eq: true
+        auction: {
+          status: {
+            eq: "Live"
+          },
+          sellType: {
+            eq: "Bidding"
+          }
         }
       },
       sort: "auction.startTimestamp:desc"
@@ -97,8 +102,10 @@ Home.getInitialProps = async () => {
     query: ALL_COLLECTIBLE_LISTDATA_QUERY,
     variables: {
       filter: {
-        putOnSale: {
-          eq: true
+        auction: {
+          status: {
+            eq: "Live"
+          },
         }
       },
       pagination: {
@@ -113,11 +120,13 @@ Home.getInitialProps = async () => {
     query: ALL_COLLECTIBLE_LISTDATA_QUERY,
     variables: {
       filter: {
-        putOnSale: {
-          eq: true
+        auction: {
+          status: {
+            eq: "Live"
+          },
         }
       },
-      sort: "createdAt"
+      sort: "auction.startTimestamp:desc"
     },
     fetchPolicy: "network-only"
   });
