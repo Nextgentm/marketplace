@@ -193,7 +193,7 @@ Home.getInitialProps = async () => {
     filters: {
       collectibles: {
         auction: {
-          sellType: "Bidding"
+          status: "Live",
         }
       }
     },
