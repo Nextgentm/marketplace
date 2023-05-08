@@ -165,11 +165,13 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         bidPrice: data.price,
         priceCurrency: data.currency,
         sellType: data.sellType,
+        status: "Live",
         startTimestamp: data.startTimestamp,
         endTimeStamp: data.endTimeStamp,
         collectible: product.id,
         paymentToken: data.paymentToken,
-        quantity: data.quantity ? data.quantity : 1
+        quantity: data.quantity ? data.quantity : 1,
+        remainingQuantity: data.quantity ? data.quantity : 1,
       });
       console.log(res);
       updateCollectible({
@@ -182,7 +184,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       });
       toast.success("Auction created successfully");
       setShowAuctionInputModel(false);
-      router.reload();
+      // router.reload();
     } catch (error) {
       toast.error("Error while creating auction");
       console.log(error);
@@ -309,7 +311,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         });
 
         toast.success("NFT transfered succesfully");
-        router.reload();
+        // router.reload();
         setShowTransferModal(false);
       } else {
         toast.error("Invalid address");
@@ -334,7 +336,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
               <span className="bid">
                 Price{" "}
                 <span className="price">
-                  {product.putOnSale ? product.auction?.data?.bidPrice : product.price}
+                  {product.putOnSale ? (product.auction?.data[0]?.bidPrice / product.auction?.data[0]?.quantity) : product.price}
                   {product.symbol}
                 </span>
               </span>
@@ -400,9 +402,11 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
 
                   <div className="rn-bid-details">
                     <BidTab
-                      bids={product.putOnSale && product.auction.data.sellType == "Bidding" ? bids : null}
+                      bids={product.putOnSale && product.auction.data[0].sellType == "Bidding" ? bids : null}
                       owner={product?.owner}
                       product={product}
+                      supply={product.supply}
+                      auction={{ data: product.auction?.data[0] }}
                       properties={product?.collectibleProperties?.data}
                       tags={product?.tags}
                       history={product?.owner_histories?.data}
@@ -411,13 +415,14 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                     {product.putOnSale && (
                       <PlaceBet
                         highest_bid={{
-                          amount: product.auction?.data?.bidPrice,
-                          priceCurrency: product.auction?.data?.priceCurrency,
-                          quantity: product.auction?.data?.quantity
+                          amount: product.auction?.data[0]?.bidPrice,
+                          priceCurrency: product.auction?.data[0]?.priceCurrency,
+                          quantity: product.auction?.data[0]?.quantity
                         }}
-                        auction_date={product.auction?.data?.endTimeStamp}
+                        auction_date={product.auction?.data[0]?.endTimeStamp}
                         product={product}
-                        isOwner={product.auction?.data?.walletAddress == walletData.account}
+                        auction={{ data: product.auction?.data[0] }}
+                        isOwner={product.auction?.data[0]?.walletAddress == walletData.account}
                       />
                     )}
                   </div>
