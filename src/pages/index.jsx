@@ -80,56 +80,114 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection })
 };
 
 Home.getInitialProps = async () => {
-  const liveAuctionData = await client.query({
-    query: ALL_COLLECTIBLE_LISTDATA_QUERY,
-    variables: {
-      filter: {
-        auction: {
-          status: {
-            eq: "Live"
-          },
-          sellType: {
-            eq: "Bidding"
-          }
-        }
+  const filter = {
+    filters: {
+      status: {
+        $eq: "Live"
       },
-      sort: "auction.startTimestamp:desc"
+      sellType: {
+        $eq: "Bidding"
+      }
     },
-    fetchPolicy: "network-only"
-  });
+    populate: {
+      collectible: {
+        populate: ["image", "collection"]
+      },
+      biddings: {
+        fields: ["id"]
+      }
+    },
+    sort: { startTimestamp: "desc" }
+  }
+  let liveAuctionData = await strapi.find("auctions", filter);
+  // console.log(liveAuctionData);
+  // const liveAuctionData = await client.query({
+  //   query: ALL_COLLECTIBLE_LISTDATA_QUERY,
+  //   variables: {
+  //     filter: {
+  //       auction: {
+  //         status: {
+  //           eq: "Live"
+  //         },
+  //         sellType: {
+  //           eq: "Bidding"
+  //         }
+  //       }
+  //     },
+  //     sort: "auction.startTimestamp:desc"
+  //   },
+  //   fetchPolicy: "network-only"
+  // });
 
-  const newestItems = await client.query({
-    query: ALL_COLLECTIBLE_LISTDATA_QUERY,
-    variables: {
-      filter: {
-        auction: {
-          status: {
-            eq: "Live"
-          },
-        }
+  const newestItemsFilter = {
+    filters: {
+      status: {
+        $eq: "Live"
       },
-      pagination: {
-        pageSize: 10
-      },
-      sort: "auction.startTimestamp:desc"
     },
-    fetchPolicy: "network-only"
-  });
+    populate: {
+      collectible: {
+        populate: ["image", "collection"]
+      },
+      biddings: {
+        fields: ["id"]
+      }
+    },
+    pagination: {
+      limit: 10
+    },
+    sort: { startTimestamp: "desc" }
+  }
+  let newestItems = await strapi.find("auctions", newestItemsFilter);
+  // const newestItems = await client.query({
+  //   query: ALL_COLLECTIBLE_LISTDATA_QUERY,
+  //   variables: {
+  //     filter: {
+  //       auction: {
+  //         status: {
+  //           eq: "Live"
+  //         },
+  //       }
+  //     },
+  //     pagination: {
+  //       pageSize: 10
+  //     },
+  //     sort: "auction.startTimestamp:desc"
+  //   },
+  //   fetchPolicy: "network-only"
+  // });
 
-  const dataCollectibles = await client.query({
-    query: ALL_COLLECTIBLE_LISTDATA_QUERY,
-    variables: {
-      filter: {
-        auction: {
-          status: {
-            eq: "Live"
-          },
-        }
+  const dataCollectiblesFilter = {
+    filters: {
+      status: {
+        $eq: "Live"
       },
-      sort: "auction.startTimestamp:desc"
     },
-    fetchPolicy: "network-only"
-  });
+    populate: {
+      collectible: {
+        populate: ["image", "collection"]
+      },
+      biddings: {
+        fields: ["id"]
+      }
+    },
+    sort: { startTimestamp: "desc" }
+  }
+  let dataCollectibles = await strapi.find("auctions", dataCollectiblesFilter);
+  // const dataCollectibles = await client.query({
+  //   query: ALL_COLLECTIBLE_LISTDATA_QUERY,
+  //   variables: {
+  //     filter: {
+  //       auction: {
+  //         status: {
+  //           eq: "Live"
+  //         },
+  //       }
+  //     },
+  //     sort: "auction.startTimestamp:desc"
+  //   },
+  //   fetchPolicy: "network-only"
+  // });
 
   const dataCollection = await getCollection({
     filters: {
@@ -150,9 +208,9 @@ Home.getInitialProps = async () => {
 
   return {
     className: "template-color-1",
-    liveAuctionData: liveAuctionData.data.collectibles?.data,
-    newestData: newestItems.data.collectibles?.data,
-    dataCollectibles: dataCollectibles.data.collectibles?.data,
+    liveAuctionData: liveAuctionData.data,
+    newestData: newestItems.data,
+    dataCollectibles: dataCollectibles.data,
     dataCollection: dataCollection.data
   };
 };

@@ -68,15 +68,15 @@ const LiveExploreArea = ({ data, className, space }) => (
                     overlay
                     placeBid={false}
                     isAuction={true}
-                    title={prod.attributes.name}
-                    slug={prod.attributes?.auction?.data[0]?.id}
-                    supply={prod.attributes.supply}
-                    price={prod.attributes?.auction?.data[0]?.attributes?.bidPrice}
-                    symbol={prod.attributes?.auction?.data[0]?.attributes?.priceCurrency}
-                    auction_date={prod.attributes?.auction?.data[0]?.attributes?.endTimeStamp}
-                    image={prod.attributes?.image?.data?.attributes?.url}
-                    collectionName={prod.attributes?.collection?.data?.attributes?.name}
-                    bitCount={prod.attributes?.auction?.data[0]?.attributes?.biddings?.data.length}
+                    title={prod.collectible.data.name}
+                    slug={prod.id}
+                    supply={prod.collectible.data.supply}
+                    price={prod.bidPrice}
+                    symbol={prod.priceCurrency}
+                    auction_date={prod.endTimeStamp}
+                    image={prod.collectible.data?.image?.data?.url}
+                    collectionName={prod.collectible.data?.collection?.data?.name}
+                    bitCount={prod.biddings?.data.length}
                     latestBid={prod.latestBid}
                     likeCount={prod.likeCount}
                     authors={prod.authors}
