@@ -4,21 +4,24 @@ import PropTypes from "prop-types";
 const CategoryFilter = ({ categories, onChange, products, collectionPage, routerQuery }) => {
   const [isCheck, setIsCheck] = useState([]);
 
-  // console.log("routerQueryNEW", routerQuery);
-  // const checkvalue = routerQuery?.join();
-  // let checkisthisvalue = "Collect12;
-
   const handleClick = (e) => {
-    console.log("e-=-=-==-=-=-=-=", e);
     const { value, checked } = e.target;
-    setIsCheck([...isCheck, value]);
-    if (!checked) {
-      setIsCheck(isCheck.filter((item) => item !== value));
-    }
+    setIsCheck((prevState) => {
+      if (checked) {
+        return [...prevState, value];
+      } else {
+        return prevState.filter((item) => item !== value);
+      }
+    });
   };
+
   useEffect(() => {
     onChange(isCheck);
   }, [isCheck]);
+
+  useEffect(() => {
+    setIsCheck(routerQuery); // set "Collect12" as checked by default
+  }, []);
 
   return (
     <div className="nuron-expo-filter-widget widget-category mt--30">
@@ -27,9 +30,14 @@ const CategoryFilter = ({ categories, onChange, products, collectionPage, router
         <div className="content">
           {Object.entries(categories).map(([key, value]) => (
             <div className="nuron-form-check" key={key}>
-              {/* {console.log("key-*-*-*-*-*-*-*-*-*-*-**-*", key)} */}
-              {/* {console.log("key-*-*-*-value*-*-*-*-*-*-*-**-*", value)} */}
-              <input type="checkbox" name="categories" value={key} onChange={handleClick} id={`cat-check-${key}`} />
+              <input
+                type="checkbox"
+                name="categories"
+                value={key}
+                onChange={handleClick}
+                id={`cat-check-${key}`}
+                checked={isCheck.includes(key)}
+              />
               <label htmlFor={`cat-check-${key}`} className="text-capitalize">
                 {key} <span>({value})</span>
               </label>
