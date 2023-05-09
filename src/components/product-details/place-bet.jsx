@@ -68,7 +68,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
     updateCollectible({
       variables: {
         "data": {
-          putOnSale: false,
+          putOnSale: !(quantity == 0),
           owner: walletData.account
         },
         "updateCollectibleId": product.id
@@ -93,7 +93,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
       //convert price
       const convertedPrice = convertEthertoWei(walletData.ethers, price);
       // Pull the deployed contract instance
-      const tokenContract = new walletData.ethers.Contract(TokenContract.address, TokenContract.abi, signer);
+      const TokenContractAddress = auction.data.paymentToken?.data?.blockchain;
+      const tokenContract = new walletData.ethers.Contract(TokenContractAddress, TokenContract.abi, signer);
 
       // const allowance = await tokenContract.allowance(walletData.account, TransferProxy.address);
       // const allowanceAmount = parseInt(allowance._hex, 16);
@@ -245,7 +246,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
           </div>
           {auction_date && (
             <div className="bid-list left-bid">
-              <h6 className="title">Auction has ended</h6>
+              <h6 className="title">{new Date() < new Date(auction_date) ? "Auction will ended in" : "Auction has ended"}</h6>
               <Countdown className="mt--15" date={auction_date} />
             </div>
           )}

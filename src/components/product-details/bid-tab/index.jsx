@@ -7,8 +7,9 @@ import Nav from "react-bootstrap/Nav";
 import BidsTabContent from "./bids-tab-content";
 import DetailsTabContent from "./details-tab-content";
 import HistoryTabContent from "./history-tab-content";
+import AuctionsTabContent from "./auctions-tab-content";
 
-const BidTab = ({ className, bids, product, auction, supply, owner, properties, tags, history, erc1155MyBalance }) => (
+const BidTab = ({ className, bids, product, auction, allAuctions, supply, owner, properties, tags, history, erc1155MyBalance }) => (
   <TabContainer defaultActiveKey={bids ? "nav-bids" : "nav-details"}>
     <div className={clsx("tab-wrapper-one", className)}>
       <nav className="tab-button-one">
@@ -21,6 +22,11 @@ const BidTab = ({ className, bids, product, auction, supply, owner, properties, 
           <Nav.Link as="button" eventKey="nav-details">
             Details
           </Nav.Link>
+          {allAuctions &&
+            <Nav.Link as="button" eventKey="nav-auctions">
+              Live Sale
+            </Nav.Link>
+          }
           {history && (
             <Nav.Link as="button" eventKey="nav-histroy">
               History
@@ -36,6 +42,9 @@ const BidTab = ({ className, bids, product, auction, supply, owner, properties, 
         )}
         <TabPane eventKey="nav-details">
           <DetailsTabContent owner={owner} properties={properties} tags={tags} supply={supply} erc1155MyBalance={erc1155MyBalance} />
+        </TabPane>
+        <TabPane eventKey="nav-auctions">
+          {allAuctions && <AuctionsTabContent auctions={allAuctions} />}
         </TabPane>
         {history && (
           <TabPane eventKey="nav-histroy">
