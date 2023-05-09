@@ -204,7 +204,7 @@ Home.getInitialProps = async () => {
       withCount: true
     }
   });
-  console.log("dataCollection654", dataCollection);
+  // console.log("dataCollection654", dataCollection);
 
   return {
     className: "template-color-1",

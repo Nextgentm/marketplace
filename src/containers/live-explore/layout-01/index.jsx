@@ -69,9 +69,9 @@ const LiveExploreArea = ({ data, className, space }) => (
                     placeBid={false}
                     isAuction={true}
                     title={prod.collectible.data.name}
-                    slug={prod.id}
+                    slug={"/collectible/" + prod.collectible.data.slug + "/auction/" + prod.id}
                     supply={prod.collectible.data.supply}
-                    price={prod.bidPrice}
+                    price={(prod.bidPrice / prod.quantity)}
                     symbol={prod.priceCurrency}
                     auction_date={prod.endTimeStamp}
                     image={prod.collectible.data?.image?.data?.url}

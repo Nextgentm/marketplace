@@ -33,10 +33,11 @@ const AuctionDetails = ({ auction, recentViewProducts }) => (
   </Wrapper>
 );
 export async function getStaticPaths() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions`);//?filters[id]=${id}
+  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions?populate[0]=collectible`);//?filters[id]=${id}
   const productData = await res.json();
   const path = productData.data.map((product) => ({
     params: {
+      slug: product.collectible.data.slug,
       id: product.id.toString()
     }
   }));
