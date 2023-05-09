@@ -47,7 +47,7 @@ const ProductArea = ({ space, className, data }) =>
                   title={prod.collectible.data.name}
                   slug={prod.id}
                   supply={prod.collectible.data.supply}
-                  price={prod.bidPrice}
+                  price={(prod.bidPrice / prod.quantity)}
                   symbol={prod.priceCurrency}
                   image={prod.collectible.data?.image?.data?.url}
                   collectionName={prod.collectible.data?.collection?.data?.name}

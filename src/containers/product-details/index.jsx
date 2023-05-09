@@ -402,17 +402,18 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
 
                   <div className="rn-bid-details">
                     <BidTab
-                      bids={product.putOnSale && product.auction.data[0].sellType == "Bidding" ? bids : null}
+                      // bids={product.putOnSale && product.auction.data[0].sellType == "Bidding" ? bids : null}
                       owner={product?.owner}
                       product={product}
                       supply={product.supply}
                       auction={{ data: product.auction?.data[0] }}
+                      allAuctions={product.auction.data}
                       properties={product?.collectibleProperties?.data}
                       tags={product?.tags}
                       history={product?.owner_histories?.data}
                       erc1155MyBalance={erc1155MyBalance}
                     />
-                    {product.putOnSale && (
+                    {/* {product.putOnSale && (
                       <PlaceBet
                         highest_bid={{
                           amount: product.auction?.data[0]?.bidPrice,
@@ -424,7 +425,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                         auction={{ data: product.auction?.data[0] }}
                         isOwner={product.auction?.data[0]?.walletAddress == walletData.account}
                       />
-                    )}
+                    )} */}
                   </div>
                 </>
               )}

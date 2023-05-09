@@ -15,6 +15,7 @@ import authorData from "../data/author.json";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import { useLazyQuery } from "@apollo/client";
 import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
+import strapi from "@utils/strapi";
 // import productData from "../data/products.json";
 
 export async function getStaticProps() {
@@ -24,19 +25,10 @@ export async function getStaticProps() {
 const Author = () => {
   const { userData: authorData } = useContext(AppData);
   const [allProductsData, setAllProductsData] = useState(null);
+  const [allCreatedProductsData, setAllCreatedProductsData] = useState(null);
+  const [allOnSaleProductsData, setAllOnSaleProductsData] = useState(null);
   const { walletData, setWalletData } = useContext(AppData);
   const [isAdminWallet, setIsAdminWallet] = useState(false);
-
-  const [getCollectible, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
-    fetchPolicy: "cache-and-network"
-  });
-
-  useEffect(() => {
-    if (collectiblesFilters?.collectibles) {
-      console.log("collectiblesFilters?.collectibles", collectiblesFilters?.collectibles);
-      setAllProductsData(collectiblesFilters?.collectibles.data);
-    }
-  }, [collectiblesFilters, error]);
 
   useEffect(() => {
     if (authorData) {
@@ -60,21 +52,60 @@ const Author = () => {
   }, [walletData]);
 
   const getAllCollectionsData = async () => {
-    getCollectible({
-      variables: {
-        filter: {
-          owner: {
-            eq: walletData.account
-          }
-        }
-      }
+
+    let response = await strapi.find("collectibles", {
+      filters: {
+        owner: {
+          $eq: walletData.account
+        },
+        // collection: {
+        //   collectionType: {
+        //     $eq: "Single"
+        //   }
+        // },
+      },
+      populate: "*",
     });
-    // const res = await fetch(
-    //   `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=image&filters[owner][$eq]=${walletData.account}`
-    // );
-    // const productData = await res.json();
-    // console.log(productData.data);
-    // setAllProductsData(productData.data);
+    // console.log(response.data);
+    setAllProductsData(response.data);
+
+    let creatorResponse = await strapi.find("collectibles", {
+      filters: {
+        creator: {
+          $eq: walletData.account
+        }
+      },
+      populate: "*",
+    });
+    // console.log(creatorResponse.data);
+    setAllCreatedProductsData(creatorResponse.data);
+
+    let onsaleResponse = await strapi.find("auctions", {
+      filters: {
+        $and: [
+          {
+            status: {
+              $eq: "Live"
+            }
+          },
+          {
+            walletAddress: {
+              $eq: walletData.account
+            }
+          }
+        ]
+      },
+      populate: {
+        collectible: {
+          populate: ["image", "collection"]
+        },
+        biddings: {
+          fields: ["id"]
+        }
+      },
+    });
+    // console.log(onsaleResponse.data);
+    setAllOnSaleProductsData(onsaleResponse.data);
   };
 
   return (
@@ -83,7 +114,8 @@ const Author = () => {
       <Header />
       <main id="main-content">
         <AuthorIntroArea data={authorData} />
-        <AuthorProfileArea productData={allProductsData} isAdminWallet={isAdminWallet} />
+        <AuthorProfileArea productData={allProductsData} allCreatedProductsData={allCreatedProductsData}
+          allOnSaleProductsData={allOnSaleProductsData} isAdminWallet={isAdminWallet} />
       </main>
       <Footer />
     </Wrapper>
