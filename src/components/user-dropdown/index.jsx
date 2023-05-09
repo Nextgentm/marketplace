@@ -60,7 +60,7 @@ const UserDropdown = () => {
         return;
       }
     } catch (error) {
-      console.log(error);
+
     }
   }
 
@@ -76,17 +76,17 @@ const UserDropdown = () => {
   useEffect(() => {
     /* code for runtime metamask events */
     const handleAccountsChanged = (accounts) => {
-      // console.log("accountsChanged", accounts);
+
       if (accounts.length > 0) {
         setAccount(accounts[0]);
       } else {
         onDisconnectWallet();
-        console.log("No accounts connected");
+
       }
     };
 
     const handleChainChanged = (_hexChainId) => {
-      // console.log(_hexChainId);
+
       if (isValidNetwork(_hexChainId)) {
         setCurrentNetwork(_hexChainId);
         updateBalance();
