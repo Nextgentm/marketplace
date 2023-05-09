@@ -34,7 +34,7 @@ const SocialAuth = ({ className, title }) => {
       toast.error("Invalid login information");
       signOut();
 
-      console.log(error);
+
       return;
     }
   };

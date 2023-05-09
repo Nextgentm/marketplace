@@ -49,7 +49,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
 
   async function switchNetwork(chainId) {
     if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
-      console.log(`Network is already with chain id ${chainId}`);
+
       return true;
     }
     try {
@@ -99,12 +99,12 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
       // const allowance = await tokenContract.allowance(walletData.account, TransferProxy.address);
       // const allowanceAmount = parseInt(allowance._hex, 16);
       const requireAllowanceAmount = "" + parseInt(convertedPrice * quantity);
-      // console.log(allowanceAmount, parseInt(requireAllowanceAmount));
+
       // if (allowanceAmount < parseInt(requireAllowanceAmount)) {
       // approve nft first
       const transaction = await tokenContract.increaseAllowance(TransferProxy.address, requireAllowanceAmount);
       const receipt = await transaction.wait();
-      console.log(receipt);
+
       // }
       let isAccepted = false;
       if (auction.data.sellType == "FixedPrice") {
@@ -125,7 +125,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         // Pull the deployed contract instance
         const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
 
-        console.log("Calling direct buy");
+
         const transaction = await tradeContract.buyAsset([
           seller,
           buyer,
@@ -142,7 +142,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
           qty
         ]);
         const receipt = await transaction.wait();
-        console.log(receipt);
+
         const transactionHash = receipt.transactionHash;
         if (receipt) {
           isAccepted = true;
@@ -171,7 +171,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         auction: auction.data.id,
         isAccepted
       });
-      console.log(res);
+
       setShowBidModal(false);
       if (auction.data.sellType === "FixedPrice") {
         toast.success("NFT purchased successfully!");
@@ -180,7 +180,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
       }
       // router.reload();
     } catch (error) {
-      console.log(error);
+
     }
   }
 
@@ -204,12 +204,12 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
     if (auction.data.sellType == "Bidding") {
       const price = event.target.price?.value;
       const quantity = auction.data.quantity;
-      // console.log(price);
+
       StoreData(price, quantity);
     } else {
       const price = auction.data.bidPrice;
       const quantity = event.target.quantity?.value ? event.target.quantity?.value : auction.data.quantity;
-      // console.log(price);
+
       StoreData(price, quantity);
     }
   };

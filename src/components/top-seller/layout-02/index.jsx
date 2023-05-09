@@ -80,7 +80,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
       // Pull the deployed contract instance
       const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
 
-      console.log("Calling direct buy");
+
       const transaction = await tradeContract.executeBid([
         seller,
         buyer,
@@ -97,7 +97,6 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
         qty
       ]);
       const receipt = await transaction.wait();
-      console.log(receipt);
       const transactionHash = receipt.transactionHash;
       if (receipt) {
         completeAuction();
@@ -115,7 +114,6 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
           }
         });
       }
-      // console.log(res);
       if (auction.data.sellType === "FixedPrice") {
         toast.success("NFT purchased successfully!");
       } else {
@@ -123,7 +121,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
       }
       // router.reload();
     } catch (error) {
-      console.log(error);
+
     }
   }
 
