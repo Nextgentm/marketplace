@@ -9,7 +9,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
         image: "/images/connect/ethereum.png"
     },
     {
-        name: "BSC",
+        name: "Binance",
         image: "/images/connect/binance.png"
     },
     {
@@ -63,6 +63,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                     name="term-condition"
                                     value="true"
                                     id="term-condition"
+                                    required
                                 />
                                 <label htmlFor="term-condition" className="term">
                                     I read and accept the <><Link href="#">Term of Service</Link> and <Link href="#">Privacy Policy</Link></>
@@ -77,7 +78,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                                 <input
                                                     type="radio"
                                                     name="networkid"
-                                                    value="all"
+                                                    value={list.name}
                                                     id={"id" + index}
                                                 />
                                                 <label htmlFor={"id" + index}>
@@ -99,6 +100,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                                 <input
                                                     type="radio"
                                                     name="walletid"
+                                                    value={list.name}
                                                     id={"walletid-" + index}
                                                 />
                                                 <label htmlFor={"walletid-" + index}>
@@ -110,6 +112,9 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                     </>
                                     )}
                                 </div>
+                            </div>
+                            <div className="">
+                                <Button type="submit" >Connect</Button>
                             </div>
                         </div>
                     </div>

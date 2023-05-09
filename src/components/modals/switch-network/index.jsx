@@ -9,7 +9,7 @@ const SwitchNetwork = ({ show, handleModal, handleSubmit }) => {
         image: "/images/connect/ethereum.png"
     },
     {
-        name: "BSC",
+        name: "Binance",
         image: "/images/connect/binance.png"
     },
     {
@@ -47,7 +47,7 @@ const SwitchNetwork = ({ show, handleModal, handleSubmit }) => {
                                         <input
                                             type="radio"
                                             name="networkid"
-                                            value="all"
+                                            value={list.name}
                                             id={"id" + index}
                                         />
                                         <label htmlFor={"id" + index}>
@@ -60,6 +60,9 @@ const SwitchNetwork = ({ show, handleModal, handleSubmit }) => {
                             </>
                             )}
                         </div>
+                    </div>
+                    <div className="">
+                        <Button type="submit" >Change</Button>
                     </div>
                 </form>
             </Modal.Body>
