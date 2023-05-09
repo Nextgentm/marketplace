@@ -7,6 +7,7 @@ import Breadcrumb from "@components/breadcrumb";
 import ProductDetailsArea from "@containers/product-details";
 import ProductArea from "@containers/product/layout-03";
 import { shuffleArray } from "@utils/methods";
+import strapi from "@utils/strapi";
 
 const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) => (
 
@@ -49,15 +50,22 @@ export async function getStaticProps({ params }) {
   let bids = null;
 
   if (product) {
-    // Get All Bids
+    // Get All payment tokens
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections/${product.collection?.data?.id}?populate[0]=paymentTokens`
     );
     const collection = await response.json();
     product.collection.data.paymentTokens = collection.data.paymentTokens;
+
+    // get owner histories
+    let collectible = await strapi.findOne("collectibles", product.id, {
+      populate: ["owner_histories"],
+    });
+    // console.log(product.id);
+    product.owner_histories = collectible.data.owner_histories;
   }
   if (product.putOnSale) {
-    // Get All Bids
+    // Get All auction and biddings data
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions/${product.auction?.data[0]?.id}?populate=*`
     );

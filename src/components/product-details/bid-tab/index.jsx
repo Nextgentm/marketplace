@@ -44,7 +44,7 @@ const BidTab = ({ className, bids, product, auction, allAuctions, supply, owner,
           <DetailsTabContent owner={owner} properties={properties} tags={tags} supply={supply} erc1155MyBalance={erc1155MyBalance} />
         </TabPane>
         <TabPane eventKey="nav-auctions">
-          {allAuctions && <AuctionsTabContent auctions={allAuctions} />}
+          {allAuctions && <AuctionsTabContent auctions={allAuctions} productSlug={product.slug} />}
         </TabPane>
         {history && (
           <TabPane eventKey="nav-histroy">
