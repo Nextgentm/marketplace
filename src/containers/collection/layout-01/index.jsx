@@ -42,7 +42,7 @@ const TopCollectionArea = ({ className, id, space, data }) => (
                 <Collection
                   title={collection.name}
                   total_item={collection?.collectibles?.data?.length}
-                  path={`collection/${collection.slug}`}
+                  path={`collectibles?collection=${collection?.name}`}
                   image={collection.cover?.data}
                   thumbnails={collection.featured?.data}
                   profile_image={collection.logo?.data}
@@ -60,7 +60,7 @@ const TopCollectionArea = ({ className, id, space, data }) => (
                 <Collection
                   title={collection.name}
                   total_item={collection?.collectibles?.data?.length}
-                  path={`collection/${collection.slug}`}
+                  path={`collectibles?collection=${collection?.name}`}
                   image={collection.cover?.data}
                   thumbnails={collection.featured?.data}
                   profile_image={collection.logo?.data}

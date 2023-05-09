@@ -27,7 +27,7 @@ const LoginForm = ({ className }) => {
           identifier: data.identifier,
           password: data.password
         });
-        console.log("data", loginResponse);
+
         const cookiesDate = new Date();
         cookiesDate.setTime(cookiesDate.getTime() + (120 * 60 * 1000));
         setCookie("token", loginResponse.jwt, { expires: cookiesDate });
@@ -36,10 +36,10 @@ const LoginForm = ({ className }) => {
         router.push("/");
       } catch ({ error }) {
         toast.error("Invalid login information");
-        console.log(error);
+
         return;
       }
-      console.log(data);
+
     }
   };
 

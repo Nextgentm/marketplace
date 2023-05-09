@@ -3,7 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
 
 const SwitchNetwork = ({ show, handleModal, handleSubmit }) => {
-    // console.log("emial");
+
     const cryptoList = [{
         name: "Ethereum",
         image: "/images/connect/ethereum.png"
