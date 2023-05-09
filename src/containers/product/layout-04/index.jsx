@@ -45,7 +45,7 @@ const ProductArea = ({ space, className, data }) =>
                 <Product
                   isAuction={true}
                   title={prod.collectible.data.name}
-                  slug={prod.id}
+                  slug={"collectible/" + prod.collectible.data.slug + "/auction/" + prod.id}
                   supply={prod.collectible.data.supply}
                   price={(prod.bidPrice / prod.quantity)}
                   symbol={prod.priceCurrency}

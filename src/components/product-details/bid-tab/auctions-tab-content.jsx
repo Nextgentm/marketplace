@@ -3,21 +3,43 @@ import { IDType, ImageType } from "@utils/types";
 import { Table } from "react-bootstrap";
 import { walletAddressShortForm, transactionHashShortForm } from "../../../utils/blockchain";
 import Anchor from "@ui/anchor";
+import Button from "@ui/button";
+import { useContext } from "react";
+import { AppData } from "src/context/app-context";
 
-const AuctionsTabContent = ({ auctions }) => {
+const AuctionsTabContent = ({ auctions, productSlug }) => {
+
+  const { walletData, setWalletData } = useContext(AppData);
 
   return (
     <div className="history-table pt-4">
-      {auctions?.map((item, index) => (
-        item.status == "Live" &&
-        <div key={index}>
-          <Anchor path={"/auction/" + item.id}>
-            <span>{item.sellType == "Bidding" ? "Bidding Auction" : "Fixed Price"} From {walletAddressShortForm(item.walletAddress)} for price {(item.bidPrice / item.quantity)} {item.priceCurrency}</span><br />
-            <span>Remaining Quantity: {item.remainingQuantity}</span>
-            <hr />
-          </Anchor>
-        </div>
-      ))}
+      <Table striped responsive variant="dark">
+        <thead>
+          <tr>
+            <th>Listing Type</th>
+            <th>Owner</th>
+            <th>Price</th>
+            <th>Remaning Quantity</th>
+            <th></th>
+            {/* <th>Created At</th> */}
+          </tr>
+        </thead>
+        <tbody>
+          {auctions?.map((item, index) => (
+            <tr key={index}>
+              <td>{item.sellType == "Bidding" ? "Bidding Auction" : "Fixed Price"}</td>
+              <td>{walletData.account == item?.walletAddress ? "You" : walletAddressShortForm(item?.walletAddress)}</td>
+              <td>{(item.bidPrice / item.quantity)} {item?.priceCurrency}</td>
+              <td>{item?.remainingQuantity}</td>
+              <td>
+                <Anchor target="_self" path={productSlug + "/auction/" + item.id}>
+                  <Button>Buy</Button>
+                </Anchor>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </div>
   );
 };
