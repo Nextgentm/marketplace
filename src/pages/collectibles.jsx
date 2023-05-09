@@ -12,6 +12,7 @@ import productData from "../data/products.json";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import client from "@utils/apollo-client";
 import { useRouter } from "next/router";
+import { ALL_AUCTION_DATA_QUERY } from "src/graphql/query/auctions/getAuctions";
 
 // export async function getStaticProps() {
 //   return { props: { className: "template-color-1" } };
@@ -48,29 +49,32 @@ Collectibles.getInitialProps = async (ctx) => {
   let routerQuery = ctx.query.collection;
 
   let filters = {
-    id: {
-      notNull: true
+    status: {
+      eq: "Live"
     }
   };
 
-  if (ctx.query.collection) {
-    filters.collection = {
-      name: {
-        in: routerQuery
-      }
-    };
-  }
+  // if (ctx.query.collection) {
+  //   filters.collectibles = {
+  //     collections: {
+  //       name: {
+  //         in: routerQuery
+  //       }
+  //     }
+  //   };
+  // }
   const { data } = await client.query({
-    query: ALL_COLLECTIBLE_LISTDATA_QUERY,
+    query: ALL_AUCTION_DATA_QUERY,
     variables: {
       filter: filters,
       pagination: {
         pageSize: 6
-      },
-      sort: ["createdAt:desc"]
+      }
+      // sort: ["createdAt:desc"]
     },
     fetchPolicy: "network-only"
   });
+  console.log("data", data);
   return {
     className: "template-color-1",
     dataCollectibles: data.collectibles

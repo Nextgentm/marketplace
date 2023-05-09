@@ -9,7 +9,6 @@ const CategoryFilter = ({ categories, onChange, products, collectionPage, router
   // let checkisthisvalue = "Collect12;
 
   const handleClick = (e) => {
-    console.log("e-=-=-==-=-=-=-=", e);
     const { value, checked } = e.target;
     setIsCheck([...isCheck, value]);
     if (!checked) {
