@@ -6,7 +6,7 @@ const DetailsTabContent = ({ owner, properties, tags, supply, erc1155MyBalance }
   <div className="rn-pd-bd-wrapper mt--20">
     {/* <TopSeller name={owner.name} total_sale={owner.total_sale} slug={owner.slug} image={owner.image} /> */}
     <div className="row">
-      <span>NFT Owner : {owner}</span>
+      {supply < 1 && <span>NFT Owner : {owner}</span>}
       {erc1155MyBalance > 0 && <span>Your Balance : {erc1155MyBalance}</span>}
       <span>Total Supply : {supply}</span>
     </div>
