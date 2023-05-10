@@ -184,7 +184,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       });
       toast.success("Auction created successfully");
       setShowAuctionInputModel(false);
-      router.push(`/auction/${res.data.id}`);
+      router.push(`/collectible/${product.slug}/auction/${res.data.id}`);
     } catch (error) {
       toast.error("Error while creating auction");
       console.log(error);
@@ -311,7 +311,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         });
 
         toast.success("NFT transfered succesfully");
-        // router.reload();
+        router.reload();
         setShowTransferModal(false);
       } else {
         toast.error("Invalid address");

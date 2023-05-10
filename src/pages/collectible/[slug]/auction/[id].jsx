@@ -7,7 +7,7 @@ import Breadcrumb from "@components/breadcrumb";
 import AuctionDetailsArea from "@containers/auction-details";
 import AuctionArea from "@containers/auction-area";
 import { shuffleArray } from "@utils/methods";
-import { GET_AUCTION_DATA_BY_ID_QUERY, ALL_AUCTION_LISTDATA_QUERY } from "src/graphql/query/auctions/getAuctions";
+import { GET_AUCTION_DATA_BY_ID_QUERY, ALL_AUCTION_LISTDATA_QUERY } from "../../../../graphql/query/auctions/getAuctions";
 import client from "@utils/apollo-client";
 import strapi from "@utils/strapi";
 

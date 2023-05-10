@@ -33,7 +33,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
   useEffect(() => {
   }, [updatedCollectible]);
 
-  async function completeAuction() {
+  async function completeAuction(quantity) {
     updateCollectible({
       variables: {
         "data": {
@@ -52,8 +52,9 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
       }
     });
     //update auction
-    const res = await strapi.create("auctions", auction.data.id, {
-      status: "Completed",
+    const res = await strapi.update("auctions", auction.data.id, {
+      status: quantity == 0 ? "Completed" : "Live",
+      remainingQuantity: quantity
     });
   }
 
@@ -79,47 +80,56 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
 
       // Pull the deployed contract instance
       const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
-
-
-      const transaction = await tradeContract.executeBid([
-        seller,
-        buyer,
-        erc20Address,
-        nftAddress,
-        nftType,
-        unitPrice,
-        skipRoyalty,
-        amount,
-        tokenId,
-        tokenURI,
-        supply,
-        royaltyFee,
-        qty
-      ]);
-      const receipt = await transaction.wait();
-      const transactionHash = receipt.transactionHash;
-      if (receipt) {
-        completeAuction();
-        createOwnerHistory({
-          variables: {
-            data: {
-              auction: auction.data.id,
-              collectible: product.id,
-              event: "TimeAuction",
-              fromWalletAddress: seller,
-              quantity: qty,
-              toWalletAddress: buyer,
-              transactionHash: transactionHash
+      const tokenContract = new walletData.ethers.Contract(erc20Address, TokenContract.abi, signer);
+      const userBalance = await tokenContract.balanceOf(buyer);
+      if (amount > parseInt(userBalance._hex)) {
+        toast.error("Bidder not have enough balance");
+        return;
+      }
+      try {
+        const transaction = await tradeContract.executeBid([
+          seller,
+          buyer,
+          erc20Address,
+          nftAddress,
+          nftType,
+          unitPrice,
+          skipRoyalty,
+          amount,
+          tokenId,
+          tokenURI,
+          supply,
+          royaltyFee,
+          qty
+        ]);
+        const receipt = await transaction.wait();
+        const transactionHash = receipt.transactionHash;
+        if (receipt) {
+          completeAuction(auction.data.remainingQuantity - qty);
+          createOwnerHistory({
+            variables: {
+              data: {
+                auction: auction.data.id,
+                collectible: product.id,
+                event: "TimeAuction",
+                fromWalletAddress: seller,
+                quantity: qty,
+                toWalletAddress: buyer,
+                transactionHash: transactionHash
+              }
             }
-          }
-        });
+          });
+        }
+        if (auction.data.sellType === "FixedPrice") {
+          toast.success("NFT purchased successfully!");
+        } else {
+          toast.success("Bidding Accepted successfully!");
+        }
+        router.reload();
+      } catch (error) {
+        toast.error(error.reason);
+        console.log(error);
       }
-      if (auction.data.sellType === "FixedPrice") {
-        toast.success("NFT purchased successfully!");
-      } else {
-        toast.success("Bidding Accepted successfully!");
-      }
-      // router.reload();
     } catch (error) {
 
     }
@@ -146,7 +156,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
               <>
                 {eth} {auction.data?.priceCurrency} By
                 {/* {product.auction.data.priceCurrency} by {name} */}
-                {name && <span className="count-number">{name.substr(0, 5) + "..." + name.substr(-5)}</span>}
+                {name && <span className="count-number">{walletData.account == name ? "You" : name.substr(0, 5) + "..." + name.substr(-5)}</span>}
               </>
             )}
             {/* <Anchor path={path}>{name}</Anchor> */}
@@ -154,8 +164,8 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
           {time && <span className="count-number">{new Date(time).toLocaleString()}</span>}
         </div>
         <div className="ms-4 accept-bid-button-div">
-          {product.owner === walletData.account && (
-            <Button size="lg" onClick={acceptBid}>
+          {product.owner === walletData.account && auction.data.status == "Live" && (
+            <Button size="lg" onClick={() => acceptBid()}>
               {" "}
               Accept Bid{" "}
             </Button>
