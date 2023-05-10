@@ -17,6 +17,7 @@ const ProductFilter = ({
   categories,
   collectionPage,
   levels,
+  auctionfilter,
   inputcheck,
   products,
   routerQuery,
@@ -42,7 +43,7 @@ const ProductFilter = ({
       />
     )} */}
     <PriceSort onChange={sortHandler} value={sort} />
-    <SalesTypeSort onChange={sortHandler} value={sort} />
+    <SalesTypeSort onChange={auctionfilter} value={sort} />
     {/* <RatingFilter onChange={filterHandler} /> */}
     <PriceRangeFilter values={inputs.price} onChange={priceHandler} />
   </div>
