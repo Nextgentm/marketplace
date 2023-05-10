@@ -153,18 +153,18 @@ const UserDropdown = () => {
           return;
         }
       }
-      const { chainId } = await provider.getNetwork();
-      let _chainId = "0x" + chainId.toString(16);
-      if (isValidNetwork(_chainId)) {
-        setCurrentNetwork(_chainId);
-      } else {
-        const selctedChainId = document.getElementById("current-wallet-network").value;
-        if (selctedChainId) {
-          _setCurrentNetwork(selctedChainId);
-        }
-        toast.error("Network is not correct");
-        return;
-      }
+      // const { chainId } = await provider.getNetwork();
+      // let _chainId = "0x" + chainId.toString(16);
+      // if (isValidNetwork(_chainId)) {
+      //   setCurrentNetwork(_chainId);
+      // } else {
+      //   const selctedChainId = document.getElementById("current-wallet-network").value;
+      //   if (selctedChainId) {
+      //     _setCurrentNetwork(selctedChainId);
+      //   }
+      //   toast.error("Network is not correct");
+      //   return;
+      // }
       const signer = provider.getSigner();
       const accounts = await provider.send("eth_requestAccounts", []);
       const balance = await provider.getBalance(accounts[0]);
@@ -216,7 +216,7 @@ const UserDropdown = () => {
     router.push("/");
   };
 
-  const handleConnectWalletSubmit = (event) => {
+  const handleConnectWalletSubmit = async (event) => {
     event.preventDefault();
     let networkids = event.target.networkid;
     let network = "";
@@ -229,6 +229,7 @@ const UserDropdown = () => {
     if (network) {
       const chainId = getChainIdByNetworkName(network);
       if (chainId) {
+        await switchNetwork(chainId);
         _setCurrentNetwork(chainId);
       }
       let walletids = event.target.walletid;
@@ -245,7 +246,7 @@ const UserDropdown = () => {
     }
   };
 
-  const handleChangeNetworkSubmit = (event) => {
+  const handleChangeNetworkSubmit = async (event) => {
     event.preventDefault();
     let networkids = event.target.networkid;
     let network = "";
@@ -258,6 +259,7 @@ const UserDropdown = () => {
     if (network) {
       const chainId = getChainIdByNetworkName(network);
       if (chainId) {
+        await switchNetwork(chainId);
         _setCurrentNetwork(chainId);
         setShowChangeNetworkModel(false);
       }
