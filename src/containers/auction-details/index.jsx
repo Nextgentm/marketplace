@@ -110,7 +110,8 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
                     highest_bid={{
                       amount: auction?.data?.bidPrice,
                       priceCurrency: auction?.data?.priceCurrency,
-                      quantity: auction?.data?.quantity
+                      quantity: auction?.data?.quantity,
+                      remainingQuantity: auction?.data?.remainingQuantity
                     }}
                     auction_date={auction?.data?.endTimeStamp}
                     product={auction?.data?.collectible.data}

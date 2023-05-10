@@ -29,7 +29,7 @@ const AuctionsTabContent = ({ auctions, productSlug }) => {
             <tr key={index}>
               <td>{item.sellType == "Bidding" ? "Bidding Auction" : "Fixed Price"}</td>
               <td>{walletData.account == item?.walletAddress ? "You" : walletAddressShortForm(item?.walletAddress)}</td>
-              <td>{(item.bidPrice / item.quantity)} {item?.priceCurrency}</td>
+              <td>{item.bidPrice} {item?.priceCurrency}</td>
               <td>{item?.remainingQuantity}</td>
               <td>
                 {item?.remainingQuantity > 0 && item?.status == "Live" ?

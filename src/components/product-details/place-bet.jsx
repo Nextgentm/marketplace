@@ -222,33 +222,49 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         <div className="rn-bet-create">
           <div className="bid-list winning-bid">
             <h6 className="title">{auction.data.sellType == "Bidding" ? "Auction Details" : "Buy Now"}</h6>
-            {auction.data.sellType == "Bidding" && (
-              <div className="top-seller-inner-one">
-                <div className="top-seller-wrapper">
-                  {highest_bid?.bidder?.image?.src && (
-                    <div className="thumbnail">
-                      <Anchor path={highest_bid?.bidder?.slug}>
-                        <Image src={highest_bid?.bidder?.image?.src} alt="Nft_Profile" width={44} height={44} />
-                      </Anchor>
-                    </div>
-                  )}
+            <div className="top-seller-inner-one">
+              <div className="top-seller-wrapper">
+                {highest_bid?.bidder?.image?.src && (
+                  <div className="thumbnail">
+                    <Anchor path={highest_bid?.bidder?.slug}>
+                      <Image src={highest_bid?.bidder?.image?.src} alt="Nft_Profile" width={44} height={44} />
+                    </Anchor>
+                  </div>
+                )}
 
+                {auction.data.sellType == "Bidding" ?
                   <div className="top-seller-content">
                     <span className="count-number">
-                      {highest_bid?.amount ? "Bid Amount :" + highest_bid?.amount : ""}
+                      {highest_bid?.amount ? "Bid Amount : " + highest_bid?.amount : ""}
                       {highest_bid?.priceCurrency}
                     </span>
+                    {highest_bid?.quantity > 1 &&
+                      <span className="count-number">
+                        {highest_bid?.remainingQuantity ? "Remaining Quantity : " + highest_bid?.remainingQuantity : ""}
+                      </span>
+                    }
+                  </div> :
+                  <div className="top-seller-content">
                     <span className="count-number">
-                      {highest_bid?.quantity ? "Quantity :" + highest_bid?.quantity : ""}
+                      {highest_bid?.amount ? "Price : " + highest_bid?.amount : ""}
+                      {highest_bid?.priceCurrency}
                     </span>
-                  </div>
-                </div>
+                    {highest_bid?.quantity > 1 &&
+                      <span className="count-number">
+                        {highest_bid?.remainingQuantity ? "Remaining Quantity : " + highest_bid?.remainingQuantity : ""}
+                      </span>
+                    }
+                  </div>}
               </div>
-            )}
+            </div>
           </div>
           {auction_date && (
             <div className="bid-list left-bid">
-              <h6 className="title">{new Date() < new Date(auction_date) ? "Auction will ended in" : "Auction has ended"}</h6>
+              <h6 className="title">{new Date() < new Date(auction_date) ?
+                (auction.data.sellType == "Bidding" ? "Auction will ended in" : "Sale will ended in")
+                :
+                (auction.data.sellType == "Bidding" ? "Auction has ended" : "Sale has ended")
+              }</h6>
               <Countdown className="mt--15" date={auction_date} />
             </div>
           )}
