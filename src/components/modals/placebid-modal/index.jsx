@@ -74,7 +74,7 @@ const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, handl
             </div>
             <div className="bit-continue-button">
               <Button size="medium" type="submit" fullwidth>
-                Place a bid
+                {supply > 1 ? "Buy Now" : "Place a bid"}
               </Button>
               <Button color="primary-alta" size="medium" className="mt--10" onClick={handleModal}>
                 Cancel
