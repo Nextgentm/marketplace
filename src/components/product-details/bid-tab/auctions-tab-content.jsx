@@ -32,9 +32,11 @@ const AuctionsTabContent = ({ auctions, productSlug }) => {
               <td>{(item.bidPrice / item.quantity)} {item?.priceCurrency}</td>
               <td>{item?.remainingQuantity}</td>
               <td>
-                <Anchor target="_self" path={productSlug + "/auction/" + item.id}>
-                  <Button>Buy</Button>
-                </Anchor>
+                {item?.remainingQuantity > 0 && item?.status == "Live" ?
+                  <Anchor target="_self" path={productSlug + "/auction/" + item.id}>
+                    <Button>Buy</Button>
+                  </Anchor> :
+                  <></>}
               </td>
             </tr>
           ))}
