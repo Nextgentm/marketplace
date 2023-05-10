@@ -639,6 +639,11 @@ const CreateNewArea = ({ className, space }) => {
                           <Button color="primary-alta" onClick={addPropertyPopup}>
                             Add Properties
                           </Button>
+                          {formValues?.map((element, index) => (
+                            element.properties_name || element.properties_type ?
+                              <span key={index}> [<b>{element.properties_name}</b>: {element.properties_type} ],</span>
+                              : <></>
+                          ))}
                         </div>
                       </div>
                     </div>

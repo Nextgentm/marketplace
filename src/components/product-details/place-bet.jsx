@@ -100,12 +100,14 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
       // const allowanceAmount = parseInt(allowance._hex, 16);
       const requireAllowanceAmount = "" + parseInt(convertedPrice * quantity);
 
-      // if (allowanceAmount < parseInt(requireAllowanceAmount)) {
-      // approve nft first
+      const userBalance = await tokenContract.balanceOf(walletData.account);
+      if (parseInt(requireAllowanceAmount) > parseInt(userBalance._hex, 16)) {
+        toast.error("Amount is greater than your current balance");
+        return;
+      }
       const transaction = await tokenContract.increaseAllowance(TransferProxy.address, requireAllowanceAmount);
       const receipt = await transaction.wait();
 
-      // }
       let isAccepted = false;
       if (auction.data.sellType == "FixedPrice") {
         const seller = auction.data.walletAddress;
@@ -178,7 +180,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
       } else {
         toast.success("Bidding placed successfully!");
       }
-      // router.reload();
+      router.reload();
     } catch (error) {
 
     }
