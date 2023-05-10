@@ -8,8 +8,10 @@ import { doLogOut } from "src/lib/user";
 import { useRouter } from "next/router";
 import { POLYGON_NETWORK_CHAIN_ID, NETWORKS } from "src/lib/constants";
 import { toast } from "react-toastify";
-import { currenyOfCurrentNetwork, getNetworkNameByChainId, isValidNetwork, switchNetwork } from "src/lib/BlokchainHelperFunctions";
+import { currenyOfCurrentNetwork, getNetworkNameByChainId, getChainIdByNetworkName, isValidNetwork, switchNetwork } from "src/lib/BlokchainHelperFunctions";
 import { walletAddressShortForm } from "../../utils/blockchain";
+import ConnectWallets from "@components/modals/connect-wallets";
+import SwitchNetwork from "@components/modals/switch-network";
 
 const UserDropdown = () => {
   const router = useRouter();
@@ -21,6 +23,8 @@ const UserDropdown = () => {
     isAuthenticatedCryptoWallet,
     setIsAuthenticatedCryptoWallet
   } = useContext(AppData);
+  const [showConnectWalletModel, setShowConnectWalletModel] = useState(false);
+  const [showChangeNetworkModel, setShowChangeNetworkModel] = useState(false);
   const [ethBalance, setEthBalance] = useState("");
   // For acount change event handle using useRef
   const [account, _setAccount] = useState("");
@@ -60,7 +64,7 @@ const UserDropdown = () => {
         return;
       }
     } catch (error) {
-      console.log(error);
+
     }
   }
 
@@ -76,17 +80,17 @@ const UserDropdown = () => {
   useEffect(() => {
     /* code for runtime metamask events */
     const handleAccountsChanged = (accounts) => {
-      // console.log("accountsChanged", accounts);
+
       if (accounts.length > 0) {
         setAccount(accounts[0]);
       } else {
         onDisconnectWallet();
-        console.log("No accounts connected");
+
       }
     };
 
     const handleChainChanged = (_hexChainId) => {
-      // console.log(_hexChainId);
+
       if (isValidNetwork(_hexChainId)) {
         setCurrentNetwork(_hexChainId);
         updateBalance();
@@ -177,6 +181,7 @@ const UserDropdown = () => {
       // console.log(walletData);
       setEthBalance(getEthBalance);
       setIsAuthenticatedCryptoWallet(walletData.isConnected);
+      setShowConnectWalletModel(false);
       // }
     } catch (err) {
       console.log(err);
@@ -211,6 +216,55 @@ const UserDropdown = () => {
     router.push("/");
   };
 
+  const handleConnectWalletSubmit = (event) => {
+    event.preventDefault();
+    let networkids = event.target.networkid;
+    let network = "";
+    for (let i = 0; i < networkids.length; i++) {
+      if (networkids[i].checked) {
+        network = networkids[i].value;
+      }
+    }
+    console.log(network);
+    if (network) {
+      const chainId = getChainIdByNetworkName(network);
+      if (chainId) {
+        _setCurrentNetwork(chainId);
+      }
+      let walletids = event.target.walletid;
+      let wallet = "";
+      for (let i = 0; i < walletids.length; i++) {
+        if (walletids[i].checked) {
+          wallet = walletids[i].value;
+        }
+      }
+      // console.log(wallet);
+      if (wallet == "MetaMask") {
+        onConnect();
+      }
+    }
+  };
+
+  const handleChangeNetworkSubmit = (event) => {
+    event.preventDefault();
+    let networkids = event.target.networkid;
+    let network = "";
+    for (let i = 0; i < networkids.length; i++) {
+      if (networkids[i].checked) {
+        network = networkids[i].value;
+      }
+    }
+    console.log(network);
+    if (network) {
+      const chainId = getChainIdByNetworkName(network);
+      if (chainId) {
+        _setCurrentNetwork(chainId);
+        setShowChangeNetworkModel(false);
+      }
+      // console.log(wallet);
+    }
+  };
+
   return (
     <div className="icon-box">
       <Anchor path="/author">
@@ -230,16 +284,16 @@ const UserDropdown = () => {
           </span>
         </div>
         {/* Select network */}
-        <div className="setting-option header-btn">
+        {/* <div className="setting-option header-btn">
           <select id="current-wallet-network" onChange={(event) => _setCurrentNetwork(event.target.value)} defaultValue={"0x5"} value={currentNetwork}>
             {Object.keys(NETWORKS).map(element =>
               <option value={NETWORKS[element]} key={element}>{element}</option>
             )}
           </select>
-        </div>
+        </div> */}
         {!walletData.isConnected && (
           <div className="setting-option header-btn">
-            <Button color="primary" className="connectBtn" onClick={() => onConnect()} fullwidth={true}>
+            <Button color="primary" className="connectBtn" onClick={() => setShowConnectWalletModel(true)} fullwidth={true}>
               Wallet Connect
             </Button>
           </div>
@@ -263,6 +317,11 @@ const UserDropdown = () => {
                   <div className="button" />
                 </li>
               </ul>
+            </div>
+            <div className="add-fund-button mt--20 pb--20">
+              <Button className="w-100" onClick={() => setShowChangeNetworkModel(true)}>
+                Change network
+              </Button>
             </div>
             <div className="add-fund-button mt--20 pb--20">
               <Button className="w-100" onClick={onDisconnectWallet}>
@@ -289,6 +348,8 @@ const UserDropdown = () => {
           </li>
         </ul>
       </div>
+      <ConnectWallets show={showConnectWalletModel} handleModal={(prev) => setShowConnectWalletModel(!prev)} handleSubmit={handleConnectWalletSubmit} />
+      <SwitchNetwork show={showChangeNetworkModel} handleModal={(prev) => setShowChangeNetworkModel(!prev)} handleSubmit={handleChangeNetworkSubmit} />
     </div>
   );
 };

@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 const CategoryFilter = ({ categories, onChange, products, collectionPage, routerQuery }) => {
   const [isCheck, setIsCheck] = useState([]);
 
-  // console.log("routerQueryNEW", routerQuery);
   // const checkvalue = routerQuery?.join();
   // let checkisthisvalue = "Collect12;
 
@@ -26,8 +25,6 @@ const CategoryFilter = ({ categories, onChange, products, collectionPage, router
         <div className="content">
           {Object.entries(categories).map(([key, value]) => (
             <div className="nuron-form-check" key={key}>
-              {/* {console.log("key-*-*-*-*-*-*-*-*-*-*-**-*", key)} */}
-              {/* {console.log("key-*-*-*-value*-*-*-*-*-*-*-**-*", value)} */}
               <input type="checkbox" name="categories" value={key} onChange={handleClick} id={`cat-check-${key}`} />
               <label htmlFor={`cat-check-${key}`} className="text-capitalize">
                 {key} <span>({value})</span>
