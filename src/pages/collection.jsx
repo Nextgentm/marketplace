@@ -20,16 +20,34 @@ const Collection = (props) => (
 )
 
 Collection.getInitialProps = async () => {
-
   const data = await getCollection({
     filters: {
       collectibles: {
         auction: {
-          sellType: "Bidding"
+          status: "Live"
         }
       }
     },
-    populate: "*",
+    populate: {
+      collectibles: {
+        fields: "*",
+        populate: {
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          }
+        }
+      },
+      cover: {
+        fields: "*"
+      },
+      logo: {
+        fields: "*"
+      }
+    },
     pagination: {
       limit: 8,
       start: 0,
@@ -38,7 +56,7 @@ Collection.getInitialProps = async () => {
   });
   return {
     className: "template-color-1",
-    data: data,
+    data: data
   };
 };
 

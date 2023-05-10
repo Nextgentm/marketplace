@@ -22,7 +22,7 @@ const ExploreProductArea = ({
   const [collectionsData, setCollectionsData] = useState();
   const router = useRouter();
   const routerQuery = router?.query?.collection?.split();
-  const [onChangeValue, setOnChangeValue] = useState("newest");
+  const [onChangeValue, setOnChangeValue] = useState();
   const [onchangepriceRange, setonchangepriceRange] = useState({ price: [0, 100] });
   const [checkedCollection, setCheckedCollection] = useState([]);
   let categoriesold = [];
@@ -54,6 +54,11 @@ const ExploreProductArea = ({
         getCollectible({
           variables: {
             filter: {
+              auction: {
+                status: {
+                  eq: "Live"
+                }
+              },
               collection: {
                 name: {
                   in: checkedCollection
@@ -63,6 +68,7 @@ const ExploreProductArea = ({
                 }
               }
             },
+            sort: ["createdAt:desc"],
             pagination: { pageSize: 6 }
           }
         });
@@ -70,6 +76,11 @@ const ExploreProductArea = ({
         getCollectible({
           variables: {
             filter: {
+              auction: {
+                status: {
+                  eq: "Live"
+                }
+              },
               collection: {
                 name: {
                   in: routerQuery
@@ -79,14 +90,11 @@ const ExploreProductArea = ({
                 }
               }
             },
+            sort: ["createdAt:desc"],
             pagination: { pageSize: 6 }
           }
         });
       }
-    } else {
-      getCollectible({
-        variables: { pagination: { pageSize: 6 } }
-      });
     }
   }, [router.query.collection]);
 
@@ -99,7 +107,13 @@ const ExploreProductArea = ({
   }, [collectiblesFilters, error]);
 
   const getCollectionPaginationRecord = (page) => {
-    let filters = {};
+    let filters = {
+      auction: {
+        status: {
+          eq: "Live"
+        }
+      }
+    };
 
     if (router.query.collection) {
       filters.collection = {
@@ -121,6 +135,7 @@ const ExploreProductArea = ({
     getCollectible({
       variables: {
         filters: filters,
+        sort: ["createdAt:desc"],
         pagination: { page, pageSize: 6 }
       }
     });
@@ -128,15 +143,18 @@ const ExploreProductArea = ({
 
   const getCollectibleSortData = (onchangeSort) => {
     setOnChangeValue(onchangeSort);
-    let filters = {};
+    let filters = {
+      auction: {
+        status: {
+          eq: "Live"
+        }
+      }
+    };
 
     if (router.query.collection) {
       filters.collection = {
         name: {
           in: routerQuery
-        },
-        id: {
-          notNull: true
         }
       };
     }
@@ -154,7 +172,7 @@ const ExploreProductArea = ({
         variables: {
           filter: filters,
           pagination: pagination,
-          sort: ["createdAt:desc"]
+          sort: ["createdAt:asc"]
         }
       });
     }
@@ -162,7 +180,7 @@ const ExploreProductArea = ({
       getCollectible({
         variables: {
           filter: filters,
-          sort: ["createdAt:asc"],
+          sort: ["createdAt:desc"],
           pagination: pagination
         }
       });
@@ -185,21 +203,56 @@ const ExploreProductArea = ({
         }
       });
     }
-    if (onchangeSort == "Fixed-price") {
-      getCollectible({
-        variables: {
-          filter: filters,
-          sort: ["createdAt:asc"],
-          pagination: pagination
+
+  };
+
+  const getauctionFilterData = (onchangefilter) => {
+    console.log("onchangefilteronchangefilter", onchangefilter)
+    setOnChangeValue(onchangefilter);
+
+    let filters = {
+    };
+
+    if (router.query.collection) {
+      filters.collection = {
+        name: {
+          in: routerQuery
         }
-      });
+      };
     }
-    if (onchangeSort == "Auction") {
+    if (checkedCollection.length) {
+      filters.collection = {
+        name: {
+          in: checkedCollection
+        }
+      };
+    }
+    let pagination = { pageSize: 6 };
+    if (onchangefilter == "Fixed-price") {
       getCollectible({
         variables: {
           filter: {
             ...filters,
             auction: {
+              status: {
+                eq: "Live"
+              }
+            }
+          },
+          sort: ["createdAt:asc"],
+          pagination: pagination
+        }
+      });
+    }
+    if (onchangefilter == "Auction") {
+      getCollectible({
+        variables: {
+          filter: {
+            ...filters,
+            auction: {
+              status: {
+                eq: "Live"
+              },
               sellType: {
                 in: "Bidding"
               }
@@ -210,10 +263,15 @@ const ExploreProductArea = ({
         }
       });
     }
-  };
 
+  }
   const getCollectibleFilterData = (onchangefilter) => {
     let filters = {
+      auction: {
+        status: {
+          eq: "Live"
+        }
+      },
       price: {
         between: onchangefilter
       }
@@ -243,9 +301,16 @@ const ExploreProductArea = ({
       });
   };
   const getCollectiblecheckData = (onchangefilter) => {
-    console.log("onchangefilter-*-*-*-*-*-*", onchangefilter);
-    setCheckedCollection(onchangefilter);
-    let filters = {};
+    console.log("onchangedata", onchangefilter)
+    setCheckedCollection(onchangefilter)
+
+    let filters = {
+      auction: {
+        status: {
+          eq: "Live"
+        }
+      }
+    };
     if (router.query.collection) {
       filters.collection = {
         name: {
@@ -253,13 +318,13 @@ const ExploreProductArea = ({
         }
       };
     }
-    if (checkedCollection.length) {
-      filters.collection = {
-        name: {
-          in: checkedCollection
-        }
-      };
-    }
+    // if (checkedCollection.length) {
+    //   filters.collection = {
+    //     name: {
+    //       in: checkedCollection
+    //     }
+    //   };
+    // }
     if (onchangefilter?.length <= 0)
       getCollectible({
         variables: {
@@ -267,10 +332,11 @@ const ExploreProductArea = ({
           pagination: { pageSize: 6 }
         }
       });
-    else {
+    else if (onchangefilter) {
       getCollectible({
         variables: {
           filter: {
+            ...filters,
             collection: {
               name: {
                 in: onchangefilter
@@ -299,6 +365,7 @@ const ExploreProductArea = ({
               categories={categoriesold}
               checkHandler={getCollectiblecheckData}
               priceHandler={getCollectibleFilterData}
+              auctionfilter={getauctionFilterData}
               collectionPage={collectionPage}
               products={products}
               routerQuery={routerQuery}
