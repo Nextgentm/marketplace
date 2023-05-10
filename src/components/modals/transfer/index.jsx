@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
 
-const TransferPopupModal = ({ show, handleModal, product, handleSubmit }) => {
+const TransferPopupModal = ({ show, handleModal, supply, handleSubmit }) => {
 
   return (
     <Modal className="rn-popup-modal placebid-modal-wrapper" show={show} onHide={handleModal} centered>
@@ -26,7 +26,14 @@ const TransferPopupModal = ({ show, handleModal, product, handleSubmit }) => {
                 </div>
               </div>
 
-              <div className="bid-content-mid" />
+              {supply > 1 && (
+                <div className="bid-content-mid">
+                  <div className="row">
+                    <label htmlFor="quantity">Quantity</label>
+                    <input type="number" id="quantity" min="1" placeholder="e.g. 10" />
+                  </div>
+                </div>
+              )}
             </div>
             <div className="bit-continue-button">
               <Button size="medium" type="submit" fullwidth>

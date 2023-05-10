@@ -49,25 +49,25 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
     // console.log(updatedCollectible);
   }, [updatedCollectible]);
 
-  // useEffect(() => {
-  //   if (walletData.isConnected) {
-  //     if (walletData.account) {
-  //       if (product.collection.data.collectionType === "Multiple") {
-  //         // check balance of userwallet
-  //         const signer = walletData.provider.getSigner();
-  //         const contractAddress = product.collection.data.contractAddress1155;
-  //         getERC1155Balance(walletData.ethers, walletData.account, contractAddress, product.nftID, signer).then((balance) => {
-  //           setERC1155MyBalance(balance);
-  //         }).catch((error) => { console.log("Error while factory call " + error) });
-  //       }
-  //     } else {
-  //       setERC1155MyBalance(0);
-  //     }
-  //   } else {
-  //     setERC1155MyBalance(0);
-  //     // toast.error("Please connect wallet first");
-  //   }
-  // }, [walletData])
+  useEffect(() => {
+    if (walletData.isConnected) {
+      if (walletData.account) {
+        if (auction?.data?.collectible.data.collection.data.collectionType === "Multiple") {
+          // check is Admin
+          const signer = walletData.provider.getSigner();
+          const contractAddress = auction?.data?.collectible.data?.collection?.data?.contractAddress1155;
+          getERC1155Balance(walletData.ethers, walletData.account, contractAddress, auction?.data?.collectible.data.nftID, signer).then((balance) => {
+            setERC1155MyBalance(balance);
+          }).catch((error) => { console.log("Error while factory call " + error) });
+        }
+      } else {
+        setERC1155MyBalance(0);
+      }
+    } else {
+      setERC1155MyBalance(0);
+      // toast.error("Please connect wallet first");
+    }
+  }, [walletData])
 
   return (
     <div className={clsx("product-details-area", space === 1 && "rn-section-gapTop", className)}>
@@ -84,7 +84,7 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
               <span className="bid">
                 Price{" "}
                 <span className="price">
-                  {auction?.data?.status == "Live" ? (auction?.data?.bidPrice / auction?.data?.quantity) : auction?.data?.collectible.data.price}
+                  {auction?.data?.status == "Live" ? auction?.data?.bidPrice : auction?.data?.collectible.data.price}
                   {auction?.data?.collectible.data.symbol}
                 </span>
               </span>

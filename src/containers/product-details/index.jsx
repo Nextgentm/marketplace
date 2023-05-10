@@ -143,7 +143,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         const approved = await contract1155.isApprovedForAll(walletData.account, TradeContract.address);
         // console.log(approved);
         if (!approved) {
-          const transaction = await contract1155.setApprovalForAll(TradeContract.address, true);
+          const transaction = await contract1155.setApprovalForAll(TransferProxy.address, true);
           const receipt = await transaction.wait();
         }
       }
@@ -253,6 +253,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     }
     // transfer NFT to other user
     const receiver = event.target.receiver.value;
+    const quantity = event.target.quantity?.value ? event.target.quantity?.value : 1;
     // console.log(receiver);
     try {
       if (validateInputAddresses(receiver)) {
@@ -282,28 +283,28 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
             walletData.account,
             receiver,
             product.nftID,
-            product.supply,
+            quantity,
             []
           );
           const receipt = await transaction.wait();
           console.log(receipt);
           transactionHash = receipt.transactionHash;
         }
-        updateCollectible({
-          variables: {
-            "data": {
-              "owner": receiver.toLowerCase()
-            },
-            "updateCollectibleId": product.id
-          }
-        });
+        // updateCollectible({
+        //   variables: {
+        //     "data": {
+        //       "owner": receiver.toLowerCase()
+        //     },
+        //     "updateCollectibleId": product.id
+        //   }
+        // });
         createOwnerHistory({
           variables: {
             data: {
               collectible: product.id,
               event: "Transferred",
               fromWalletAddress: walletData.account,
-              quantity: product.supply,
+              quantity: quantity,
               toWalletAddress: receiver.toLowerCase(),
               transactionHash: transactionHash
             }
@@ -450,6 +451,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       <TransferPopupModal
         show={showTransferModal}
         handleModal={handleShowTransferModal}
+        supply={product?.supply}
         handleSubmit={handleSubmitTransfer}
       />
     </div>
