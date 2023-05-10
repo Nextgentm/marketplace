@@ -27,7 +27,7 @@ const AuctionArea = ({ space, className, data }) => (
               slug={auction.id}
               collectionName={auction.collectible?.data?.collection?.data?.name}
               latestBid={auction.latestBid || "N/A"}
-              price={(auction.bidPrice / auction.quantity) || "-"}
+              price={auction.bidPrice || "-"}
               symbol={auction.priceCurrency || ""}
               likeCount={auction.likeCount}
               auction_date={auction.auction_date}
