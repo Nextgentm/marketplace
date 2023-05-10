@@ -19,7 +19,7 @@ import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/con
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
 import TransferPopupModal from "@components/modals/transfer";
-import { validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
+import { getERC1155Balance, validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
 
 import ERC721Contract from "../../contracts/json/erc721.json";
 import ERC1155Contract from "../../contracts/json/erc1155.json";
@@ -42,6 +42,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   const router = useRouter();
+  const [erc1155MyBalance, setERC1155MyBalance] = useState(0);
   const [showDirectSalesModal, setShowDirectSalesModal] = useState(false);
   const handleDirectSaleModal = () => {
     setShowAuctionInputModel(!showDirectSalesModal); // close model close on sale buttons option
@@ -65,6 +66,26 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     // }
     // console.log(updatedCollectible);
   }, [updatedCollectible]);
+
+  useEffect(() => {
+    if (walletData.isConnected) {
+      if (walletData.account) {
+        if (product.collection.data.collectionType === "Multiple") {
+          // check is Admin
+          const signer = walletData.provider.getSigner();
+          const contractAddress = product.collection.data.contractAddress1155;
+          getERC1155Balance(walletData.ethers, walletData.account, contractAddress, product.nftID, signer).then((balance) => {
+            setERC1155MyBalance(balance);
+          }).catch((error) => { console.log("Error while factory call " + error) });
+        }
+      } else {
+        setERC1155MyBalance(0);
+      }
+    } else {
+      setERC1155MyBalance(0);
+      // toast.error("Please connect wallet first");
+    }
+  }, [walletData])
 
   async function switchNetwork(chainId) {
     if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
@@ -119,9 +140,12 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         // Pull the deployed contract instance
         const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
 
-        const transaction = await contract1155.setApprovalForAll(TradeContract.address, true);
-        const receipt = await transaction.wait();
-
+        const approved = await contract1155.isApprovedForAll(walletData.account, TradeContract.address);
+        // console.log(approved);
+        if (!approved) {
+          const transaction = await contract1155.setApprovalForAll(TradeContract.address, true);
+          const receipt = await transaction.wait();
+        }
       }
       return true;
     } catch (error) {
@@ -141,11 +165,13 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         bidPrice: data.price,
         priceCurrency: data.currency,
         sellType: data.sellType,
+        status: "Live",
         startTimestamp: data.startTimestamp,
         endTimeStamp: data.endTimeStamp,
         collectible: product.id,
         paymentToken: data.paymentToken,
-        quantity: data.quantity ? data.quantity : 1
+        quantity: data.quantity ? data.quantity : 1,
+        remainingQuantity: data.quantity ? data.quantity : 1,
       });
       console.log(res);
       updateCollectible({
@@ -158,7 +184,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       });
       toast.success("Auction created successfully");
       setShowAuctionInputModel(false);
-      router.reload();
+      router.push(`/auction/${res.data.id}`);
     } catch (error) {
       toast.error("Error while creating auction");
       console.log(error);
@@ -285,7 +311,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         });
 
         toast.success("NFT transfered succesfully");
-        router.reload();
+        // router.reload();
         setShowTransferModal(false);
       } else {
         toast.error("Invalid address");
@@ -310,7 +336,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
               <span className="bid">
                 Price{" "}
                 <span className="price">
-                  {product.price}
+                  {product.putOnSale ? (product.auction?.data[0]?.bidPrice / product.auction?.data[0]?.quantity) : product.price}
                   {product.symbol}
                 </span>
               </span>
@@ -376,25 +402,30 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
 
                   <div className="rn-bid-details">
                     <BidTab
-                      bids={product.putOnSale && product.auction.data.sellType == "Bidding" ? bids : null}
+                      // bids={product.putOnSale && product.auction.data[0].sellType == "Bidding" ? bids : null}
                       owner={product?.owner}
                       product={product}
+                      supply={product.supply}
+                      auction={{ data: product.auction?.data[0] }}
+                      allAuctions={product.auction.data}
                       properties={product?.collectibleProperties?.data}
                       tags={product?.tags}
                       history={product?.owner_histories?.data}
+                      erc1155MyBalance={erc1155MyBalance}
                     />
-                    {product.putOnSale && (
+                    {/* {product.putOnSale && (
                       <PlaceBet
                         highest_bid={{
-                          amount: product.auction?.data?.bidPrice,
-                          priceCurrency: product.auction?.data?.priceCurrency,
-                          quantity: product.auction?.data?.quantity
+                          amount: product.auction?.data[0]?.bidPrice,
+                          priceCurrency: product.auction?.data[0]?.priceCurrency,
+                          quantity: product.auction?.data[0]?.quantity
                         }}
-                        auction_date={product.auction?.data?.endTimeStamp}
+                        auction_date={product.auction?.data[0]?.endTimeStamp}
                         product={product}
-                        isOwner={product.auction?.data?.walletAddress == walletData.account}
+                        auction={{ data: product.auction?.data[0] }}
+                        isOwner={product.auction?.data[0]?.walletAddress == walletData.account}
                       />
-                    )}
+                    )} */}
                   </div>
                 </>
               )}

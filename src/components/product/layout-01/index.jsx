@@ -33,6 +33,7 @@ const Product = ({
   authors,
   placeBid,
   collectionName,
+  isAuction,
   disableShareDropdown
 }) => {
   const [showBidModal, setShowBidModal] = useState(false);
@@ -44,7 +45,7 @@ const Product = ({
       <div className={clsx("product-style-one", !overlay && "no-overlay", placeBid && "with-placeBid")}>
         <div className="card-thumbnail">
           {image && (
-            <Anchor path={`/collectible/${slug}`}>
+            <Anchor target="_self" path={isAuction ? `${slug}` : `/collectible/${slug}`}>
               <Image
                 src={image?.src ? image.src : image}
                 alt={image?.alt || "NFT_portfolio"}
@@ -65,19 +66,19 @@ const Product = ({
             {authors?.map((client) => (
               <ClientAvatar key={client.name} slug={client.slug} name={client.name} image={client.image} />
             ))}
-            {bitCount > 0 && <Anchor className="more-author-text" path={`/collectible/${slug}`}>
+            {bitCount > 0 && <Anchor className="more-author-text" target="_self" path={isAuction ? `${slug}` : `/collectible/${slug}`}>
               {bitCount}+ Place Bit.
             </Anchor>}
           </div>
           {!disableShareDropdown && <ShareDropdown />}
         </div>
-        <Anchor path={`/collectible/${slug}`}>
+        <Anchor target="_self" path={isAuction ? `${slug}` : `/collectible/${slug}`}>
           <span className="product-name">{title}</span>
         </Anchor>
         {/* <span className="latest-bid">Highest bid {latestBid}</span> */}
         <span className="latest-bid">From {collectionName}</span><br />
         {supply > 1 && <span className="latest-bid">Supply {supply}</span>}
-        {likeCount && <ProductBid symbol={symbol} price={price} likeCount={likeCount} />}
+        <ProductBid symbol={symbol} price={price} likeCount={likeCount} />
       </div>
       <PlaceBidModal show={showBidModal} handleModal={handleBidModal} />
     </>

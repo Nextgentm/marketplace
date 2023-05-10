@@ -10,7 +10,7 @@ const NewsletterForm = () => {
   } = useForm();
   const onSubmit = (data) => {
     // eslint-disable-next-line no-console
-    console.log(data);
+
   };
   return (
     <form className="newsletter-wrapper" onSubmit={handleSubmit(onSubmit)}>

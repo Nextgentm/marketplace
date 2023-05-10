@@ -19,16 +19,28 @@ const ProductFilter = ({
   levels,
   inputcheck,
   products,
+  routerQuery,
   languages
 }) => (
   <div className="nu-course-sidebar">
     <SortWidget onChange={sortHandler} value={sort} />
-    <CategoryFilter
-      categories={inputcheck}
-      onChange={checkHandler}
-      collectionPage={collectionPage}
-      products={products}
-    />
+    {!collectionPage && (
+      <CategoryFilter
+        categories={inputcheck}
+        onChange={checkHandler}
+        collectionPage={collectionPage}
+        products={products}
+        routerQuery={routerQuery}
+      />
+    )}
+    {/* {!collectionPage && (
+      <CategoryFilter
+        categories={inputcheck}
+        onChange={checkHandler}
+        collectionPage={collectionPage}
+        products={products}
+      />
+    )} */}
     <PriceSort onChange={sortHandler} value={sort} />
     <SalesTypeSort onChange={sortHandler} value={sort} />
     {/* <RatingFilter onChange={filterHandler} /> */}

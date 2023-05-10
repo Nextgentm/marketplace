@@ -116,10 +116,10 @@
       "items": [
         {
           "id": 1,
-          "title": "Set up your wallet",
+          "title": "Why LootMogul Marketplace?",
           "path": "/connect",
-          "subtitle": "Step-01",
-          "description": "Powerful features and inclusions, which makes Nuron standout, easily customizable and scalable.",
+          "subtitle": "",
+          "description": "We are a prolific sports web3 gaming and e-commerce space working unitedly with a community of athletes and sports fans to build an online platform that allows ownership of sports specific unique digital assets.",
           "images": [
             {
               "src": "/images/icons/shape-7.png"
@@ -128,10 +128,10 @@
         },
         {
           "id": 2,
-          "title": "Create your collection",
+          "title": "Benefits of LootMogul Marketplace",
           "path": "/collection",
-          "subtitle": "Step-02",
-          "description": "A great collection of beautiful website templates for your need. Choose the best suitable template.",
+          "subtitle": "",
+          "description": "A functional marketplace offers brands and individuals multiple ways of making an income by creating and showcasing innovative collectibles, promoting brand & product, selling merchandise. And all of these with In Real Life utilities.",
           "images": [
             {
               "src": "/images/icons/shape-1.png"
@@ -140,10 +140,10 @@
         },
         {
           "id": 3,
-          "title": "Add your NFT's",
+          "title": "Sell, Collect & Share",
           "path": "/connect",
-          "subtitle": "Step-03",
-          "description": "We've made the template fully responsive, so it looks great on all devices: desktop, tablets and.",
+          "subtitle": "",
+          "description": "Curate from a wide range of exclusive LootMogul digital collectibles. Sell your collection or share it with your friends, family, or community. Digital Collectibles are the main functionality of this marketplace.",
           "images": [
             {
               "src": "/images/icons/shape-5.png"
@@ -152,10 +152,10 @@
         },
         {
           "id": 4,
-          "title": "Sell Your NFT's",
+          "title": "Wide range of Collection",
           "path": "/creator",
-          "subtitle": "Step-04",
-          "description": "I throw myself down among the tall grass by the stream as I lie close to the earth NFT's.",
+          "subtitle": "",
+          "description": "Browse through our range - Sporticon, Platina, Meta Avatars, Trading Cards, and others from our selection of digital collectibles. If you are a sports enthusiast, this section is for you. All our collectibles comes with In Real Life or In Game Play utilities.",
           "images": [
             {
               "src": "/images/icons/shape-6.png"

@@ -9,7 +9,7 @@ import { ProductType } from "@utils/types";
 import { shuffleArray } from "@utils/methods";
 import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 
-const AuthorProfileArea = ({ className, productData, isAdminWallet }) => (
+const AuthorProfileArea = ({ className, productData, allCreatedProductsData, allOnSaleProductsData, isAdminWallet }) => (
   <div className={clsx("rn-authore-profile-area", className)}>
     <TabContainer defaultActiveKey="nav-profile">
       <div className="container">
@@ -41,78 +41,77 @@ const AuthorProfileArea = ({ className, productData, isAdminWallet }) => (
 
         <TabContent className="tab-content rn-bid-content">
           <TabPane className="row d-flex g-5" eventKey="nav-home" id="nav-home">
-            {productData?.map(
-              (prod, index) =>
-                prod.attributes.putOnSale && (
-                  <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
-                    <Product
-                      // overlay //only onsale && not owner
-                      // placeBid //only onsale && not owner
-                      title={prod.attributes.name}
-                      slug={prod.attributes.slug}
-                      price={prod.attributes?.auction?.data?.attributes?.bidPrice}
-                      symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
-                      image={prod.attributes?.image?.data?.attributes?.url}
-                      collectionName={prod.attributes?.collection?.data?.attributes?.name}
-                      auction_date={prod.attributes?.auction?.data?.attributes?.endTimeStamp}
-                      bitCount={prod.attributes?.auction?.data?.attributes?.sellType == "Bidding" ? prod.attributes?.auction?.data?.attributes?.biddings?.data.length : 0}
-                      latestBid={prod.latestBid}
-                      likeCount={prod.likeCount}
-                      authors={prod.authors}
-                      owner={prod.attributes.owner}
-                    />
-                  </div>
-                )
+            {allOnSaleProductsData?.map(
+              (prod, index) => (
+                <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
+                  <Product
+                    // overlay //only onsale && not owner
+                    // placeBid //only onsale && not owner
+                    isAuction={true}
+                    title={prod.collectible.data.name}
+                    slug={"collectible/" + prod.collectible.data.slug + "/auction/" + prod.id}
+                    supply={prod.collectible.data.supply}
+                    price={(prod.bidPrice / prod.quantity)}
+                    symbol={prod.priceCurrency}
+                    image={prod.collectible.data?.image?.data?.url}
+                    collectionName={prod.collectible.data?.collection?.data?.name}
+                    auction_date={prod.endTimeStamp}
+                    bitCount={prod.sellType == "Bidding" ? prod.biddings?.data.length : 0}
+                    latestBid={prod.latestBid}
+                    likeCount={prod.likeCount}
+                    authors={prod.authors}
+                    owner={prod.owner}
+                  />
+                </div>
+              )
             )}
           </TabPane>
           <TabPane className="row g-5 d-flex" eventKey="nav-profile" id="nav-profile">
             {productData?.map(
-              (prod, index) =>
-                !prod.attributes.putOnSale && (
-                  <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
-                    <Product
-                      // overlay //only onsale && not owner
-                      // placeBid //only onsale && not owner
-                      title={prod.attributes.name}
-                      slug={prod.attributes.slug}
-                      price={prod.attributes?.auction?.data?.attributes?.bidPrice}
-                      symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
-                      image={prod.attributes?.image?.data?.attributes?.url}
-                      collectionName={prod.attributes?.collection?.data?.attributes?.name}
-                      auction_date={prod.attributes?.auction?.data?.attributes?.endTimeStamp}
-                      latestBid={prod.latestBid}
-                      likeCount={prod.likeCount}
-                      authors={prod.authors}
-                      bitCount={prod.bitCount}
-                      owner={prod.attributes.owner}
-                    />
-                  </div>
-                )
+              (prod, index) => (
+                <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
+                  <Product
+                    // overlay //only onsale && not owner
+                    // placeBid //only onsale && not owner
+                    title={prod.name}
+                    slug={prod.slug}
+                    supply={prod.supply}
+                    // price={prod.attributes?.auction?.data?.attributes?.bidPrice}
+                    // symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
+                    image={prod.image?.data?.url}
+                    collectionName={prod.collection?.data?.name}
+                    auction_date={prod.auction?.data?.endTimeStamp}
+                    latestBid={prod.latestBid}
+                    likeCount={prod.likeCount}
+                    authors={prod.authors}
+                    owner={prod.owner}
+                  />
+                </div>
+              )
             )}
           </TabPane>
           {isAdminWallet &&
             <TabPane className="row g-5 d-flex" eventKey="nav-contact" id="nav-profile">
-              {productData?.map(
-                (prod, index) =>
-                  prod.attributes.owner === prod.attributes.creator && (
-                    <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
-                      <Product
-                        // overlay //only onsale && not owner
-                        // placeBid //only onsale && not owner
-                        title={prod.attributes.name}
-                        slug={prod.attributes.slug}
-                        price={prod.attributes?.auction?.data?.attributes?.bidPrice}
-                        symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
-                        image={prod.attributes?.image?.data?.attributes?.url}
-                        collectionName={prod.attributes?.collection?.data?.attributes?.name}
-                        auction_date={prod.attributes?.auction?.data?.attributes?.endTimeStamp}
-                        latestBid={prod.latestBid}
-                        likeCount={prod.likeCount}
-                        authors={prod.authors}
-                        owner={prod.attributes.owner}
-                      />
-                    </div>
-                  )
+              {allCreatedProductsData?.map(
+                (prod, index) => (
+                  <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
+                    <Product
+                      // overlay //only onsale && not owner
+                      // placeBid //only onsale && not owner
+                      title={prod.name}
+                      slug={prod.slug}
+                      // price={prod.auction?.data?.bidPrice}
+                      // symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
+                      image={prod.image?.data?.url}
+                      collectionName={prod.collection?.data?.name}
+                      auction_date={prod.auction?.data?.endTimeStamp}
+                      latestBid={prod.latestBid}
+                      likeCount={prod.likeCount}
+                      authors={prod.authors}
+                      owner={prod.owner}
+                    />
+                  </div>
+                )
               )}
             </TabPane>
           }

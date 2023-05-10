@@ -8,10 +8,11 @@ const SignupArea = ({ className, space }) => (
     <div className="container">
       <div className="row g-5">
         <div className="offset-2 col-lg-4 col-md-6 ml_md--0 ml_sm--0 col-sm-12">
-          <SignupForm />
+          <SocialAuth title="Another way to sign up" />
+
         </div>
         <div className="col-lg-4 col-md-6 col-sm-12">
-          <SocialAuth title="Another way to sign up" />
+          <SignupForm />
         </div>
       </div>
     </div>

@@ -28,7 +28,7 @@ const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
   ssr: false
 });
 
-const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, className }) => {
+const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnColor, className }) => {
   const { walletData, setWalletData } = useContext(AppData);
   const [showBidModal, setShowBidModal] = useState(false);
   const handleBidModal = () => {
@@ -49,7 +49,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
 
   async function switchNetwork(chainId) {
     if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
-      console.log(`Network is already with chain id ${chainId}`);
+
       return true;
     }
     try {
@@ -64,15 +64,20 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
     return false;
   }
 
-  async function completeAuction() {
+  async function completeAuction(quantity) {
     updateCollectible({
       variables: {
         "data": {
-          putOnSale: false,
+          putOnSale: !(quantity == 0),
           owner: walletData.account
         },
         "updateCollectibleId": product.id
       }
+    });
+
+    const res = await strapi.update("auctions", auction.data.id, {
+      status: quantity == 0 ? "Completed" : "Live",
+      remainingQuantity: quantity
     });
   }
 
@@ -88,28 +93,29 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
       //convert price
       const convertedPrice = convertEthertoWei(walletData.ethers, price);
       // Pull the deployed contract instance
-      const tokenContract = new walletData.ethers.Contract(TokenContract.address, TokenContract.abi, signer);
+      const TokenContractAddress = auction.data.paymentToken?.data?.blockchain;
+      const tokenContract = new walletData.ethers.Contract(TokenContractAddress, TokenContract.abi, signer);
 
-      const allowance = await tokenContract.allowance(walletData.account, TransferProxy.address);
-      const allowanceAmount = parseInt(allowance._hex, 16);
+      // const allowance = await tokenContract.allowance(walletData.account, TransferProxy.address);
+      // const allowanceAmount = parseInt(allowance._hex, 16);
       const requireAllowanceAmount = "" + parseInt(convertedPrice * quantity);
-      console.log(allowanceAmount, parseInt(requireAllowanceAmount));
-      if (allowanceAmount < parseInt(requireAllowanceAmount)) {
-        // approve nft first
-        const transaction = await tokenContract.approve(TransferProxy.address, requireAllowanceAmount);
-        const receipt = await transaction.wait();
-        console.log(receipt);
-      }
+
+      // if (allowanceAmount < parseInt(requireAllowanceAmount)) {
+      // approve nft first
+      const transaction = await tokenContract.increaseAllowance(TransferProxy.address, requireAllowanceAmount);
+      const receipt = await transaction.wait();
+
+      // }
       let isAccepted = false;
-      if (product.auction.data.sellType == "FixedPrice") {
-        const seller = product.auction.data.walletAddress;
+      if (auction.data.sellType == "FixedPrice") {
+        const seller = auction.data.walletAddress;
         const buyer = walletData.account;
-        const erc20Address = product.auction.data.paymentToken?.data?.blockchain;
+        const erc20Address = auction.data.paymentToken?.data?.blockchain;
         const nftAddress = contractAddress;
         const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
         const skipRoyalty = true;
         const unitPrice = `${convertedPrice}`;
-        const amount = `${parseFloat(product.auction.data.quantity) * parseFloat(unitPrice)}`;
+        const amount = `${parseFloat(quantity) * parseFloat(unitPrice)}`;
         const tokenId = `${product.nftID}`;
         const tokenURI = "";
         const supply = `${product.supply ? product.supply : 1}`;
@@ -119,7 +125,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
         // Pull the deployed contract instance
         const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
 
-        console.log("Calling direct buy");
+
         const transaction = await tradeContract.buyAsset([
           seller,
           buyer,
@@ -136,15 +142,15 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
           qty
         ]);
         const receipt = await transaction.wait();
-        console.log(receipt);
+
         const transactionHash = receipt.transactionHash;
         if (receipt) {
           isAccepted = true;
-          completeAuction();
+          completeAuction(auction.data.remainingQuantity - qty);
           createOwnerHistory({
             variables: {
               data: {
-                auction: product.auction.id,
+                auction: auction.data.id,
                 collectible: product.id,
                 event: "FixedPrice",
                 fromWalletAddress: seller,
@@ -162,18 +168,19 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
         bidPrice: price,
         bidderAddress: walletData.account,
         timeStamp: new Date(),
-        auction: product.auction.data.id,
+        auction: auction.data.id,
         isAccepted
       });
-      console.log(res);
-      if (product.auction.data.sellType === "FixedPrice") {
+
+      setShowBidModal(false);
+      if (auction.data.sellType === "FixedPrice") {
         toast.success("NFT purchased successfully!");
       } else {
         toast.success("Bidding placed successfully!");
       }
-      router.reload();
+      // router.reload();
     } catch (error) {
-      console.log(error);
+
     }
   }
 
@@ -194,15 +201,15 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
         return;
       }
     }
-    if (product.auction.data.sellType == "Bidding") {
+    if (auction.data.sellType == "Bidding") {
       const price = event.target.price?.value;
-      const quantity = product.auction.data.quantity;
-      // console.log(price);
+      const quantity = auction.data.quantity;
+
       StoreData(price, quantity);
     } else {
-      const price = product.auction.data.bidPrice;
-      const quantity = event.target.quantity?.value ? event.target.quantity?.value : product.auction.data.quantity;
-      // console.log(price);
+      const price = auction.data.bidPrice;
+      const quantity = event.target.quantity?.value ? event.target.quantity?.value : auction.data.quantity;
+
       StoreData(price, quantity);
     }
   };
@@ -212,8 +219,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
       <div className={clsx("place-bet-area", className)}>
         <div className="rn-bet-create">
           <div className="bid-list winning-bid">
-            <h6 className="title">{product.auction.data.sellType == "Bidding" ? "Auction Details" : "Buy Now"}</h6>
-            {product.auction.data.sellType == "Bidding" && (
+            <h6 className="title">{auction.data.sellType == "Bidding" ? "Auction Details" : "Buy Now"}</h6>
+            {auction.data.sellType == "Bidding" && (
               <div className="top-seller-inner-one">
                 <div className="top-seller-wrapper">
                   {highest_bid?.bidder?.image?.src && (
@@ -239,7 +246,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
           </div>
           {auction_date && (
             <div className="bid-list left-bid">
-              <h6 className="title">Auction has ended</h6>
+              <h6 className="title">{new Date() < new Date(auction_date) ? "Auction will ended in" : "Auction has ended"}</h6>
               <Countdown className="mt--15" date={auction_date} />
             </div>
           )}
@@ -249,18 +256,18 @@ const PlaceBet = ({ highest_bid, auction_date, product, isOwner, btnColor, class
           color={btnColor || "primary-alta"}
           className="mt--30"
           onClick={
-            product.auction.data.sellType == "Bidding"
+            auction.data.sellType == "Bidding"
               ? handleBidModal
-              : product.auction.data.quantity > 1
+              : auction.data.quantity > 1
                 ? handleBidModal
                 : handleSubmit
           }
           disabled={isOwner || (auction_date && new Date() > new Date(auction_date))}
         >
-          {product.auction.data.sellType == "Bidding" ? "Place a Bid" : "Buy Now"}
+          {auction.data.sellType == "Bidding" ? "Place a Bid" : "Buy Now"}
         </Button>
       </div>
-      <PlaceBidModal show={showBidModal} handleModal={handleBidModal} product={product} handleSubmit={handleSubmit} />
+      <PlaceBidModal show={showBidModal} handleModal={handleBidModal} bidPrice={auction.data.bidPrice} supply={product.supply} maxQuantity={auction.data.remainingQuantity} handleSubmit={handleSubmit} auction={auction} />
     </>
   );
 };

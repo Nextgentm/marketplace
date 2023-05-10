@@ -43,14 +43,15 @@ const ProductArea = ({ space, className, data }) =>
                 className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
               >
                 <Product
-                  title={prod.attributes.name}
-                  slug={prod.attributes.slug}
-                  supply={prod.attributes.supply}
-                  price={prod.attributes?.auction?.data?.attributes?.bidPrice}
-                  symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
-                  image={prod.attributes?.image?.data?.attributes?.url}
-                  collectionName={prod.attributes?.collection?.data?.attributes?.name}
-                  bitCount={prod.attributes?.auction?.data?.attributes?.sellType == "Bidding" ? prod.attributes?.auction?.data?.attributes?.biddings?.data.length : 0}
+                  isAuction={true}
+                  title={prod.collectible.data.name}
+                  slug={"collectible/" + prod.collectible.data.slug + "/auction/" + prod.id}
+                  supply={prod.collectible.data.supply}
+                  price={(prod.bidPrice / prod.quantity)}
+                  symbol={prod.priceCurrency}
+                  image={prod.collectible.data?.image?.data?.url}
+                  collectionName={prod.collectible.data?.collection?.data?.name}
+                  bitCount={prod.sellType == "Bidding" ? prod.biddings?.data.length : 0}
                   latestBid={prod.latestBid}
                   likeCount={prod.likeCount}
                   authors={prod.authors}
