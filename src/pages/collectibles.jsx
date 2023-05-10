@@ -12,7 +12,7 @@ import productData from "../data/products.json";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import client from "@utils/apollo-client";
 import { useRouter } from "next/router";
-import { ALL_AUCTION_DATA_QUERY } from "src/graphql/query/auctions/getAuctions";
+import { ALL_AUCTION_DATA_QUERY, ALL_AUCTION_LISTDATA_QUERY } from "src/graphql/query/auctions/getAuctions";
 
 // export async function getStaticProps() {
 //   return { props: { className: "template-color-1" } };
@@ -54,30 +54,33 @@ Collectibles.getInitialProps = async (ctx) => {
     }
   };
 
-  // if (ctx.query.collection) {
-  //   filters.collectibles = {
-  //     collections: {
-  //       name: {
-  //         in: routerQuery
-  //       }
-  //     }
-  //   };
-  // }
+  if (ctx.query.collection) {
+    filters.collectibles = {
+      collections: {
+        name: {
+          in: routerQuery
+        }
+      }
+    };
+  }
   const { data } = await client.query({
-    query: ALL_AUCTION_DATA_QUERY,
+    query: ALL_AUCTION_LISTDATA_QUERY,
     variables: {
-      filter: filters,
+      filters: {
+        status: {
+          eq: "Live"
+        }
+      },
       pagination: {
         pageSize: 6
       }
       // sort: ["createdAt:desc"]
-    },
-    fetchPolicy: "network-only"
+    }
   });
-  console.log("data", data);
+  console.log("data", data.auctions.data);
   return {
     className: "template-color-1",
-    dataCollectibles: data.collectibles
+    dataCollectibles: data.auctions
   };
 };
 

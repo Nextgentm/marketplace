@@ -1,8 +1,12 @@
 import { gql } from "@apollo/client";
 
 export const ALL_AUCTION_DATA_QUERY = gql`
-query ExampleQuery($filters: AuctionFiltersInput) {
-    auctions(filters: $filters) {
+  query auctions(
+    $filter: AuctionFiltersInput
+    $pagination: PaginationArg
+    $sort: [String]
+  ) {
+    auctions(pagination: $pagination, filter: $filter, sort: $sort) {
       data {
         id
         attributes {
@@ -151,8 +155,12 @@ query ExampleQuery($filters: AuctionFiltersInput) {
 `;
 
 export const ALL_AUCTION_LISTDATA_QUERY = gql`
-query ExampleQuery($filters: AuctionFiltersInput) {
-    auctions(filters: $filters) {
+query auctions(
+  $filters: AuctionFiltersInput
+  $pagination: PaginationArg
+  $sort: [String]
+  ) {
+    auctions(pagination: $pagination, filters: $filters, sort: $sort) {
       data {
         id
         attributes {
