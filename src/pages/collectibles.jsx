@@ -48,8 +48,10 @@ Collectibles.getInitialProps = async (ctx) => {
   let routerQuery = ctx.query.collection;
 
   let filters = {
-    id: {
-      notNull: true
+    auction: {
+      status: {
+        eq: "Live"
+      }
     }
   };
 
