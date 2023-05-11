@@ -1,5 +1,10 @@
 {
   "address": "0xB9222dACfF05c78A80Fb21f3A42313536638D745",
+  "address1": {
+    "Ethereum": "",
+    "Polygon": "0xB9222dACfF05c78A80Fb21f3A42313536638D745",
+    "Binance": "0x0ED4C96208e4BEB9079844C5cdB3F341a2BF6eB4"
+  },
   "abi": [
     {
       "inputs": [

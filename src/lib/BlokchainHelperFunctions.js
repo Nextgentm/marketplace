@@ -174,6 +174,24 @@ export function validateInputAddresses(address) {
   return /^(0x){1}[0-9a-fA-F]{40}$/i.test(address);
 }
 
+export async function signMessage(provider, ethers, walletAddress) {
+  if (!provider) {
+    throw new Error("Provider not connected");
+  }
+  const { chainId } = await provider.getNetwork();
+  let _chainId = "0x" + chainId.toString(16);
+
+  const msg =
+    "I want to login on Lootmogul at " +
+    new Date().toISOString() +
+    ". I accept the Lootmogul Terms of Service and I am at least 13 years old."; //formatAuthMessage(walletAddress, _chainId);
+  const sig = await provider.send("personal_sign", [msg, walletAddress]);
+  // console.log("Signature", sig);
+  const isValid = (await ethers.utils.verifyMessage(msg, sig)) === ethers.utils.getAddress(walletAddress);
+  // console.log("isValid", isValid);
+  return isValid;
+}
+
 //_______________________________________________//
 // convert values
 //_______________________________________________//

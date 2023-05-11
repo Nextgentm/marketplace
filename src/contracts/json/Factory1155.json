@@ -1,7 +1,8 @@
 {
   "address": {
     "Ethereum": null,
-    "Polygon": "0xe8005e175D4C41E7773c4Bc07F25526C25639FE1"
+    "Polygon": "0xe8005e175D4C41E7773c4Bc07F25526C25639FE1",
+    "Binance": "0xa07673d995898940731495F387dBa53CDBA9c136"
   },
   "abi": [
     {
