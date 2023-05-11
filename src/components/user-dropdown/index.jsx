@@ -240,9 +240,9 @@ const UserDropdown = () => {
         }
       }
       // console.log(wallet);
-      if (wallet == "MetaMask") {
-        onConnect();
-      }
+      // if (wallet == "MetaMask") {
+      onConnect();
+      // }
     }
   };
 

@@ -2,8 +2,12 @@ import PropTypes from "prop-types";
 import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
 import Link from "next/link";
+import { useState } from "react";
 const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
 
+    const [selectTermsAndConditions, setSelectTermsAndConditions] = useState(false);
+    const [selectNetwork, setSelectNetwork] = useState(false);
+    const [selectWallet, setSelectWallet] = useState(false);
     const cryptoList = [{
         name: "Ethereum",
         image: "/images/connect/ethereum.png"
@@ -30,18 +34,18 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
         name: "MetaMask",
         image: "/images/connect/fox.png"
     },
-    {
-        name: "WalletConnect",
-        image: "/images/connect/WalletConnect.png"
-    },
-    {
-        name: "BSC Wallet",
-        image: "/images/connect/binance.png"
-    },
-    {
-        name: "Coinbase Wallet",
-        image: "/images/connect/coinbase.png"
-    }
+        // {
+        //     name: "WalletConnect",
+        //     image: "/images/connect/WalletConnect.png"
+        // },
+        // {
+        //     name: "BSC Wallet",
+        //     image: "/images/connect/binance.png"
+        // },
+        // {
+        //     name: "Coinbase Wallet",
+        //     image: "/images/connect/coinbase.png"
+        // }
     ];
     return (
         <Modal className="rn-popup-modal connect-wallets-wrapper placebid-modal-wrapper" show={show} onHide={handleModal} centered>
@@ -63,6 +67,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                     name="term-condition"
                                     value="true"
                                     id="term-condition"
+                                    onClick={() => setSelectTermsAndConditions(true)}
                                     required
                                 />
                                 <label htmlFor="term-condition" className="term">
@@ -80,6 +85,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                                     name="networkid"
                                                     value={list.name}
                                                     id={"id" + index}
+                                                    onClick={() => setSelectNetwork(true)}
                                                 />
                                                 <label htmlFor={"id" + index}>
                                                     <img src={list.image} alt="Image" />
@@ -102,6 +108,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                                     name="walletid"
                                                     value={list.name}
                                                     id={"walletid-" + index}
+                                                    onClick={() => setSelectWallet(true)}
                                                 />
                                                 <label htmlFor={"walletid-" + index}>
                                                     <img src={list.image} alt="Image" />
@@ -114,7 +121,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                 </div>
                             </div>
                             <div className="">
-                                <Button type="submit" >Connect</Button>
+                                <Button type="submit" disabled={!(selectTermsAndConditions && selectNetwork && selectWallet)}>Connect</Button>
                             </div>
                         </div>
                     </div>
