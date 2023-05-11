@@ -10,6 +10,8 @@ import { flatDeep } from "@utils/methods";
 import { useLazyQuery } from "@apollo/client";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import { useRouter } from "next/router";
+import { getCollection } from "src/services/collections/collection";
+import strapi from "@utils/strapi";
 
 const ExploreProductArea = ({
   className,
@@ -25,14 +27,47 @@ const ExploreProductArea = ({
   const [onChangeValue, setOnChangeValue] = useState();
   const [onchangepriceRange, setonchangepriceRange] = useState({ price: [0, 100] });
   const [checkedCollection, setCheckedCollection] = useState([]);
-  let categoriesold = [];
-  const cats = flatDeep(products.map((prod) => prod.attributes.collection.data?.attributes.name));
-  categoriesold = cats.reduce((obj, b) => {
+  const [dataAll, setDataAll] = useState([]);
+  let categoriesolds = [];
+
+  const cats = flatDeep(products.map((prod) => prod?.collectible?.data?.collection?.data?.name));
+  categoriesolds = cats.reduce((obj, b) => {
     const newObj = { ...obj };
     newObj[b] = obj[b] + 1 || 1;
     return newObj;
   }, {});
-  const [onchangecheckData, setonchangecheckData] = useState(categoriesold);
+
+  const [onchangecheckData, setonchangecheckData] = useState(categoriesolds);
+  let categoriesold = [];
+  useEffect(() => {
+    async function fetchData() {
+      const newestItemsFilter = {
+        filters: {
+          status: {
+            $eq: "Live"
+          },
+        },
+        populate: {
+          collectible: {
+            populate: ["image", "collection"]
+          },
+          biddings: {
+            fields: ["id"]
+          }
+        }
+      }
+      let getdataAll = await strapi.find("auctions", newestItemsFilter);
+      const cats = flatDeep(getdataAll.data.map((prod) => prod?.collectible?.data?.collection?.data?.name));
+      categoriesold = cats.reduce((obj, b) => {
+        const newObj = { ...obj };
+        newObj[b] = obj[b] + 1 || 1;
+        return newObj;
+      }, {});
+      setonchangecheckData(categoriesold)
+    }
+    fetchData();
+  }, []);
+
   const [pagination, setPagination] = useState({
     page: 1,
     pageCount: 1,
@@ -45,11 +80,12 @@ const ExploreProductArea = ({
   useEffect(() => {
     if (collectionData.data) {
       setCollectionsData(collectionData.data);
+      setPagination(collectionData.meta.pagination);
     }
   }, [collectionData.data]);
 
   useEffect(() => {
-    if (router?.query?.collection) {
+    if (router.query.collection) {
       if (checkedCollection.length) {
         getCollectible({
           variables: {
@@ -84,9 +120,6 @@ const ExploreProductArea = ({
               collection: {
                 name: {
                   in: routerQuery
-                },
-                id: {
-                  notNull: true
                 }
               }
             },
@@ -100,7 +133,6 @@ const ExploreProductArea = ({
 
   useEffect(() => {
     if (collectiblesFilters) {
-      console.log("collectiblesFiltersDATA", collectiblesFilters?.collectibles);
       setPagination(collectiblesFilters.collectibles.meta.pagination);
       setCollectionsData(collectiblesFilters.collectibles.data);
     }
@@ -119,9 +151,6 @@ const ExploreProductArea = ({
       filters.collection = {
         name: {
           in: routerQuery
-        },
-        auction: {
-          sellType: "Bidding"
         }
       };
     }
@@ -134,8 +163,7 @@ const ExploreProductArea = ({
     }
     getCollectible({
       variables: {
-        filters: filters,
-        sort: ["createdAt:desc"],
+        filter: filters,
         pagination: { page, pageSize: 6 }
       }
     });
@@ -166,7 +194,6 @@ const ExploreProductArea = ({
       };
     }
     let pagination = { pageSize: 6 };
-    console.log("filters963", filters);
     if (onchangeSort == "oldest") {
       getCollectible({
         variables: {
@@ -205,9 +232,7 @@ const ExploreProductArea = ({
     }
 
   };
-
   const getauctionFilterData = (onchangefilter) => {
-    console.log("onchangefilteronchangefilter", onchangefilter)
     setOnChangeValue(onchangefilter);
 
     let filters = {
@@ -301,7 +326,6 @@ const ExploreProductArea = ({
       });
   };
   const getCollectiblecheckData = (onchangefilter) => {
-    console.log("onchangedata", onchangefilter)
     setCheckedCollection(onchangefilter)
 
     let filters = {
@@ -401,14 +425,6 @@ const ExploreProductArea = ({
               ) : (
                 <p>No item to show</p>
               )}
-              {/* {numberOfPages > 1 ? (
-                <Pagination
-                  className="single-column-blog"
-                  currentPage={state.currentPage}
-                  numberOfPages={numberOfPages}
-                  onClick={paginationHandler}
-                />
-              ) : null} */}
               {pagination?.pageCount > 1 ? (
                 <Pagination
                   className="single-column-blog"

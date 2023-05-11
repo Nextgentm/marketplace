@@ -1,9 +1,11 @@
 import PropTypes from "prop-types";
 import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
+import { useState } from "react";
 
 const SwitchNetwork = ({ show, handleModal, handleSubmit }) => {
 
+    const [selectNetwork, setSelectNetwork] = useState(false);
     const cryptoList = [{
         name: "Ethereum",
         image: "/images/connect/ethereum.png"
@@ -49,6 +51,7 @@ const SwitchNetwork = ({ show, handleModal, handleSubmit }) => {
                                             name="networkid"
                                             value={list.name}
                                             id={"id" + index}
+                                            onClick={() => setSelectNetwork(true)}
                                         />
                                         <label htmlFor={"id" + index}>
                                             <img src={list.image} alt="Image" />
@@ -62,7 +65,7 @@ const SwitchNetwork = ({ show, handleModal, handleSubmit }) => {
                         </div>
                     </div>
                     <div className="">
-                        <Button type="submit" >Change</Button>
+                        <Button type="submit" disabled={!selectNetwork}>Change</Button>
                     </div>
                 </form>
             </Modal.Body>
