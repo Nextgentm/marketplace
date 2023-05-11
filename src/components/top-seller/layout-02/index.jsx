@@ -9,13 +9,7 @@ import axios from "axios";
 import { Button } from "react-bootstrap";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
-import { convertEthertoWei } from "../../../lib/BlokchainHelperFunctions";
-import ERC721Contract from "../../../contracts/json/erc721.json";
-import ERC1155Contract from "../../../contracts/json/erc1155.json";
-import TradeContract from "../../../contracts/json/trade.json";
-import TransferProxy from "../../../contracts/json/TransferProxy.json";
-import TokenContract from "../../../contracts/json/ERC20token.json";
+import { convertEthertoWei, getTradeContract, getTokenContract } from "../../../lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { UPDATE_BIDDING } from "src/graphql/mutation/bidding.js/updateBidding";
@@ -33,12 +27,12 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
   useEffect(() => {
   }, [updatedCollectible]);
 
-  async function completeAuction(quantity) {
+  async function completeAuction(quantity, newOwner) {
     updateCollectible({
       variables: {
         "data": {
           putOnSale: false,
-          owner: walletData.account
+          owner: newOwner
         },
         "updateCollectibleId": product.id
       }
@@ -63,7 +57,19 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
       const signer = walletData.provider.getSigner();
       const seller = auction.data.walletAddress;
       const buyer = name;
-      const erc20Address = auction.data.paymentToken?.data?.blockchain;
+      let erc20Address;
+      //Select token contract address according to current network
+      if (walletData.network == "Polygon") {
+        erc20Address = auction.data.paymentToken?.data?.polygonAddress;
+      } else if (walletData.network == "Ethereum") {
+        erc20Address = auction.data.paymentToken?.data?.ethAddress;
+      } else if (walletData.network == "Binance") {
+        erc20Address = auction.data.paymentToken?.data?.binanceAddress;
+      }
+      if (!erc20Address) {
+        toast.error("Token address not found for current network!");
+        return;
+      }
       const nftAddress =
         product.collection.data.collectionType === "Single"
           ? product.collection.data.contractAddress
@@ -79,8 +85,8 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
       const qty = `${auction.data.quantity ? auction.data.quantity : 1}`;
 
       // Pull the deployed contract instance
-      const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
-      const tokenContract = new walletData.ethers.Contract(erc20Address, TokenContract.abi, signer);
+      const tradeContract = await getTradeContract(walletData);
+      const tokenContract = await getTokenContract(walletData, erc20Address);
       const userBalance = await tokenContract.balanceOf(buyer);
       if (amount > parseInt(userBalance._hex)) {
         toast.error("Bidder not have enough balance");
@@ -105,7 +111,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
         const receipt = await transaction.wait();
         const transactionHash = receipt.transactionHash;
         if (receipt) {
-          completeAuction(auction.data.remainingQuantity - qty);
+          completeAuction(auction.data.remainingQuantity - qty, buyer);
           createOwnerHistory({
             variables: {
               data: {

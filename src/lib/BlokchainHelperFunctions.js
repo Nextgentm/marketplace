@@ -5,73 +5,129 @@ import {
   NETWORKS_CHAINS,
   BINANCE_NETWORK_CHAIN_ID
 } from "./constants";
-import Factory721Contract from "../contracts/json/Factory721.json";
-import Factory1155Contract from "../contracts/json/Factory1155.json";
-import ERC721Contract from "../contracts/json/erc721.json";
-import ERC1155Contract from "../contracts/json/erc1155.json";
-import TradeContract from "../contracts/json/trade.json";
-import TransferProxy from "../contracts/json/TransferProxy.json";
 
 const ADMIN_ROLE = "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775";
 
 //_______________________________________________//
 // Get Contracts object
 //_______________________________________________//
-export async function getERC721FactoryContract(ethers, blockchainNetwork, signer) {
+export async function getERC721FactoryContract(walletData) {
   // Pull the deployed contract instance
-  if (Factory721Contract.address[blockchainNetwork]) {
-    const factoryContract721Factory = new ethers.Contract(
-      Factory721Contract.address[blockchainNetwork],
-      Factory721Contract.abi,
+  if (walletData.contractData) {
+    const signer = walletData.provider.getSigner();
+
+    const factoryContract721Factory = new walletData.ethers.Contract(
+      walletData.contractData.Factory721Contract.address,
+      walletData.contractData.Factory721Contract.abi,
       signer
     );
     return factoryContract721Factory;
+    // } else if(walletData.network){ // incase if contractData is not loaded
+    //   const contractData = getContractsData(walletData.network);
+    //   const signer = walletData.provider.getSigner();
+    //   const factoryContract721Factory = new walletData.ethers.Contract(
+    //     contractData.Factory721Contract.address,
+    //     contractData.Factory721Contract.abi,
+    //     signer
+    //   );
+    //   return factoryContract721Factory;
   }
   return null;
 }
 
-export async function getERC1155FactoryContract(ethers, blockchainNetwork, signer) {
+export async function getERC1155FactoryContract(walletData) {
   // Pull the deployed contract instance
-  const factoryContract1155 = new ethers.Contract(
-    Factory1155Contract.address[blockchainNetwork],
-    Factory1155Contract.abi,
-    signer
-  );
-  return factoryContract1155;
+  if (walletData.contractData) {
+    const signer = walletData.provider.getSigner();
+    const factoryContract1155 = new walletData.ethers.Contract(
+      walletData.contractData.Factory1155Contract.address,
+      walletData.contractData.Factory1155Contract.abi,
+      signer
+    );
+    return factoryContract1155;
+  }
+  return null;
 }
 
-export async function getERC721Contract(ethers, contractAddress, signer) {
+export async function getERC721Contract(walletData, contractAddress) {
   // Pull the deployed contract instance
-  const contract721 = new ethers.Contract(contractAddress, ERC721Contract.abi, signer);
-  return contract721;
+  if (walletData.contractData) {
+    const signer = walletData.provider.getSigner();
+    const contract721 = new walletData.ethers.Contract(
+      contractAddress,
+      walletData.contractData.ERC721Contract.abi,
+      signer
+    );
+    return contract721;
+  }
+  return null;
 }
 
-export async function getERC1155Contract(ethers, contractAddress, signer) {
+export async function getERC1155Contract(walletData, contractAddress) {
   // Pull the deployed contract instance
-  const contract1155 = new ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
-  return contract1155;
+  if (walletData.contractData) {
+    const signer = walletData.provider.getSigner();
+    const contract1155 = new walletData.ethers.Contract(
+      contractAddress,
+      walletData.contractData.ERC1155Contract.abi,
+      signer
+    );
+    return contract1155;
+  }
+  return null;
 }
 
-export async function getTradeContractContract(ethers, signer) {
+export async function getTokenContract(walletData, contractAddress) {
   // Pull the deployed contract instance
-  const tradeContract = new ethers.Contract(TradeContract.address, TradeContract.abi, signer);
-  return tradeContract;
+  if (walletData.contractData) {
+    const signer = walletData.provider.getSigner();
+    const tokenContract = new walletData.ethers.Contract(
+      contractAddress,
+      walletData.contractData.TokenContract.abi,
+      signer
+    );
+    return tokenContract;
+  }
+  return null;
 }
 
-export async function getTransferProxyContract(ethers, signer) {
+export async function getTradeContract(walletData) {
   // Pull the deployed contract instance
-  const transferProxy = new ethers.Contract(TransferProxy.address, TransferProxy.abi, signer);
-  return transferProxy;
+  console.log(walletData);
+  if (walletData.contractData) {
+    const signer = walletData.provider.getSigner();
+    const tradeContract = new walletData.ethers.Contract(
+      walletData.contractData.TradeContract.address,
+      walletData.contractData.TradeContract.abi,
+      signer
+    );
+    return tradeContract;
+  }
+  return null;
+}
+
+export async function getTransferProxyContract(walletData) {
+  // Pull the deployed contract instance
+  if (walletData.contractData) {
+    const signer = walletData.provider.getSigner();
+    const transferProxy = new walletData.ethers.Contract(
+      walletData.contractData.TransferProxy.address,
+      walletData.contractData.TransferProxy.abi,
+      signer
+    );
+    return transferProxy;
+  }
+  return null;
 }
 
 //_______________________________________________//
 // get value from smart contracts
 //_______________________________________________//
 
-export async function getERC1155Balance(ethers, walletAddress, contractAddress, tokenId, signer) {
+export async function getERC1155Balance(walletData, walletAddress, contractAddress, tokenId) {
   if (!walletAddress || !contractAddress) return false;
-  const contract1155 = await getERC1155Contract(ethers, contractAddress, signer);
-  // console.log(contract1155);
+  const contract1155 = await getERC1155Contract(walletData, contractAddress);
+  // console.log(walletData, walletAddress, contractAddress, tokenId);
   if (contract1155) {
     const balanceData = await contract1155.balanceOf(walletAddress, tokenId);
     // console.log(balanceData);
@@ -81,12 +137,12 @@ export async function getERC1155Balance(ethers, walletAddress, contractAddress, 
   return 0;
 }
 
-export async function addressIsAdmin(ethers, walletAddress, blockchainNetwork, signer) {
-  if (!walletAddress) return false;
-  const factoryContract721 = await getERC721FactoryContract(ethers, blockchainNetwork, signer);
+export async function addressIsAdmin(walletData) {
+  if (!walletData.isConnected && !walletData.account) return false;
+  const factoryContract721 = await getERC721FactoryContract(walletData);
   // console.log(factoryContract721);
   if (factoryContract721) {
-    const validationValue = await factoryContract721.hasRole(ADMIN_ROLE, walletAddress);
+    const validationValue = await factoryContract721.hasRole(ADMIN_ROLE, walletData.account);
     return validationValue;
   }
   return false;
@@ -172,6 +228,21 @@ export function currenyOfCurrentNetwork(currentNetwork) {
 
 export function validateInputAddresses(address) {
   return /^(0x){1}[0-9a-fA-F]{40}$/i.test(address);
+}
+
+export async function signMessage(provider, ethers, walletAddress) {
+  if (!provider) {
+    throw new Error("Provider not connected");
+  }
+  const msg =
+    "I want to login on Lootmogul at " +
+    new Date().toISOString() +
+    ". I accept the Lootmogul Terms of Service and I am at least 13 years old.";
+  const sig = await provider.send("personal_sign", [msg, walletAddress]);
+  // console.log("Signature", sig);
+  const isValid = (await ethers.utils.verifyMessage(msg, sig)) === ethers.utils.getAddress(walletAddress);
+  // console.log("isValid", isValid);
+  return isValid;
 }
 
 //_______________________________________________//

@@ -16,15 +16,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
-import DirectSalesModal from "@components/modals/direct-sales";
-import TimeAuctionModal from "@components/modals/time-auction";
-import TransferPopupModal from "@components/modals/transfer";
 import { getERC1155Balance, validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
 
-import ERC721Contract from "../../contracts/json/erc721.json";
-import ERC1155Contract from "../../contracts/json/erc1155.json";
-import TradeContract from "../../contracts/json/trade.json";
-import TransferProxy from "../../contracts/json/TransferProxy.json";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
@@ -53,10 +46,9 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
     if (walletData.isConnected) {
       if (walletData.account) {
         if (auction?.data?.collectible.data.collection.data.collectionType === "Multiple") {
-          // check is Admin
-          const signer = walletData.provider.getSigner();
+          // check ERC1155 Token balance
           const contractAddress = auction?.data?.collectible.data?.collection?.data?.contractAddress1155;
-          getERC1155Balance(walletData.ethers, walletData.account, contractAddress, auction?.data?.collectible.data.nftID, signer).then((balance) => {
+          getERC1155Balance(walletData, walletData.account, contractAddress, auction?.data?.collectible.data.nftID).then((balance) => {
             setERC1155MyBalance(balance);
           }).catch((error) => { console.log("Error while factory call " + error) });
         }

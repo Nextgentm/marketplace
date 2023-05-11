@@ -12,8 +12,7 @@ import { AppData } from "src/context/app-context";
 import { useRouter } from "next/router";
 import Multiselect from "multiselect-react-dropdown";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, BINANCE_NETWORK_CHAIN_ID } from "src/lib/constants";
-import Factory721Contract from "../../contracts/json/Factory721.json";
-import Factory1155Contract from "../../contracts/json/Factory1155.json";
+import { getERC721FactoryContract, getERC1155FactoryContract } from "src/lib/BlokchainHelperFunctions";
 import strapi from "@utils/strapi";
 
 const CreateCollectionArea = () => {
@@ -270,11 +269,7 @@ const CreateCollectionArea = () => {
       console.log(salt);
       if (router.query.type === "single") {
         // Pull the deployed contract instance
-        const contract721 = new walletData.ethers.Contract(
-          Factory721Contract.address[blockchainNetwork],
-          Factory721Contract.abi,
-          signer
-        );
+        const contract721 = await getERC721FactoryContract(walletData);
         const transaction = await contract721.deploy(salt, name, symbol, tokenURIPrefix);
         const receipt = await transaction.wait();
         // console.log(receipt);
@@ -285,11 +280,7 @@ const CreateCollectionArea = () => {
       }
       if (router.query.type === "multiple") {
         // Pull the deployed contract instance
-        const contract1155 = new walletData.ethers.Contract(
-          Factory1155Contract.address[blockchainNetwork],
-          Factory1155Contract.abi,
-          signer
-        );
+        const contract1155 = await getERC1155FactoryContract(walletData);
         const transaction = await contract1155.deploy(salt, name, symbol, tokenURIPrefix);
         const receipt = await transaction.wait();
         // console.log(receipt);
@@ -300,11 +291,7 @@ const CreateCollectionArea = () => {
       }
       if (router.query.type === "hybrid") {
         // Pull the deployed contract instance
-        const contract721 = new walletData.ethers.Contract(
-          Factory721Contract.address[blockchainNetwork],
-          Factory721Contract.abi,
-          signer
-        );
+        const contract721 = await getERC721FactoryContract(walletData);
         const transaction1 = await contract721.deploy(salt, name, symbol, tokenURIPrefix);
         const receipt1 = await transaction1.wait();
         // console.log(receipt);
@@ -313,11 +300,7 @@ const CreateCollectionArea = () => {
         const erc721ContractAddr = correctEvent1.args.contractAddress;
 
         // Pull the deployed contract instance
-        const contract1155 = new walletData.ethers.Contract(
-          Factory1155Contract.address[blockchainNetwork],
-          Factory1155Contract.abi,
-          signer
-        );
+        const contract1155 = await getERC1155FactoryContract(walletData);
         const transaction2 = await contract1155.deploy(salt, name, symbol, tokenURIPrefix);
         const receipt2 = await transaction2.wait();
         // console.log(receipt);

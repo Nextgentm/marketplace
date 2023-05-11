@@ -43,8 +43,7 @@ const Header = ({ className }) => {
 
   useEffect(() => {
     if (walletData.isConnected) {
-      const signer = walletData.provider.getSigner();
-      addressIsAdmin(walletData.ethers, walletData.account, "Polygon", signer).then((validationValue) => {
+      addressIsAdmin(walletData).then((validationValue) => {
         setIsAdminWallet(validationValue);
       }).catch((error) => { console.log("Error while factory call " + error) });
     } else {

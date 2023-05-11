@@ -19,12 +19,7 @@ import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/con
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
 import TransferPopupModal from "@components/modals/transfer";
-import { getERC1155Balance, validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
-
-import ERC721Contract from "../../contracts/json/erc721.json";
-import ERC1155Contract from "../../contracts/json/erc1155.json";
-import TradeContract from "../../contracts/json/trade.json";
-import TransferProxy from "../../contracts/json/TransferProxy.json";
+import { getERC1155Balance, validateInputAddresses, getERC1155Contract, getERC721Contract } from "../../lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
@@ -74,7 +69,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           // check is Admin
           const signer = walletData.provider.getSigner();
           const contractAddress = product.collection.data.contractAddress1155;
-          getERC1155Balance(walletData.ethers, walletData.account, contractAddress, product.nftID, signer).then((balance) => {
+          getERC1155Balance(walletData, walletData.account, contractAddress, product.nftID).then((balance) => {
             setERC1155MyBalance(balance);
           }).catch((error) => { console.log("Error while factory call " + error) });
         }
@@ -115,35 +110,35 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         // console.log(contractAddress);
 
         // Pull the deployed contract instance
-        const contract721 = new walletData.ethers.Contract(contractAddress, ERC721Contract.abi, signer);
+        const contract721 = await getERC721Contract(walletData, contractAddress);
         // const options = {
         //     value: walletData.ethers.utils.parseEther("0.01"),
         // };
         let approveAddress = await contract721.getApproved(product.nftID);
         // console.log(approveAddress);
-        if (approveAddress.toLowerCase() != TradeContract.address.toLowerCase()) {
+        if (approveAddress.toLowerCase() != walletData.contractData.TradeContract.address.toLowerCase()) {
           // approve nft first
-          const transaction = await contract721.approve(TradeContract.address, product.nftID);
+          const transaction = await contract721.approve(walletData.contractData.TradeContract.address, product.nftID);
           const receipt = await transaction.wait();
           // console.log(receipt);
         }
         approveAddress = await contract721.getApproved(product.nftID);
         // console.log(approveAddress);
-        if (approveAddress.toLowerCase() != TransferProxy.address.toLowerCase()) {
+        if (approveAddress.toLowerCase() != walletData.contractData.TransferProxy.address.toLowerCase()) {
           // approve nft first
-          const transaction = await contract721.approve(TransferProxy.address, product.nftID);
+          const transaction = await contract721.approve(walletData.contractData.TransferProxy.address, product.nftID);
           const receipt = await transaction.wait();
           // console.log(receipt);
         }
       } else if (product.collection.data.collectionType === "Multiple") {
         contractAddress = product.collection.data.contractAddress1155;
         // Pull the deployed contract instance
-        const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
+        const contract1155 = await getERC1155Contract(walletData, contractAddress);
 
-        const approved = await contract1155.isApprovedForAll(walletData.account, TradeContract.address);
+        const approved = await contract1155.isApprovedForAll(walletData.account, walletData.contractData.TradeContract.address);
         // console.log(approved);
         if (!approved) {
-          const transaction = await contract1155.setApprovalForAll(TransferProxy.address, true);
+          const transaction = await contract1155.setApprovalForAll(walletData.contractData.TransferProxy.address, true);
           const receipt = await transaction.wait();
         }
       }
@@ -266,7 +261,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           // console.log(contractAddress);
 
           // Pull the deployed contract instance
-          const contract721 = new walletData.ethers.Contract(contractAddress, ERC721Contract.abi, signer);
+          const contract721 = await getERC721Contract(walletData, contractAddress);
 
           // approve nft first
           const transaction = await contract721.transferFrom(walletData.account, receiver, product.nftID);
@@ -276,7 +271,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         } else if (product.collection.data.collectionType === "Multiple") {
           const contractAddress = product.collection.data.contractAddress1155;
           // Pull the deployed contract instance
-          const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
+          const contract1155 = await getERC1155Contract(walletData, contractAddress);
 
           // transfer token
           const transaction = await contract1155.safeTransferFrom(

@@ -8,6 +8,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
     const [selectTermsAndConditions, setSelectTermsAndConditions] = useState(false);
     const [selectNetwork, setSelectNetwork] = useState(false);
     const [selectWallet, setSelectWallet] = useState(false);
+
     const cryptoList = [{
         name: "Ethereum",
         image: "/images/connect/ethereum.png"
@@ -78,7 +79,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                 <h5 className="mb--0 mt--20">Choose Network</h5>
                                 <div className="row align-items-center mb--0">
                                     {cryptoList.map((list, index) => <>
-                                        <div className="col-lg-2 col-3">
+                                        <div className="col-lg-2 col-3" key={index}>
                                             <div className="nuron-form-check">
                                                 <input
                                                     type="radio"
@@ -101,7 +102,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                 <h5 className="mb--0 mt--20">Choose Wallet</h5>
                                 <div className="row align-items-center mb--20 mt--20">
                                     {connectWallet.map((list, index) => <>
-                                        <div className="col-lg-3 col-6">
+                                        <div className="col-lg-3 col-6" key={index}>
                                             <div className="nuron-form-check">
                                                 <input
                                                     type="radio"
