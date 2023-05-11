@@ -44,12 +44,11 @@ Collection.propTypes = {
     src: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]),
     alt: PropTypes.string
   }).isRequired,
-  thumbnails: PropTypes.arrayOf(
-    PropTypes.shape({
-      src: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]).isRequired,
-      alt: PropTypes.string
-    }).isRequired
-  ),
+  thumbnails: PropTypes.shape({
+    src: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]).isRequired,
+    alt: PropTypes.string
+  }).isRequired,
+  // PropTypes.arrayOf( ),
   profile_image: PropTypes.shape({
     src: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]),
     alt: PropTypes.string

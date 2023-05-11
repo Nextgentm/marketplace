@@ -24,7 +24,7 @@ const AuctionArea = ({ space, className, data }) => (
           >
             <Product
               title={auction.collectible?.data?.name || "Untitled NFT"}
-              slug={auction.id}
+              slug={auction.id.toString()}
               collectionName={auction.collectible?.data?.collection?.data?.name}
               latestBid={auction.latestBid || "N/A"}
               price={auction.bidPrice || "-"}

@@ -122,27 +122,27 @@ contract NFTMarketplace is ERC721URIStorage, ERC721Burnable {
     }
 
     //The first time a token is created, it is listed here
-    function createToken(
-        string memory tokenURI,
-        uint256 price,
-        bool listOnSale
-    ) public onlyOwner returns (uint256) {
-        //Increment the tokenId counter, which is keeping track of the number of minted NFTs
-        _tokenIds.increment();
-        uint256 newTokenId = _tokenIds.current();
+    // function createToken(
+    //     string memory tokenURI,
+    //     uint256 price,
+    //     bool listOnSale
+    // ) public onlyOwner returns (uint256) {
+    //     //Increment the tokenId counter, which is keeping track of the number of minted NFTs
+    //     _tokenIds.increment();
+    //     uint256 newTokenId = _tokenIds.current();
 
-        //Mint the NFT with tokenId newTokenId to the address who called createToken
-        _safeMint(msg.sender, newTokenId);
+    //     //Mint the NFT with tokenId newTokenId to the address who called createToken
+    //     _safeMint(msg.sender, newTokenId);
 
-        //Map the tokenId to the tokenURI (which is an IPFS URL with the NFT metadata)
-        _setTokenURI(newTokenId, tokenURI);
+    //     //Map the tokenId to the tokenURI (which is an IPFS URL with the NFT metadata)
+    //     _setTokenURI(newTokenId, tokenURI);
 
-        if (listOnSale) {
-            //Helper function to update Global variables and emit an event
-            createListedToken(newTokenId, price);
-        }
-        return newTokenId;
-    }
+    //     if (listOnSale) {
+    //         //Helper function to update Global variables and emit an event
+    //         createListedToken(newTokenId, price);
+    //     }
+    //     return newTokenId;
+    // }
 
     function createListedToken(
         uint256 tokenId,
