@@ -98,13 +98,11 @@ Product.propTypes = {
   likeCount: PropTypes.number,
   auction_date: PropTypes.string,
   image: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]),
-  authors: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      slug: PropTypes.string.isRequired,
-      image: ImageType.isRequired
-    })
-  ),
+  authors: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    slug: PropTypes.string.isRequired,
+    image: ImageType.isRequired
+  }),// PropTypes.arrayOf(),
   bitCount: PropTypes.number,
   placeBid: PropTypes.bool,
   disableShareDropdown: PropTypes.bool

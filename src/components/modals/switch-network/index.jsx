@@ -43,7 +43,7 @@ const SwitchNetwork = ({ show, handleModal, handleSubmit }) => {
                         <div className="row align-items-center mb--60">
                             {cryptoList.map((list, index) => <>
 
-                                <div className="col-lg-4 col-3">
+                                <div className="col-lg-4 col-3" key={index}>
 
                                     <div className="nuron-form-check">
                                         <input

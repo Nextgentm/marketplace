@@ -36,8 +36,7 @@ const Author = () => {
         if (walletData.account) {
           getAllCollectionsData();
           // check is Admin
-          const signer = walletData.provider.getSigner();
-          addressIsAdmin(walletData.ethers, walletData.account, "Polygon", signer).then((validationValue) => {
+          addressIsAdmin(walletData).then((validationValue) => {
             setIsAdminWallet(validationValue);
           }).catch((error) => { console.log("Error while factory call " + error) });
         } else {

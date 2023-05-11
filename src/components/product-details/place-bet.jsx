@@ -13,12 +13,7 @@ import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 
-import { convertEthertoWei, convertWeitoEther } from "../../lib/BlokchainHelperFunctions";
-import ERC721Contract from "../../contracts/json/erc721.json";
-import ERC1155Contract from "../../contracts/json/erc1155.json";
-import TradeContract from "../../contracts/json/trade.json";
-import TransferProxy from "../../contracts/json/TransferProxy.json";
-import TokenContract from "../../contracts/json/ERC20token.json";
+import { convertEthertoWei, convertWeitoEther, getTokenContract, getTradeContract } from "../../lib/BlokchainHelperFunctions";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import { useMutation } from "@apollo/client";
@@ -93,10 +88,21 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
       //convert price
       const convertedPrice = convertEthertoWei(walletData.ethers, price);
       // Pull the deployed contract instance
-      const TokenContractAddress = auction.data.paymentToken?.data?.blockchain;
-      const tokenContract = new walletData.ethers.Contract(TokenContractAddress, TokenContract.abi, signer);
-
-      // const allowance = await tokenContract.allowance(walletData.account, TransferProxy.address);
+      let TokenContractAddress;
+      //Select token contract address according to current network
+      if (walletData.network == "Polygon") {
+        TokenContractAddress = auction.data.paymentToken?.data?.polygonAddress;
+      } else if (walletData.network == "Ethereum") {
+        TokenContractAddress = auction.data.paymentToken?.data?.ethAddress;
+      } else if (walletData.network == "Binance") {
+        TokenContractAddress = auction.data.paymentToken?.data?.binanceAddress;
+      }
+      if (!TokenContractAddress) {
+        toast.error("Token address not found for current network!");
+        return;
+      }
+      const tokenContract = await getTokenContract(walletData, TokenContractAddress);
+      // const allowance = await tokenContract.allowance(walletData.account, walletData.contractData.TransferProxy.address);
       // const allowanceAmount = parseInt(allowance._hex, 16);
       const requireAllowanceAmount = "" + parseInt(convertedPrice * quantity);
 
@@ -105,7 +111,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         toast.error("Amount is greater than your current balance");
         return;
       }
-      const transaction = await tokenContract.increaseAllowance(TransferProxy.address, requireAllowanceAmount);
+      const transaction = await tokenContract.increaseAllowance(walletData.contractData.TransferProxy.address, requireAllowanceAmount);
       const receipt = await transaction.wait();
 
       let isAccepted = false;
@@ -125,7 +131,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         const qty = `${quantity ? quantity : 1}`;
 
         // Pull the deployed contract instance
-        const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
+        const tradeContract = await getTradeContract(walletData);
 
 
         const transaction = await tradeContract.buyAsset([
