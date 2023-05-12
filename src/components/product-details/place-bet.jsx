@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 
 import { convertEthertoWei, convertWeitoEther, getTokenContract, getTradeContract } from "../../lib/BlokchainHelperFunctions";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
@@ -154,7 +154,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         const transactionHash = receipt.transactionHash;
         if (receipt) {
           isAccepted = true;
-          completeAuction(auction.data.remainingQuantity - qty);
+          await completeAuction(auction.data.remainingQuantity - qty);
           createOwnerHistory({
             variables: {
               data: {
@@ -205,6 +205,11 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
       }
     } else if (product.collection.data.networkType === "Polygon") {
       if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    } else if (product.collection.data.networkType === "Binance") {
+      if (!switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }

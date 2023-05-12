@@ -17,17 +17,17 @@ export const NETWORKS = {
 export const NETWORKS_CHAINS = {
   "0x5": {
     chainId: "0x5",
-    chainName: "Mumbai",
-    nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-    rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
-    blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
-  },
-  "0x13881": {
-    chainId: "0x13881",
     chainName: "Goerli test network",
     nativeCurrency: { name: "GoerliETH", symbol: "GoerliETH", decimals: 18 },
     rpcUrls: ["https://goerli.infura.io/v3/"],
     blockExplorerUrls: ["https://goerli.etherscan.io"]
+  },
+  "0x13881": {
+    chainId: "0x13881",
+    chainName: "Mumbai",
+    nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
+    rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
+    blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
   },
   "0x61": {
     chainId: "0x61",
