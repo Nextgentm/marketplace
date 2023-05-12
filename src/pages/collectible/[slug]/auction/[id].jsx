@@ -18,7 +18,7 @@ const AuctionDetails = ({ auction, recentViewProducts }) => (
     <Header />
     <main id="main-content">
       <Breadcrumb pageTitle="Product Details" currentPage="Product Details" />
-      {auction && <AuctionDetailsArea auction={auction} />}
+      {auction && <AuctionDetailsArea auctionData={auction} />}
 
       {recentViewProducts?.data.length > 0 &&
         <AuctionArea

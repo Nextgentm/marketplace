@@ -23,7 +23,7 @@ const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
   ssr: false
 });
 
-const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnColor, className }) => {
+const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData, isOwner, btnColor, className }) => {
   const { walletData, setWalletData } = useContext(AppData);
   const [showBidModal, setShowBidModal] = useState(false);
   const handleBidModal = () => {
@@ -155,7 +155,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         if (receipt) {
           isAccepted = true;
           await completeAuction(auction.data.remainingQuantity - qty);
-          createOwnerHistory({
+          await createOwnerHistory({
             variables: {
               data: {
                 auction: auction.data.id,
@@ -179,14 +179,15 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         auction: auction.data.id,
         isAccepted
       });
-
+      console.log(res);
+      await refreshPageData();
       setShowBidModal(false);
       if (auction.data.sellType === "FixedPrice") {
         toast.success("NFT purchased successfully!");
       } else {
         toast.success("Bidding placed successfully!");
       }
-      router.reload();
+      // router.reload();
     } catch (error) {
 
     }

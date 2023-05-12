@@ -16,7 +16,7 @@ import { UPDATE_BIDDING } from "src/graphql/mutation/bidding.js/updateBidding";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
 
-const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction, id }) => {
+const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction, id, refreshPageData }) => {
   const { walletData, setWalletData } = useContext(AppData);
 
   const router = useRouter();
@@ -112,7 +112,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
         const transactionHash = receipt.transactionHash;
         if (receipt) {
           await completeAuction(auction.data.remainingQuantity - qty, buyer);
-          createOwnerHistory({
+          await createOwnerHistory({
             variables: {
               data: {
                 auction: auction.data.id,
@@ -126,12 +126,13 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
             }
           });
         }
+        await refreshPageData();
         if (auction.data.sellType === "FixedPrice") {
           toast.success("NFT purchased successfully!");
         } else {
           toast.success("Bidding Accepted successfully!");
         }
-        router.reload();
+        // router.reload();
       } catch (error) {
         toast.error(error.reason);
         console.log(error);

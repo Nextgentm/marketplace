@@ -57,17 +57,34 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
 
   useEffect(() => {
     // if (updatedCollectible) {
-    //   console.log(updatedCollectible);
+    // console.log(updatedCollectible);
     // }
     // console.log(updatedCollectible);
   }, [updatedCollectible]);
 
   useEffect(() => {
+    if (createdOwnerHistory) {
+      // local product values update
+      // later update this product to hook
+      product?.owner_histories?.data.push({
+        createdAt: createdOwnerHistory.createOwnerHistory.data?.attributes?.createdAt,
+        event: createdOwnerHistory.createOwnerHistory.data?.attributes?.event,
+        fromWalletAddress: createdOwnerHistory.createOwnerHistory.data?.attributes?.fromWalletAddress,
+        id: createdOwnerHistory.createOwnerHistory.data?.id,
+        quantity: createdOwnerHistory.createOwnerHistory.data?.attributes?.quantity,
+        toWalletAddress: createdOwnerHistory.createOwnerHistory.data?.attributes?.toWalletAddress,
+        transactionHash: createdOwnerHistory.createOwnerHistory.data?.attributes?.transactionHash
+      });
+    }
+    // console.log(createdOwnerHistory);
+  }, [createdOwnerHistory]);
+
+
+  const updateMyERC1155Balance = () => {
     if (walletData.isConnected) {
       if (walletData.account) {
         if (product.collection.data.collectionType === "Multiple") {
-          // check is Admin
-          const signer = walletData.provider.getSigner();
+          // check ERC1155 Token balance
           const contractAddress = product.collection.data.contractAddress1155;
           getERC1155Balance(walletData, walletData.account, contractAddress, product.nftID).then((balance) => {
             setERC1155MyBalance(balance);
@@ -80,6 +97,10 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       setERC1155MyBalance(0);
       // toast.error("Please connect wallet first");
     }
+  }
+
+  useEffect(() => {
+    updateMyERC1155Balance();
   }, [walletData])
 
   async function switchNetwork(chainId) {
@@ -168,8 +189,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         quantity: data.quantity ? data.quantity : 1,
         remainingQuantity: data.quantity ? data.quantity : 1,
       });
-      console.log(res);
-      updateCollectible({
+      // console.log(res);
+      await updateCollectible({
         variables: {
           "data": {
             putOnSale: true
@@ -295,7 +316,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           console.log(receipt);
           transactionHash = receipt.transactionHash;
         }
-        updateCollectible({
+        await updateCollectible({
           variables: {
             "data": {
               "owner": receiver.toLowerCase()
@@ -303,7 +324,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
             "updateCollectibleId": product.id
           }
         });
-        createOwnerHistory({
+        await createOwnerHistory({
           variables: {
             data: {
               collectible: product.id,
@@ -317,7 +338,10 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         });
 
         toast.success("NFT transfered succesfully");
-        router.reload();
+        // router.reload();
+        // later update this product to hook
+        product.owner = receiver.toLowerCase();
+        updateMyERC1155Balance();
         setShowTransferModal(false);
       } else {
         toast.error("Invalid address");
