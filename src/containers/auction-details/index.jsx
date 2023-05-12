@@ -25,7 +25,7 @@ import strapi from "@utils/strapi";
 
 // Demo Image
 
-const AuctionDetailsArea = ({ space, className, auction }) => {
+const AuctionDetailsArea = ({ space, className, auctionData }) => {
 
   const { walletData, setWalletData } = useContext(AppData);
 
@@ -33,6 +33,7 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   const router = useRouter();
+  const [auction, setAuction] = useState(auctionData);
   const [erc1155MyBalance, setERC1155MyBalance] = useState(0);
 
   useEffect(() => {
@@ -40,9 +41,23 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
     //   console.log(updatedCollectible);
     // }
     // console.log(updatedCollectible);
-  }, [updatedCollectible]);
+  }, [auction]);
 
-  useEffect(() => {
+  const refreshPageData = async () => {
+    let _auctionData = await strapi.findOne("auctions", auction.data.id, {
+      populate: ["collectible", "paymentToken", "biddings"],
+    });
+    // console.log(auction);
+
+    let collectible = await strapi.findOne("collectibles", auction.data.collectible.data.id, {
+      populate: ["owner_histories", "image", "collectibleProperties", "collection"],
+    });
+    _auctionData.data.collectible = collectible;
+    setAuction(_auctionData);
+    updateMyERC1155Balance();
+  }
+
+  const updateMyERC1155Balance = () => {
     if (walletData.isConnected) {
       if (walletData.account) {
         if (auction?.data?.collectible.data.collection.data.collectionType === "Multiple") {
@@ -59,6 +74,10 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
       setERC1155MyBalance(0);
       // toast.error("Please connect wallet first");
     }
+  }
+
+  useEffect(() => {
+    updateMyERC1155Balance();
   }, [walletData])
 
   return (
@@ -92,6 +111,7 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
                   supply={auction?.data?.collectible.data.supply}
                   product={auction?.data?.collectible.data}
                   auction={auction}
+                  refreshPageData={refreshPageData}
                   properties={auction?.data?.collectible.data?.collectibleProperties?.data}
                   tags={auction?.data?.collectible.data?.tags}
                   history={auction?.data?.collectible.data?.owner_histories?.data}
@@ -108,6 +128,7 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
                     auction_date={auction?.data?.endTimeStamp}
                     product={auction?.data?.collectible.data}
                     auction={auction}
+                    refreshPageData={refreshPageData}
                     isOwner={auction?.data?.walletAddress == walletData.account}
                   />
                 )}
