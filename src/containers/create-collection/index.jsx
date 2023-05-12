@@ -339,6 +339,11 @@ const CreateCollectionArea = () => {
         // polygon testnet
         return;
       }
+    } else if (blockchainNetwork === "Binance") {
+      if (!switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
     }
 
     /** Show Error if form not submited correctly */
