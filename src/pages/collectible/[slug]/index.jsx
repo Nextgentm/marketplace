@@ -44,9 +44,9 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=*`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?filters[slug][$eq]=${params.slug}&populate=*`);
   const productData = await res.json();
-  const product = productData.data.find(({ slug }) => slug === params.slug);
+  const product = productData.data[0] || null;
   let bids = null;
 
   if (product) {
@@ -63,19 +63,22 @@ export async function getStaticProps({ params }) {
     });
     // console.log(product.id);
     product.owner_histories = collectible.data.owner_histories;
+
+    if (product.putOnSale) {
+      // Get All auction and biddings data
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions/${product.auction?.data[0]?.id}?populate=*`
+      );
+      const auction = await response.json();
+      // console.log(auction);
+      bids = auction.data?.biddings?.data;
+      product.auction.data.paymentToken = auction.data?.paymentToken;
+    }
   }
-  if (product.putOnSale) {
-    // Get All auction and biddings data
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions/${product.auction?.data[0]?.id}?populate=*`
-    );
-    const auction = await response.json();
-    // console.log(auction);
-    bids = auction.data?.biddings?.data;
-    product.auction.data.paymentToken = auction.data?.paymentToken;
-  }
-  const remaningProducts = productData.data.filter((slug) => slug !== params.slug);
-  const recentViewProducts = shuffleArray(remaningProducts).slice(0, 5);
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?filters[slug][$ne]=${params.slug}&populate=*&pagination[pageSize]=10`);
+  const remaningProducts = await response.json();
+  const recentViewProducts = shuffleArray(remaningProducts.data).slice(0, 5);
   const relatedProducts = [];
   return {
     props: {

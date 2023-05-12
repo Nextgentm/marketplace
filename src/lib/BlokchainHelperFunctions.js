@@ -93,7 +93,7 @@ export async function getTokenContract(walletData, contractAddress) {
 
 export async function getTradeContract(walletData) {
   // Pull the deployed contract instance
-  console.log(walletData);
+  // console.log(walletData);
   if (walletData.contractData) {
     const signer = walletData.provider.getSigner();
     const tradeContract = new walletData.ethers.Contract(
