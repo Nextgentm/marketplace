@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
 
-const TransferPopupModal = ({ show, handleModal, supply, handleSubmit }) => {
+const TransferPopupModal = ({ show, handleModal, supply, maxQuantity, handleSubmit }) => {
 
   return (
     <Modal className="rn-popup-modal placebid-modal-wrapper" show={show} onHide={handleModal} centered>
@@ -30,7 +30,7 @@ const TransferPopupModal = ({ show, handleModal, supply, handleSubmit }) => {
                 <div className="bid-content-mid">
                   <div className="row">
                     <label htmlFor="quantity">Quantity</label>
-                    <input type="number" id="quantity" min="1" placeholder="e.g. 10" />
+                    <input type="number" id="quantity" min="1" max={maxQuantity} placeholder="e.g. 10" />
                   </div>
                 </div>
               )}

@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
 import TransferPopupModal from "@components/modals/transfer";
@@ -205,6 +205,11 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         // polygon testnet
         return;
       }
+    } else if (product.collection.data.networkType === "Binance") {
+      if (!switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
     }
 
     let _sellType;
@@ -242,6 +247,11 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       }
     } else if (product.collection.data.networkType === "Polygon") {
       if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    } else if (product.collection.data.networkType === "Binance") {
+      if (!switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }
@@ -285,14 +295,14 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           console.log(receipt);
           transactionHash = receipt.transactionHash;
         }
-        // updateCollectible({
-        //   variables: {
-        //     "data": {
-        //       "owner": receiver.toLowerCase()
-        //     },
-        //     "updateCollectibleId": product.id
-        //   }
-        // });
+        updateCollectible({
+          variables: {
+            "data": {
+              "owner": receiver.toLowerCase()
+            },
+            "updateCollectibleId": product.id
+          }
+        });
         createOwnerHistory({
           variables: {
             data: {
@@ -374,27 +384,28 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                 </div>
               ) : (
                 <>
-                  {!product.putOnSale && product.owner === walletData.account && (
-                    <div className="row">
-                      <div className="col-md-6">
-                        <Button
-                          color="primary-alta"
-                          onClick={() =>
-                            product.collection.data.collectionType === "Multiple"
-                              ? setShowDirectSalesModal(true)
-                              : setShowAuctionInputModel(true)
-                          }
-                        >
-                          Put on Sale
-                        </Button>
+                  {((!product.putOnSale && product.owner === walletData.account) ||
+                    (product.supply > 1 && erc1155MyBalance > 0)) && (
+                      <div className="row">
+                        <div className="col-md-6">
+                          <Button
+                            color="primary-alta"
+                            onClick={() =>
+                              product.collection.data.collectionType === "Multiple"
+                                ? setShowDirectSalesModal(true)
+                                : setShowAuctionInputModel(true)
+                            }
+                          >
+                            Put on Sale
+                          </Button>
+                        </div>
+                        <div className="col-md-6">
+                          <Button color="primary-alta" onClick={() => handleShowTransferModal(true)}>
+                            Transfer
+                          </Button>
+                        </div>
                       </div>
-                      <div className="col-md-6">
-                        <Button color="primary-alta" onClick={() => handleShowTransferModal(true)}>
-                          Transfer
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+                    )}
 
                   <div className="rn-bid-details">
                     <BidTab
@@ -433,6 +444,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         show={showDirectSalesModal}
         handleModal={handleDirectSaleModal}
         supply={product?.supply}
+        maxQuantity={product?.supply > 1 ? erc1155MyBalance : product?.supply}
         handleSubmit={handleSubmit}
         paymentTokensList={product.collection?.data?.paymentTokens?.data}
       />
@@ -440,6 +452,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         show={showTimeAuctionModal}
         handleModal={handleTimeAuctionModal}
         supply={product?.supply}
+        maxQuantity={product?.supply > 1 ? erc1155MyBalance : product?.supply}
         handleSubmit={handleSubmit}
         paymentTokensList={product.collection?.data?.paymentTokens?.data}
       />
@@ -447,6 +460,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         show={showTransferModal}
         handleModal={handleShowTransferModal}
         supply={product?.supply}
+        maxQuantity={product?.supply > 1 ? erc1155MyBalance : product?.supply}
         handleSubmit={handleSubmitTransfer}
       />
     </div>

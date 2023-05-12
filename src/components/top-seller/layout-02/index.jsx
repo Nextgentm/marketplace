@@ -111,7 +111,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
         const receipt = await transaction.wait();
         const transactionHash = receipt.transactionHash;
         if (receipt) {
-          completeAuction(auction.data.remainingQuantity - qty, buyer);
+          await completeAuction(auction.data.remainingQuantity - qty, buyer);
           createOwnerHistory({
             variables: {
               data: {

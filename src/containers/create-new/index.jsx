@@ -14,7 +14,7 @@ import NiceSelect from "@ui/nice-select";
 import Modal from "react-bootstrap/Modal";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 import { getERC721Contract, getERC1155Contract } from "src/lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
@@ -265,6 +265,11 @@ const CreateNewArea = ({ className, space }) => {
         // polygon testnet
         return;
       }
+    } else if (selectedCollection?.networkType === "Binance") {
+      if (!switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
     }
     if (isPreviewBtn && selectedImage) {
       setPreviewData({ ...data, image: selectedImage });
@@ -487,6 +492,8 @@ const CreateNewArea = ({ className, space }) => {
         switchNetwork(ETHEREUM_NETWORK_CHAIN_ID); // ethereum testnet
       } else if (selectedCollection.networkType === "Polygon") {
         switchNetwork(POLYGON_NETWORK_CHAIN_ID); // polygon testnet
+      } else if (selectedCollection.networkType === "Binance") {
+        switchNetwork(BINANCE_NETWORK_CHAIN_ID); // polygon testnet
       }
     }
   }, [selectedCollection]);

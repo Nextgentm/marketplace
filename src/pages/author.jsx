@@ -54,18 +54,37 @@ const Author = () => {
 
     let response = await strapi.find("collectibles", {
       filters: {
-        owner: {
-          $eq: walletData.account
-        },
-        // collection: {
-        //   collectionType: {
-        //     $eq: "Single"
-        //   }
-        // },
+        $or: [{
+          $and: [{
+            owner: {
+              $eq: walletData.account
+            },
+          }, {
+            collection: {
+              collectionType: {
+                $eq: "Single"
+              }
+            },
+          }]
+        }, {
+          $and: [{
+            owner_histories: {
+              toWalletAddress: {
+                $eq: walletData.account
+              }
+            },
+          }, {
+            collection: {
+              collectionType: {
+                $ne: "Single"
+              }
+            },
+          }]
+        }]
       },
       populate: "*",
     });
-    // console.log(response.data);
+    console.log(response.data);
     setAllProductsData(response.data);
 
     let creatorResponse = await strapi.find("collectibles", {
