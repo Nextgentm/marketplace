@@ -11,7 +11,7 @@ import _ from "lodash";
 import { getCollection } from "src/services/collections/collection";
 
 const CollectionArea = ({ className, space, id, data }) => {
-  console.log("data data ", data);
+  // console.log("data data ", data);
   const [collectionsRecords, setCollectionsRecords] = useState([]);
   const [collectionsData, setCollectionsData] = useState();
   const [pagination, setPagination] = useState({
@@ -27,7 +27,7 @@ const CollectionArea = ({ className, space, id, data }) => {
   }, [data]);
 
   const setCollectionData = (data, page = 1) => {
-    console.log("data123465", Math.ceil(data.meta.pagination.total / 8));
+    // console.log("data123465", Math.ceil(data.meta.pagination.total / 8));
     setCollectionsData(data.data);
     setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 8), page });
   };
@@ -39,13 +39,31 @@ const CollectionArea = ({ className, space, id, data }) => {
     const data = await getCollection({
       filters: {
         collectibles: {
-          putOnSale: true,
-          id: {
-            $notNull: true
+          auction: {
+            status: "Live"
           }
         }
       },
-      populate: "*",
+      populate: {
+        collectibles: {
+          fields: "*",
+          populate: {
+            auction: {
+              fields: "*",
+              filters: {
+                status: "Live",
+                id: { $notNull: true }
+              }
+            }
+          }
+        },
+        cover: {
+          fields: "*"
+        },
+        logo: {
+          fields: "*"
+        }
+      },
       pagination: {
         start,
         limit
@@ -77,7 +95,7 @@ const CollectionArea = ({ className, space, id, data }) => {
   // };
   const getTotal = useCallback((collection) => {
     let total = 0;
-    total = +collection.collectibles.data.reduce((acc, cur) => acc + cur.auction.data.length, 0);
+    total = +collection.collectibles.data.reduce((acc, cur) => acc + cur.auction?.data?.length, 0);
     return total;
   }, []);
 
@@ -86,7 +104,7 @@ const CollectionArea = ({ className, space, id, data }) => {
       <div className="container">
         {collectionsData && (
           <div className="row g-5">
-            {console.log("collectionsData", collectionsData)}
+            {/* {console.log("collectionsData", collectionsData)} */}
             {collectionsData.map((collection) =>
               collection?.collectibles?.data?.length ? (
                 <div key={collection.id} className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12">
