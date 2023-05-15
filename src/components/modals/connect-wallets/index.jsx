@@ -3,51 +3,15 @@ import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
 import Link from "next/link";
 import { useState } from "react";
+import { networksList, walletsList } from "@utils/wallet";
+
+
 const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
 
     const [selectTermsAndConditions, setSelectTermsAndConditions] = useState(false);
     const [selectNetwork, setSelectNetwork] = useState(false);
     const [selectWallet, setSelectWallet] = useState(false);
 
-    const cryptoList = [{
-        name: "Ethereum",
-        image: "/images/connect/ethereum.png"
-    },
-    {
-        name: "Binance",
-        image: "/images/connect/binance.png"
-    },
-    {
-        name: "Polygon",
-        image: "/images/connect/polygon.png"
-    },
-    {
-        name: "Avalanche",
-        image: "/images/connect/avalanche.png"
-    },
-    {
-        name: "Arbitrum",
-        image: "/images/connect/arbitrum.webp"
-    }
-    ];
-
-    const connectWallet = [{
-        name: "MetaMask",
-        image: "/images/connect/fox.png"
-    },
-        // {
-        //     name: "WalletConnect",
-        //     image: "/images/connect/WalletConnect.png"
-        // },
-        // {
-        //     name: "BSC Wallet",
-        //     image: "/images/connect/binance.png"
-        // },
-        // {
-        //     name: "Coinbase Wallet",
-        //     image: "/images/connect/coinbase.png"
-        // }
-    ];
     return (
         <Modal className="rn-popup-modal connect-wallets-wrapper placebid-modal-wrapper" show={show} onHide={handleModal} centered>
             {show && (
@@ -78,7 +42,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                             <div className="switch-network-form-box choose-network">
                                 <h5 className="mb--0 mt--20">Choose Network</h5>
                                 <div className="row align-items-center mb--0">
-                                    {cryptoList.map((list, index) => <>
+                                    {networksList.map((list, index) => <>
                                         <div className="col-lg-2 col-3" key={index}>
                                             <div className="nuron-form-check">
                                                 <input
@@ -101,7 +65,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                             <div className="switch-network-form-box choose-wallet">
                                 <h5 className="mb--0 mt--20">Choose Wallet</h5>
                                 <div className="row align-items-center mb--20 mt--20">
-                                    {connectWallet.map((list, index) => <>
+                                    {walletsList.map((list, index) => <>
                                         <div className="col-lg-3 col-6" key={index}>
                                             <div className="nuron-form-check">
                                                 <input

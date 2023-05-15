@@ -318,7 +318,7 @@ const CreateCollectionArea = () => {
     }
   }
 
-  const onSubmit = (data, e) => {
+  const onSubmit = async (data, e) => {
     const { target } = e;
     const submitBtn = target.localName === "span" ? target.parentElement : target;
     const isPreviewBtn = submitBtn.dataset?.btn;
@@ -330,17 +330,17 @@ const CreateCollectionArea = () => {
       return;
     } // chnage network
     if (blockchainNetwork === "Ethereum") {
-      if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
         // ethereum testnet
         return;
       }
     } else if (blockchainNetwork === "Polygon") {
-      if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }
     } else if (blockchainNetwork === "Binance") {
-      if (!switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }

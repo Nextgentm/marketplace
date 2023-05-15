@@ -9,12 +9,13 @@ import axios from "axios";
 import { Button } from "react-bootstrap";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { convertEthertoWei, getTradeContract, getTokenContract } from "../../../lib/BlokchainHelperFunctions";
+import { convertEthertoWei, getTradeContract, getTokenContract, switchNetwork } from "../../../lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { UPDATE_BIDDING } from "src/graphql/mutation/bidding.js/updateBidding";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
+import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 
 const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction, id, refreshPageData }) => {
   const { walletData, setWalletData } = useContext(AppData);
@@ -54,6 +55,23 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
 
   async function acceptBid() {
     try {
+      // chnage network
+      if (product.collection.data.networkType === "Ethereum") {
+        if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+          // ethereum testnet
+          return;
+        }
+      } else if (product.collection.data.networkType === "Polygon") {
+        if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+          // polygon testnet
+          return;
+        }
+      } else if (product.collection.data.networkType === "Binance") {
+        if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+          // polygon testnet
+          return;
+        }
+      }
       const signer = walletData.provider.getSigner();
       const seller = auction.data.walletAddress;
       const buyer = name;
