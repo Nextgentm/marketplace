@@ -19,7 +19,7 @@ import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CH
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
 import TransferPopupModal from "@components/modals/transfer";
-import { getERC1155Balance, validateInputAddresses, getERC1155Contract, getERC721Contract } from "../../lib/BlokchainHelperFunctions";
+import { getERC1155Balance, validateInputAddresses, getERC1155Contract, getERC721Contract, switchNetwork } from "../../lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
@@ -102,25 +102,6 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   useEffect(() => {
     updateMyERC1155Balance();
   }, [walletData])
-
-  async function switchNetwork(chainId) {
-    if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
-      console.log(`Network is already with chain id ${chainId}`);
-      return true;
-    }
-    try {
-      const res = await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId }]
-      });
-      // console.log(res);
-      return true;
-    } catch (switchError) {
-      // console.log(switchError);
-      toast.error("Failed to change the network.");
-    }
-    return false;
-  }
 
   async function approveNFT() {
     try {
@@ -207,7 +188,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     }
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     // const { target } = e;
     event.preventDefault();
     // console.log(event);
@@ -217,17 +198,17 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       return;
     } // chnage network
     if (product.collection.data.networkType === "Ethereum") {
-      if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
         // ethereum testnet
         return;
       }
     } else if (product.collection.data.networkType === "Polygon") {
-      if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }
     } else if (product.collection.data.networkType === "Binance") {
-      if (!switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }
@@ -262,17 +243,17 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       return;
     } // chnage network
     if (product.collection.data.networkType === "Ethereum") {
-      if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
         // ethereum testnet
         return;
       }
     } else if (product.collection.data.networkType === "Polygon") {
-      if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }
     } else if (product.collection.data.networkType === "Binance") {
-      if (!switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }

@@ -45,7 +45,7 @@ Collection.propTypes = {
     alt: PropTypes.string
   }).isRequired,
   thumbnails: PropTypes.shape({
-    src: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]).isRequired,
+    src: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]),
     alt: PropTypes.string
   }).isRequired,
   // PropTypes.arrayOf( ),

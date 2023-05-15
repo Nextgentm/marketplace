@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 
-import { convertEthertoWei, convertWeitoEther, getTokenContract, getTradeContract } from "../../lib/BlokchainHelperFunctions";
+import { convertEthertoWei, convertWeitoEther, getTokenContract, getTradeContract, switchNetwork } from "../../lib/BlokchainHelperFunctions";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import { useMutation } from "@apollo/client";
@@ -41,23 +41,6 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
 
   useEffect(() => {
   }, [updatedCollectible]);
-
-  async function switchNetwork(chainId) {
-    if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
-
-      return true;
-    }
-    try {
-      const res = await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId }]
-      });
-      return true;
-    } catch (switchError) {
-      toast.error("Failed to change the network.");
-    }
-    return false;
-  }
 
   async function completeAuction(quantity) {
     updateCollectible({
@@ -193,24 +176,24 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
     }
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!walletData.isConnected) {
       toast.error("Please connect wallet first");
       return;
     } // chnage network
     if (product.collection.data.networkType === "Ethereum") {
-      if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
         // ethereum testnet
         return;
       }
     } else if (product.collection.data.networkType === "Polygon") {
-      if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }
     } else if (product.collection.data.networkType === "Binance") {
-      if (!switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }

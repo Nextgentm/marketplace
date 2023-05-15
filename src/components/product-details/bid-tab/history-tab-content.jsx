@@ -47,7 +47,7 @@ HistoryTabContent.propTypes = {
         slug: PropTypes.string.isRequired,
         image: ImageType.isRequired
       }),
-      amount: PropTypes.string.isRequired,
+      // amount: PropTypes.string.isRequired,
       bidAt: PropTypes.string.isRequired
     })
   )
