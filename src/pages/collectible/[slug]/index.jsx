@@ -5,6 +5,7 @@ import Header from "@layout/header/header";
 import Footer from "@layout/footer/footer-01";
 import Breadcrumb from "@components/breadcrumb";
 import ProductDetailsArea from "@containers/product-details";
+import AuctionArea from "@containers/auction-area";
 import ProductArea from "@containers/product/layout-03";
 import { shuffleArray } from "@utils/methods";
 import strapi from "@utils/strapi";
@@ -18,10 +19,10 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
       <Breadcrumb pageTitle="Product Details" currentPage="Product Details" />
       {product && <ProductDetailsArea product={product} bids={bids} />}
 
-      <ProductArea
+      <AuctionArea
         data={{
           section_title: { title: "Related Item" },
-          products: recentViewProducts
+          auctions: recentViewProducts.data
         }}
       />
 
@@ -76,9 +77,29 @@ export async function getStaticProps({ params }) {
     }
   }
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?filters[slug][$ne]=${params.slug}&populate=*&pagination[pageSize]=10`);
-  const remaningProducts = await response.json();
-  const recentViewProducts = shuffleArray(remaningProducts.data).slice(0, 5);
+  const filter = {
+    filters: {
+      id: {
+        $ne: params.id
+      },
+      status: {
+        $eq: "Live"
+      }
+    },
+    populate: {
+      collectible: {
+        populate: ["image", "collection"]
+      },
+      biddings: {
+        fields: ["id"]
+      }
+    },
+    pagination: {
+      limit: 5
+    }
+  }
+  const recentViewProducts = await strapi.find("auctions", filter);
+  // const recentViewProducts = shuffleArray(remaningProducts.data).slice(0, 5);
   const relatedProducts = [];
   return {
     props: {
