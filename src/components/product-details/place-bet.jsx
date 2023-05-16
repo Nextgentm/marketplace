@@ -11,14 +11,9 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 
-import { convertEthertoWei, convertWeitoEther } from "../../lib/BlokchainHelperFunctions";
-import ERC721Contract from "../../contracts/json/erc721.json";
-import ERC1155Contract from "../../contracts/json/erc1155.json";
-import TradeContract from "../../contracts/json/trade.json";
-import TransferProxy from "../../contracts/json/TransferProxy.json";
-import TokenContract from "../../contracts/json/ERC20token.json";
+import { convertEthertoWei, convertWeitoEther, getTokenContract, getTradeContract, switchNetwork } from "../../lib/BlokchainHelperFunctions";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import { useMutation } from "@apollo/client";
@@ -28,7 +23,7 @@ const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
   ssr: false
 });
 
-const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnColor, className }) => {
+const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData, isOwner, btnColor, className }) => {
   const { walletData, setWalletData } = useContext(AppData);
   const [showBidModal, setShowBidModal] = useState(false);
   const handleBidModal = () => {
@@ -46,23 +41,6 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
 
   useEffect(() => {
   }, [updatedCollectible]);
-
-  async function switchNetwork(chainId) {
-    if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
-
-      return true;
-    }
-    try {
-      const res = await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId }]
-      });
-      return true;
-    } catch (switchError) {
-      toast.error("Failed to change the network.");
-    }
-    return false;
-  }
 
   async function completeAuction(quantity) {
     updateCollectible({
@@ -93,10 +71,21 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
       //convert price
       const convertedPrice = convertEthertoWei(walletData.ethers, price);
       // Pull the deployed contract instance
-      const TokenContractAddress = auction.data.paymentToken?.data?.blockchain;
-      const tokenContract = new walletData.ethers.Contract(TokenContractAddress, TokenContract.abi, signer);
-
-      // const allowance = await tokenContract.allowance(walletData.account, TransferProxy.address);
+      let TokenContractAddress;
+      //Select token contract address according to current network
+      if (walletData.network == "Polygon") {
+        TokenContractAddress = auction.data.paymentToken?.data?.polygonAddress;
+      } else if (walletData.network == "Ethereum") {
+        TokenContractAddress = auction.data.paymentToken?.data?.ethAddress;
+      } else if (walletData.network == "Binance") {
+        TokenContractAddress = auction.data.paymentToken?.data?.binanceAddress;
+      }
+      if (!TokenContractAddress) {
+        toast.error("Token address not found for current network!");
+        return;
+      }
+      const tokenContract = await getTokenContract(walletData, TokenContractAddress);
+      // const allowance = await tokenContract.allowance(walletData.account, walletData.contractData.TransferProxy.address);
       // const allowanceAmount = parseInt(allowance._hex, 16);
       const requireAllowanceAmount = "" + parseInt(convertedPrice * quantity);
 
@@ -105,7 +94,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         toast.error("Amount is greater than your current balance");
         return;
       }
-      const transaction = await tokenContract.increaseAllowance(TransferProxy.address, requireAllowanceAmount);
+      const transaction = await tokenContract.increaseAllowance(walletData.contractData.TransferProxy.address, requireAllowanceAmount);
       const receipt = await transaction.wait();
 
       let isAccepted = false;
@@ -125,7 +114,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         const qty = `${quantity ? quantity : 1}`;
 
         // Pull the deployed contract instance
-        const tradeContract = new walletData.ethers.Contract(TradeContract.address, TradeContract.abi, signer);
+        const tradeContract = await getTradeContract(walletData);
 
 
         const transaction = await tradeContract.buyAsset([
@@ -148,8 +137,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         const transactionHash = receipt.transactionHash;
         if (receipt) {
           isAccepted = true;
-          completeAuction(auction.data.remainingQuantity - qty);
-          createOwnerHistory({
+          await completeAuction(auction.data.remainingQuantity - qty);
+          await createOwnerHistory({
             variables: {
               data: {
                 auction: auction.data.id,
@@ -173,32 +162,38 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         auction: auction.data.id,
         isAccepted
       });
-
+      console.log(res);
+      await refreshPageData();
       setShowBidModal(false);
       if (auction.data.sellType === "FixedPrice") {
         toast.success("NFT purchased successfully!");
       } else {
         toast.success("Bidding placed successfully!");
       }
-      router.reload();
+      // router.reload();
     } catch (error) {
 
     }
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!walletData.isConnected) {
       toast.error("Please connect wallet first");
       return;
     } // chnage network
     if (product.collection.data.networkType === "Ethereum") {
-      if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
         // ethereum testnet
         return;
       }
     } else if (product.collection.data.networkType === "Polygon") {
-      if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    } else if (product.collection.data.networkType === "Binance") {
+      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }
@@ -222,33 +217,49 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, isOwner, btnCol
         <div className="rn-bet-create">
           <div className="bid-list winning-bid">
             <h6 className="title">{auction.data.sellType == "Bidding" ? "Auction Details" : "Buy Now"}</h6>
-            {auction.data.sellType == "Bidding" && (
-              <div className="top-seller-inner-one">
-                <div className="top-seller-wrapper">
-                  {highest_bid?.bidder?.image?.src && (
-                    <div className="thumbnail">
-                      <Anchor path={highest_bid?.bidder?.slug}>
-                        <Image src={highest_bid?.bidder?.image?.src} alt="Nft_Profile" width={44} height={44} />
-                      </Anchor>
-                    </div>
-                  )}
+            <div className="top-seller-inner-one">
+              <div className="top-seller-wrapper">
+                {highest_bid?.bidder?.image?.src && (
+                  <div className="thumbnail">
+                    <Anchor path={highest_bid?.bidder?.slug}>
+                      <Image src={highest_bid?.bidder?.image?.src} alt="Nft_Profile" width={44} height={44} />
+                    </Anchor>
+                  </div>
+                )}
 
+                {auction.data.sellType == "Bidding" ?
                   <div className="top-seller-content">
                     <span className="count-number">
-                      {highest_bid?.amount ? "Bid Amount :" + highest_bid?.amount : ""}
+                      {highest_bid?.amount ? "Bid Amount : " + highest_bid?.amount : ""}
                       {highest_bid?.priceCurrency}
                     </span>
+                    {highest_bid?.quantity > 1 &&
+                      <span className="count-number">
+                        {highest_bid?.remainingQuantity ? "Remaining Quantity : " + highest_bid?.remainingQuantity : ""}
+                      </span>
+                    }
+                  </div> :
+                  <div className="top-seller-content">
                     <span className="count-number">
-                      {highest_bid?.quantity ? "Quantity :" + highest_bid?.quantity : ""}
+                      {highest_bid?.amount ? "Price : " + highest_bid?.amount : ""}
+                      {highest_bid?.priceCurrency}
                     </span>
-                  </div>
-                </div>
+                    {highest_bid?.quantity > 1 &&
+                      <span className="count-number">
+                        {highest_bid?.remainingQuantity ? "Remaining Quantity : " + highest_bid?.remainingQuantity : ""}
+                      </span>
+                    }
+                  </div>}
               </div>
-            )}
+            </div>
           </div>
           {auction_date && (
             <div className="bid-list left-bid">
-              <h6 className="title">{new Date() < new Date(auction_date) ? "Auction will ended in" : "Auction has ended"}</h6>
+              <h6 className="title">{new Date() < new Date(auction_date) ?
+                (auction.data.sellType == "Bidding" ? "Auction will ended in" : "Sale will ended in")
+                :
+                (auction.data.sellType == "Bidding" ? "Auction has ended" : "Sale has ended")
+              }</h6>
               <Countdown className="mt--15" date={auction_date} />
             </div>
           )}

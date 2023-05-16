@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import TopSeller from "@components/top-seller/layout-02";
 import { IDType, ImageType } from "@utils/types";
 
-const BidsTabContent = ({ bids, product, auction }) => (
+const BidsTabContent = ({ bids, product, auction, refreshPageData }) => (
   <div>
     {bids?.map((bid) => (
       <TopSeller
@@ -15,6 +15,7 @@ const BidsTabContent = ({ bids, product, auction }) => (
         image={{ src: bid?.user?.image?.src, width: 44, height: 44 }}
         product={product}
         auction={auction}
+        refreshPageData={refreshPageData}
       />
     ))}
   </div>

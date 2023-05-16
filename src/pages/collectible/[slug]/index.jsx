@@ -5,6 +5,7 @@ import Header from "@layout/header/header";
 import Footer from "@layout/footer/footer-01";
 import Breadcrumb from "@components/breadcrumb";
 import ProductDetailsArea from "@containers/product-details";
+import AuctionArea from "@containers/auction-area";
 import ProductArea from "@containers/product/layout-03";
 import { shuffleArray } from "@utils/methods";
 import strapi from "@utils/strapi";
@@ -18,10 +19,10 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
       <Breadcrumb pageTitle="Product Details" currentPage="Product Details" />
       {product && <ProductDetailsArea product={product} bids={bids} />}
 
-      <ProductArea
+      <AuctionArea
         data={{
           section_title: { title: "Related Item" },
-          products: recentViewProducts
+          auctions: recentViewProducts.data
         }}
       />
 
@@ -44,9 +45,9 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=*`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?filters[slug][$eq]=${params.slug}&populate=*`);
   const productData = await res.json();
-  const product = productData.data.find(({ slug }) => slug === params.slug);
+  const product = productData.data[0] || null;
   let bids = null;
 
   if (product) {
@@ -63,19 +64,42 @@ export async function getStaticProps({ params }) {
     });
     // console.log(product.id);
     product.owner_histories = collectible.data.owner_histories;
+
+    if (product.putOnSale) {
+      // Get All auction and biddings data
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions/${product.auction?.data[0]?.id}?populate=*`
+      );
+      const auction = await response.json();
+      // console.log(auction);
+      bids = auction.data?.biddings?.data;
+      product.auction.data.paymentToken = auction.data?.paymentToken;
+    }
   }
-  if (product.putOnSale) {
-    // Get All auction and biddings data
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions/${product.auction?.data[0]?.id}?populate=*`
-    );
-    const auction = await response.json();
-    // console.log(auction);
-    bids = auction.data?.biddings?.data;
-    product.auction.data.paymentToken = auction.data?.paymentToken;
+
+  const filter = {
+    filters: {
+      id: {
+        $ne: params.id
+      },
+      status: {
+        $eq: "Live"
+      }
+    },
+    populate: {
+      collectible: {
+        populate: ["image", "collection"]
+      },
+      biddings: {
+        fields: ["id"]
+      }
+    },
+    pagination: {
+      limit: 5
+    }
   }
-  const remaningProducts = productData.data.filter((slug) => slug !== params.slug);
-  const recentViewProducts = shuffleArray(remaningProducts).slice(0, 5);
+  const recentViewProducts = await strapi.find("auctions", filter);
+  // const recentViewProducts = shuffleArray(remaningProducts.data).slice(0, 5);
   const relatedProducts = [];
   return {
     props: {

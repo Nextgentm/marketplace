@@ -14,9 +14,8 @@ import NiceSelect from "@ui/nice-select";
 import Modal from "react-bootstrap/Modal";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
-import ERC721Contract from "../../contracts/json/erc721.json";
-import ERC1155Contract from "../../contracts/json/erc1155.json";
+import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { getERC721Contract, getERC1155Contract } from "src/lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
@@ -204,7 +203,7 @@ const CreateNewArea = ({ className, space }) => {
       console.log(contractAddress, metadataURL, price, royalty, supply);
       if (router.query.type === "single") {
         // Pull the deployed contract instance
-        const contract721 = new walletData.ethers.Contract(contractAddress, ERC721Contract.abi, signer);
+        const contract721 = await getERC721Contract(walletData, contractAddress);
         const options = {
           value: walletData.ethers.utils.parseEther("0.01")
         };
@@ -223,7 +222,7 @@ const CreateNewArea = ({ className, space }) => {
       }
       if (router.query.type === "multiple") {
         // Pull the deployed contract instance
-        const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
+        const contract1155 = await getERC1155Contract(walletData, contractAddress);
         const transaction = await contract1155.mint(metadataURL, royalty, supply);
         const receipt = await transaction.wait();
         // console.log(receipt);
@@ -242,7 +241,7 @@ const CreateNewArea = ({ className, space }) => {
     }
   }
 
-  const onSubmit = (data, e) => {
+  const onSubmit = async (data, e) => {
     const { target } = e;
     const submitBtn = target.localName === "span" ? target.parentElement : target;
     const isPreviewBtn = submitBtn.dataset?.btn;
@@ -257,12 +256,17 @@ const CreateNewArea = ({ className, space }) => {
       return;
     }
     if (selectedCollection?.networkType === "Ethereum") {
-      if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
         // ethereum testnet
         return;
       }
     } else if (selectedCollection?.networkType === "Polygon") {
-      if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    } else if (selectedCollection?.networkType === "Binance") {
+      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }
@@ -488,6 +492,8 @@ const CreateNewArea = ({ className, space }) => {
         switchNetwork(ETHEREUM_NETWORK_CHAIN_ID); // ethereum testnet
       } else if (selectedCollection.networkType === "Polygon") {
         switchNetwork(POLYGON_NETWORK_CHAIN_ID); // polygon testnet
+      } else if (selectedCollection.networkType === "Binance") {
+        switchNetwork(BINANCE_NETWORK_CHAIN_ID); // polygon testnet
       }
     }
   }, [selectedCollection]);

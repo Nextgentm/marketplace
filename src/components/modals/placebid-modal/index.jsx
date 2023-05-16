@@ -6,15 +6,9 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
-import ERC721Contract from "../../../contracts/json/erc721.json";
-import ERC1155Contract from "../../../contracts/json/erc1155.json";
-import TradeContract from "../../../contracts/json/trade.json";
-import TransferProxy from "../../../contracts/json/TransferProxy.json";
-import TokenContract from "../../../contracts/json/ERC20token.json";
+
 
 const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, handleSubmit }) => {
-  const { walletData, setWalletData } = useContext(AppData);
 
   return (
     <Modal className="rn-popup-modal placebid-modal-wrapper" show={show} onHide={handleModal} centered>
@@ -74,7 +68,7 @@ const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, handl
             </div>
             <div className="bit-continue-button">
               <Button size="medium" type="submit" fullwidth>
-                Place a bid
+                {supply > 1 ? "Buy Now" : "Place a bid"}
               </Button>
               <Button color="primary-alta" size="medium" className="mt--10" onClick={handleModal}>
                 Cancel

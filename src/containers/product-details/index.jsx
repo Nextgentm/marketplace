@@ -15,16 +15,11 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
 import TransferPopupModal from "@components/modals/transfer";
-import { getERC1155Balance, validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
-
-import ERC721Contract from "../../contracts/json/erc721.json";
-import ERC1155Contract from "../../contracts/json/erc1155.json";
-import TradeContract from "../../contracts/json/trade.json";
-import TransferProxy from "../../contracts/json/TransferProxy.json";
+import { getERC1155Balance, validateInputAddresses, getERC1155Contract, getERC721Contract, switchNetwork } from "../../lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
@@ -62,19 +57,36 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
 
   useEffect(() => {
     // if (updatedCollectible) {
-    //   console.log(updatedCollectible);
+    // console.log(updatedCollectible);
     // }
     // console.log(updatedCollectible);
   }, [updatedCollectible]);
 
   useEffect(() => {
+    if (createdOwnerHistory) {
+      // local product values update
+      // later update this product to hook
+      product?.owner_histories?.data.push({
+        createdAt: createdOwnerHistory.createOwnerHistory.data?.attributes?.createdAt,
+        event: createdOwnerHistory.createOwnerHistory.data?.attributes?.event,
+        fromWalletAddress: createdOwnerHistory.createOwnerHistory.data?.attributes?.fromWalletAddress,
+        id: createdOwnerHistory.createOwnerHistory.data?.id,
+        quantity: createdOwnerHistory.createOwnerHistory.data?.attributes?.quantity,
+        toWalletAddress: createdOwnerHistory.createOwnerHistory.data?.attributes?.toWalletAddress,
+        transactionHash: createdOwnerHistory.createOwnerHistory.data?.attributes?.transactionHash
+      });
+    }
+    // console.log(createdOwnerHistory);
+  }, [createdOwnerHistory]);
+
+
+  const updateMyERC1155Balance = () => {
     if (walletData.isConnected) {
       if (walletData.account) {
         if (product.collection.data.collectionType === "Multiple") {
-          // check is Admin
-          const signer = walletData.provider.getSigner();
+          // check ERC1155 Token balance
           const contractAddress = product.collection.data.contractAddress1155;
-          getERC1155Balance(walletData.ethers, walletData.account, contractAddress, product.nftID, signer).then((balance) => {
+          getERC1155Balance(walletData, walletData.account, contractAddress, product.nftID).then((balance) => {
             setERC1155MyBalance(balance);
           }).catch((error) => { console.log("Error while factory call " + error) });
         }
@@ -85,26 +97,11 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       setERC1155MyBalance(0);
       // toast.error("Please connect wallet first");
     }
-  }, [walletData])
-
-  async function switchNetwork(chainId) {
-    if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
-      console.log(`Network is already with chain id ${chainId}`);
-      return true;
-    }
-    try {
-      const res = await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId }]
-      });
-      // console.log(res);
-      return true;
-    } catch (switchError) {
-      // console.log(switchError);
-      toast.error("Failed to change the network.");
-    }
-    return false;
   }
+
+  useEffect(() => {
+    updateMyERC1155Balance();
+  }, [walletData])
 
   async function approveNFT() {
     try {
@@ -115,35 +112,35 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         // console.log(contractAddress);
 
         // Pull the deployed contract instance
-        const contract721 = new walletData.ethers.Contract(contractAddress, ERC721Contract.abi, signer);
+        const contract721 = await getERC721Contract(walletData, contractAddress);
         // const options = {
         //     value: walletData.ethers.utils.parseEther("0.01"),
         // };
         let approveAddress = await contract721.getApproved(product.nftID);
         // console.log(approveAddress);
-        if (approveAddress.toLowerCase() != TradeContract.address.toLowerCase()) {
+        if (approveAddress.toLowerCase() != walletData.contractData.TradeContract.address.toLowerCase()) {
           // approve nft first
-          const transaction = await contract721.approve(TradeContract.address, product.nftID);
+          const transaction = await contract721.approve(walletData.contractData.TradeContract.address, product.nftID);
           const receipt = await transaction.wait();
           // console.log(receipt);
         }
         approveAddress = await contract721.getApproved(product.nftID);
         // console.log(approveAddress);
-        if (approveAddress.toLowerCase() != TransferProxy.address.toLowerCase()) {
+        if (approveAddress.toLowerCase() != walletData.contractData.TransferProxy.address.toLowerCase()) {
           // approve nft first
-          const transaction = await contract721.approve(TransferProxy.address, product.nftID);
+          const transaction = await contract721.approve(walletData.contractData.TransferProxy.address, product.nftID);
           const receipt = await transaction.wait();
           // console.log(receipt);
         }
       } else if (product.collection.data.collectionType === "Multiple") {
         contractAddress = product.collection.data.contractAddress1155;
         // Pull the deployed contract instance
-        const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
+        const contract1155 = await getERC1155Contract(walletData, contractAddress);
 
-        const approved = await contract1155.isApprovedForAll(walletData.account, TradeContract.address);
+        const approved = await contract1155.isApprovedForAll(walletData.account, walletData.contractData.TradeContract.address);
         // console.log(approved);
         if (!approved) {
-          const transaction = await contract1155.setApprovalForAll(TransferProxy.address, true);
+          const transaction = await contract1155.setApprovalForAll(walletData.contractData.TransferProxy.address, true);
           const receipt = await transaction.wait();
         }
       }
@@ -173,8 +170,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         quantity: data.quantity ? data.quantity : 1,
         remainingQuantity: data.quantity ? data.quantity : 1,
       });
-      console.log(res);
-      updateCollectible({
+      // console.log(res);
+      await updateCollectible({
         variables: {
           "data": {
             putOnSale: true
@@ -191,7 +188,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     }
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     // const { target } = e;
     event.preventDefault();
     // console.log(event);
@@ -201,12 +198,17 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       return;
     } // chnage network
     if (product.collection.data.networkType === "Ethereum") {
-      if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
         // ethereum testnet
         return;
       }
     } else if (product.collection.data.networkType === "Polygon") {
-      if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    } else if (product.collection.data.networkType === "Binance") {
+      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }
@@ -241,12 +243,17 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       return;
     } // chnage network
     if (product.collection.data.networkType === "Ethereum") {
-      if (!switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
         // ethereum testnet
         return;
       }
     } else if (product.collection.data.networkType === "Polygon") {
-      if (!switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    } else if (product.collection.data.networkType === "Binance") {
+      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
         // polygon testnet
         return;
       }
@@ -266,7 +273,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           // console.log(contractAddress);
 
           // Pull the deployed contract instance
-          const contract721 = new walletData.ethers.Contract(contractAddress, ERC721Contract.abi, signer);
+          const contract721 = await getERC721Contract(walletData, contractAddress);
 
           // approve nft first
           const transaction = await contract721.transferFrom(walletData.account, receiver, product.nftID);
@@ -276,7 +283,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         } else if (product.collection.data.collectionType === "Multiple") {
           const contractAddress = product.collection.data.contractAddress1155;
           // Pull the deployed contract instance
-          const contract1155 = new walletData.ethers.Contract(contractAddress, ERC1155Contract.abi, signer);
+          const contract1155 = await getERC1155Contract(walletData, contractAddress);
 
           // transfer token
           const transaction = await contract1155.safeTransferFrom(
@@ -290,15 +297,15 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           console.log(receipt);
           transactionHash = receipt.transactionHash;
         }
-        // updateCollectible({
-        //   variables: {
-        //     "data": {
-        //       "owner": receiver.toLowerCase()
-        //     },
-        //     "updateCollectibleId": product.id
-        //   }
-        // });
-        createOwnerHistory({
+        await updateCollectible({
+          variables: {
+            "data": {
+              "owner": receiver.toLowerCase()
+            },
+            "updateCollectibleId": product.id
+          }
+        });
+        await createOwnerHistory({
           variables: {
             data: {
               collectible: product.id,
@@ -312,7 +319,10 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         });
 
         toast.success("NFT transfered succesfully");
-        router.reload();
+        // router.reload();
+        // later update this product to hook
+        product.owner = receiver.toLowerCase();
+        updateMyERC1155Balance();
         setShowTransferModal(false);
       } else {
         toast.error("Invalid address");
@@ -337,7 +347,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
               <span className="bid">
                 Price{" "}
                 <span className="price">
-                  {product.putOnSale ? (product.auction?.data[0]?.bidPrice / product.auction?.data[0]?.quantity) : product.price}
+                  {product.price}
                   {product.symbol}
                 </span>
               </span>
@@ -379,27 +389,28 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                 </div>
               ) : (
                 <>
-                  {!product.putOnSale && product.owner === walletData.account && (
-                    <div className="row">
-                      <div className="col-md-6">
-                        <Button
-                          color="primary-alta"
-                          onClick={() =>
-                            product.collection.data.collectionType === "Multiple"
-                              ? setShowDirectSalesModal(true)
-                              : setShowAuctionInputModel(true)
-                          }
-                        >
-                          Put on Sale
-                        </Button>
+                  {((!product.putOnSale && product.owner === walletData.account) ||
+                    (product.supply > 1 && erc1155MyBalance > 0)) && (
+                      <div className="row">
+                        <div className="col-md-6">
+                          <Button
+                            color="primary-alta"
+                            onClick={() =>
+                              product.collection.data.collectionType === "Multiple"
+                                ? setShowDirectSalesModal(true)
+                                : setShowAuctionInputModel(true)
+                            }
+                          >
+                            Put on Sale
+                          </Button>
+                        </div>
+                        <div className="col-md-6">
+                          <Button color="primary-alta" onClick={() => handleShowTransferModal(true)}>
+                            Transfer
+                          </Button>
+                        </div>
                       </div>
-                      <div className="col-md-6">
-                        <Button color="primary-alta" onClick={() => handleShowTransferModal(true)}>
-                          Transfer
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+                    )}
 
                   <div className="rn-bid-details">
                     <BidTab
@@ -438,6 +449,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         show={showDirectSalesModal}
         handleModal={handleDirectSaleModal}
         supply={product?.supply}
+        maxQuantity={product?.supply > 1 ? erc1155MyBalance : product?.supply}
         handleSubmit={handleSubmit}
         paymentTokensList={product.collection?.data?.paymentTokens?.data}
       />
@@ -445,6 +457,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         show={showTimeAuctionModal}
         handleModal={handleTimeAuctionModal}
         supply={product?.supply}
+        maxQuantity={product?.supply > 1 ? erc1155MyBalance : product?.supply}
         handleSubmit={handleSubmit}
         paymentTokensList={product.collection?.data?.paymentTokens?.data}
       />
@@ -452,6 +465,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         show={showTransferModal}
         handleModal={handleShowTransferModal}
         supply={product?.supply}
+        maxQuantity={product?.supply > 1 ? erc1155MyBalance : product?.supply}
         handleSubmit={handleSubmitTransfer}
       />
     </div>

@@ -12,6 +12,7 @@ import { currenyOfCurrentNetwork, getNetworkNameByChainId, getChainIdByNetworkNa
 import { walletAddressShortForm } from "../../utils/blockchain";
 import ConnectWallets from "@components/modals/connect-wallets";
 import SwitchNetwork from "@components/modals/switch-network";
+import { getContractsData } from "src/lib/contractData";
 
 const UserDropdown = () => {
   const router = useRouter();
@@ -42,8 +43,10 @@ const UserDropdown = () => {
   }
 
   useEffect(() => {
-    if (walletData.isConnected)
+    if (walletData.isConnected) {
       setWalletData({ ...walletData, account: account });
+      updateBalance();
+    }
   }, [account])
 
   useEffect(() => {
@@ -93,7 +96,7 @@ const UserDropdown = () => {
 
       if (isValidNetwork(_hexChainId)) {
         setCurrentNetwork(_hexChainId);
-        updateBalance();
+        directConnect();
       } else {
         onDisconnectWallet();
       }
@@ -111,9 +114,9 @@ const UserDropdown = () => {
     // check if previously connected
     if (localStorage?.getItem("isWalletConnected") === "true") {
       if (isPreviouslyConnected()) {
-        const oldChainId = localStorage?.getItem("currentNetwork");
-        _setCurrentNetwork(oldChainId);
-        onConnect();
+        // const oldChainId = localStorage?.getItem("currentNetwork");
+        // _setCurrentNetwork(oldChainId);
+        directConnect();
       } else {
         localStorage.setItem("isWalletConnected", false);
       }
@@ -139,6 +142,44 @@ const UserDropdown = () => {
     return null;
   }
 
+  const directConnect = async () => {
+    try {
+      if (!window.ethereum) {
+        toast.error("Metamask wallet is not installed");
+        return;
+      }
+      const provider = await getProvider();
+      const { chainId } = await provider.getNetwork();
+      let _chainId = "0x" + chainId.toString(16);
+      const _currentNetwork = getNetworkNameByChainId(_chainId);
+      const signer = provider.getSigner();
+      const accounts = await provider.send("eth_requestAccounts", []);
+      const balance = await provider.getBalance(accounts[0]);
+      const getEthBalance = ethers.utils.formatEther(balance);
+      const allContractData = getContractsData(_currentNetwork);
+      // console.log(signer);
+      setWalletData({
+        provider,
+        account: accounts[0],
+        balance: getEthBalance,
+        ethers,
+        isConnected: true,
+        network: _currentNetwork,
+        chainId: _chainId,
+        contractData: allContractData
+      });
+      localStorage.setItem("isWalletConnected", true);
+      // console.log(walletData);
+      setEthBalance(getEthBalance);
+      setIsAuthenticatedCryptoWallet(walletData.isConnected);
+      setShowConnectWalletModel(false);
+      // }
+    } catch (err) {
+      console.log(err);
+      localStorage.setItem("isWalletConnected", false);
+    }
+  };
+
   const onConnect = async () => {
     try {
       if (!window.ethereum) {
@@ -153,29 +194,24 @@ const UserDropdown = () => {
           return;
         }
       }
-      // const { chainId } = await provider.getNetwork();
-      // let _chainId = "0x" + chainId.toString(16);
-      // if (isValidNetwork(_chainId)) {
-      //   setCurrentNetwork(_chainId);
-      // } else {
-      //   const selctedChainId = document.getElementById("current-wallet-network").value;
-      //   if (selctedChainId) {
-      //     _setCurrentNetwork(selctedChainId);
-      //   }
-      //   toast.error("Network is not correct");
-      //   return;
-      // }
+      const { chainId } = await provider.getNetwork();
+      let _chainId = "0x" + chainId.toString(16);
+      const _currentNetwork = getNetworkNameByChainId(_chainId);
       const signer = provider.getSigner();
       const accounts = await provider.send("eth_requestAccounts", []);
       const balance = await provider.getBalance(accounts[0]);
       const getEthBalance = ethers.utils.formatEther(balance);
+      const allContractData = getContractsData(_currentNetwork);
       // console.log(signer);
       setWalletData({
         provider,
         account: accounts[0],
         balance: getEthBalance,
         ethers,
-        isConnected: true
+        isConnected: true,
+        network: _currentNetwork,
+        chainId: _chainId,
+        contractData: allContractData
       });
       localStorage.setItem("isWalletConnected", true);
       // console.log(walletData);
@@ -195,22 +231,17 @@ const UserDropdown = () => {
       accounts: null,
       balance: null,
       ethers,
-      isConnected: false
+      isConnected: false,
+      network: null,
+      chainId: null,
+      contractData: null
     });
     localStorage.setItem("isWalletConnected", false);
     setIsAuthenticatedCryptoWallet(false);
   };
 
   const onDisconnect = async () => {
-    setWalletData({
-      provider: null,
-      accounts: null,
-      balance: null,
-      ethers,
-      isConnected: false
-    });
-    localStorage.setItem("isWalletConnected", false);
-    setIsAuthenticatedCryptoWallet(false);
+    onDisconnectWallet();
     await doLogOut();
     await loadUserData();
     router.push("/");
@@ -240,9 +271,9 @@ const UserDropdown = () => {
         }
       }
       // console.log(wallet);
-      if (wallet == "MetaMask") {
-        onConnect();
-      }
+      // if (wallet == "MetaMask") {
+      onConnect();
+      // }
     }
   };
 

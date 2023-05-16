@@ -12,8 +12,12 @@ const AppDataContext = ({ children }) => {
     account: null,
     balance: null,
     ethers: null,
-    isConnected: false
+    isConnected: false,
+    network: null,
+    chainId: null,
+    contractData: null
   });
+
   const [userData, setUserData] = useState();
   const [isAuthenticatedCryptoWallet, setIsAuthenticatedCryptoWallet] = useState(false);
 

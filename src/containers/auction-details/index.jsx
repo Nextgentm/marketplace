@@ -16,15 +16,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
-import DirectSalesModal from "@components/modals/direct-sales";
-import TimeAuctionModal from "@components/modals/time-auction";
-import TransferPopupModal from "@components/modals/transfer";
 import { getERC1155Balance, validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
 
-import ERC721Contract from "../../contracts/json/erc721.json";
-import ERC1155Contract from "../../contracts/json/erc1155.json";
-import TradeContract from "../../contracts/json/trade.json";
-import TransferProxy from "../../contracts/json/TransferProxy.json";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
@@ -32,7 +25,7 @@ import strapi from "@utils/strapi";
 
 // Demo Image
 
-const AuctionDetailsArea = ({ space, className, auction }) => {
+const AuctionDetailsArea = ({ space, className, auctionData }) => {
 
   const { walletData, setWalletData } = useContext(AppData);
 
@@ -40,6 +33,7 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   const router = useRouter();
+  const [auction, setAuction] = useState(auctionData);
   const [erc1155MyBalance, setERC1155MyBalance] = useState(0);
 
   useEffect(() => {
@@ -47,16 +41,29 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
     //   console.log(updatedCollectible);
     // }
     // console.log(updatedCollectible);
-  }, [updatedCollectible]);
+  }, [auction]);
 
-  useEffect(() => {
+  const refreshPageData = async () => {
+    let _auctionData = await strapi.findOne("auctions", auction.data.id, {
+      populate: ["collectible", "paymentToken", "biddings"],
+    });
+    // console.log(auction);
+
+    let collectible = await strapi.findOne("collectibles", auction.data.collectible.data.id, {
+      populate: ["owner_histories", "image", "collectibleProperties", "collection"],
+    });
+    _auctionData.data.collectible = collectible;
+    setAuction(_auctionData);
+    updateMyERC1155Balance();
+  }
+
+  const updateMyERC1155Balance = () => {
     if (walletData.isConnected) {
       if (walletData.account) {
         if (auction?.data?.collectible.data.collection.data.collectionType === "Multiple") {
-          // check is Admin
-          const signer = walletData.provider.getSigner();
+          // check ERC1155 Token balance
           const contractAddress = auction?.data?.collectible.data?.collection?.data?.contractAddress1155;
-          getERC1155Balance(walletData.ethers, walletData.account, contractAddress, auction?.data?.collectible.data.nftID, signer).then((balance) => {
+          getERC1155Balance(walletData, walletData.account, contractAddress, auction?.data?.collectible.data.nftID).then((balance) => {
             setERC1155MyBalance(balance);
           }).catch((error) => { console.log("Error while factory call " + error) });
         }
@@ -67,6 +74,10 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
       setERC1155MyBalance(0);
       // toast.error("Please connect wallet first");
     }
+  }
+
+  useEffect(() => {
+    updateMyERC1155Balance();
   }, [walletData])
 
   return (
@@ -100,6 +111,7 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
                   supply={auction?.data?.collectible.data.supply}
                   product={auction?.data?.collectible.data}
                   auction={auction}
+                  refreshPageData={refreshPageData}
                   properties={auction?.data?.collectible.data?.collectibleProperties?.data}
                   tags={auction?.data?.collectible.data?.tags}
                   history={auction?.data?.collectible.data?.owner_histories?.data}
@@ -110,11 +122,13 @@ const AuctionDetailsArea = ({ space, className, auction }) => {
                     highest_bid={{
                       amount: auction?.data?.bidPrice,
                       priceCurrency: auction?.data?.priceCurrency,
-                      quantity: auction?.data?.quantity
+                      quantity: auction?.data?.quantity,
+                      remainingQuantity: auction?.data?.remainingQuantity
                     }}
                     auction_date={auction?.data?.endTimeStamp}
                     product={auction?.data?.collectible.data}
                     auction={auction}
+                    refreshPageData={refreshPageData}
                     isOwner={auction?.data?.walletAddress == walletData.account}
                   />
                 )}

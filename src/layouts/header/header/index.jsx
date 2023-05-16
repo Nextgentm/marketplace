@@ -20,7 +20,9 @@ import headerData from "../../../data/general/header-01.json";
 import menuData from "../../../data/general/menu-01.json";
 import Link from "next/link";
 import { authenticationData } from "src/graphql/reactive/authentication";
-import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
+import { addressIsAdmin, getChainIdByNetworkName, switchNetwork } from "src/lib/BlokchainHelperFunctions";
+import { DEFAULT_NETWORK } from "src/lib/constants";
+import { networksList } from "@utils/wallet";
 
 const Header = ({ className }) => {
   const sticky = useSticky();
@@ -30,27 +32,29 @@ const Header = ({ className }) => {
   const { walletData, setWalletData, userData } = useContext(AppData);
 
   const [isAdminWallet, setIsAdminWallet] = useState(false);
-
-  // const checkIsAdmin = async () => {
-  //   const { chainId } = await walletData.provider.getNetwork();
-  //   const signer = walletData.provider.getSigner();
-  //   const _chainId = "0x" + chainId.toString(16);
-  //   const networkName = getNetworkNameByChainId(_chainId);
-  //   addressIsAdmin(walletData.ethers, walletData.account, networkName, signer).then((validationValue) => {
-  //     setIsAdminWallet(validationValue);
-  //   }).catch((error) => { console.log("Error while factory call " + error) });
-  // }
+  const [currentNetwork, setCurrentNetwork] = useState(DEFAULT_NETWORK);
 
   useEffect(() => {
     if (walletData.isConnected) {
-      const signer = walletData.provider.getSigner();
-      addressIsAdmin(walletData.ethers, walletData.account, "Polygon", signer).then((validationValue) => {
+      addressIsAdmin(walletData).then((validationValue) => {
         setIsAdminWallet(validationValue);
       }).catch((error) => { console.log("Error while factory call " + error) });
     } else {
       setIsAdminWallet(false);
     }
   }, [walletData]);
+
+
+  useEffect(() => {
+    if (walletData.isConnected) {
+      if (currentNetwork) {
+        const chainId = getChainIdByNetworkName(currentNetwork);
+        if (chainId) {
+          switchNetwork(chainId);
+        }
+      }
+    }
+  }, [currentNetwork]);
 
   return (
     <>
@@ -108,6 +112,17 @@ const Header = ({ className }) => {
                   <UserDropdown />
                 </div>
               )}
+              <div className="setting-option current-network">
+                <select id="current-wallet-network" onChange={(event) => setCurrentNetwork(event.target.value)} value={currentNetwork}>
+                  {walletData.isConnected ? networksList.map((ele, index) =>
+                    <option key={index} value={ele.name}>{ele.name}</option>
+                  ) : <option value={DEFAULT_NETWORK}>{DEFAULT_NETWORK}</option>
+                  }
+                </select>
+                {/* <Button size="small">
+                  {walletData.isConnected ? walletData.network : DEFAULT_NETWORK}
+                </Button> */}
+              </div>
               {/* <div className="setting-option rn-icon-list notification-badge">
                 <div className="icon-box">
                   <Anchor path={headerData.activity_link}>
