@@ -21,7 +21,7 @@ contract Factory721 is AccessControl {
     string memory symbol,
     string memory tokenURIPrefix
   ) external onlyRole(ADMIN_ROLE) returns (address addr) {
-    addr = address(new NFTMarketplace());
+    addr = address(new NFTMarketplace{ salt: _salt }(name, symbol));
     NFTMarketplace token = NFTMarketplace(address(addr));
     token.transferOwnership(msg.sender);
     emit Deployed(msg.sender, addr);
