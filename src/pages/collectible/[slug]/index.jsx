@@ -31,17 +31,21 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
   </Wrapper>
 );
 export async function getStaticPaths() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=*`);
-  const productData = await res.json();
-  const path = productData.data.map(({ slug }) => ({
-    params: {
-      slug
-    }
-  }));
-  return {
-    paths: [...path],
-    fallback: "blocking"
-  };
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=*`);
+    const productData = await res.json();
+    const path = productData.data.map(({ slug }) => ({
+      params: {
+        slug
+      }
+    }));
+    return {
+      paths: [...path],
+      fallback: "blocking"
+    };
+  } catch (er) {
+    return { paths: [], fallback: false } // <- ADDED RETURN STMNT
+  }
 }
 
 export async function getStaticProps({ params }) {
