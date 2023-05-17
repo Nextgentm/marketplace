@@ -27,7 +27,7 @@ const CollectionDetail = ({ collections }) => {
               section_title: {
                 title: "Find Your Non Replaceable Token"
               },
-              products: collections?.collectibles.data,
+              products: collections?.collectibles?.data,
               placeBid: true,
               collectionPage: true,
               collectionData: collections
@@ -41,16 +41,20 @@ const CollectionDetail = ({ collections }) => {
 };
 
 export async function getStaticPaths() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections/?populate=*`);
-  const productData = await res.json();
-  return {
-    paths: productData.data.map(({ slug }) => ({
-      params: {
-        slug
-      }
-    })),
-    fallback: false
-  };
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections/?populate=*`);
+    const productData = await res.json();
+    return {
+      paths: productData.data.map(({ slug }) => ({
+        params: {
+          slug
+        }
+      })),
+      fallback: false
+    };
+  } catch (er) {
+    return { paths: [], fallback: false } // <- ADDED RETURN STMNT
+  }
 }
 
 export async function getStaticProps({ params }) {
@@ -63,8 +67,10 @@ export async function getStaticProps({ params }) {
         },
       },
       collectiblesFilters: {
-        putOnSale: {
-          eq: true
+        auction: {
+          status: {
+            eq: "Live"
+          }
         },
       },
       pagination: {
@@ -76,7 +82,7 @@ export async function getStaticProps({ params }) {
   return {
     props: {
       className: "template-color-1",
-      collections: data.collections.data[0].attributes
+      collections: data?.collections?.data[0]?.attributes
     } // will be passed to the page component as props
   };
 }
