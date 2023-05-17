@@ -8,6 +8,9 @@ export const DEFAULT_NETWORK = "Polygon"; // testnet chain Id's
 export const ETHEREUM_NETWORK_CHAIN_ID = "0x5"; // testnet chain Id's
 export const POLYGON_NETWORK_CHAIN_ID = "0x13881"; // testnet chain Id's
 export const BINANCE_NETWORK_CHAIN_ID = "0x61"; // testnet chain Id's
+// export const ETHEREUM_NETWORK_CHAIN_ID = "0x1"; // mainnet chain Id's
+// export const POLYGON_NETWORK_CHAIN_ID = "0x89"; // mainnet chain Id's
+// export const BINANCE_NETWORK_CHAIN_ID = "0x38"; // mainnet chain Id's
 
 // network name to chain id
 export const NETWORKS = {
@@ -38,4 +41,25 @@ export const NETWORKS_CHAINS = {
     rpcUrls: ["https://data-seed-prebsc-1-s3.binance.org:8545/"],
     blockExplorerUrls: ["https://testnet.bscscan.com/"]
   }
+  // "0x1": {
+  //   chainId: "0x1",
+  //   chainName: "Ethereum Mainnet",
+  //   nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
+  //   rpcUrls: ["https://mainnet.infura.io/v3/"],
+  //   blockExplorerUrls: ["https://etherscan.io"]
+  // },
+  // "0x89": {
+  //   chainId: "0x89",
+  //   chainName: "Polygon Mainnet",
+  //   nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
+  //   rpcUrls: ["https://polygon-rpc.com/"],
+  //   blockExplorerUrls: ["https://polygonscan.com/"]
+  // },
+  // "0x38": {
+  //   chainId: "0x38",
+  //   chainName: "BNB Smart Chain",
+  //   nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+  //   rpcUrls: ["https://rpc.ankr.com/bsc"],
+  //   blockExplorerUrls: ["https://bscscan.com"]
+  // },
 };
