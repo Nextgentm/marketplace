@@ -47,6 +47,12 @@ const CollectionArea = ({ className, space, id, data }) => {
       populate: {
         collectibles: {
           fields: "*",
+          filters: {
+            auction: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
           populate: {
             auction: {
               fields: "*",
@@ -93,11 +99,11 @@ const CollectionArea = ({ className, space, id, data }) => {
   //     }
   //   });
   // };
-  const getTotal = useCallback((collection) => {
-    let total = 0;
-    total = +collection.collectibles.data.reduce((acc, cur) => acc + cur.auction?.data?.length, 0);
-    return total;
-  }, []);
+  // const getTotal = useCallback((collection) => {
+  //   let total = 0;
+  //   total = +collection.collectibles.data.reduce((acc, cur) => acc + cur.auction?.data?.length, 0);
+  //   return total;
+  // }, []);
 
   return (
     <div className={clsx("rn-collection-area", space === 1 && "rn-section-gapTop", className)} id={id}>
@@ -109,7 +115,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                 <div key={collection.id} className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12">
                   <Collection
                     title={collection?.name}
-                    total_item={getTotal(collection)}
+                    total_item={collection?.collectibles?.data?.length}
                     path={`collectibles?collection=${collection?.name}`}
                     image={collection?.cover?.data}
                     thumbnails={collection?.featured?.data}

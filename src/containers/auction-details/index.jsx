@@ -95,8 +95,8 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
               <span className="bid">
                 Price{" "}
                 <span className="price">
-                  {auction?.data?.status == "Live" ? auction?.data?.bidPrice : auction?.data?.collectible.data.price}
-                  {auction?.data?.collectible.data.symbol}
+                  {auction?.data?.status == "Live" ? auction?.data?.bidPrice : auction?.data?.collectible.data.price}{" "}
+                  {auction?.data?.priceCurrency}
                 </span>
               </span>
               <h6 className="title-name">{`${auction?.data?.collectible.data.description.substring(0, 110)}...`}</h6>

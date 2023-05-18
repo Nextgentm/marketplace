@@ -88,23 +88,31 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
         toast.error("Token address not found for current network!");
         return;
       }
+      const tokenContract = await getTokenContract(walletData, erc20Address);
+      const decimals = await tokenContract.decimals();
+      //convert price
+      let convertedPrice;
+      if (decimals > 7) {
+        convertedPrice = convertEthertoWei(walletData.ethers, eth);
+      } else {
+        convertedPrice = (eth * (10 ^ decimals));
+      }
       const nftAddress =
         product.collection.data.collectionType === "Single"
           ? product.collection.data.contractAddress
           : product.collection.data.contractAddress1155;
       const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
       const skipRoyalty = true;
-      const unitPrice = `${convertEthertoWei(walletData.ethers, eth)}`;
+      const unitPrice = `${convertedPrice}`;
       const amount = `${parseFloat(auction.data.quantity) * parseFloat(unitPrice)}`;
       const tokenId = `${product.nftID}`;
       const tokenURI = "";
       const supply = `${product.supply ? product.supply : 1}`;
-      const royaltyFee = `${product?.royalty ? product?.royalty : 10}`;
+      const royaltyFee = `${product?.royalty ? product?.royalty : 0}`;
       const qty = `${auction.data.quantity ? auction.data.quantity : 1}`;
 
       // Pull the deployed contract instance
       const tradeContract = await getTradeContract(walletData);
-      const tokenContract = await getTokenContract(walletData, erc20Address);
       const userBalance = await tokenContract.balanceOf(buyer);
       if (amount > parseInt(userBalance._hex)) {
         toast.error("Bidder not have enough balance");
@@ -179,7 +187,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
           <span>
             {eth && (
               <>
-                {eth} {auction.data?.priceCurrency} By
+                {eth}{" "}{auction.data?.priceCurrency} By
                 {/* {product.auction.data.priceCurrency} by {name} */}
                 {name && <span className="count-number">{walletData.account == name ? "You" : name.substr(0, 5) + "..." + name.substr(-5)}</span>}
               </>
