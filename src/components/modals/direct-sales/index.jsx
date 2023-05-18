@@ -21,7 +21,7 @@ const DirectSalesModal = ({ show, handleModal, supply, maxQuantity, handleSubmit
             <div className="bid-content">
               <div className="bid-content-top">
                 <div className="bid-content-left">
-                  <input id="price" type="number" name="price" step="0.0000001" min="1" required />
+                  <input id="price" type="number" name="price" step="0.0000001" min="0.000000000000000001" required />
                   <input id="currency" type="hidden" value="wETH" />
                   {/* <span>wETH</span> */}
                 </div>
