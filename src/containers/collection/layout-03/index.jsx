@@ -102,10 +102,9 @@ const CollectionArea = ({ className, space, id, data }) => {
   return (
     <div className={clsx("rn-collection-area", space === 1 && "rn-section-gapTop", className)} id={id}>
       <div className="container">
-        {collectionsData && (
+        {collectionsData ? (
           <div className="row g-5">
-            {/* {console.log("collectionsData", collectionsData)} */}
-            {collectionsData.map((collection) =>
+            {collectionsData.length > 0 ? collectionsData.map((collection) =>
               collection?.collectibles?.data?.length ? (
                 <div key={collection.id} className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12">
                   <Collection
@@ -118,9 +117,9 @@ const CollectionArea = ({ className, space, id, data }) => {
                   />
                 </div>
               ) : null
-            )}
+            ) : <p>No collections to show</p>}
           </div>
-        )}
+        ) : <p>No collections to show</p>}
         <div className="row">
           <div className="col-lg-12" data-sal="slide-up" data-sal-delay="950" data-sal-duration="800">
             {pagination?.pageCount > 1 ? (

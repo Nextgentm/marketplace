@@ -32,7 +32,7 @@ const ProductArea = ({ space, className, data }) =>
             </div>
           )}
         </div>
-        {data?.products && (
+        {data?.products.length > 0 ? (
           <div className="row g-5">
             {data.products.slice(0, 5).map((prod, index) => (
               <div
@@ -59,7 +59,7 @@ const ProductArea = ({ space, className, data }) =>
               </div>
             ))}
           </div>
-        )}
+        ) : <p>No item to show</p>}
       </div>
     </div>
   );

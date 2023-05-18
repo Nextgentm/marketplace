@@ -36,26 +36,28 @@ const ExploreProductArea = ({ className, space, data }) => {
           </div>
         </div>
         <div className="col-lg-12">
-          <motion.div layout className="isotope-list item-5">
-            {products?.slice(0, 10)?.map((prod, index) => (
-              <motion.div key={index} className={clsx("grid-item")} layout>
-                <Product
-                  isAuction={true}
-                  title={prod.collectible.data.name}
-                  slug={"collectible/" + prod.collectible.data.slug + "/auction/" + prod.id}
-                  supply={prod.collectible.data.supply}
-                  price={prod.bidPrice}
-                  symbol={prod.priceCurrency}
-                  image={prod.collectible.data?.image?.data?.url}
-                  collectionName={prod.collectible.data?.collection?.data?.name}
-                  bitCount={prod.sellType == "Bidding" ? prod.biddings?.data.length : 0}
-                  latestBid={prod.latestBid}
-                  likeCount={prod.likeCount}
-                  authors={prod.authors}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
+          {products.length > 0 ?
+            <motion.div layout className="isotope-list item-5">
+              {products?.slice(0, 10)?.map((prod, index) => (
+                <motion.div key={index} className={clsx("grid-item")} layout>
+                  <Product
+                    isAuction={true}
+                    title={prod.collectible.data.name}
+                    slug={"collectible/" + prod.collectible.data.slug + "/auction/" + prod.id}
+                    supply={prod.collectible.data.supply}
+                    price={prod.bidPrice}
+                    symbol={prod.priceCurrency}
+                    image={prod.collectible.data?.image?.data?.url}
+                    collectionName={prod.collectible.data?.collection?.data?.name}
+                    bitCount={prod.sellType == "Bidding" ? prod.biddings?.data.length : 0}
+                    latestBid={prod.latestBid}
+                    likeCount={prod.likeCount}
+                    authors={prod.authors}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+            : <p>No item to show</p>}
         </div>
       </div>
     </div>
