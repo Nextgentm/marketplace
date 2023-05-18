@@ -12,12 +12,12 @@ const SliderOptions = {
 };
 
 const HeroArea = ({ data }) => (
-  <div className="rn-banner-area rn-section-gapTop">
+  <div className="rn-banner-area rn-section-gapTop rn-banner-section-gapTop">
     <div className="container">
       {data?.banners && (
         <Slider
           options={SliderOptions}
-          className="slider-style-6 wide-wrapper slick-activation-06 slick-arrow-between desktop-slider"
+          className="slider-style-6 no-padding wide-wrapper slick-activation-06 slick-arrow-between desktop-slider"
         >
           {data.banners.map((banner) => (
             <SliderItem key={banner.id}>
