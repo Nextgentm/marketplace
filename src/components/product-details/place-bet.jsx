@@ -24,9 +24,13 @@ const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
 });
 
 const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData, isOwner, btnColor, className }) => {
-  const { walletData, setWalletData } = useContext(AppData);
+  const { walletData, setWalletData, userData } = useContext(AppData);
   const [showBidModal, setShowBidModal] = useState(false);
   const handleBidModal = () => {
+    if (!userData) {
+      toast.error("Please login first");
+      return;
+    }
     if (!walletData.isConnected) {
       toast.error("Please connect wallet first");
       return;
@@ -178,6 +182,10 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!userData) {
+      toast.error("Please login first");
+      return;
+    }
     if (!walletData.isConnected) {
       toast.error("Please connect wallet first");
       return;

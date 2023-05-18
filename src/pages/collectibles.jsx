@@ -21,7 +21,7 @@ const Collectibles = ({ dataCollectibles }) => {
   return (
     <Wrapper>
       <SEO pageTitle="Explore Simple" />
-      {console.log("data=-=-Collectibles", dataCollectibles)}
+      {/* {console.log("data=-=-Collectibles", dataCollectibles)} */}
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Explore NFT" currentPage="Explore NFT" />
