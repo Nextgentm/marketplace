@@ -37,12 +37,13 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection })
       <Header />
       <main id="main-content">
         <HeroArea data={content["hero-section"]} />
-        <LiveExploreArea
-          data={{
-            ...content["live-explore-section"],
-            products: liveAuctionData
-          }}
-        />
+        {liveAuctionData.length > 0 &&
+          <LiveExploreArea
+            data={{
+              ...content["live-explore-section"],
+              products: liveAuctionData
+            }}
+          />}
 
         <NewestItmesArea
           data={{

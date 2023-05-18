@@ -58,32 +58,34 @@ const LiveExploreArea = ({ data, className, space }) => (
       {data?.products && (
         <div className="row">
           <div className="col-lg-12">
-            <Slider
-              options={SliderOptions}
-              className="banner-one-slick slick-arrow-style-one rn-slick-dot-style slick-gutter-15"
-            >
-              {data.products.map((prod, index) => (
-                <SliderItem key={index} className="single-slide-product">
-                  <Product
-                    overlay
-                    placeBid={false}
-                    isAuction={true}
-                    title={prod.collectible.data.name}
-                    slug={"/collectible/" + prod.collectible.data.slug + "/auction/" + prod.id}
-                    supply={prod.collectible.data.supply}
-                    price={prod.bidPrice}
-                    symbol={prod.priceCurrency}
-                    auction_date={prod.endTimeStamp}
-                    image={prod.collectible.data?.image?.data?.url}
-                    collectionName={prod.collectible.data?.collection?.data?.name}
-                    bitCount={prod.biddings?.data.length}
-                    latestBid={prod.latestBid}
-                    likeCount={prod.likeCount}
-                    authors={prod.authors}
-                  />
-                </SliderItem>
-              ))}
-            </Slider>
+            {data.products.length > 0 ?
+              <Slider
+                options={SliderOptions}
+                className="banner-one-slick slick-arrow-style-one rn-slick-dot-style slick-gutter-15"
+              >
+                {data.products.map((prod, index) => (
+                  <SliderItem key={index} className="single-slide-product">
+                    <Product
+                      overlay
+                      placeBid={false}
+                      isAuction={true}
+                      title={prod.collectible.data.name}
+                      slug={"/collectible/" + prod.collectible.data.slug + "/auction/" + prod.id}
+                      supply={prod.collectible.data.supply}
+                      price={prod.bidPrice}
+                      symbol={prod.priceCurrency}
+                      auction_date={prod.endTimeStamp}
+                      image={prod.collectible.data?.image?.data?.url}
+                      collectionName={prod.collectible.data?.collection?.data?.name}
+                      bitCount={prod.biddings?.data.length}
+                      latestBid={prod.latestBid}
+                      likeCount={prod.likeCount}
+                      authors={prod.authors}
+                    />
+                  </SliderItem>
+                ))}
+              </Slider>
+              : <p>No item to show</p>}
           </div>
         </div>
       )}
