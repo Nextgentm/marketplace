@@ -32,7 +32,7 @@ const Header = ({ className }) => {
   const { walletData, setWalletData, userData } = useContext(AppData);
 
   const [isAdminWallet, setIsAdminWallet] = useState(false);
-  const [currentNetwork, setCurrentNetwork] = useState(DEFAULT_NETWORK);
+  const [currentNetwork, setCurrentNetwork] = useState(walletData.network ? walletData.network : DEFAULT_NETWORK);
 
   useEffect(() => {
     if (walletData.isConnected) {
@@ -44,6 +44,12 @@ const Header = ({ className }) => {
     }
   }, [walletData]);
 
+
+  useEffect(() => {
+    if (walletData.network) {
+      setCurrentNetwork(walletData.network);
+    }
+  }, [walletData.network]);
 
   useEffect(() => {
     if (walletData.isConnected) {
