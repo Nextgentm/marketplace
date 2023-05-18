@@ -29,7 +29,7 @@ const TopCollectionArea = ({ className, id, space, data }) => (
         </div>
       </div>
 
-      {data?.collections &&
+      {data?.collections.length > 0 ?
         <div className="row g-5">
           {data?.collections?.length > 5 ?
             data.collections?.slice(0, 4).map((collection, index) => (
@@ -69,7 +69,7 @@ const TopCollectionArea = ({ className, id, space, data }) => (
             ))
           }
         </div>
-      }
+        : <p>No collections to show</p>}
     </div>
   </div>
 );
