@@ -119,10 +119,10 @@
           "title": "Why LootMogul Marketplace?",
           "path": "/connect",
           "subtitle": "",
-          "description": "We are a prolific sports web3 gaming and e-commerce space working with a community of athletes to build an online platform that allows ownership of unique digital assets. We create a significant niche of digital collectibles that come with real-life utilities. Members can buy, sell, and trade them. Brands can promote their sports-specific products in the marketplace.",
+          "description": "A prolific sports web3 gaming and e-commerce space working with a community of athletes to build a platform that allows ownership of unique digital assets. We create a significant niche of digital collectibles that come with real-life utilities. Brands can buy, sell, trade, and promote sports-specific products.",
           "images": [
             {
-              "src": "/images/icons/shape-7.png"
+              "src": "/images/icons/service-2.png"
             }
           ]
         },
@@ -131,10 +131,10 @@
           "title": "LootMogul Marketplace- Benefits",
           "path": "/collection",
           "subtitle": "",
-          "description": "A functional marketplace offers brands multiple ways of making an income. Collectibles find their gateway and are sold at display museums; sports fanatics can get access to stadium games, buy digital tokens, businesses can make promotions, and buy & sell limited-edition merchandise. Meta stadiums provide several monetization opportunities ensuring transparent transactions.",
+          "description": "A functional marketplace offers brands multiple monetization opportunities ensuring transparent transactions. Collectibles are sold at display museums; sports fanatics access stadium games, buy digital tokens, businesses make promotions, and buy & sell limited-edition merchandise.",
           "images": [
             {
-              "src": "/images/icons/shape-1.png"
+              "src": "/images/icons/service-1.png"
             }
           ]
         },
@@ -143,10 +143,10 @@
           "title": "Create, Sell, Collect & Share",
           "path": "/connect",
           "subtitle": "",
-          "description": "Curate, collect, and trade exclusive digital collectibles on the marketplace. Unique graphic trading cards, digital tokens, sports athletes’ collectibles, and other unique digital assets are created and sold via the DeFi model. Secure payment options are a bonus for the members to buy and sell through a reliable mode of payment, along with ten underlying cryptocurrencies.",
+          "description": "Curate, collect and trade exclusive digital collectibles. Unique graphic trading cards, digital tokens, and sports athletes’ collectibles are created and sold via the DeFi model. Secure payment options are a bonus for the members to buy and sell through reliable modes of payment with ten underlying cryptocurrencies.",
           "images": [
             {
-              "src": "/images/icons/shape-5.png"
+              "src": "/images/icons/service-4.png"
             }
           ]
         },
@@ -158,7 +158,7 @@
           "description": "Explore our collectibles page and purchase from a wide range of Sporticon, Platina, Meta Avatars, Trading Cards, and others from our splendid selection of digital collectibles. If you are a sports enthusiast, this section is for you. All our collectibles come with In Real Life or In Game Play utilities.",
           "images": [
             {
-              "src": "/images/icons/shape-6.png"
+              "src": "/images/icons/service-3.png"
             }
           ]
         }
