@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import SortWidget from "./sort";
 import CategoryFilter from "./category-filter";
+import NetworkFilter from "./network-filter";
 import LevelFilter from "./level-filter";
 import PriceSort from "./price-sort";
 import LanguageFilter from "./language-flter";
@@ -21,10 +22,18 @@ const ProductFilter = ({
   inputcheck,
   products,
   routerQuery,
-  languages
+  languages,
+  networksList,
+  networksCheckHandler
 }) => (
   <div className="nu-course-sidebar">
     <SortWidget onChange={sortHandler} value={sort} />
+    {networksList && (
+      <NetworkFilter
+        networks={networksList}
+        onChange={networksCheckHandler}
+      />
+    )}
     {!collectionPage && (
       <CategoryFilter
         categories={inputcheck}

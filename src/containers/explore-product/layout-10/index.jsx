@@ -11,6 +11,7 @@ import { useLazyQuery } from "@apollo/client";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import { useRouter } from "next/router";
 import { getCollection } from "src/services/collections/collection";
+import { networksList } from "@utils/wallet";
 import strapi from "@utils/strapi";
 
 const ExploreProductArea = ({
@@ -28,6 +29,7 @@ const ExploreProductArea = ({
   const [onchangepriceRange, setonchangepriceRange] = useState({ price: [0, 100] });
   const [checkedCollection, setCheckedCollection] = useState([]);
   const [dataAll, setDataAll] = useState([]);
+  const [selectedFilterNetworks, setSelectedFilterNetworks] = useState([]);
   let categoriesolds = [];
 
   const cats = flatDeep(products.map((prod) => prod?.collectible?.data?.collection?.data?.name));
@@ -46,6 +48,13 @@ const ExploreProductArea = ({
           status: {
             $eq: "Live"
           },
+          collectible: {
+            collection: {
+              networkType: {
+                in: selectedFilterNetworks
+              }
+            }
+          }
         },
         populate: {
           collectible: {
@@ -144,9 +153,16 @@ const ExploreProductArea = ({
         status: {
           eq: "Live"
         }
-      }
+      },
     };
 
+    if (selectedFilterNetworks.length > 0) {
+      filters.collection = {
+        networkType: {
+          in: selectedFilterNetworks
+        }
+      };
+    }
     if (router.query.collection) {
       filters.collection = {
         name: {
@@ -176,9 +192,16 @@ const ExploreProductArea = ({
         status: {
           eq: "Live"
         }
-      }
+      },
     };
 
+    if (selectedFilterNetworks.length > 0) {
+      filters.collection = {
+        networkType: {
+          in: selectedFilterNetworks
+        }
+      };
+    }
     if (router.query.collection) {
       filters.collection = {
         name: {
@@ -237,6 +260,13 @@ const ExploreProductArea = ({
 
     let filters = {
     };
+    if (selectedFilterNetworks.length > 0) {
+      filters.collection = {
+        networkType: {
+          in: selectedFilterNetworks
+        }
+      };
+    }
 
     if (router.query.collection) {
       filters.collection = {
@@ -299,9 +329,16 @@ const ExploreProductArea = ({
       },
       price: {
         between: onchangefilter
-      }
+      },
     };
 
+    if (selectedFilterNetworks.length > 0) {
+      filters.collection = {
+        networkType: {
+          in: selectedFilterNetworks
+        }
+      };
+    }
     if (router.query.collection) {
       filters.collection = {
         name: {
@@ -333,8 +370,15 @@ const ExploreProductArea = ({
         status: {
           eq: "Live"
         }
-      }
+      },
     };
+    if (selectedFilterNetworks.length > 0) {
+      filters.collection = {
+        networkType: {
+          in: selectedFilterNetworks
+        }
+      };
+    }
     if (router.query.collection) {
       filters.collection = {
         name: {
@@ -373,6 +417,49 @@ const ExploreProductArea = ({
     }
   };
 
+  const getSelectedFilterNetworksCheckData = (onchangefilter) => {
+    setSelectedFilterNetworks(onchangefilter);
+
+    let filters = {
+      auction: {
+        status: {
+          eq: "Live"
+        }
+      },
+    };
+    if (router.query.collection) {
+      filters.collection = {
+        name: {
+          eq: routerQuery
+        }
+      };
+    }
+
+    if (onchangefilter?.length <= 0)
+      getCollectible({
+        variables: {
+          filter: filters,
+          pagination: { pageSize: 6 }
+        }
+      });
+    else if (onchangefilter) {
+      getCollectible({
+        variables: {
+          filter: {
+            ...filters,
+            collection: {
+              networkType: {
+                in: onchangefilter
+              }
+            }
+          },
+          pagination: { pageSize: 6 }
+        }
+      });
+    }
+
+  };
+
   return (
     <div className={clsx("explore-area", space === 1 && "rn-section-gapTop", className)} id="explore-id">
       <div className="container">
@@ -393,6 +480,8 @@ const ExploreProductArea = ({
               collectionPage={collectionPage}
               products={products}
               routerQuery={routerQuery}
+              networksList={networksList}
+              networksCheckHandler={getSelectedFilterNetworksCheckData}
             />
           </div>
           <div className="col-lg-9 order-1 order-lg-2">
