@@ -3,7 +3,11 @@
   "logo-widget": {
     "logo": [
       {
-        "src": "/images/logo/logo-white.png",
+        "src": "/images/logo/logo-full-mobile.png",
+        "alt": "logo"
+      },
+      {
+        "src": "/images/logo/logo-full-mobile.png",
         "alt": "logo"
       }
     ],
