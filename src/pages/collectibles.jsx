@@ -12,6 +12,7 @@ import productData from "../data/products.json";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import client from "@utils/apollo-client";
 import { useRouter } from "next/router";
+import { getCollectible } from "src/services/collections/collection";
 
 // export async function getStaticProps() {
 //   return { props: { className: "template-color-1" } };
@@ -45,37 +46,48 @@ const Collectibles = ({ dataCollectibles }) => {
 };
 
 Collectibles.getInitialProps = async (ctx) => {
-  let routerQuery = ctx.query.collection;
-
-  let filters = {
-    auction: {
-      status: {
-        eq: "Live"
+  const data = await getCollectible({
+    filters: {
+      auction: {
+        status: "Live"
       }
-    }
-  };
-
-  if (ctx.query.collection) {
-    filters.collection = {
-      name: {
-        in: routerQuery
-      }
-    };
-  }
-  const { data } = await client.query({
-    query: ALL_COLLECTIBLE_LISTDATA_QUERY,
-    variables: {
-      filter: filters,
-      pagination: {
-        pageSize: 6
-      },
-      sort: ["createdAt:desc"]
     },
-    fetchPolicy: "network-only"
+    // populate: {
+    //   collectibles: {
+    //     fields: "*",
+    //     filters: {
+    //       auction: {
+    //         status: "Live",
+    //         id: { $notNull: true }
+    //       }
+    //     },
+    //     populate: {
+    //       auction: {
+    //         fields: "*",
+    //         filters: {
+    //           status: "Live",
+    //           id: { $notNull: true }
+    //         }
+    //       }
+    //     }
+    //   },
+    //   cover: {
+    //     fields: "*"
+    //   },
+    //   logo: {
+    //     fields: "*"
+    //   }
+    // },
+    pagination: {
+      limit: 6,
+      start: 0,
+      withCount: true
+    }
   });
+  console.log("data=-=-=-=--=-=-=-=-=-=-=", data);
   return {
-    className: "template-color-1",
-    dataCollectibles: data.collectibles
+    className: "template-color-1"
+    // dataCollectibles: data.collectibles
   };
 };
 
