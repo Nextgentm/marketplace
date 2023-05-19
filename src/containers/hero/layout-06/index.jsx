@@ -13,7 +13,7 @@ const SliderOptions = {
 
 const HeroArea = ({ data }) => (
   <div className="rn-banner-area rn-section-gapTop rn-banner-section-gapTop">
-    <div className="container">
+    <div className="rn-slider-area fullscreen-slide">
       {data?.banners && (
         <Slider
           options={SliderOptions}
