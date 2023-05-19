@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 
 
-const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, handleSubmit }) => {
+const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, currency, handleSubmit }) => {
 
   return (
     <Modal className="rn-popup-modal placebid-modal-wrapper" show={show} onHide={handleModal} centered>
@@ -48,7 +48,7 @@ const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, handl
                       min={bidPrice}
                       required
                     />
-                    <span>wETH</span>
+                    <span>{currency}</span>
                   </div>
                 )}
               </div>
