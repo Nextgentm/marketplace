@@ -41,7 +41,7 @@ const BidTab = ({ className, bids, product, auction, refreshPageData, allAuction
           </TabPane>
         )}
         <TabPane eventKey="nav-details">
-          <DetailsTabContent owner={owner} properties={properties} tags={tags} supply={supply} erc1155MyBalance={erc1155MyBalance} />
+          <DetailsTabContent product={product} owner={owner} properties={properties} tags={tags} supply={supply} erc1155MyBalance={erc1155MyBalance} />
         </TabPane>
         <TabPane eventKey="nav-auctions">
           {allAuctions && <AuctionsTabContent auctions={allAuctions} productSlug={product.slug} />}
