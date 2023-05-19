@@ -31,6 +31,12 @@ Collection.getInitialProps = async () => {
     populate: {
       collectibles: {
         fields: "*",
+        filters: {
+          auction: {
+            status: "Live",
+            id: { $notNull: true }
+          }
+        },
         populate: {
           auction: {
             fields: "*",

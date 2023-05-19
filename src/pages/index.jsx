@@ -96,7 +96,7 @@ Home.getInitialProps = async () => {
       },
       biddings: {
         fields: ["id"]
-      }
+      },
     },
     sort: { startTimestamp: "desc" }
   }
@@ -194,17 +194,45 @@ Home.getInitialProps = async () => {
     filters: {
       collectibles: {
         auction: {
-          status: "Live",
+          status: {
+            $eq: "Live"
+          },
         }
       }
     },
-    populate: "*",
+    populate: {
+      collectibles: {
+        fields: "*",
+        filters: {
+          auction: {
+            status: "Live",
+            id: { $notNull: true }
+          }
+        },
+        populate: {
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          }
+        }
+      },
+      cover: {
+        fields: "*"
+      },
+      logo: {
+        fields: "*"
+      }
+    },
     pagination: {
       limit: 8,
       start: 0,
       withCount: true
     }
   });
+
   // console.log("dataCollection654", dataCollection);
 
   return {
