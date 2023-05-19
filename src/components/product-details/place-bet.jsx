@@ -72,8 +72,6 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       } else if (product.collection.data.collectionType === "Multiple") {
         contractAddress = product.collection.data.contractAddress1155;
       }
-      //convert price
-      const convertedPrice = convertEthertoWei(walletData.ethers, price);
       // Pull the deployed contract instance
       let TokenContractAddress;
       //Select token contract address according to current network
@@ -91,6 +89,14 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       const tokenContract = await getTokenContract(walletData, TokenContractAddress);
       // const allowance = await tokenContract.allowance(walletData.account, walletData.contractData.TransferProxy.address);
       // const allowanceAmount = parseInt(allowance._hex, 16);
+      const decimals = await tokenContract.decimals();
+      //convert price
+      let convertedPrice;
+      if (decimals > 7) {
+        convertedPrice = convertEthertoWei(walletData.ethers, price);
+      } else {
+        convertedPrice = (price * (10 ^ decimals));
+      }
       const requireAllowanceAmount = "" + parseInt(convertedPrice * quantity);
 
       const userBalance = await tokenContract.balanceOf(walletData.account);
@@ -105,7 +111,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       if (auction.data.sellType == "FixedPrice") {
         const seller = auction.data.walletAddress;
         const buyer = walletData.account;
-        const erc20Address = auction.data.paymentToken?.data?.blockchain;
+        const erc20Address = TokenContractAddress;
         const nftAddress = contractAddress;
         const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
         const skipRoyalty = true;
@@ -114,7 +120,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         const tokenId = `${product.nftID}`;
         const tokenURI = "";
         const supply = `${product.supply ? product.supply : 1}`;
-        const royaltyFee = `${product?.royalty ? product?.royalty : 10}`;
+        const royaltyFee = `${product?.royalty ? product?.royalty : 0}`;
         const qty = `${quantity ? quantity : 1}`;
 
         // Pull the deployed contract instance
@@ -239,7 +245,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
                   <div className="top-seller-content">
                     <span className="count-number">
                       {highest_bid?.amount ? "Bid Amount : " + highest_bid?.amount : ""}
-                      {highest_bid?.priceCurrency}
+                      {" " + highest_bid?.priceCurrency}
                     </span>
                     {highest_bid?.quantity > 1 &&
                       <span className="count-number">
@@ -250,7 +256,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
                   <div className="top-seller-content">
                     <span className="count-number">
                       {highest_bid?.amount ? "Price : " + highest_bid?.amount : ""}
-                      {highest_bid?.priceCurrency}
+                      {" " + highest_bid?.priceCurrency}
                     </span>
                     {highest_bid?.quantity > 1 &&
                       <span className="count-number">
@@ -288,7 +294,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
           {auction.data.sellType == "Bidding" ? "Place a Bid" : "Buy Now"}
         </Button>
       </div>
-      <PlaceBidModal show={showBidModal} handleModal={handleBidModal} bidPrice={auction.data.bidPrice} supply={product.supply} maxQuantity={auction.data.remainingQuantity} handleSubmit={handleSubmit} auction={auction} />
+      <PlaceBidModal show={showBidModal} handleModal={handleBidModal} bidPrice={auction.data.bidPrice} supply={product.supply} maxQuantity={auction.data.remainingQuantity} handleSubmit={handleSubmit} auction={auction}
+        currency={highest_bid?.priceCurrency} />
     </>
   );
 };
