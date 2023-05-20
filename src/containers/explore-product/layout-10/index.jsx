@@ -64,7 +64,7 @@ const ExploreProductArea = ({
             fields: ["id"]
           }
         }
-      }
+      };
       let getdataAll = await strapi.find("auctions", newestItemsFilter);
       const cats = flatDeep(getdataAll.data.map((prod) => prod?.collectible?.data?.collection?.data?.name));
       categoriesold = cats.reduce((obj, b) => {
@@ -72,7 +72,7 @@ const ExploreProductArea = ({
         newObj[b] = obj[b] + 1 || 1;
         return newObj;
       }, {});
-      setonchangecheckData(categoriesold)
+      setonchangecheckData(categoriesold);
     }
     fetchData();
   }, []);
@@ -96,6 +96,26 @@ const ExploreProductArea = ({
   useEffect(() => {
     if (router.query.collection) {
       if (checkedCollection.length) {
+        const filter = {
+          filter: {
+            auction: {
+              status: {
+                eq: "Live"
+              }
+            },
+            collection: {
+              name: {
+                in: checkedCollection
+              },
+              id: {
+                notNull: true
+              }
+            }
+          },
+          sort: ["createdAt:desc"],
+          pagination: { pageSize: 6 }
+        };
+
         getCollectible({
           variables: {
             filter: {
@@ -153,7 +173,7 @@ const ExploreProductArea = ({
         status: {
           eq: "Live"
         }
-      },
+      }
     };
 
     if (selectedFilterNetworks.length > 0) {
@@ -192,7 +212,7 @@ const ExploreProductArea = ({
         status: {
           eq: "Live"
         }
-      },
+      }
     };
 
     if (selectedFilterNetworks.length > 0) {
@@ -253,13 +273,11 @@ const ExploreProductArea = ({
         }
       });
     }
-
   };
   const getauctionFilterData = (onchangefilter) => {
     setOnChangeValue(onchangefilter);
 
-    let filters = {
-    };
+    let filters = {};
     if (selectedFilterNetworks.length > 0) {
       filters.collection = {
         networkType: {
@@ -318,8 +336,7 @@ const ExploreProductArea = ({
         }
       });
     }
-
-  }
+  };
   const getCollectibleFilterData = (onchangefilter) => {
     let filters = {
       auction: {
@@ -329,7 +346,7 @@ const ExploreProductArea = ({
       },
       price: {
         between: onchangefilter
-      },
+      }
     };
 
     if (selectedFilterNetworks.length > 0) {
@@ -363,14 +380,14 @@ const ExploreProductArea = ({
       });
   };
   const getCollectiblecheckData = (onchangefilter) => {
-    setCheckedCollection(onchangefilter)
+    setCheckedCollection(onchangefilter);
 
     let filters = {
       auction: {
         status: {
           eq: "Live"
         }
-      },
+      }
     };
     if (selectedFilterNetworks.length > 0) {
       filters.collection = {
@@ -425,7 +442,7 @@ const ExploreProductArea = ({
         status: {
           eq: "Live"
         }
-      },
+      }
     };
     if (router.query.collection) {
       filters.collection = {
@@ -457,7 +474,6 @@ const ExploreProductArea = ({
         }
       });
     }
-
   };
 
   return (
@@ -491,18 +507,16 @@ const ExploreProductArea = ({
                   {collectionsData?.map((prod, index) => (
                     <div key={index} className="col-lg-4 col-md-6 col-sm-12">
                       <Product
-                        placeBid={prod.attributes?.auction?.data?.attributes?.sellType == "Bidding"}
-                        title={prod.attributes.name}
-                        slug={prod.attributes.slug}
-                        supply={prod.attributes.supply}
-                        price={prod.attributes?.auction?.data?.attributes?.bidPrice}
-                        symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
-                        image={prod.attributes?.image?.data?.attributes?.url}
-                        collectionName={prod.attributes?.collection?.data?.attributes?.name}
+                        placeBid={prod?.auction?.data?.sellType == "Bidding"}
+                        title={prod.name}
+                        slug={prod.slug}
+                        supply={prod.supply}
+                        price={prod?.auction?.data?.bidPrice}
+                        symbol={prod?.auction?.data?.priceCurrency}
+                        image={prod?.image?.data?.url}
+                        collectionName={prod?.collection?.data?.name}
                         bitCount={
-                          prod.attributes?.auction?.data?.attributes?.sellType == "Bidding"
-                            ? prod.attributes?.auction?.data?.attributes?.biddings?.data.length
-                            : 0
+                          prod?.auction?.data?.sellType == "Bidding" ? prod?.auction?.data?.biddings?.data.length : 0
                         }
                         latestBid={prod.latestBid}
                         likeCount={prod.likeCount}

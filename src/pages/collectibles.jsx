@@ -22,7 +22,7 @@ const Collectibles = ({ dataCollectibles }) => {
   return (
     <Wrapper>
       <SEO pageTitle="Explore Simple" />
-      {/* {console.log("data=-=-Collectibles", dataCollectibles)} */}
+      {console.log("data=-=-Collectibles", dataCollectibles)}
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Explore NFT" currentPage="Explore NFT" />
@@ -53,31 +53,26 @@ Collectibles.getInitialProps = async (ctx) => {
       }
     },
     // populate: {
-    //   collectibles: {
+    //   collection: {
     //     fields: "*",
-    //     filters: {
-    //       auction: {
+    //     populate: {
+    //       cover: {
+    //         fields: "*"
+    //       },
+    //       logo: {
+    //         fields: "*"
+    //       }
+    //     },
+    //     auction: {
+    //       fields: "*",
+    //       filters: {
     //         status: "Live",
     //         id: { $notNull: true }
     //       }
-    //     },
-    //     populate: {
-    //       auction: {
-    //         fields: "*",
-    //         filters: {
-    //           status: "Live",
-    //           id: { $notNull: true }
-    //         }
-    //       }
     //     }
-    //   },
-    //   cover: {
-    //     fields: "*"
-    //   },
-    //   logo: {
-    //     fields: "*"
     //   }
     // },
+
     pagination: {
       limit: 6,
       start: 0,
@@ -86,8 +81,8 @@ Collectibles.getInitialProps = async (ctx) => {
   });
   console.log("data=-=-=-=--=-=-=-=-=-=-=", data);
   return {
-    className: "template-color-1"
-    // dataCollectibles: data.collectibles
+    className: "template-color-1",
+    dataCollectibles: data
   };
 };
 
