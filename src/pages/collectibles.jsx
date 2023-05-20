@@ -52,28 +52,28 @@ Collectibles.getInitialProps = async (ctx) => {
         status: "Live"
       }
     },
-    // populate: {
-    //   collection: {
-    //     fields: "*",
-    //     populate: {
-    //       cover: {
-    //         fields: "*"
-    //       },
-    //       logo: {
-    //         fields: "*"
-    //       }
-    //     },
-    //     auction: {
-    //       fields: "*",
-    //       filters: {
-    //         status: "Live",
-    //         id: { $notNull: true }
-    //       }
-    //     }
-    //   }
-    // },
-
-    pagination: {
+    populate: {
+      collection: {
+        fields: "*",
+        populate: {
+          cover: {
+            fields: "*"
+          },
+          logo: {
+            fields: "*"
+          }
+        }
+      }, auction: {
+        fields: "*",
+        filters: {
+          status: "Live",
+          id: { $notNull: true }
+        }
+      },
+      image: {
+        fields: "*"
+      }
+    }, pagination: {
       limit: 6,
       start: 0,
       withCount: true
