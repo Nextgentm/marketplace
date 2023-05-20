@@ -41,7 +41,6 @@ const ExploreProductArea = ({
 
   const [onchangecheckData, setonchangecheckData] = useState(categoriesolds);
   const setCollectionData = (data, page = 1) => {
-    console.log("data123465", data, page);
     setCollectionsData(data.data);
     setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 8), page });
   };
@@ -111,7 +110,6 @@ const ExploreProductArea = ({
       //   }
       // });
       let getdataAll = await strapi.find("auctions", newestItemsFilter);
-      console.log("data=-=-=-=--=-=-*-*-**-=-=-=-=-=", getdataAll);
       const cats = flatDeep(getdataAll.data.map((prod) => prod?.collectible?.data?.collection?.data?.name));
       categoriesold = cats.reduce((obj, b) => {
         const newObj = { ...obj };
@@ -134,7 +132,6 @@ const ExploreProductArea = ({
   }
   useEffect(() => {
     if (collectionData.data) {
-      console.log("collectionData.data", collectionData);
       setCollectionsData(collectionData.data);
       setPagination(collectionData.meta.pagination);
     }
@@ -189,7 +186,6 @@ const ExploreProductArea = ({
                 sort: ["createdAt:desc"]
               }
             });
-            console.log(data, page);
             setCollectionData(data, page);
           } else {
             const data = await getCollectible({
@@ -231,7 +227,6 @@ const ExploreProductArea = ({
                 sort: ["createdAt:desc"]
               }
             });
-            console.log(data, page);
             setCollectionData(data, page);
           }
         }
@@ -1110,7 +1105,6 @@ const ExploreProductArea = ({
           </div>
           <div className="col-lg-9 order-1 order-lg-2">
             <div className="row g-5">
-              {console.log("collectionsData", collectionsData)}
               {collectionsData?.length > 0 ? (
                 <>
                   {collectionsData?.map((prod, index) => (

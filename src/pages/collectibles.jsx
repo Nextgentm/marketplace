@@ -22,7 +22,6 @@ const Collectibles = ({ dataCollectibles }) => {
   return (
     <Wrapper>
       <SEO pageTitle="Explore Simple" />
-      {console.log("data=-=-Collectibles", dataCollectibles)}
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Explore NFT" currentPage="Explore NFT" />
@@ -63,7 +62,8 @@ Collectibles.getInitialProps = async (ctx) => {
             fields: "*"
           }
         }
-      }, auction: {
+      },
+      auction: {
         fields: "*",
         filters: {
           status: "Live",
@@ -73,13 +73,13 @@ Collectibles.getInitialProps = async (ctx) => {
       image: {
         fields: "*"
       }
-    }, pagination: {
+    },
+    pagination: {
       limit: 6,
       start: 0,
       withCount: true
     }
   });
-  console.log("data=-=-=-=--=-=-=-=-=-=-=", data);
   return {
     className: "template-color-1",
     dataCollectibles: data
