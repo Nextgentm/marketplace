@@ -10,7 +10,7 @@ import { flatDeep } from "@utils/methods";
 import { useLazyQuery } from "@apollo/client";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import { useRouter } from "next/router";
-import { getCollection } from "src/services/collections/collection";
+import { getCollectible, getCollection } from "src/services/collections/collection";
 import { networksList } from "@utils/wallet";
 import strapi from "@utils/strapi";
 
@@ -19,7 +19,7 @@ const ExploreProductArea = ({
   space,
   data: { section_title, products, placeBid, collectionPage, paginationdata, collectionData }
 }) => {
-  const [getCollectible, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
+  const [getCollectiblesdata, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
     fetchPolicy: "cache-and-network"
   });
   const [collectionsData, setCollectionsData] = useState();
@@ -32,7 +32,7 @@ const ExploreProductArea = ({
   const [selectedFilterNetworks, setSelectedFilterNetworks] = useState([]);
   let categoriesolds = [];
 
-  const cats = flatDeep(products.map((prod) => prod?.collectible?.data?.collection?.data?.name));
+  const cats = flatDeep(products.map((prod) => prod?.collection?.data?.name));
   categoriesolds = cats.reduce((obj, b) => {
     const newObj = { ...obj };
     newObj[b] = obj[b] + 1 || 1;
@@ -40,6 +40,10 @@ const ExploreProductArea = ({
   }, {});
 
   const [onchangecheckData, setonchangecheckData] = useState(categoriesolds);
+  const setCollectionData = (data, page = 1) => {
+    setCollectionsData(data.data);
+    setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 8), page });
+  };
   let categoriesold = [];
   useEffect(() => {
     async function fetchData() {
@@ -64,7 +68,47 @@ const ExploreProductArea = ({
             fields: ["id"]
           }
         }
-      }
+      };
+      // const getdataAll = await getCollectible({
+      //   filters: {
+      //     auction: {
+      //       status: "Live"
+      //     },
+      //     collection: {
+      //       networkType: {
+      //         $in: selectedFilterNetworks
+      //       }
+      //     }
+      //   },
+      //   populate: {
+      //     collection: {
+      //       fields: "*",
+      //       populate: {
+      //         cover: {
+      //           fields: "*"
+      //         },
+      //         logo: {
+      //           fields: "*"
+      //         }
+      //       }
+      //     },
+      //     auction: {
+      //       fields: "*",
+      //       filters: {
+      //         status: "Live",
+      //         id: { $notNull: true }
+      //       }
+      //     },
+      //     image: {
+      //       fields: "*"
+      //     }
+      //   },
+      //   pagination: {
+      //     limit: 6,
+      //     start: 0,
+      //     withCount: true
+      //   }
+      // });
       let getdataAll = await strapi.find("auctions", newestItemsFilter);
       const cats = flatDeep(getdataAll.data.map((prod) => prod?.collectible?.data?.collection?.data?.name));
       categoriesold = cats.reduce((obj, b) => {
@@ -72,7 +116,7 @@ const ExploreProductArea = ({
         newObj[b] = obj[b] + 1 || 1;
         return newObj;
       }, {});
-      setonchangecheckData(categoriesold)
+      setonchangecheckData(categoriesold);
     }
     fetchData();
   }, []);
@@ -94,298 +138,140 @@ const ExploreProductArea = ({
   }, [collectionData.data]);
 
   useEffect(() => {
-    if (router.query.collection) {
-      if (checkedCollection.length) {
-        getCollectible({
-          variables: {
-            filter: {
-              auction: {
-                status: {
-                  eq: "Live"
+    const fetchData = async () => {
+      try {
+        if (router.query.collection) {
+          if (checkedCollection.length) {
+            const data = await getCollectible({
+              filters: {
+                auction: {
+                  status: "Live"
                 }
               },
-              collection: {
-                name: {
-                  in: checkedCollection
+              populate: {
+                collection: {
+                  fields: "*",
+                  filter: {
+                    name: {
+                      $in: checkedCollection
+                    },
+                    id: {
+                      $notNull: true
+                    }
+                  },
+                  populate: {
+                    cover: {
+                      fields: "*"
+                    },
+                    logo: {
+                      fields: "*"
+                    }
+                  }
                 },
-                id: {
-                  notNull: true
-                }
-              }
-            },
-            sort: ["createdAt:desc"],
-            pagination: { pageSize: 6 }
-          }
-        });
-      } else {
-        getCollectible({
-          variables: {
-            filter: {
-              auction: {
-                status: {
-                  eq: "Live"
+                auction: {
+                  fields: "*",
+                  filters: {
+                    status: "Live",
+                    id: { $notNull: true }
+                  }
+                },
+                image: {
+                  fields: "*"
                 }
               },
-              collection: {
-                name: {
-                  in: routerQuery
-                }
+              pagination: {
+                limit: 6,
+                start: 0,
+                withCount: true,
+                sort: ["createdAt:desc"]
               }
-            },
-            sort: ["createdAt:desc"],
-            pagination: { pageSize: 6 }
+            });
+            setCollectionData(data, page);
+          } else {
+            const data = await getCollectible({
+              filter: {
+                auction: {
+                  status: "Live"
+                }
+              },
+              populate: {
+                collection: {
+                  fields: "*",
+                  filter: {
+                    name: routerQuery
+                  },
+                  populate: {
+                    cover: {
+                      fields: "*"
+                    },
+                    logo: {
+                      fields: "*"
+                    }
+                  }
+                },
+                auction: {
+                  fields: "*",
+                  filter: {
+                    status: "Live",
+                    id: { $exists: true }
+                  }
+                },
+                image: {
+                  fields: "*"
+                }
+              },
+              pagination: {
+                limit: 6,
+                start: 0,
+                withCount: true,
+                sort: ["createdAt:desc"]
+              }
+            });
+            setCollectionData(data, page);
           }
-        });
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle the error appropriately (e.g., show an error message)
       }
-    }
+    };
+
+    fetchData();
   }, [router.query.collection]);
 
-  useEffect(() => {
-    if (collectiblesFilters) {
-      setPagination(collectiblesFilters.collectibles.meta.pagination);
-      setCollectionsData(collectiblesFilters.collectibles.data);
-    }
-  }, [collectiblesFilters, error]);
+  // useEffect(() => {
+  //   if (collectiblesFilters) {
+  //     setPagination(collectiblesFilters.collectibles.meta.pagination);
+  //     setCollectionsData(collectiblesFilters.collectibles.data);
+  //   }
+  // }, [collectiblesFilters, error]);
 
-  const getCollectionPaginationRecord = (page) => {
-    let filters = {
-      auction: {
-        status: {
-          eq: "Live"
-        }
-      },
-    };
+  const getCollectionPaginationRecord = async (page) => {
+    const start = page * 6 - 6;
+    const limit = 6;
 
-    if (selectedFilterNetworks.length > 0) {
-      filters.collection = {
-        networkType: {
-          in: selectedFilterNetworks
-        }
-      };
-    }
-    if (router.query.collection) {
-      filters.collection = {
-        name: {
-          in: routerQuery
-        }
-      };
-    }
-    if (checkedCollection.length) {
-      filters.collection = {
-        name: {
-          in: checkedCollection
-        }
-      };
-    }
-    getCollectible({
-      variables: {
-        filter: filters,
-        pagination: { page, pageSize: 6 }
-      }
-    });
-  };
+    // let filters = {
+    //   auction: {
+    //     status: {
+    //       eq: "Live"
+    //     }
+    //   }
+    // };
 
-  const getCollectibleSortData = (onchangeSort) => {
-    setOnChangeValue(onchangeSort);
-    let filters = {
-      auction: {
-        status: {
-          eq: "Live"
-        }
-      },
-    };
-
-    if (selectedFilterNetworks.length > 0) {
-      filters.collection = {
-        networkType: {
-          in: selectedFilterNetworks
-        }
-      };
-    }
-    if (router.query.collection) {
-      filters.collection = {
-        name: {
-          in: routerQuery
-        }
-      };
-    }
-    if (checkedCollection.length) {
-      filters.collection = {
-        name: {
-          in: checkedCollection
-        }
-      };
-    }
-    let pagination = { pageSize: 6 };
-    if (onchangeSort == "oldest") {
-      getCollectible({
-        variables: {
-          filter: filters,
-          pagination: pagination,
-          sort: ["createdAt:asc"]
-        }
-      });
-    }
-    if (onchangeSort == "newest") {
-      getCollectible({
-        variables: {
-          filter: filters,
-          sort: ["createdAt:desc"],
-          pagination: pagination
-        }
-      });
-    }
-    if (onchangeSort == "low-to-high") {
-      getCollectible({
-        variables: {
-          filter: filters,
-          sort: ["price:asc"],
-          pagination: pagination
-        }
-      });
-    }
-    if (onchangeSort == "high-to-low") {
-      getCollectible({
-        variables: {
-          filter: filters,
-          sort: ["price:desc"],
-          pagination: pagination
-        }
-      });
-    }
-
-  };
-  const getauctionFilterData = (onchangefilter) => {
-    setOnChangeValue(onchangefilter);
-
-    let filters = {
-    };
-    if (selectedFilterNetworks.length > 0) {
-      filters.collection = {
-        networkType: {
-          in: selectedFilterNetworks
-        }
-      };
-    }
-
-    if (router.query.collection) {
-      filters.collection = {
-        name: {
-          in: routerQuery
-        }
-      };
-    }
-    if (checkedCollection.length) {
-      filters.collection = {
-        name: {
-          in: checkedCollection
-        }
-      };
-    }
-    let pagination = { pageSize: 6 };
-    if (onchangefilter == "Fixed-price") {
-      getCollectible({
-        variables: {
-          filter: {
-            ...filters,
-            auction: {
-              status: {
-                eq: "Live"
-              }
-            }
-          },
-          sort: ["createdAt:asc"],
-          pagination: pagination
-        }
-      });
-    }
-    if (onchangefilter == "Auction") {
-      getCollectible({
-        variables: {
-          filter: {
-            ...filters,
-            auction: {
-              status: {
-                eq: "Live"
-              },
-              sellType: {
-                in: "Bidding"
-              }
-            }
-          },
-          pagination: pagination,
-          sort: "auction.startTimestamp:desc"
-        }
-      });
-    }
-
-  }
-  const getCollectibleFilterData = (onchangefilter) => {
-    let filters = {
-      auction: {
-        status: {
-          eq: "Live"
-        }
-      },
-      price: {
-        between: onchangefilter
-      },
-    };
-
-    if (selectedFilterNetworks.length > 0) {
-      filters.collection = {
-        networkType: {
-          in: selectedFilterNetworks
-        }
-      };
-    }
-    if (router.query.collection) {
-      filters.collection = {
-        name: {
-          in: routerQuery
-        }
-      };
-    }
-    if (checkedCollection.length) {
-      filters.collection = {
-        name: {
-          in: checkedCollection
-        }
-      };
-    }
-    setonchangepriceRange({ price: onchangefilter });
-    if (onchangefilter)
-      getCollectible({
-        variables: {
-          filter: filters,
-          pagination: { pageSize: 6 }
-        }
-      });
-  };
-  const getCollectiblecheckData = (onchangefilter) => {
-    setCheckedCollection(onchangefilter)
-
-    let filters = {
-      auction: {
-        status: {
-          eq: "Live"
-        }
-      },
-    };
-    if (selectedFilterNetworks.length > 0) {
-      filters.collection = {
-        networkType: {
-          in: selectedFilterNetworks
-        }
-      };
-    }
-    if (router.query.collection) {
-      filters.collection = {
-        name: {
-          eq: routerQuery
-        }
-      };
-    }
+    // if (selectedFilterNetworks.length > 0) {
+    //   filters.collection = {
+    //     networkType: {
+    //       in: selectedFilterNetworks
+    //     }
+    //   };
+    // }
+    // if (router.query.collection) {
+    //   filters.collection = {
+    //     name: {
+    //       in: routerQuery
+    //     }
+    //   };
+    // }
     // if (checkedCollection.length) {
     //   filters.collection = {
     //     name: {
@@ -393,71 +279,804 @@ const ExploreProductArea = ({
     //     }
     //   };
     // }
-    if (onchangefilter?.length <= 0)
-      getCollectible({
-        variables: {
-          filter: filters,
-          pagination: { pageSize: 6 }
-        }
-      });
-    else if (onchangefilter) {
-      getCollectible({
-        variables: {
-          filter: {
-            ...filters,
-            collection: {
-              name: {
-                in: onchangefilter
-              }
-            }
-          },
-          pagination: { pageSize: 6 }
-        }
-      });
-    }
-  };
-
-  const getSelectedFilterNetworksCheckData = (onchangefilter) => {
-    setSelectedFilterNetworks(onchangefilter);
+    // getCollectible({
+    //   variables: {
+    //     filter: filters,
+    //     pagination: { page, pageSize: 6 }
+    //   }
+    // });
 
     let filters = {
       auction: {
         status: {
-          eq: "Live"
+          $eq: "Live"
         }
-      },
+      }
     };
+
+    if (selectedFilterNetworks.length > 0) {
+      filters.collection = {
+        networkType: {
+          $in: selectedFilterNetworks
+        }
+      };
+    }
     if (router.query.collection) {
       filters.collection = {
         name: {
-          eq: routerQuery
+          $in: routerQuery
+        }
+      };
+    }
+    if (checkedCollection.length) {
+      filters.collection = {
+        name: {
+          $in: checkedCollection
+        }
+      };
+    }
+    const data = await getCollectible({
+      filters: filters,
+      populate: {
+        collection: {
+          fields: "*",
+          populate: {
+            cover: {
+              fields: "*"
+            },
+            logo: {
+              fields: "*"
+            }
+          }
+        },
+        auction: {
+          fields: "*",
+          filters: {
+            status: "Live",
+            id: { $notNull: true }
+          }
+        },
+        image: {
+          fields: "*"
+        }
+      },
+      pagination: {
+        start,
+        limit
+      }
+    });
+    setCollectionData(data, page);
+  };
+
+  const getCollectibleSortData = async (onchangeSort) => {
+    setOnChangeValue(onchangeSort);
+    // let filters = {
+    //   auction: {
+    //     status: {
+    //       eq: "Live"
+    //     }
+    //   }
+    // };
+
+    // if (selectedFilterNetworks.length > 0) {
+    //   filters.collection = {
+    //     networkType: {
+    //       in: selectedFilterNetworks
+    //     }
+    //   };
+    // }
+    // if (router.query.collection) {
+    //   filters.collection = {
+    //     name: {
+    //       in: routerQuery
+    //     }
+    //   };
+    // }
+    // if (checkedCollection.length) {
+    //   filters.collection = {
+    //     name: {
+    //       in: checkedCollection
+    //     }
+    //   };
+    // }
+    let filters = {
+      auction: {
+        status: "Live"
+      }
+    };
+
+    if (selectedFilterNetworks.length > 0) {
+      filters.collection = {
+        networkType: {
+          $in: selectedFilterNetworks
+        }
+      };
+    }
+    if (router.query.collection) {
+      filters.collection = {
+        name: {
+          $in: routerQuery
+        }
+      };
+    }
+    if (checkedCollection.length) {
+      filters.collection = {
+        name: {
+          $in: checkedCollection
+        }
+      };
+    }
+    let pagination = { pageSize: 6 };
+    if (onchangeSort == "oldest") {
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: pagination,
+        sort: ["createdAt:asc"]
+      });
+      setCollectionData(data);
+      // getCollectiblesdata({
+      //   variables: {
+      //     filter: filters,
+      //     pagination: pagination,
+      //     sort: ["createdAt:asc"]
+      //   }
+      // });
+    }
+    if (onchangeSort == "newest") {
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: pagination,
+        sort: ["createdAt:desc"]
+      });
+      setCollectionData(data);
+      // getCollectiblesdata({
+      //   variables: {
+      //     filter: filters,
+      //     sort: ["createdAt:desc"],
+      //     pagination: pagination
+      //   }
+      // });
+    }
+    if (onchangeSort == "low-to-high") {
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: pagination,
+        sort: ["price:asc"]
+      });
+      setCollectionData(data);
+      // getCollectiblesdata({
+      //   variables: {
+      //     filter: filters,
+      //     sort: ["price:asc"],
+      //     pagination: pagination
+      //   }
+      // });
+    }
+    if (onchangeSort == "high-to-low") {
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: pagination,
+        sort: ["price:desc"]
+      });
+      setCollectionData(data);
+      // getCollectiblesdata({
+      //   variables: {
+      //     filter: filters,
+      //     sort: ["price:desc"],
+      //     pagination: pagination
+      //   }
+      // });
+    }
+  };
+  const getauctionFilterData = async (onchangefilter) => {
+    setOnChangeValue(onchangefilter);
+
+    // let filters = {};
+    // if (selectedFilterNetworks.length > 0) {
+    //   filters.collection = {
+    //     networkType: {
+    //       in: selectedFilterNetworks
+    //     }
+    //   };
+    // }
+
+    // if (router.query.collection) {
+    //   filters.collection = {
+    //     name: {
+    //       in: routerQuery
+    //     }
+    //   };
+    // }
+    // if (checkedCollection.length) {
+    //   filters.collection = {
+    //     name: {
+    //       in: checkedCollection
+    //     }
+    //   };
+    // }
+
+    let filters = {};
+    if (selectedFilterNetworks.length > 0) {
+      filters.collection = {
+        networkType: {
+          $in: selectedFilterNetworks
         }
       };
     }
 
-    if (onchangefilter?.length <= 0)
-      getCollectible({
-        variables: {
-          filter: filters,
-          pagination: { pageSize: 6 }
+    if (router.query.collection) {
+      filters.collection = {
+        name: {
+          $in: routerQuery
         }
-      });
-    else if (onchangefilter) {
-      getCollectible({
-        variables: {
-          filter: {
-            ...filters,
-            collection: {
-              networkType: {
-                in: onchangefilter
+      };
+    }
+    if (checkedCollection.length) {
+      filters.collection = {
+        name: {
+          $in: checkedCollection
+        }
+      };
+    }
+    let pagination = { pageSize: 6 };
+    if (onchangefilter == "Fixed-price") {
+      filters.auction = {
+        status: {
+          $eq: "Live"
+        },
+        sellType: {
+          $eq: "FixedPrice"
+        }
+      };
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
               }
             }
           },
-          pagination: { pageSize: 6 }
-        }
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: pagination,
+        sort: ["createdAt:asc"]
       });
+      setCollectionData(data);
+      // getCollectiblesdata({
+      //   variables: {
+      //     filter: {
+      //       ...filters,
+      //       auction: {
+      //         status: {
+      //           eq: "Live"
+      //         }
+      //       }
+      //     },
+      //     sort: ["createdAt:asc"],
+      //     pagination: pagination
+      //   }
+      // });
+    }
+    if (onchangefilter == "Auction") {
+      filters.auction = {
+        status: {
+          $eq: "Live"
+        },
+        sellType: {
+          $eq: "Bidding"
+        }
+      };
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: pagination,
+        sort: ["createdAt:asc"]
+      });
+      setCollectionData(data);
+      // getCollectiblesdata({
+      //   variables: {
+      //     filter: {
+      //       ...filters,
+      //       auction: {
+      //         status: {
+      //           eq: "Live"
+      //         },
+      //         sellType: {
+      //           in: "Bidding"
+      //         }
+      //       }
+      //     },
+      //     pagination: pagination,
+      //     sort: "auction.startTimestamp:desc"
+      //   }
+      // });
+    }
+  };
+  const getCollectibleFilterData = async (onchangefilter) => {
+    // let filters = {
+    //   auction: {
+    //     status: {
+    //       eq: "Live"
+    //     }
+    //   },
+    //   price: {
+    //     between: onchangefilter
+    //   }
+    // };
+
+    // if (selectedFilterNetworks.length > 0) {
+    //   filters.collection = {
+    //     networkType: {
+    //       in: selectedFilterNetworks
+    //     }
+    //   };
+    // }
+    // if (router.query.collection) {
+    //   filters.collection = {
+    //     name: {
+    //       in: routerQuery
+    //     }
+    //   };
+    // }
+    // if (checkedCollection.length) {
+    //   filters.collection = {
+    //     name: {
+    //       in: checkedCollection
+    //     }
+    //   };
+    // }
+    let filters = {
+      auction: {
+        status: {
+          $eq: "Live"
+        }
+      },
+      price: {
+        $between: onchangefilter
+      }
+    };
+
+    if (selectedFilterNetworks.length > 0) {
+      filters.collection = {
+        networkType: {
+          $in: selectedFilterNetworks
+        }
+      };
+    }
+    if (router.query.collection) {
+      filters.collection = {
+        name: {
+          $in: routerQuery
+        }
+      };
+    }
+    if (checkedCollection.length) {
+      filters.collection = {
+        name: {
+          $in: checkedCollection
+        }
+      };
+    }
+    setonchangepriceRange({ price: onchangefilter });
+    if (onchangefilter) {
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: { pageSize: 6 }
+      });
+      setCollectionData(data);
+      // getCollectiblesdata({
+      //   variables: {
+      //     filter: filters,
+      //     pagination: { pageSize: 6 }
+      //   }
+      // });
+    }
+  };
+  const getCollectiblecheckData = async (onchangefilter) => {
+    setCheckedCollection(onchangefilter);
+
+    // let filters = {
+    //   auction: {
+    //     status: {
+    //       eq: "Live"
+    //     }
+    //   }
+    // };
+    // if (selectedFilterNetworks.length > 0) {
+    //   filters.collection = {
+    //     networkType: {
+    //       in: selectedFilterNetworks
+    //     }
+    //   };
+    // }
+    // if (router.query.collection) {
+    //   filters.collection = {
+    //     name: {
+    //       eq: routerQuery
+    //     }
+    //   };
+    // }
+    // if (checkedCollection.length) {
+    //   filters.collection = {
+    //     name: {
+    //       in: checkedCollection
+    //     }
+    //   };
+    // }
+    let filters = {
+      auction: {
+        status: {
+          $eq: "Live"
+        }
+      }
+    };
+    if (selectedFilterNetworks.length > 0) {
+      filters.collection = {
+        networkType: {
+          $in: selectedFilterNetworks
+        }
+      };
+    }
+    if (router.query.collection) {
+      filters.collection = {
+        name: {
+          $eq: routerQuery
+        }
+      };
+    }
+    if (onchangefilter?.length <= 0) {
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: { pageSize: 6 }
+      });
+      setCollectionData(data);
+      // getCollectiblesdata({
+      //   variables: {
+      //     filter: filters,
+      //     pagination: { pageSize: 6 }
+      //   }
+      // });
+    } else if (onchangefilter) {
+      filters.collection = {
+        name: {
+          $in: onchangefilter
+        }
+      };
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: { pageSize: 6 }
+      });
+      setCollectionData(data);
+      // getCollectiblesdata({
+      //   variables: {
+      //     filter: {
+      //       ...filters,
+      //       collection: {
+      //         name: {
+      //           in: onchangefilter
+      //         }
+      //       }
+      //     },
+      //     pagination: { pageSize: 6 }
+      //   }
+      // });
+    }
+  };
+
+  const getSelectedFilterNetworksCheckData = async (onchangefilter) => {
+    setSelectedFilterNetworks(onchangefilter);
+
+    // let filters = {
+    //   auction: {
+    //     status: {
+    //       eq: "Live"
+    //     }
+    //   }
+    // };
+    // if (router.query.collection) {
+    //   filters.collection = {
+    //     name: {
+    //       eq: routerQuery
+    //     }
+    //   };
+    // }
+
+    let filters = {
+      auction: {
+        status: {
+          $eq: "Live"
+        }
+      }
+    };
+    if (router.query.collection) {
+      filters.collection = {
+        name: {
+          $eq: routerQuery
+        }
+      };
     }
 
+    if (onchangefilter?.length <= 0) {
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: { pageSize: 6 }
+      });
+      setCollectionData(data);
+      // getCollectiblesdata({
+      //   variables: {
+      //     filter: filters,
+      //     pagination: { pageSize: 6 }
+      //   }
+      // });
+    } else if (onchangefilter) {
+      filters.collection = {
+        networkType: {
+          $in: onchangefilter
+        }
+      };
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: { pageSize: 6 }
+      });
+      setCollectionData(data);
+      // getCollectiblesdata({
+      //   variables: {
+      //     filter: {
+      //       ...filters,
+      //       collection: {
+      //         networkType: {
+      //           in: onchangefilter
+      //         }
+      //       }
+      //     },
+      //     pagination: { pageSize: 6 }
+      //   }
+      // });
+    }
   };
 
   return (
@@ -491,18 +1110,16 @@ const ExploreProductArea = ({
                   {collectionsData?.map((prod, index) => (
                     <div key={index} className="col-lg-4 col-md-6 col-sm-12">
                       <Product
-                        placeBid={prod.attributes?.auction?.data?.attributes?.sellType == "Bidding"}
-                        title={prod.attributes.name}
-                        slug={prod.attributes.slug}
-                        supply={prod.attributes.supply}
-                        price={prod.attributes?.auction?.data?.attributes?.bidPrice}
-                        symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
-                        image={prod.attributes?.image?.data?.attributes?.url}
-                        collectionName={prod.attributes?.collection?.data?.attributes?.name}
+                        placeBid={prod?.auction?.data?.sellType == "Bidding"}
+                        title={prod.name}
+                        slug={prod.slug}
+                        supply={prod.supply}
+                        price={prod?.auction?.data[0]?.bidPrice}
+                        symbol={prod?.auction?.data[0]?.priceCurrency}
+                        image={prod?.image?.data?.url}
+                        collectionName={prod?.collection?.data?.name}
                         bitCount={
-                          prod.attributes?.auction?.data?.attributes?.sellType == "Bidding"
-                            ? prod.attributes?.auction?.data?.attributes?.biddings?.data.length
-                            : 0
+                          prod?.auction?.data[0]?.sellType == "Bidding" ? prod?.auction?.data?.biddings?.data.length : 0
                         }
                         latestBid={prod.latestBid}
                         likeCount={prod.likeCount}
