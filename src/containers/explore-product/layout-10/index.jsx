@@ -53,7 +53,7 @@ const ExploreProductArea = ({
   const [onchangecheckData, setonchangecheckData] = useState(categoriesolds);
   const setCollectionData = (data, page = 1) => {
     setCollectionsData(data.data);
-    setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 8), page });
+    setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 6), page });
   };
   let categoriesold = [];
   useEffect(() => {
