@@ -32,12 +32,23 @@ const ExploreProductArea = ({
   const [selectedFilterNetworks, setSelectedFilterNetworks] = useState([]);
   let categoriesolds = [];
 
-  const cats = flatDeep(products.map((prod) => prod?.collection?.data?.name));
-  categoriesolds = cats.reduce((obj, b) => {
-    const newObj = { ...obj };
-    newObj[b] = obj[b] + 1 || 1;
-    return newObj;
-  }, {});
+  // const cats = flatDeep(products.map((prod) => prod?.collection?.data?.name));
+  // categoriesolds = cats.reduce((obj, b) => {
+  //   const newObj = { ...obj };
+  //   newObj[b] = obj[b] + 1 || 1;
+  //   return newObj;
+  // }, {});
+  let cats = {};
+  products.map((prod) => {
+    if (!cats[prod?.collectible?.data?.collection?.data?.name])
+      cats[prod?.collectible?.data?.collection?.data?.name] = [prod?.collectible?.data?.name];
+    if (!cats[prod?.collectible?.data?.collection?.data?.name].includes(prod?.collectible?.data?.name))
+      cats[prod?.collectible?.data?.collection?.data?.name].push(prod?.collectible?.data?.name);
+  });
+  // console.log(cats, catsData);
+  Object.entries(cats).map(([key, value]) => {
+    categoriesolds[key] = value.length;
+  });
 
   const [onchangecheckData, setonchangecheckData] = useState(categoriesolds);
   const setCollectionData = (data, page = 1) => {
@@ -110,12 +121,25 @@ const ExploreProductArea = ({
       //   }
       // });
       let getdataAll = await strapi.find("auctions", newestItemsFilter);
-      const cats = flatDeep(getdataAll.data.map((prod) => prod?.collectible?.data?.collection?.data?.name));
-      categoriesold = cats.reduce((obj, b) => {
-        const newObj = { ...obj };
-        newObj[b] = obj[b] + 1 || 1;
-        return newObj;
-      }, {});
+      // const cats = flatDeep(getdataAll.data.map((prod) => prod?.collectible?.data?.collection?.data?.name));
+      let cats = {};
+      getdataAll.data.map((prod) => {
+        if (!cats[prod?.collectible?.data?.collection?.data?.name])
+          cats[prod?.collectible?.data?.collection?.data?.name] = [prod?.collectible?.data?.name];
+        if (!cats[prod?.collectible?.data?.collection?.data?.name].includes(prod?.collectible?.data?.name))
+          cats[prod?.collectible?.data?.collection?.data?.name].push(prod?.collectible?.data?.name);
+      });
+      // console.log(cats, catsData);
+      // console.log(cats);
+      Object.entries(cats).map(([key, value]) => {
+        categoriesold[key] = value.length;
+      });
+      // console.log(categoriesold);
+      // categoriesold = cats.reduce((obj, b) => {
+      //   const newObj = { ...obj };
+      //   newObj[b] = obj[b] + 1 || 1;
+      //   return newObj;
+      // }, {});
       setonchangecheckData(categoriesold);
     }
     fetchData();
