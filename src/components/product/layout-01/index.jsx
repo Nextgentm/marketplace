@@ -8,6 +8,7 @@ import ClientAvatar from "@ui/client-avatar";
 import ProductBid from "@components/product-bid";
 import Button from "@ui/button";
 import { ImageType } from "@utils/types";
+import { isImgLink } from "@utils/methods";
 import PlaceBidModal from "@components/modals/placebid-modal";
 
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
@@ -34,6 +35,7 @@ const Product = ({
   placeBid,
   collectionName,
   isAuction,
+  isOpenseaCollectible,
   disableShareDropdown
 }) => {
   const [showBidModal, setShowBidModal] = useState(false);
@@ -45,13 +47,18 @@ const Product = ({
       <div className={clsx("product-style-one", !overlay && "no-overlay", placeBid && "with-placeBid")}>
         <div className="card-thumbnail">
           {image && (
-            <Anchor target="_self" path={isAuction ? `${slug}` : `/collectible/${slug}`}>
-              <Image
-                src={image?.src ? image.src : image}
-                alt={image?.alt || "NFT_portfolio"}
-                width={533}
-                height={533}
-              />
+            <Anchor target={isOpenseaCollectible ? "_blank" : "_self"} path={isOpenseaCollectible ? `${slug}` : isAuction ? `${slug}` : `/collectible/${slug}`}>
+              {isImgLink(image?.src ? image.src : image) ?
+                <Image
+                  src={image?.src ? image.src : image}
+                  alt={image?.alt || "NFT_portfolio"}
+                  width={533}
+                  height={533}
+                /> :
+                <video width={"100%"} height={"auto"}>
+                  <source src={image?.src ? image.src : image} />
+                </video>
+              }
             </Anchor>
           )}
           {auction_date && <CountdownTimer date={auction_date} />}
@@ -66,13 +73,13 @@ const Product = ({
             {authors?.map((client) => (
               <ClientAvatar key={client.name} slug={client.slug} name={client.name} image={client.image} />
             ))}
-            {bitCount > 0 && <Anchor className="more-author-text" target="_self" path={isAuction ? `${slug}` : `/collectible/${slug}`}>
+            {bitCount > 0 && <Anchor className="more-author-text" target={isOpenseaCollectible ? "_blank" : "_self"} path={isOpenseaCollectible ? `${slug}` : isAuction ? `${slug}` : `/collectible/${slug}`}>
               {bitCount}+ Place Bit.
             </Anchor>}
           </div>
           {!disableShareDropdown && <ShareDropdown />}
         </div>
-        <Anchor target="_self" path={isAuction ? `${slug}` : `/collectible/${slug}`}>
+        <Anchor target={isOpenseaCollectible ? "_blank" : "_self"} path={isOpenseaCollectible ? `${slug}` : isAuction ? `${slug}` : `/collectible/${slug}`}>
           <span className="product-name">{title}</span>
         </Anchor>
         {/* <span className="latest-bid">Highest bid {latestBid}</span> */}

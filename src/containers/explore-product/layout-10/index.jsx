@@ -19,9 +19,7 @@ const ExploreProductArea = ({
   space,
   data: { section_title, products, placeBid, collectionPage, paginationdata, collectionData }
 }) => {
-  const [getCollectiblesdata, { data: collectiblesFilters, error }] = useLazyQuery(ALL_COLLECTIBLE_LISTDATA_QUERY, {
-    fetchPolicy: "cache-and-network"
-  });
+
   const [collectionsData, setCollectionsData] = useState();
   const router = useRouter();
   const routerQuery = router?.query?.collection?.split();
@@ -32,12 +30,6 @@ const ExploreProductArea = ({
   const [selectedFilterNetworks, setSelectedFilterNetworks] = useState([]);
   let categoriesolds = [];
 
-  // const cats = flatDeep(products.map((prod) => prod?.collection?.data?.name));
-  // categoriesolds = cats.reduce((obj, b) => {
-  //   const newObj = { ...obj };
-  //   newObj[b] = obj[b] + 1 || 1;
-  //   return newObj;
-  // }, {});
   let cats = {};
   products.map((prod) => {
     if (!cats[prod?.collectible?.data?.collection?.data?.name])
@@ -58,88 +50,35 @@ const ExploreProductArea = ({
   let categoriesold = [];
   useEffect(() => {
     async function fetchData() {
-      const newestItemsFilter = {
+      const getdataAll = await getCollectible({
         filters: {
-          status: {
-            $eq: "Live"
-          },
-          collectible: {
-            collection: {
-              networkType: {
-                in: selectedFilterNetworks
-              }
-            }
-          }
+          $or: [{
+            auction: {
+              status: "Live"
+            },
+          }, {
+            isOpenseaCollectible: true
+          }]
         },
         populate: {
-          collectible: {
-            populate: ["image", "collection"]
+          fields: ["name", "id"],
+          collection: {
+            fields: ["name", "id"],
           },
-          biddings: {
-            fields: ["id"]
-          }
+        },
+        pagination: {
+          limit: 25,
         }
-      };
-      // const getdataAll = await getCollectible({
-      //   filters: {
-      //     auction: {
-      //       status: "Live"
-      //     },
-      //     collection: {
-      //       networkType: {
-      //         $in: selectedFilterNetworks
-      //       }
-      //     }
-      //   },
-      //   populate: {
-      //     collection: {
-      //       fields: "*",
-      //       populate: {
-      //         cover: {
-      //           fields: "*"
-      //         },
-      //         logo: {
-      //           fields: "*"
-      //         }
-      //       }
-      //     },
-      //     auction: {
-      //       fields: "*",
-      //       filters: {
-      //         status: "Live",
-      //         id: { $notNull: true }
-      //       }
-      //     },
-      //     image: {
-      //       fields: "*"
-      //     }
-      //   },
-      //   pagination: {
-      //     limit: 6,
-      //     start: 0,
-      //     withCount: true
-      //   }
-      // });
-      let getdataAll = await strapi.find("auctions", newestItemsFilter);
-      // const cats = flatDeep(getdataAll.data.map((prod) => prod?.collectible?.data?.collection?.data?.name));
-      let cats = {};
-      getdataAll.data.map((prod) => {
-        if (!cats[prod?.collectible?.data?.collection?.data?.name])
-          cats[prod?.collectible?.data?.collection?.data?.name] = [prod?.collectible?.data?.name];
-        if (!cats[prod?.collectible?.data?.collection?.data?.name].includes(prod?.collectible?.data?.name))
-          cats[prod?.collectible?.data?.collection?.data?.name].push(prod?.collectible?.data?.name);
       });
-      // console.log(cats, catsData);
+      // console.log(getdataAll);
+      const cats = flatDeep(getdataAll.data.map((prod) => prod?.collection?.data?.name));
       // console.log(cats);
-      Object.entries(cats).map(([key, value]) => {
-        categoriesold[key] = value.length;
-      });
+      categoriesold = cats.reduce((obj, b) => {
+        const newObj = { ...obj };
+        newObj[b] = obj[b] + 1 || 1;
+        return newObj;
+      }, {});
       // console.log(categoriesold);
-      // categoriesold = cats.reduce((obj, b) => {
-      //   const newObj = { ...obj };
-      //   newObj[b] = obj[b] + 1 || 1;
-      //   return newObj;
-      // }, {});
       setonchangecheckData(categoriesold);
     }
     fetchData();
@@ -214,9 +153,13 @@ const ExploreProductArea = ({
           } else {
             const data = await getCollectible({
               filter: {
-                auction: {
-                  status: "Live"
-                }
+                $or: [{
+                  auction: {
+                    status: "Live"
+                  }
+                }, {
+                  isOpenseaCollectible: true
+                }]
               },
               populate: {
                 collection: {
@@ -263,52 +206,9 @@ const ExploreProductArea = ({
     fetchData();
   }, [router.query.collection]);
 
-  // useEffect(() => {
-  //   if (collectiblesFilters) {
-  //     setPagination(collectiblesFilters.collectibles.meta.pagination);
-  //     setCollectionsData(collectiblesFilters.collectibles.data);
-  //   }
-  // }, [collectiblesFilters, error]);
-
   const getCollectionPaginationRecord = async (page) => {
     const start = page * 6 - 6;
     const limit = 6;
-
-    // let filters = {
-    //   auction: {
-    //     status: {
-    //       eq: "Live"
-    //     }
-    //   }
-    // };
-
-    // if (selectedFilterNetworks.length > 0) {
-    //   filters.collection = {
-    //     networkType: {
-    //       in: selectedFilterNetworks
-    //     }
-    //   };
-    // }
-    // if (router.query.collection) {
-    //   filters.collection = {
-    //     name: {
-    //       in: routerQuery
-    //     }
-    //   };
-    // }
-    // if (checkedCollection.length) {
-    //   filters.collection = {
-    //     name: {
-    //       in: checkedCollection
-    //     }
-    //   };
-    // }
-    // getCollectible({
-    //   variables: {
-    //     filter: filters,
-    //     pagination: { page, pageSize: 6 }
-    //   }
-    // });
 
     let filters = {
       auction: {
@@ -432,6 +332,17 @@ const ExploreProductArea = ({
         setCollectionData(data, page);
       }
     } else {
+      if ((onChangeValue == "oldest" || onChangeValue == "newest" || onChangeValue == "other-marketplace" || selectedFilterNetworks.length < 1)
+        && (onChangeValue != "lm-marketplace")) {
+        let filterObj = {
+          $or: [{
+            ...filters
+          }, {
+            isOpenseaCollectible: true
+          }]
+        }
+        filters = filterObj;
+      }
       const data = await getCollectible({
         filters: filters,
         populate: {
@@ -450,7 +361,7 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
-              id: { $notNull: true }
+              // id: { $notNull: true }
             }
           },
           image: {
@@ -469,35 +380,7 @@ const ExploreProductArea = ({
 
   const getCollectibleSortData = async (onchangeSort) => {
     setOnChangeValue(onchangeSort);
-    // let filters = {
-    //   auction: {
-    //     status: {
-    //       eq: "Live"
-    //     }
-    //   }
-    // };
 
-    // if (selectedFilterNetworks.length > 0) {
-    //   filters.collection = {
-    //     networkType: {
-    //       in: selectedFilterNetworks
-    //     }
-    //   };
-    // }
-    // if (router.query.collection) {
-    //   filters.collection = {
-    //     name: {
-    //       in: routerQuery
-    //     }
-    //   };
-    // }
-    // if (checkedCollection.length) {
-    //   filters.collection = {
-    //     name: {
-    //       in: checkedCollection
-    //     }
-    //   };
-    // }
     let filters = {
       auction: {
         status: "Live"
@@ -525,6 +408,15 @@ const ExploreProductArea = ({
         }
       };
     }
+    let filterObj = {
+      $or: [{
+        ...filters
+      }, {
+        isOpenseaCollectible: true
+      }]
+    }
+    filters = filterObj;
+    // console.log(filters);
     let pagination = { pageSize: 6 };
     if (onchangeSort == "oldest") {
       const data = await getCollectible({
@@ -545,7 +437,7 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
-              id: { $notNull: true }
+              // id: { $notNull: true }
             }
           },
           image: {
@@ -556,13 +448,6 @@ const ExploreProductArea = ({
         sort: ["createdAt:asc"]
       });
       setCollectionData(data);
-      // getCollectiblesdata({
-      //   variables: {
-      //     filter: filters,
-      //     pagination: pagination,
-      //     sort: ["createdAt:asc"]
-      //   }
-      // });
     }
     if (onchangeSort == "newest") {
       const data = await getCollectible({
@@ -583,7 +468,7 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
-              id: { $notNull: true }
+              // id: { $notNull: true }
             }
           },
           image: {
@@ -594,13 +479,6 @@ const ExploreProductArea = ({
         sort: ["createdAt:desc"]
       });
       setCollectionData(data);
-      // getCollectiblesdata({
-      //   variables: {
-      //     filter: filters,
-      //     sort: ["createdAt:desc"],
-      //     pagination: pagination
-      //   }
-      // });
     }
     if (onchangeSort == "low-to-high") {
       const data = await getCollectible({
@@ -621,7 +499,7 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
-              id: { $notNull: true }
+              // id: { $notNull: true }
             }
           },
           image: {
@@ -632,15 +510,71 @@ const ExploreProductArea = ({
         sort: ["price:asc"]
       });
       setCollectionData(data);
-      // getCollectiblesdata({
-      //   variables: {
-      //     filter: filters,
-      //     sort: ["price:asc"],
-      //     pagination: pagination
-      //   }
-      // });
     }
     if (onchangeSort == "high-to-low") {
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              // id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: pagination,
+        sort: ["price:desc"]
+      });
+      setCollectionData(data);
+    }
+    if (onchangeSort == "other-marketplace") {
+      const data = await getCollectible({
+        filters: {
+          isOpenseaCollectible: true
+        },
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              // id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: pagination,
+      });
+      setCollectionData(data);
+    }
+    if (onchangeSort == "lm-marketplace") {
       const data = await getCollectible({
         filters: filters,
         populate: {
@@ -667,44 +601,12 @@ const ExploreProductArea = ({
           }
         },
         pagination: pagination,
-        sort: ["price:desc"]
       });
       setCollectionData(data);
-      // getCollectiblesdata({
-      //   variables: {
-      //     filter: filters,
-      //     sort: ["price:desc"],
-      //     pagination: pagination
-      //   }
-      // });
     }
   };
   const getauctionFilterData = async (onchangefilter) => {
     setOnChangeValue(onchangefilter);
-
-    // let filters = {};
-    // if (selectedFilterNetworks.length > 0) {
-    //   filters.collection = {
-    //     networkType: {
-    //       in: selectedFilterNetworks
-    //     }
-    //   };
-    // }
-
-    // if (router.query.collection) {
-    //   filters.collection = {
-    //     name: {
-    //       in: routerQuery
-    //     }
-    //   };
-    // }
-    // if (checkedCollection.length) {
-    //   filters.collection = {
-    //     name: {
-    //       in: checkedCollection
-    //     }
-    //   };
-    // }
 
     let filters = {};
     if (selectedFilterNetworks.length > 0) {
@@ -768,20 +670,6 @@ const ExploreProductArea = ({
         sort: ["createdAt:asc"]
       });
       setCollectionData(data);
-      // getCollectiblesdata({
-      //   variables: {
-      //     filter: {
-      //       ...filters,
-      //       auction: {
-      //         status: {
-      //           eq: "Live"
-      //         }
-      //       }
-      //     },
-      //     sort: ["createdAt:asc"],
-      //     pagination: pagination
-      //   }
-      // });
     }
     if (onchangefilter == "Auction") {
       filters.auction = {
@@ -824,38 +712,7 @@ const ExploreProductArea = ({
     }
   };
   const getCollectibleFilterData = async (onchangefilter) => {
-    // let filters = {
-    //   auction: {
-    //     status: {
-    //       eq: "Live"
-    //     }
-    //   },
-    //   price: {
-    //     between: onchangefilter
-    //   }
-    // };
 
-    // if (selectedFilterNetworks.length > 0) {
-    //   filters.collection = {
-    //     networkType: {
-    //       in: selectedFilterNetworks
-    //     }
-    //   };
-    // }
-    // if (router.query.collection) {
-    //   filters.collection = {
-    //     name: {
-    //       in: routerQuery
-    //     }
-    //   };
-    // }
-    // if (checkedCollection.length) {
-    //   filters.collection = {
-    //     name: {
-    //       in: checkedCollection
-    //     }
-    //   };
-    // }
     let filters = {
       auction: {
         status: {
@@ -908,7 +765,7 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
-              id: { $notNull: true }
+              // id: { $notNull: true }
             }
           },
           image: {
@@ -918,45 +775,11 @@ const ExploreProductArea = ({
         pagination: { pageSize: 6 }
       });
       setCollectionData(data);
-      // getCollectiblesdata({
-      //   variables: {
-      //     filter: filters,
-      //     pagination: { pageSize: 6 }
-      //   }
-      // });
     }
   };
   const getCollectiblecheckData = async (onchangefilter) => {
     setCheckedCollection(onchangefilter);
 
-    // let filters = {
-    //   auction: {
-    //     status: {
-    //       eq: "Live"
-    //     }
-    //   }
-    // };
-    // if (selectedFilterNetworks.length > 0) {
-    //   filters.collection = {
-    //     networkType: {
-    //       in: selectedFilterNetworks
-    //     }
-    //   };
-    // }
-    // if (router.query.collection) {
-    //   filters.collection = {
-    //     name: {
-    //       eq: routerQuery
-    //     }
-    //   };
-    // }
-    // if (checkedCollection.length) {
-    //   filters.collection = {
-    //     name: {
-    //       in: checkedCollection
-    //     }
-    //   };
-    // }
     let filters = {
       auction: {
         status: {
@@ -979,6 +802,14 @@ const ExploreProductArea = ({
       };
     }
     if (onchangefilter?.length <= 0) {
+      let filterObj = {
+        $or: [{
+          ...filters
+        }, {
+          isOpenseaCollectible: true,
+        }]
+      }
+      filters = filterObj;
       const data = await getCollectible({
         filters: filters,
         populate: {
@@ -997,7 +828,7 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
-              id: { $notNull: true }
+              // id: { $notNull: true }
             }
           },
           image: {
@@ -1019,6 +850,20 @@ const ExploreProductArea = ({
           $in: onchangefilter
         }
       };
+      let filterObj = {
+        $or: [{
+          ...filters
+        }, {
+          isOpenseaCollectible: true,
+          collection: {
+            name: {
+              $in: onchangefilter
+            }
+          }
+        }]
+      }
+      filters = filterObj;
+      // console.log(filters);
       const data = await getCollectible({
         filters: filters,
         populate: {
@@ -1037,7 +882,7 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
-              id: { $notNull: true }
+              // id: { $notNull: true }
             }
           },
           image: {
@@ -1046,40 +891,13 @@ const ExploreProductArea = ({
         },
         pagination: { pageSize: 6 }
       });
+      // console.log(data);
       setCollectionData(data);
-      // getCollectiblesdata({
-      //   variables: {
-      //     filter: {
-      //       ...filters,
-      //       collection: {
-      //         name: {
-      //           in: onchangefilter
-      //         }
-      //       }
-      //     },
-      //     pagination: { pageSize: 6 }
-      //   }
-      // });
     }
   };
 
   const getSelectedFilterNetworksCheckData = async (onchangefilter) => {
     setSelectedFilterNetworks(onchangefilter);
-
-    // let filters = {
-    //   auction: {
-    //     status: {
-    //       eq: "Live"
-    //     }
-    //   }
-    // };
-    // if (router.query.collection) {
-    //   filters.collection = {
-    //     name: {
-    //       eq: routerQuery
-    //     }
-    //   };
-    // }
 
     let filters = {
       auction: {
@@ -1097,6 +915,21 @@ const ExploreProductArea = ({
     }
 
     if (onchangefilter?.length <= 0) {
+      if (routerQuery) {
+        let filterObj = {
+          $or: [{
+            ...filters
+          }, {
+            isOpenseaCollectible: true,
+            collection: {
+              name: {
+                $eq: routerQuery
+              }
+            }
+          }]
+        }
+        filters = filterObj;
+      }
       const data = await getCollectible({
         filters: filters,
         populate: {
@@ -1165,19 +998,6 @@ const ExploreProductArea = ({
         pagination: { pageSize: 6 }
       });
       setCollectionData(data);
-      // getCollectiblesdata({
-      //   variables: {
-      //     filter: {
-      //       ...filters,
-      //       collection: {
-      //         networkType: {
-      //           in: onchangefilter
-      //         }
-      //       }
-      //     },
-      //     pagination: { pageSize: 6 }
-      //   }
-      // });
     }
   };
 
@@ -1207,7 +1027,7 @@ const ExploreProductArea = ({
           </div>
           <div className="col-lg-9 order-1 order-lg-2">
             <div className="row g-5">
-              {console.log("collectionsData", collectionsData)}
+              {/* {console.log("collectionsData", collectionsData)} */}
               {collectionsData?.length > 0 ? (
                 <>
                   {collectionsData?.map((prod, index) => (
@@ -1215,7 +1035,7 @@ const ExploreProductArea = ({
                       <Product
                         placeBid={prod?.auction?.data?.sellType == "Bidding"}
                         title={prod.name}
-                        slug={prod.slug}
+                        slug={prod.isOpenseaCollectible ? prod.marketURL : prod.slug}
                         supply={prod.supply}
                         price={prod?.auction?.data[0]?.bidPrice}
                         symbol={prod?.auction?.data[0]?.priceCurrency}
@@ -1227,6 +1047,7 @@ const ExploreProductArea = ({
                         latestBid={prod.latestBid}
                         likeCount={prod.likeCount}
                         authors={prod.authors}
+                        isOpenseaCollectible={prod.isOpenseaCollectible}
                       />
                     </div>
                   ))}
