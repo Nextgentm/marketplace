@@ -53,7 +53,7 @@ const ExploreProductArea = ({
   const [onchangecheckData, setonchangecheckData] = useState(categoriesolds);
   const setCollectionData = (data, page = 1) => {
     setCollectionsData(data.data);
-    setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 8), page });
+    setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 6), page });
   };
   let categoriesold = [];
   useEffect(() => {
@@ -339,37 +339,129 @@ const ExploreProductArea = ({
         }
       };
     }
-    const data = await getCollectible({
-      filters: filters,
-      populate: {
-        collection: {
-          fields: "*",
+
+    let sort = [];
+    if (onChangeValue == "oldest") {
+      sort = ["createdAt:asc"];
+    }
+    if (onChangeValue == "newest") {
+      sort = ["createdAt:desc"];
+    }
+    if (onChangeValue == "low-to-high") {
+      sort = ["price:asc"];
+    }
+    if (onChangeValue == "high-to-low") {
+      sort = ["price:desc"];
+    }
+    if (onChangeValue == "high-to-low") {
+      sort = ["price:desc"];
+    }
+    if (onChangeValue == "Auction") {
+      filters.auction = {
+        sellType: {
+          $eq: "Bidding"
+        },
+        id: { $notNull: true }
+      };
+    }
+    if (onChangeValue == "Fixed-price") {
+      let filters = {};
+      if (selectedFilterNetworks.length > 0) {
+        filters.collection = {
+          networkType: {
+            $in: selectedFilterNetworks
+          }
+        };
+      }
+
+      if (router.query.collection) {
+        filters.collection = {
+          name: {
+            $in: routerQuery
+          }
+        };
+      }
+      if (checkedCollection.length) {
+        filters.collection = {
+          name: {
+            $in: checkedCollection
+          }
+        };
+      }
+      if (onChangeValue == "Fixed-price") {
+        filters.auction = {
+          status: {
+            $eq: "Live"
+          },
+          sellType: {
+            $eq: "FixedPrice"
+          }
+        };
+
+        const data = await getCollectible({
+          filters: filters,
           populate: {
-            cover: {
-              fields: "*"
+            collection: {
+              fields: "*",
+              populate: {
+                cover: {
+                  fields: "*"
+                },
+                logo: {
+                  fields: "*"
+                }
+              }
             },
-            logo: {
+            auction: {
+              fields: "*",
+              filters: {
+                status: "Live",
+                id: { $notNull: true }
+              }
+            },
+            image: {
               fields: "*"
             }
-          }
-        },
-        auction: {
-          fields: "*",
-          filters: {
-            status: "Live",
-            id: { $notNull: true }
-          }
-        },
-        image: {
-          fields: "*"
-        }
-      },
-      pagination: {
-        start,
-        limit
+          },
+          pagination: { start, limit },
+          sort: ["createdAt:asc"]
+        });
+        setCollectionData(data, page);
       }
-    });
-    setCollectionData(data, page);
+    } else {
+      const data = await getCollectible({
+        filters: filters,
+        populate: {
+          collection: {
+            fields: "*",
+            populate: {
+              cover: {
+                fields: "*"
+              },
+              logo: {
+                fields: "*"
+              }
+            }
+          },
+          auction: {
+            fields: "*",
+            filters: {
+              status: "Live",
+              id: { $notNull: true }
+            }
+          },
+          image: {
+            fields: "*"
+          }
+        },
+        pagination: {
+          start,
+          limit
+        },
+        sort: sort
+      });
+      setCollectionData(data, page);
+    }
   };
 
   const getCollectibleSortData = async (onchangeSort) => {
@@ -726,23 +818,6 @@ const ExploreProductArea = ({
         sort: ["createdAt:asc"]
       });
       setCollectionData(data);
-      // getCollectiblesdata({
-      //   variables: {
-      //     filter: {
-      //       ...filters,
-      //       auction: {
-      //         status: {
-      //           eq: "Live"
-      //         },
-      //         sellType: {
-      //           in: "Bidding"
-      //         }
-      //       }
-      //     },
-      //     pagination: pagination,
-      //     sort: "auction.startTimestamp:desc"
-      //   }
-      // });
     }
   };
   const getCollectibleFilterData = async (onchangefilter) => {
@@ -1129,6 +1204,7 @@ const ExploreProductArea = ({
           </div>
           <div className="col-lg-9 order-1 order-lg-2">
             <div className="row g-5">
+              {console.log("collectionsData", collectionsData)}
               {collectionsData?.length > 0 ? (
                 <>
                   {collectionsData?.map((prod, index) => (
