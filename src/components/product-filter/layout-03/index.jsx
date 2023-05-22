@@ -4,6 +4,7 @@ import CategoryFilter from "./category-filter";
 import NetworkFilter from "./network-filter";
 import LevelFilter from "./level-filter";
 import PriceSort from "./price-sort";
+import MarketplaceSort from "./marketplace-sort";
 import LanguageFilter from "./language-flter";
 import RatingFilter from "./rating-filter";
 import PriceRangeFilter from "./price-range-filter";
@@ -28,6 +29,7 @@ const ProductFilter = ({
 }) => (
   <div className="nu-course-sidebar">
     <SortWidget onChange={sortHandler} value={sort} />
+    <MarketplaceSort onChange={sortHandler} value={sort} />
     {networksList && (
       <NetworkFilter
         networks={networksList}
