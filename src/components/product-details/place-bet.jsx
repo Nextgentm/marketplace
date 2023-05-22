@@ -114,11 +114,11 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         const erc20Address = TokenContractAddress;
         const nftAddress = contractAddress;
         const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
-        const skipRoyalty = true;
+        const skipRoyalty = false;
         const unitPrice = `${convertedPrice}`;
         const amount = `${parseFloat(quantity) * parseFloat(unitPrice)}`;
         const tokenId = `${product.nftID}`;
-        const tokenURI = "";
+        const tokenURI = "-";
         const supply = `${product.supply ? product.supply : 1}`;
         const royaltyFee = `${product?.royalty ? product?.royalty : 0}`;
         const qty = `${quantity ? quantity : 1}`;
