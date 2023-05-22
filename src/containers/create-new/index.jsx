@@ -209,7 +209,7 @@ const CreateNewArea = ({ className, space }) => {
         };
         const transaction = await contract721.createToken(
           metadataURL,
-          price
+          (royalty * 10)
           // options
         );
         const receipt = await transaction.wait();
@@ -223,7 +223,7 @@ const CreateNewArea = ({ className, space }) => {
       if (router.query.type === "multiple") {
         // Pull the deployed contract instance
         const contract1155 = await getERC1155Contract(walletData, contractAddress);
-        const transaction = await contract1155.mint(metadataURL, royalty, supply);
+        const transaction = await contract1155.mint(metadataURL, (royalty * 10), supply);
         const receipt = await transaction.wait();
         // console.log(receipt);
         const transactionHash = receipt.transactionHash;

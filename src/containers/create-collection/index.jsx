@@ -460,6 +460,7 @@ const CreateCollectionArea = () => {
                           className="name"
                           type="text"
                           id="name"
+                          maxLength={30}
                           {...register("title", {
                             required: "title is required"
                           })}

@@ -102,11 +102,11 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
           ? product.collection.data.contractAddress
           : product.collection.data.contractAddress1155;
       const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
-      const skipRoyalty = true;
+      const skipRoyalty = false;
       const unitPrice = `${convertedPrice}`;
       const amount = `${parseFloat(auction.data.quantity) * parseFloat(unitPrice)}`;
       const tokenId = `${product.nftID}`;
-      const tokenURI = "";
+      const tokenURI = "-";
       const supply = `${product.supply ? product.supply : 1}`;
       const royaltyFee = `${product?.royalty ? product?.royalty : 0}`;
       const qty = `${auction.data.quantity ? auction.data.quantity : 1}`;

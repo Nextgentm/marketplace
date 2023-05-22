@@ -118,13 +118,13 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         // };
         let approveAddress = await contract721.getApproved(product.nftID);
         // console.log(approveAddress);
-        if (approveAddress.toLowerCase() != walletData.contractData.TradeContract.address.toLowerCase()) {
-          // approve nft first
-          const transaction = await contract721.approve(walletData.contractData.TradeContract.address, product.nftID);
-          const receipt = await transaction.wait();
-          // console.log(receipt);
-        }
-        approveAddress = await contract721.getApproved(product.nftID);
+        // if (approveAddress.toLowerCase() != walletData.contractData.TradeContract.address.toLowerCase()) {
+        //   // approve nft first
+        //   const transaction = await contract721.approve(walletData.contractData.TradeContract.address, product.nftID);
+        //   const receipt = await transaction.wait();
+        //   // console.log(receipt);
+        // }
+        // approveAddress = await contract721.getApproved(product.nftID);
         // console.log(approveAddress);
         if (approveAddress.toLowerCase() != walletData.contractData.TransferProxy.address.toLowerCase()) {
           // approve nft first

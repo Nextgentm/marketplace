@@ -358,6 +358,9 @@ const ExploreProductArea = ({
     }
     if (onChangeValue == "Auction") {
       filters.auction = {
+        status: {
+          $eq: "Live"
+        },
         sellType: {
           $eq: "Bidding"
         },
