@@ -47,9 +47,13 @@ const Collectibles = ({ dataCollectibles }) => {
 Collectibles.getInitialProps = async (ctx) => {
   const data = await getCollectible({
     filters: {
-      auction: {
-        status: "Live"
-      }
+      $or: [{
+        auction: {
+          status: "Live"
+        }
+      }, {
+        isOpenseaCollectible: true
+      }]
     },
     populate: {
       collection: {
