@@ -92,10 +92,10 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
       const decimals = await tokenContract.decimals();
       //convert price
       let convertedPrice;
-      if (decimals > 7) {
+      if (decimals == 18) {
         convertedPrice = convertEthertoWei(walletData.ethers, eth);
       } else {
-        convertedPrice = (eth * (10 ^ decimals));
+        convertedPrice = (eth * (10 ** decimals));
       }
       const nftAddress =
         product.collection.data.collectionType === "Single"

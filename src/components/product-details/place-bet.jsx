@@ -92,13 +92,13 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       const decimals = await tokenContract.decimals();
       //convert price
       let convertedPrice;
-      if (decimals > 7) {
+      if (decimals == 18) {
         convertedPrice = convertEthertoWei(walletData.ethers, price);
       } else {
-        convertedPrice = (price * (10 ^ decimals));
+        convertedPrice = (price * (10 ** decimals));
       }
       const requireAllowanceAmount = "" + parseInt(convertedPrice * quantity);
-
+      // console.log(price, decimals, convertedPrice, quantity, requireAllowanceAmount);
       const userBalance = await tokenContract.balanceOf(walletData.account);
       if (parseInt(requireAllowanceAmount) > parseInt(userBalance._hex, 16)) {
         toast.error("Amount is greater than your current balance");
