@@ -284,7 +284,7 @@ Home.getInitialProps = async () => {
     newestData: newestItems.data,
     dataCollectibles: dataCollectibles.data,
     dataCollection: dataCollection.data,
-    otherMarketplaceCollectibles: [...otherMarketplaceData.data, ...otherMarketplaceData.data, ...otherMarketplaceData.data, ...otherMarketplaceData.data, ...otherMarketplaceData.data]
+    otherMarketplaceCollectibles: otherMarketplaceData.data,
   };
 };
 
