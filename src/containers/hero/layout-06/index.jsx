@@ -19,7 +19,16 @@ const HeroArea = ({ data }) => (
           options={SliderOptions}
           className="slider-style-6 no-padding wide-wrapper slick-activation-06 slick-arrow-between desktop-slider"
         >
-          {data.banners.map((banner) => (
+          <SliderItem key="1">
+            <video controls autoPlay muted loop controlsList="nofullscreen nodownload noremoteplayback noplaybackrate foobar" poster="/images/bg/NFTPosterImage-min.png">
+              <source
+                src="/images/bg/NftMarketplace_Banner.mp4"
+                type="video/mp4"
+              />
+            </video>
+          </SliderItem>
+
+          {/*data.banners.map((banner) => (
             <SliderItem key={banner.id}>
               <div className="slide">
                 {banner.image?.src && (
@@ -33,8 +42,8 @@ const HeroArea = ({ data }) => (
                     style={{
                       objectFit: "cover"
                     }}
-                  />
-                )}
+
+
 
                 <div className="banner-read-thumb-lg">
                   {/* <h4
@@ -47,7 +56,7 @@ const HeroArea = ({ data }) => (
                                             __html: banner?.description,
                                         }}
                                     /> */}
-                  {/* banner?.buttons && (
+          {/* banner?.buttons && (
                                         <div className="button-group">
                                             {banner.buttons.map(
                                                 (
@@ -71,11 +80,11 @@ const HeroArea = ({ data }) => (
                                                 )
                                             )}
                                         </div>
-                                                    ) */}
+                                                    ) }
                 </div>
               </div>
             </SliderItem>
-          ))}
+          ))*/}
         </Slider>
       )}
       {data?.banners && (
