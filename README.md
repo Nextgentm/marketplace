@@ -45,4 +45,14 @@ truffle migrate --reset
 truffle console
 ```
 
+## SmartContract Logic deployment
+
+```bash
+
+#NFTMarketplace Logic = 0x029a5e38c811FD8264B4bd5e518DA54429D888ff
+#OwnCollection721Beacon = 0xe861560231D308faD14ffBd2dFBf783eA60D3df8
+#LootmogulUser1155Token Logic = 0x2b96589204fF6F89dB24dB90bb05eFe30291643e
+#OwnCollection1155Beacon = 0xd6Aa6e9a6fBB2fce3FB621C8ffA1B7A35A0082f1
+```
+
 # ntest-nextjs
