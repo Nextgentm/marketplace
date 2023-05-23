@@ -48,11 +48,24 @@ truffle console
 ## SmartContract Logic deployment
 
 ```bash
-
-#NFTMarketplace Logic = 0x029a5e38c811FD8264B4bd5e518DA54429D888ff
-#OwnCollection721Beacon = 0xe861560231D308faD14ffBd2dFBf783eA60D3df8
-#LootmogulUser1155Token Logic = 0x2b96589204fF6F89dB24dB90bb05eFe30291643e
-#OwnCollection1155Beacon = 0xd6Aa6e9a6fBB2fce3FB621C8ffA1B7A35A0082f1
+#Mainnet Networks
+//----------------------------------------------------------------//
+#Testnet Networks
+#Polygon Network
+- NFTMarketplace Logic = 0x029a5e38c811FD8264B4bd5e518DA54429D888ff
+- OwnCollection721Beacon = 0xe861560231D308faD14ffBd2dFBf783eA60D3df8
+- LootmogulUser1155Token Logic = 0x2b96589204fF6F89dB24dB90bb05eFe30291643e
+- OwnCollection1155Beacon = 0xd6Aa6e9a6fBB2fce3FB621C8ffA1B7A35A0082f1
+#Binance Network
+- NFTMarketplace Logic = 0xD524c69c4Fcf9f21Eb2d12aFAB0F6B9FA90d914b
+- OwnCollection721Beacon = 0x99d73B59B4DA39e8380AA590d53C808780002152
+- LootmogulUser1155Token Logic = 0xcE30e36B7a93f4552035f4baf4245578Fe7E03E1
+- OwnCollection1155Beacon = 0x62f173b38b171c94A20d5ec8C627492220CDA109
+#Ethereum (Gorli) Network
+- NFTMarketplace Logic = 0xc032A7358df83dDad4fC8731DaCA0800326D6939
+- OwnCollection721Beacon = 0x6e63c0EFC1FfB803670696419Ba40817Fd0612D6
+- LootmogulUser1155Token Logic = 0xBe24e32933FD9acA93d4D5271931f342c4A883d3
+- OwnCollection1155Beacon = 0x12E7B5983Cf7b7D93DC49668cDF37fb178A9F19E
 ```
 
 # ntest-nextjs
