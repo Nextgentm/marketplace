@@ -5,6 +5,7 @@ import Footer from "@layout/footer/footer-01";
 import HeroArea from "@containers/hero/layout-06";
 import CollectionArea from "@containers/collection/layout-01";
 import NewestItmesArea from "@containers/product/layout-04";
+import OtherMarketplaceCollectibles from "@containers/product/layout-05";
 import ExploreProductArea from "@containers/explore-product/layout-02";
 import { normalizedData } from "@utils/methods";
 
@@ -16,9 +17,9 @@ import { GET_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getC
 import LiveExploreArea from "@containers/live-explore/layout-01";
 import strapi from "@utils/strapi";
 import ServiceArea from "@containers/services/layout-01";
-import { getCollection } from "src/services/collections/collection";
+import { getCollection, getCollectible } from "src/services/collections/collection";
 
-const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection }) => {
+const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, otherMarketplaceCollectibles }) => {
   const content = normalizedData(homepageData?.content || []);
   const submit = async () => {
     const filter = {
@@ -64,6 +65,14 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection })
             dataCollectibles && {
               ...content["explore-product-section"],
               products: dataCollectibles
+            }
+          }
+        />
+        <OtherMarketplaceCollectibles
+          data={
+            dataCollectibles && {
+              ...content["other-marketplace-product-section"],
+              products: otherMarketplaceCollectibles
             }
           }
         />
@@ -235,12 +244,47 @@ Home.getInitialProps = async () => {
 
   // console.log("dataCollection654", dataCollection);
 
+  const otherMarketplaceData = await getCollectible({
+    filters: {
+      isOpenseaCollectible: true
+    },
+    populate: {
+      collection: {
+        fields: "*",
+        populate: {
+          cover: {
+            fields: "*"
+          },
+          logo: {
+            fields: "*"
+          }
+        }
+      },
+      auction: {
+        fields: "*",
+        filters: {
+          status: "Live",
+          id: { $notNull: true }
+        }
+      },
+      image: {
+        fields: "*"
+      }
+    },
+    pagination: {
+      limit: 6,
+      start: 0,
+      withCount: true
+    }
+  });
+
   return {
     className: "template-color-1",
     liveAuctionData: liveAuctionData.data,
     newestData: newestItems.data,
     dataCollectibles: dataCollectibles.data,
-    dataCollection: dataCollection.data
+    dataCollection: dataCollection.data,
+    otherMarketplaceCollectibles: [...otherMarketplaceData.data, ...otherMarketplaceData.data, ...otherMarketplaceData.data, ...otherMarketplaceData.data, ...otherMarketplaceData.data]
   };
 };
 

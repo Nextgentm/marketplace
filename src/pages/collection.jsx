@@ -22,11 +22,15 @@ const Collection = (props) => (
 Collection.getInitialProps = async () => {
   const data = await getCollection({
     filters: {
-      collectibles: {
-        auction: {
-          status: "Live"
+      $or: [{
+        collectibles: {
+          auction: {
+            status: "Live"
+          }
         }
-      }
+      }, {
+        isOpenseaCollection: true
+      }]
     },
     populate: {
       collectibles: {

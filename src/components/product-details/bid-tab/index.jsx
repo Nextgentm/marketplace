@@ -22,12 +22,12 @@ const BidTab = ({ className, bids, product, auction, refreshPageData, allAuction
           <Nav.Link as="button" eventKey="nav-details">
             Details
           </Nav.Link>
-          {allAuctions &&
+          {allAuctions?.length > 0 &&
             <Nav.Link as="button" eventKey="nav-auctions">
               Live Sale
             </Nav.Link>
           }
-          {history && (
+          {history?.length > 0 && (
             <Nav.Link as="button" eventKey="nav-histroy">
               History
             </Nav.Link>
@@ -43,10 +43,12 @@ const BidTab = ({ className, bids, product, auction, refreshPageData, allAuction
         <TabPane eventKey="nav-details">
           <DetailsTabContent product={product} owner={owner} properties={properties} tags={tags} supply={supply} erc1155MyBalance={erc1155MyBalance} />
         </TabPane>
-        <TabPane eventKey="nav-auctions">
-          {allAuctions && <AuctionsTabContent auctions={allAuctions} productSlug={product.slug} />}
-        </TabPane>
-        {history && (
+        {allAuctions?.length > 0 &&
+          <TabPane eventKey="nav-auctions">
+            <AuctionsTabContent auctions={allAuctions} productSlug={product.slug} />
+          </TabPane>
+        }
+        {history?.length > 0 && (
           <TabPane eventKey="nav-histroy">
             <HistoryTabContent history={history} />
           </TabPane>
