@@ -206,9 +206,17 @@ const ExploreProductArea = ({
     fetchData();
   }, [router.query.collection]);
 
+  useEffect(() => {
+    if (router.query.sort) {
+      setOnChangeValue(router.query.sort);
+      getCollectibleSortData(router.query.sort);
+    }
+  }, [router.query.sort]);
+
   const getCollectionPaginationRecord = async (page) => {
     const start = page * 6 - 6;
     const limit = 6;
+    console.log("getCollectionPaginationRecord");
 
     let filters = {
       auction: {
@@ -334,14 +342,20 @@ const ExploreProductArea = ({
     } else {
       if ((onChangeValue == "oldest" || onChangeValue == "newest" || onChangeValue == "other-marketplace" || selectedFilterNetworks.length < 1)
         && (onChangeValue != "lm-marketplace")) {
-        let filterObj = {
-          $or: [{
-            ...filters
-          }, {
-            isOpenseaCollectible: true
-          }]
+        if (router.query.sort == "other-marketplace") {
+          filters = {
+            isOpenseaCollectible: true,
+          };
+        } else {
+          let filterObj = {
+            $or: [{
+              ...filters
+            }, {
+              isOpenseaCollectible: true
+            }]
+          }
+          filters = filterObj;
         }
-        filters = filterObj;
       }
       const data = await getCollectible({
         filters: filters,
@@ -380,6 +394,7 @@ const ExploreProductArea = ({
 
   const getCollectibleSortData = async (onchangeSort) => {
     setOnChangeValue(onchangeSort);
+    console.log("getCollectibleSortData");
 
     let filters = {
       auction: {
@@ -416,6 +431,11 @@ const ExploreProductArea = ({
       }]
     }
     filters = filterObj;
+    if (router.query.sort == "other-marketplace") {
+      filters = {
+        isOpenseaCollectible: true,
+      };
+    }
     // console.log(filters);
     let pagination = { pageSize: 6 };
     if (onchangeSort == "oldest") {
@@ -607,6 +627,7 @@ const ExploreProductArea = ({
   };
   const getauctionFilterData = async (onchangefilter) => {
     setOnChangeValue(onchangefilter);
+    console.log("getauctionFilterData");
 
     let filters = {};
     if (selectedFilterNetworks.length > 0) {
@@ -713,6 +734,7 @@ const ExploreProductArea = ({
   };
   const getCollectibleFilterData = async (onchangefilter) => {
 
+    console.log("getCollectibleFilterData");
     let filters = {
       auction: {
         status: {
@@ -779,6 +801,7 @@ const ExploreProductArea = ({
   };
   const getCollectiblecheckData = async (onchangefilter) => {
     setCheckedCollection(onchangefilter);
+    console.log("getCollectiblecheckData");
 
     let filters = {
       auction: {
@@ -810,6 +833,14 @@ const ExploreProductArea = ({
         }]
       }
       filters = filterObj;
+      if (router.query.sort == "other-marketplace") {
+        filters = {
+          isOpenseaCollectible: true,
+        };
+      } let sortedFilter = [];
+      if (router.query.sort == "newest") {
+        sortedFilter = ["createdAt:desc"]
+      }
       const data = await getCollectible({
         filters: filters,
         populate: {
@@ -835,7 +866,8 @@ const ExploreProductArea = ({
             fields: "*"
           }
         },
-        pagination: { pageSize: 6 }
+        pagination: { pageSize: 6 },
+        sort: sortedFilter
       });
       setCollectionData(data);
       // getCollectiblesdata({
@@ -898,7 +930,7 @@ const ExploreProductArea = ({
 
   const getSelectedFilterNetworksCheckData = async (onchangefilter) => {
     setSelectedFilterNetworks(onchangefilter);
-
+    console.log("getSelectedFilterNetworksCheckData");
     let filters = {
       auction: {
         status: {
@@ -929,6 +961,11 @@ const ExploreProductArea = ({
           }]
         }
         filters = filterObj;
+      }
+      if (router.query.sort == "other-marketplace") {
+        filters = {
+          isOpenseaCollectible: true,
+        };
       }
       const data = await getCollectible({
         filters: filters,

@@ -38,11 +38,15 @@ const CollectionArea = ({ className, space, id, data }) => {
 
     const data = await getCollection({
       filters: {
-        collectibles: {
-          auction: {
-            status: "Live"
+        $or: [{
+          collectibles: {
+            auction: {
+              status: "Live"
+            }
           }
-        }
+        }, {
+          isOpenseaCollection: true
+        }]
       },
       populate: {
         collectibles: {
@@ -112,6 +116,17 @@ const CollectionArea = ({ className, space, id, data }) => {
           <div className="row g-5">
             {collectionsData.length > 0 ? collectionsData.map((collection) =>
               collection?.collectibles?.data?.length ? (
+                <div key={collection.id} className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12">
+                  <Collection
+                    title={collection?.name}
+                    total_item={collection?.collectibles?.data?.length}
+                    path={`collectibles?collection=${collection?.name}`}
+                    image={collection?.cover?.data}
+                    thumbnails={collection?.featured?.data}
+                    profile_image={collection?.logo?.data}
+                  />
+                </div>
+              ) : collection.isOpenseaCollection ? (
                 <div key={collection.id} className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12">
                   <Collection
                     title={collection?.name}
