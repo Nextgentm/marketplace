@@ -103,6 +103,12 @@
       }
     },
     {
+      "section": "other-marketplace-product-section",
+      "section_title": {
+        "title": "Other Marketplace Product"
+      }
+    },
+    {
       "section": "top-sller-section",
       "section_title": {
         "title": "Our Best Creators"

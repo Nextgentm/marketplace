@@ -15,22 +15,22 @@ const MarketplaceSort = ({ onChange, value }) => {
               type="radio"
               value="other-marketplace"
               name="sort"
-              id="price-check1"
+              id="marketplace-check1"
               checked={value === "other-marketplace"}
               onChange={changeHandler}
             />
-            <label htmlFor="price-check1">Other Marketplace</label>
+            <label htmlFor="marketplace-check1">Other Marketplace</label>
           </div>
           <div className="nuron-form-check">
             <input
               type="radio"
               value="lm-marketplace"
               name="sort"
-              id="price-check2"
+              id="marketplace-check2"
               checked={value === "lm-marketplace"}
               onChange={changeHandler}
             />
-            <label htmlFor="price-check2">LM-Marketplace</label>
+            <label htmlFor="marketplace-check2">LM-Marketplace</label>
           </div>
         </div>
       </div>
