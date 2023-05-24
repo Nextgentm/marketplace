@@ -3,7 +3,7 @@ import clsx from "clsx";
 import Product from "@components/product/layout-01";
 import { ProductType } from "@utils/types";
 
-const AuctionArea = ({ space, className, data }) => (
+const AuctionArea = ({ space, className, collectiblePage, data }) => (
   <div className={clsx("product-area", space === 1 && "rn-section-gapTop", className)}>
     <div className="container">
       <div className="row mb--30 align-items-center">
@@ -24,7 +24,7 @@ const AuctionArea = ({ space, className, data }) => (
           >
             <Product
               title={auction.collectible?.data?.name || "Untitled NFT"}
-              slug={auction.id.toString()}
+              slug={collectiblePage ? auction.collectible?.data?.slug + "/auction/" + auction.id.toString() : auction.id.toString()}
               collectionName={auction.collectible?.data?.collection?.data?.name}
               latestBid={auction.latestBid || "N/A"}
               price={auction.bidPrice || "-"}

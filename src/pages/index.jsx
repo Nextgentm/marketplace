@@ -52,6 +52,14 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, o
             products: newestData
           }}
         />
+        <OtherMarketplaceCollectibles
+          data={
+            dataCollectibles && {
+              ...content["other-marketplace-product-section"],
+              products: otherMarketplaceCollectibles
+            }
+          }
+        />
         <CollectionArea
           data={
             dataCollection && {
@@ -65,14 +73,6 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, o
             dataCollectibles && {
               ...content["explore-product-section"],
               products: dataCollectibles
-            }
-          }
-        />
-        <OtherMarketplaceCollectibles
-          data={
-            dataCollectibles && {
-              ...content["other-marketplace-product-section"],
-              products: otherMarketplaceCollectibles
             }
           }
         />
