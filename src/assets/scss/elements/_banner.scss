@@ -519,7 +519,7 @@
             }
             h4 {
                 margin-bottom: 15px;
-                font-size: 50px;
+                font-size: 44px;
                 font-weight: 400;
 
                 @media #{$md-layout} {
@@ -1588,9 +1588,13 @@
 
 .slider-style-6 {
     .slide {
-        min-height: 80vh;
+        min-height: 75vh;
     }
 }
+.slider-style-6 .slide .banner-read-thumb-lg {margin-left: 4%;}
+.slider-style-6 .slide .banner-read-thumb-lg h4 {text-shadow: 5px 5px 20px #000;}
+.slider-style-6 .slide video {position: absolute;height: 100%;width: 100%;inset: 0px;object-fit: cover;color: transparent}
+
 @media only screen and (max-width: 767px){
     .slider-style-6 .slide {min-height: auto;padding: 0;}    
 }
