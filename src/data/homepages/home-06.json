@@ -6,74 +6,22 @@
       "banners": [
         {
           "id": 1,
-          "title": "The way to find any <br/> Digital content",
+          "title": "Explore Digital Collectibles With <br>in Real life Utilities and <br>Rewards",
           "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores expedita beatae exercitationem quasi ullam esse?",
           "buttons": [
             {
               "id": 1,
-              "path": "/login",
-              "content": "Get Started"
-            },
-            {
-              "id": 2,
-              "path": "/create",
-              "color": "primary-alta",
-              "content": "Create"
+              "path": "/collection",
+              "content": "Explore Now"
             }
           ],
           "image": {
-            "src": "/images/bg/bg-image-18.jpg"
+            "src": "/images/bg/NFTPosterImage-min.png",
+            "video": "/images/bg/NftMarketplace_Banner.mp4"
           },
           "mobile": {
-            "src": "/images/bg/bg-image-18-mobile.jpg"
-          }
-        },
-        {
-          "id": 2,
-          "title": "The way to find any <br/> Digital content",
-          "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores expedita beatae exercitationem quasi ullam esse?",
-          "buttons": [
-            {
-              "id": 1,
-              "path": "/login",
-              "content": "Get Started"
-            },
-            {
-              "id": 2,
-              "path": "/create",
-              "color": "primary-alta",
-              "content": "Create"
-            }
-          ],
-          "image": {
-            "src": "/images/bg/bg-image-19.jpg"
-          },
-          "mobile": {
-            "src": "/images/bg/bg-image-19-mobile.jpg"
-          }
-        },
-        {
-          "id": 3,
-          "title": "The way to find any <br/> Digital content",
-          "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores expedita beatae exercitationem quasi ullam esse?",
-          "buttons": [
-            {
-              "id": 1,
-              "path": "/login",
-              "content": "Get Started"
-            },
-            {
-              "id": 2,
-              "path": "/create",
-              "color": "primary-alta",
-              "content": "Create"
-            }
-          ],
-          "image": {
-            "src": "/images/bg/unlock-now.jpg"
-          },
-          "mobile": {
-            "src": "/images/bg/unlock-now-mobile.jpg"
+            "src": "/images/bg/NFTPosterImage-min.png",
+            "video": "/images/bg/NftMarketplace_Banner.mp4"
           }
         }
       ]
