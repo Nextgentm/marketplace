@@ -44,7 +44,7 @@ const ProductArea = ({ space, className, data }) =>
               >
                 <Product
                   title={prod.name}
-                  slug={prod.slug}
+                  slug={prod.isOpenseaCollectible ? prod.marketURL : prod.slug}
                   supply={prod.supply}
                   price={prod.bidPrice}
                   symbol={prod.priceCurrency}
@@ -54,6 +54,7 @@ const ProductArea = ({ space, className, data }) =>
                   latestBid={prod.latestBid}
                   likeCount={prod.likeCount}
                   authors={prod.authors}
+                  isOpenseaCollectible={prod.isOpenseaCollectible}
                 />
               </div>
             ))}
