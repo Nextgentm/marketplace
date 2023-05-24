@@ -22,8 +22,9 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
       <AuctionArea
         data={{
           section_title: { title: "Related Item" },
-          auctions: recentViewProducts.data
+          auctions: recentViewProducts.data,
         }}
+        collectiblePage={true}
       />
 
     </main>

@@ -24,7 +24,7 @@ const AuctionDetails = ({ auction, recentViewProducts }) => (
         <AuctionArea
           data={{
             section_title: { title: "Related Item" },
-            auctions: recentViewProducts.data
+            auctions: recentViewProducts.data,
           }}
         />
       }
