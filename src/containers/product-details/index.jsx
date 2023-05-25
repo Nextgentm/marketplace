@@ -118,13 +118,13 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         // };
         let approveAddress = await contract721.getApproved(product.nftID);
         // console.log(approveAddress);
-        if (approveAddress.toLowerCase() != walletData.contractData.TradeContract.address.toLowerCase()) {
-          // approve nft first
-          const transaction = await contract721.approve(walletData.contractData.TradeContract.address, product.nftID);
-          const receipt = await transaction.wait();
-          // console.log(receipt);
-        }
-        approveAddress = await contract721.getApproved(product.nftID);
+        // if (approveAddress.toLowerCase() != walletData.contractData.TradeContract.address.toLowerCase()) {
+        //   // approve nft first
+        //   const transaction = await contract721.approve(walletData.contractData.TradeContract.address, product.nftID);
+        //   const receipt = await transaction.wait();
+        //   // console.log(receipt);
+        // }
+        // approveAddress = await contract721.getApproved(product.nftID);
         // console.log(approveAddress);
         if (approveAddress.toLowerCase() != walletData.contractData.TransferProxy.address.toLowerCase()) {
           // approve nft first
@@ -338,7 +338,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         <div className="row g-5">
           <div className="col-lg-7 col-md-12 col-sm-12">
             <Sticky>
-              <GalleryTab images={product?.image} />
+              <GalleryTab images={[product?.image, product?.front_image_url ? { data: { id: "front_image_url", url: product?.front_image_url, alternativeText: "Front Image" } } : null, product?.back_image_url ? { data: { id: "back_image_url", url: product?.back_image_url, alternativeText: "Back Image" } } : null]} />
             </Sticky>
           </div>
           <div className="col-lg-5 col-md-12 col-sm-12 mt_md--50 mt_sm--60">
@@ -356,76 +356,80 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                 <ProductCategory owner={product.collection} royalty={product.royalty} />
                 <ProductCollection collection={product.collection} />
               </div>
-              {showAuctionInputModel ? (
-                <div className="rn-bid-details">
-                  <TabContainer defaultActiveKey="nav-direct-sale1">
-                    <div className={clsx("tab-wrapper-one", className)}>
-                      <nav className="tab-button-one">
-                        <Nav as="div" className="nav-tabs">
-                          <Nav.Link
-                            as="button"
-                            eventKey="nav-direct-sale"
-                            onClick={() => {
-                              setSellType("nav-direct-sale");
-                              handleDirectSaleModal(true);
-                            }}
-                          >
-                            Direct Sale
-                          </Nav.Link>
-                          <Nav.Link
-                            as="button"
-                            eventKey="nav-timed-auction"
-                            onClick={() => {
-                              setSellType("nav-timed-auction");
-                              handleTimeAuctionModal(true);
-                            }}
-                          >
-                            Timed Auction
-                          </Nav.Link>
-                        </Nav>
-                      </nav>
-                    </div>
-                  </TabContainer>
-                </div>
-              ) : (
-                <>
-                  {((!product.putOnSale && product.owner === walletData.account) ||
-                    (product.supply > 1 && erc1155MyBalance > 0)) && (
-                      <div className="row">
-                        <div className="col-md-6">
-                          <Button
-                            color="primary-alta"
-                            onClick={() =>
-                              product.collection.data.collectionType === "Multiple"
-                                ? setShowDirectSalesModal(true)
-                                : setShowAuctionInputModel(true)
-                            }
-                          >
-                            Put on Sale
-                          </Button>
-                        </div>
-                        <div className="col-md-6">
-                          <Button color="primary-alta" onClick={() => handleShowTransferModal(true)}>
-                            Transfer
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-
+              {product.isOpenseaCollectible ?
+                <div>
+                  <Button path={product.marketURL} target="_blank">View NFT</Button>
+                </div> :
+                showAuctionInputModel ? (
                   <div className="rn-bid-details">
-                    <BidTab
-                      // bids={product.putOnSale && product.auction.data[0].sellType == "Bidding" ? bids : null}
-                      owner={product?.owner}
-                      product={product}
-                      supply={product.supply}
-                      auction={{ data: product.auction?.data[0] }}
-                      allAuctions={product.auction.data}
-                      properties={product?.collectibleProperties?.data}
-                      tags={product?.tags}
-                      history={product?.owner_histories?.data}
-                      erc1155MyBalance={erc1155MyBalance}
-                    />
-                    {/* {product.putOnSale && (
+                    <TabContainer defaultActiveKey="nav-direct-sale1">
+                      <div className={clsx("tab-wrapper-one", className)}>
+                        <nav className="tab-button-one">
+                          <Nav as="div" className="nav-tabs">
+                            <Nav.Link
+                              as="button"
+                              eventKey="nav-direct-sale"
+                              onClick={() => {
+                                setSellType("nav-direct-sale");
+                                handleDirectSaleModal(true);
+                              }}
+                            >
+                              Direct Sale
+                            </Nav.Link>
+                            <Nav.Link
+                              as="button"
+                              eventKey="nav-timed-auction"
+                              onClick={() => {
+                                setSellType("nav-timed-auction");
+                                handleTimeAuctionModal(true);
+                              }}
+                            >
+                              Timed Auction
+                            </Nav.Link>
+                          </Nav>
+                        </nav>
+                      </div>
+                    </TabContainer>
+                  </div>
+                ) : (
+                  <>
+                    {((!product.putOnSale && product.owner === walletData.account && walletData.isConnected) ||
+                      (product.supply > 1 && erc1155MyBalance > 0 && walletData.isConnected)) && (
+                        <div className="row">
+                          <div className="col-md-6">
+                            <Button
+                              color="primary-alta"
+                              onClick={() =>
+                                product.collection.data.collectionType === "Multiple"
+                                  ? setShowDirectSalesModal(true)
+                                  : setShowAuctionInputModel(true)
+                              }
+                            >
+                              Put on Sale
+                            </Button>
+                          </div>
+                          <div className="col-md-6">
+                            <Button color="primary-alta" onClick={() => handleShowTransferModal(true)}>
+                              Transfer
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                    <div className="rn-bid-details">
+                      <BidTab
+                        // bids={product.putOnSale && product.auction.data[0].sellType == "Bidding" ? bids : null}
+                        owner={product?.owner}
+                        product={product}
+                        supply={product.supply}
+                        auction={{ data: product.auction?.data[0] }}
+                        allAuctions={product.auction.data}
+                        properties={product?.collectibleProperties?.data}
+                        tags={product?.tags}
+                        history={product?.owner_histories?.data}
+                        erc1155MyBalance={erc1155MyBalance}
+                      />
+                      {/* {product.putOnSale && (
                       <PlaceBet
                         highest_bid={{
                           amount: product.auction?.data[0]?.bidPrice,
@@ -438,9 +442,9 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                         isOwner={product.auction?.data[0]?.walletAddress == walletData.account}
                       />
                     )} */}
-                  </div>
-                </>
-              )}
+                    </div>
+                  </>
+                )}
             </div>
           </div>
         </div>

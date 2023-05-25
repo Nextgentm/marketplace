@@ -184,6 +184,12 @@ const normalize = (data) => {
 const isServer = () => {
   return typeof window === "undefined";
 };
+
+const isImgLink = (url) => {
+  if (typeof url !== "string") return false;
+  return url.match(/^http[^\?]*.(jpg|jpeg|gif|png|tiff|bmp|webp)(\?(.*))?$/gim) != null;
+};
+
 module.exports = {
   slideUp,
   slideDown,
@@ -197,5 +203,6 @@ module.exports = {
   hasKey,
   isEmpty,
   normalize,
-  isServer
+  isServer,
+  isImgLink
 };

@@ -19,59 +19,52 @@ const HeroArea = ({ data }) => (
           options={SliderOptions}
           className="slider-style-6 no-padding wide-wrapper slick-activation-06 slick-arrow-between desktop-slider"
         >
+
+
           {data.banners.map((banner) => (
             <SliderItem key={banner.id}>
               <div className="slide">
-                {banner.image?.src && (
-                  <Image
-                    src={banner.image.src}
-                    alt="Slider BG"
-                    quality={100}
-                    priority
-                    fill
-                    sizes="100vw"
-                    style={{
-                      objectFit: "cover"
-                    }}
+                <video style={{ "width": "100%" }} autoPlay muted loop controlsList="nofullscreen nodownload noremoteplayback noplaybackrate foobar" poster={banner.image.src}>
+                  <source
+                    src={banner.image.video}
+                    type="video/mp4"
                   />
-                )}
+                </video>
 
                 <div className="banner-read-thumb-lg">
-                  {/* <h4
-                                        dangerouslySetInnerHTML={{
-                                            __html: banner?.title,
-                                        }}
-                                    />
-                                    <p
-                                        dangerouslySetInnerHTML={{
-                                            __html: banner?.description,
-                                        }}
-                                    /> */}
-                  {/* banner?.buttons && (
-                                        <div className="button-group">
-                                            {banner.buttons.map(
-                                                (
-                                                    { id, content, ...btn },
-                                                    i
-                                                ) => (
-                                                    <Button
-                                                        key={id}
-                                                        data-sal="slide-up"
-                                                        data-sal-delay="300"
-                                                        data-sal-duration="800"
-                                                        {...btn}
-                                                        className={
-                                                            i === 0
-                                                                ? "mr--15"
-                                                                : ""
-                                                        }
-                                                    >
-                                                        {content}
-                                                    </Button>
-                                                )
-                                            )}
-                                        </div>
-                                                    ) */}
+                  <h4
+                    dangerouslySetInnerHTML={{
+                      __html: banner?.title,
+                    }}
+                  />
+                  {/*<p
+                    dangerouslySetInnerHTML={{
+                      __html: banner?.description,
+                    }}
+                  />*/}
+                  {banner?.buttons && (
+                    <div className="button-group">
+                      {banner.buttons.map(
+                        (
+                          { id, content, ...btn },
+                          i
+                        ) => (
+                          <Button
+                            key={id}
+
+                            {...btn}
+                            className={
+                              i === 0
+                                ? "mr--15"
+                                : ""
+                            }
+                          >
+                            {content}
+                          </Button>
+                        )
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </SliderItem>
@@ -84,6 +77,54 @@ const HeroArea = ({ data }) => (
           className="slider-style-6 wide-wrapper slick-activation-06 slick-arrow-between mobile-slider"
         >
           {data.banners.map((banner) => (
+            <SliderItem key={banner.id}>
+              <div className="slide">
+                <video style={{ "width": "100%" }} autoPlay muted loop controlsList="nofullscreen nodownload noremoteplayback noplaybackrate foobar" poster={banner.image.src}>
+                  <source
+                    src={banner.image.video}
+                    type="video/mp4"
+                  />
+                </video>
+
+                <div className="banner-read-thumb-lg">
+                  <h4
+                    dangerouslySetInnerHTML={{
+                      __html: banner?.title,
+                    }}
+                  />
+                  {/*<p
+                    dangerouslySetInnerHTML={{
+                      __html: banner?.description,
+                    }}
+                  />*/}
+                  {banner?.buttons && (
+                    <div className="button-group">
+                      {banner.buttons.map(
+                        (
+                          { id, content, ...btn },
+                          i
+                        ) => (
+                          <Button
+                            key={id}
+
+                            {...btn}
+                            className={
+                              i === 0
+                                ? "mr--15"
+                                : ""
+                            }
+                          >
+                            {content}
+                          </Button>
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </SliderItem>
+          ))}
+          {/*data.banners.map((banner) => (
             <SliderItem key={banner.id}>
               <div className="slide">
                 {banner.mobile?.src && (
@@ -101,11 +142,11 @@ const HeroArea = ({ data }) => (
                 )}
               </div>
             </SliderItem>
-          ))}
+                  ))*/}
         </Slider>
       )}
     </div>
-  </div>
+  </div >
 );
 
 HeroArea.propTypes = {

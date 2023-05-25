@@ -92,13 +92,13 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       const decimals = await tokenContract.decimals();
       //convert price
       let convertedPrice;
-      if (decimals > 7) {
+      if (decimals == 18) {
         convertedPrice = convertEthertoWei(walletData.ethers, price);
       } else {
-        convertedPrice = (price * (10 ^ decimals));
+        convertedPrice = (price * (10 ** decimals));
       }
       const requireAllowanceAmount = "" + parseInt(convertedPrice * quantity);
-
+      // console.log(price, decimals, convertedPrice, quantity, requireAllowanceAmount);
       const userBalance = await tokenContract.balanceOf(walletData.account);
       if (parseInt(requireAllowanceAmount) > parseInt(userBalance._hex, 16)) {
         toast.error("Amount is greater than your current balance");
@@ -114,11 +114,11 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         const erc20Address = TokenContractAddress;
         const nftAddress = contractAddress;
         const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
-        const skipRoyalty = true;
+        const skipRoyalty = false;
         const unitPrice = `${convertedPrice}`;
         const amount = `${parseFloat(quantity) * parseFloat(unitPrice)}`;
         const tokenId = `${product.nftID}`;
-        const tokenURI = "";
+        const tokenURI = "-";
         const supply = `${product.supply ? product.supply : 1}`;
         const royaltyFee = `${product?.royalty ? product?.royalty : 0}`;
         const qty = `${quantity ? quantity : 1}`;

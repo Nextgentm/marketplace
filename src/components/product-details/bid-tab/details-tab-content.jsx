@@ -19,16 +19,20 @@ const DetailsTabContent = ({ owner, properties, tags, supply, erc1155MyBalance, 
   <div className="rn-pd-bd-wrapper mt--20">
     {/* <TopSeller name={owner.name} total_sale={owner.total_sale} slug={owner.slug} image={owner.image} /> */}
     <div className="row">
-      <span>Contract Address: <a href={getContractAddress(product)}>
-        {product.collection.data.collectionType == "Single" ? product.collection.data.contractAddress : product.collection.data.contractAddress1155}
-      </a>
-      </span>
-      <span>Token ID: {product.nftID}</span>
-      <span>Token Standard: {product.collection.data.collectionType == "Single" ? "ERC-721" : "ERC-1155"}</span>
-      <span>Chain: {product.collection.data.networkType}</span>
-      {supply < 1 && <span>NFT Owner : {owner}</span>}
-      {erc1155MyBalance > 0 && <span>Your Balance : {erc1155MyBalance}</span>}
-      <span>Total Supply : {supply}</span>
+      <div className="lable">
+        Contract Address:
+        <span>
+          <a href={getContractAddress(product)}>
+            {product.collection.data.collectionType == "Single" ? product.collection.data.contractAddress : product.collection.data.contractAddress1155}
+          </a>
+        </span>
+      </div>
+      <div className="lable">Token ID <span>{product.nftID}</span></div>
+      <div className="lable">Token Standard <span>{product.collection.data.collectionType == "Single" ? "ERC-721" : "ERC-1155"}</span></div>
+      <div className="lable">Chain <span>{product.collection.data.networkType}</span></div>
+      {supply < 1 && <div className="lable">NFT Owner <span>{owner}</span></div>}
+      {erc1155MyBalance > 0 && <div className="lable">Your Balance <span>{erc1155MyBalance}</span></div>}
+      <div className="lable">Total Supply <span>{supply}</span></div>
     </div>
     {
       properties && properties?.length > 0 && (

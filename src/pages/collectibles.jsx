@@ -12,6 +12,7 @@ import productData from "../data/products.json";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import client from "@utils/apollo-client";
 import { useRouter } from "next/router";
+import { getCollectible } from "src/services/collections/collection";
 
 // export async function getStaticProps() {
 //   return { props: { className: "template-color-1" } };
@@ -21,7 +22,6 @@ const Collectibles = ({ dataCollectibles }) => {
   return (
     <Wrapper>
       <SEO pageTitle="Explore Simple" />
-      {/* {console.log("data=-=-Collectibles", dataCollectibles)} */}
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Explore NFT" currentPage="Explore NFT" />
@@ -45,37 +45,48 @@ const Collectibles = ({ dataCollectibles }) => {
 };
 
 Collectibles.getInitialProps = async (ctx) => {
-  let routerQuery = ctx.query.collection;
-
-  let filters = {
-    auction: {
-      status: {
-        eq: "Live"
-      }
-    }
-  };
-
-  if (ctx.query.collection) {
-    filters.collection = {
-      name: {
-        in: routerQuery
-      }
-    };
-  }
-  const { data } = await client.query({
-    query: ALL_COLLECTIBLE_LISTDATA_QUERY,
-    variables: {
-      filter: filters,
-      pagination: {
-        pageSize: 6
-      },
-      sort: ["createdAt:desc"]
+  const data = await getCollectible({
+    filters: {
+      $or: [{
+        auction: {
+          status: "Live"
+        }
+      }, {
+        isOpenseaCollectible: true
+      }]
     },
-    fetchPolicy: "network-only"
+    populate: {
+      collection: {
+        fields: "*",
+        populate: {
+          cover: {
+            fields: "*"
+          },
+          logo: {
+            fields: "*"
+          }
+        }
+      },
+      auction: {
+        fields: "*",
+        filters: {
+          status: "Live",
+          id: { $notNull: true }
+        }
+      },
+      image: {
+        fields: "*"
+      }
+    },
+    pagination: {
+      limit: 6,
+      start: 0,
+      withCount: true
+    }
   });
   return {
     className: "template-color-1",
-    dataCollectibles: data.collectibles
+    dataCollectibles: data
   };
 };
 
