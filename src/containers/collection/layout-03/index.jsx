@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import Collection from "@components/collection";
@@ -9,9 +9,24 @@ import { useLazyQuery } from "@apollo/client";
 import { ALL_COLLECTION_QUERY, GET_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getCollection";
 import _ from "lodash";
 import { getCollection } from "src/services/collections/collection";
+import { AppData } from "src/context/app-context";
+import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 
 const CollectionArea = ({ className, space, id, data }) => {
   // console.log("data data ", data);
+  const { walletData, setWalletData } = useContext(AppData);
+
+  const [isAdminWallet, setIsAdminWallet] = useState(false);
+  useEffect(() => {
+    if (walletData.isConnected) {
+      addressIsAdmin(walletData).then((validationValue) => {
+        setIsAdminWallet(validationValue);
+      }).catch((error) => { console.log("Error while factory call " + error) });
+    } else {
+      setIsAdminWallet(false);
+    }
+  }, [walletData]);
+
   const [collectionsRecords, setCollectionsRecords] = useState([]);
   const [collectionsData, setCollectionsData] = useState();
   const [pagination, setPagination] = useState({
@@ -124,6 +139,8 @@ const CollectionArea = ({ className, space, id, data }) => {
                     image={collection?.cover?.data}
                     thumbnails={collection?.featured?.data}
                     profile_image={collection?.logo?.data}
+                    dropdownOption={isAdminWallet}
+                    slug={collection?.slug}
                   />
                 </div>
               ) : collection.isOpenseaCollection ? (
@@ -135,6 +152,8 @@ const CollectionArea = ({ className, space, id, data }) => {
                     image={collection?.cover?.data}
                     thumbnails={collection?.featured?.data}
                     profile_image={collection?.logo?.data}
+                    dropdownOption={isAdminWallet}
+                    slug={collection?.slug}
                   />
                 </div>
               ) : null

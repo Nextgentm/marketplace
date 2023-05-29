@@ -36,7 +36,8 @@ const Product = ({
   collectionName,
   isAuction,
   isOpenseaCollectible,
-  disableShareDropdown
+  disableShareDropdown,
+  editProductSlug
 }) => {
   const [showBidModal, setShowBidModal] = useState(false);
   const handleBidModal = () => {
@@ -77,7 +78,7 @@ const Product = ({
               {bitCount}+ Place Bit.
             </Anchor>}
           </div>
-          {!disableShareDropdown && <ShareDropdown />}
+          {!disableShareDropdown && <ShareDropdown slug={editProductSlug} />}
         </div>
         <Anchor target={isOpenseaCollectible ? "_blank" : "_self"} path={isOpenseaCollectible ? `${slug}` : isAuction ? `${slug}` : `/collectible/${slug}`}>
           <span className="product-name">{title}</span>
