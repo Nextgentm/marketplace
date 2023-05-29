@@ -1148,7 +1148,7 @@ html[data-theme="light"] body {
     // check box
     input[type="checkbox"] ~ label::before,
     input[type="radio"] ~ label::before {
-        background-color: var(--color-border-white);
+        background-color: #666//var(--color-border-white);
     }
 
     // forget page
@@ -2013,4 +2013,8 @@ html[data-theme="light"] body{
     .product-details-area .table-responsive th {background-color: var(--color-midgray);}
     .product-details-area .table-responsive td {color: var(--color-light-heading);box-shadow: inset 0 0 0 9999px var(--color-white);background-color: var(--color-white);}
 
+    .nuron-expo-filter-widget input[type=checkbox]:checked ~ label::before {
+        background-color: #666;
+    }
+    
 }
