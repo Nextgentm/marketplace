@@ -48,7 +48,7 @@ const TimeAuctionModal = ({ show, handleModal, supply, maxQuantity, handleSubmit
                 <select id="paymentToken">
                   {paymentTokensList &&
                     paymentTokensList.map((item, index) => (
-                      <option value={item.id} key={index} selected={auctionData && auctionData.paymentToken.data.id == item.id}> {item.name} </option>
+                      <option value={item.id} key={index} selected={auctionData && auctionData.paymentToken?.data?.id == item.id}> {item.name} </option>
                     ))}
                 </select>
               </div>

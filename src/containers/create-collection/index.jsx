@@ -666,7 +666,7 @@ const CreateCollectionArea = ({ collection }) => {
                         Description
                       </label>
                       <div className="create-collection-input">
-                        <textarea className="text-area" {...register("description")}>{collection ? collection.description : ""}</textarea>
+                        <textarea className="text-area" {...register("description")} defaultValue={collection ? collection.description : ""} />
                         {errors.description && <ErrorText>{errors.description?.message}</ErrorText>}
                       </div>
                     </div>
@@ -788,7 +788,6 @@ const CreateCollectionArea = ({ collection }) => {
                           data-btn="update"
                           name="update"
                           value="update"
-                          onClick={() => setShowPreviewModal(false)}
                         >
                           Update Collection
                         </Button> : <>
