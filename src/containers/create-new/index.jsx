@@ -530,7 +530,8 @@ const CreateNewArea = ({ className, space, collectible }) => {
         return;
       }
       const validationValue = await addressIsAdmin(walletData);
-      if (validationValue) {
+      const isAuctionLive = collectible.auction.data.every(({ status }) => status === "Live");
+      if (validationValue && !isAuctionLive) {
 
         const slug = data.name ? data.name.toLowerCase().split(" ").join("-") : collectible.slug;
         let updatedCollectibleObj = {
@@ -580,7 +581,11 @@ const CreateNewArea = ({ className, space, collectible }) => {
         toast("collectible updated successfully");
         reloadCollectibleData();
       } else {
-        toast.error("Only admin can update collectible");
+        if (!validationValue)
+          toast.error("Only admin can update collectible");
+        if (isAuctionLive)
+          toast.error("Please close live auctions for this NFT to edit.");
+
       }
     } catch (error) {
       toast.error("Error while updating collectible");

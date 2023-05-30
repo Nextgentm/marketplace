@@ -24,7 +24,7 @@ import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHis
 import strapi from "@utils/strapi";
 import TimeAuctionModal from "@components/modals/time-auction";
 import DirectSalesModal from "@components/modals/direct-sales";
-import ConfirmModal from "@components/modals/report-modal";
+import ConfirmModal from "@components/modals/confirm-modal";
 
 // Demo Image
 
