@@ -1,8 +1,10 @@
 import PropTypes from "prop-types";
 import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
+import { getTodayDate } from "@utils/methods";
 
-const DirectSalesModal = ({ show, handleModal, supply, maxQuantity, handleSubmit, paymentTokensList }) => {
+
+const DirectSalesModal = ({ show, handleModal, supply, maxQuantity, handleSubmit, paymentTokensList, auctionData }) => {
   return (
     <Modal className="rn-popup-modal placebid-modal-wrapper" show={show} onHide={handleModal} centered>
       {show && (
@@ -11,7 +13,7 @@ const DirectSalesModal = ({ show, handleModal, supply, maxQuantity, handleSubmit
         </button>
       )}
       <Modal.Header>
-        <h3 className="modal-title">Direct Sales</h3>
+        <h3 className="modal-title">{auctionData ? "Edit " : ""}Direct Sales</h3>
       </Modal.Header>
       <Modal.Body>
         <p>Enter price. Your NFT will be pushed in top of marketplace</p>
@@ -21,7 +23,7 @@ const DirectSalesModal = ({ show, handleModal, supply, maxQuantity, handleSubmit
             <div className="bid-content">
               <div className="bid-content-top">
                 <div className="bid-content-left">
-                  <input id="price" type="number" name="price" step="0.0000001" min="0.000000000000000001" required />
+                  <input id="price" type="number" name="price" step="0.0000001" min="0.000000000000000001" defaultValue={auctionData ? auctionData.bidPrice : "0.01"} required />
                   <input id="currency" type="hidden" value="wETH" />
                   {/* <span>wETH</span> */}
                 </div>
@@ -31,11 +33,11 @@ const DirectSalesModal = ({ show, handleModal, supply, maxQuantity, handleSubmit
                 <div className="row">
                   <div className="col-md-6">
                     <label htmlFor="startDate">Start Date</label>
-                    <input type="date" id="startDate" name="startDate" />
+                    <input type="date" id="startDate" name="startDate" min={auctionData ? auctionData.startTimestamp : getTodayDate()} defaultValue={auctionData ? auctionData.startTimestamp : getTodayDate()} />
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="startDate">End Date</label>
-                    <input type="date" id="endDate" name="endDate" />
+                    <input type="date" id="endDate" name="endDate" min={getTodayDate(2)} defaultValue={auctionData ? auctionData.endTimeStamp : getTodayDate(6)} />
                   </div>
                 </div>
               </div>
@@ -46,7 +48,7 @@ const DirectSalesModal = ({ show, handleModal, supply, maxQuantity, handleSubmit
                   <select id="paymentToken">
                     {paymentTokensList &&
                       paymentTokensList.map((item, index) => (
-                        <option value={item.id} key={index}> {item.name} </option>
+                        <option value={item.id} key={index} selected={auctionData && auctionData.paymentToken?.data?.id == item.id}> {item.name} </option>
                       ))}
                   </select>
                 </div>
@@ -56,14 +58,14 @@ const DirectSalesModal = ({ show, handleModal, supply, maxQuantity, handleSubmit
                 <div className="bid-content-mid">
                   <div className="row">
                     <label htmlFor="quantity">Quantity</label>
-                    <input type="number" id="quantity" min="1" max={maxQuantity} placeholder="e.g. 10" />
+                    <input type="number" id="quantity" min="1" max={maxQuantity} defaultValue={auctionData ? auctionData.quantity : 1} placeholder="e.g. 10" />
                   </div>
                 </div>
               )}
             </div>
             <div className="bit-continue-button">
               <Button size="medium" type="submit" fullwidth>
-                Confirm
+                {auctionData ? "Update" : "Confirm"}
               </Button>
             </div>
           </form>

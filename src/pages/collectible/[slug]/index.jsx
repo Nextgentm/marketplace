@@ -53,7 +53,7 @@ export async function getStaticProps({ params }) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?filters[slug][$eq]=${params.slug}&populate=*`);
   const productData = await res.json();
   const product = productData.data[0] || null;
-  let bids = null;
+  let bids = [];
 
   if (product) {
     // Get All payment tokens
@@ -77,8 +77,10 @@ export async function getStaticProps({ params }) {
       );
       const auction = await response.json();
       // console.log(auction);
-      bids = auction.data?.biddings?.data;
-      product.auction.data.paymentToken = auction.data?.paymentToken;
+      if (auction.data) {
+        bids = auction.data?.biddings?.data;
+        product.auction.data.paymentToken = auction.data?.paymentToken;
+      }
     }
   }
 

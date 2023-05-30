@@ -2,8 +2,9 @@ import { useState } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import ShareModal from "@components/modals/share-modal";
 import ReportModal from "@components/modals/report-modal";
+import Anchor from "@ui/anchor";
 
-const ShareDropdown = () => {
+const ShareDropdown = ({ slug }) => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const handleShareModal = () => {
@@ -27,6 +28,13 @@ const ShareDropdown = () => {
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="share-btn-setting" align="end">
+          {slug &&
+            <Anchor target="_self" path={"edit-collectible/" + slug}>
+              <button type="button" className="btn-setting-text share-text">
+                Edit
+              </button>
+            </Anchor>
+          }
           <button type="button" className="btn-setting-text share-text" onClick={handleShareModal}>
             Share
           </button>
