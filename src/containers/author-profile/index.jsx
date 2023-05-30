@@ -109,6 +109,7 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                       likeCount={prod.likeCount}
                       authors={prod.authors}
                       owner={prod.owner}
+                      editProductSlug={prod.slug}
                     />
                   </div>
                 )

@@ -190,6 +190,22 @@ const isImgLink = (url) => {
   return url.match(/^http[^\?]*.(jpg|jpeg|gif|png|tiff|bmp|webp)(\?(.*))?$/gim) != null;
 };
 
+const getTodayDate = (skip = 0) => {
+  let date = new Date();
+  if (skip > 0) {
+    date.setDate(date.getDate() + skip);
+  }
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let year = date.getFullYear();
+
+  if (month < 10) month = "0" + month;
+  if (day < 10) day = "0" + day;
+
+  let today = year + "-" + month + "-" + day;
+  return today;
+};
+
 module.exports = {
   slideUp,
   slideDown,
@@ -204,5 +220,6 @@ module.exports = {
   isEmpty,
   normalize,
   isServer,
-  isImgLink
+  isImgLink,
+  getTodayDate
 };
