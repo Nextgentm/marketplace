@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
 
-const ConfirmModal = ({ show, handleModal, headingText, handleSubmit }) => (
+const ReportModal = ({ show, handleModal }) => (
   <Modal className="rn-popup-modal report-modal-wrapper" show={show} onHide={handleModal} centered>
     {show && (
       <button type="button" className="btn-close" aria-label="Close" onClick={handleModal}>
@@ -10,21 +10,19 @@ const ConfirmModal = ({ show, handleModal, headingText, handleSubmit }) => (
       </button>
     )}
     <Modal.Header className="report-modal-header">
-      <h5 className="modal-title">Are you sure?</h5>
+      <h5 className="modal-title">Why are you reporting?</h5>
     </Modal.Header>
     <Modal.Body>
-      <p>{headingText}
-        <br /><span>This process cannot be reverted.</span>
-      </p>
-      <div className="row">
-        <div className="col-md-6">
-          <Button color="primary-alta" size="medium" className="mr--10 w-100" onClick={handleModal}>
-            No
+      <p>Describe why you think this item should be removed from marketplace</p>
+      <div className="report-form-box">
+        <h6 className="title">Message</h6>
+        <textarea name="message" placeholder="Write issues" />
+        <div className="report-button">
+          <Button size="medium" className="mr--10 w-auto">
+            Report
           </Button>
-        </div>
-        <div className="col-md-6">
-          <Button size="medium" className="mr--10 w-100" onClick={handleSubmit}>
-            Yes
+          <Button color="primary-alta" size="medium" className="w-auto" onClick={handleModal}>
+            Cancel
           </Button>
         </div>
       </div>
@@ -32,8 +30,8 @@ const ConfirmModal = ({ show, handleModal, headingText, handleSubmit }) => (
   </Modal>
 );
 
-ConfirmModal.propTypes = {
+ReportModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleModal: PropTypes.func.isRequired
 };
-export default ConfirmModal;
+export default ReportModal;
