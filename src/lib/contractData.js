@@ -11,9 +11,9 @@ export function getContractsData(network) {
   if (network == "Ethereum") {
     //address
     contractData.Factory721Contract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS };
-    contractData.Factory1155Contract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS };
+    contractData.Factory1155Contract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS };
     contractData.TradeContract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS };
-    contractData.TransferProxy = { "address": process.env.NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS };
+    contractData.TransferProxy = { "address": process.env.NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS };
   } else if (network == "Polygon") {
     //address
     contractData.Factory721Contract = { "address": process.env.NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS };

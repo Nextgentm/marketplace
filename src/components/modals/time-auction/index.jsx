@@ -32,7 +32,7 @@ const TimeAuctionModal = ({ show, handleModal, supply, maxQuantity, handleSubmit
                 <div className="row">
                   <div className="col-md-6">
                     <label htmlFor="startDate">Start Date</label>
-                    <input type="date" id="startDate" name="startDate" min={getTodayDate()} defaultValue={auctionData ? auctionData.startTimestamp : getTodayDate()} />
+                    <input type="date" id="startDate" name="startDate" min={auctionData ? auctionData.startTimestamp : getTodayDate()} defaultValue={auctionData ? auctionData.startTimestamp : getTodayDate()} />
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="startDate">End Date</label>

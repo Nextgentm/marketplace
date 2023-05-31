@@ -167,9 +167,9 @@ const CreateCollectionArea = ({ collection }) => {
   //load collection data
   useEffect(() => {
     if (collection) {
-      setSelectedPaymentTokens(convertPaymentTokenObjToOptions(collection.paymentTokens));
-      setCategory(collection.category);
-      setBlockchainNetwork(collection.networkType);
+      setSelectedPaymentTokens(convertPaymentTokenObjToOptions(collection?.paymentTokens));
+      setCategory(collection?.category);
+      setBlockchainNetwork(collection?.networkType);
       // setLogoImagePath(collection.logo.data.url);
       // setlogoImageId(collection.logoID);
       // setCoverImagePath(collection.cover.data.url);
@@ -191,14 +191,14 @@ const CreateCollectionArea = ({ collection }) => {
         const selectedPaymentTokensList = Array.from(selectedPaymentTokens).map(({ value }) => value);
         // console.log(selectedPaymentTokens);
         let updatedCollectionObj = {
-          name: data.title ? data.title : collection.name,
+          name: data.title ? data.title : collection?.name,
           symbol: data.symbol,
-          url: data.url ? data.url : collection.url,
-          description: data.description ? data.description : collection.description,
+          url: data.url ? data.url : collection?.url,
+          description: data.description ? data.description : collection?.description,
           category,
           slug,
           paymentTokens: selectedPaymentTokensList,
-          payoutWalletAddress: data.wallet ? data.wallet : collection.payoutWalletAddress,
+          payoutWalletAddress: data.wallet ? data.wallet : collection?.payoutWalletAddress,
           explicitAndSensitiveContent: data.themeSwitch
         }
         if (logoImagePath) {
@@ -214,7 +214,7 @@ const CreateCollectionArea = ({ collection }) => {
           updatedCollectionObj.featuredID = Number(featureImageId);
         }
         // console.log(updatedCollectionObj);
-        const resp = await strapi.update("collections", collection.id, updatedCollectionObj);
+        const resp = await strapi.update("collections", collection?.id, updatedCollectionObj);
         console.log(resp);
         toast("Collection updated successfully");
       } else {
@@ -499,7 +499,7 @@ const CreateCollectionArea = ({ collection }) => {
                   className="logo-image"
                   id="logoImg"
                   placeholder={{
-                    src: collection ? collection.logo.data.url : "/images/profile/profile-01.jpg",
+                    src: collection ? collection?.logo?.data?.url : "/images/profile/profile-01.jpg",
                     width: 277,
                     height: 277
                   }}
@@ -530,7 +530,7 @@ const CreateCollectionArea = ({ collection }) => {
                   className="feature-image"
                   id="featImg"
                   placeholder={{
-                    src: collection ? collection.cover.data.url : "/images/profile/cover-04.jpg",
+                    src: collection ? collection?.cover?.data?.url : "/images/profile/cover-04.jpg",
                     width: 277,
                     height: 138
                   }}
@@ -555,7 +555,7 @@ const CreateCollectionArea = ({ collection }) => {
                   className="banner-image"
                   id="bannerImg"
                   placeholder={{
-                    src: collection ? collection.featured.data.url : "/images/profile/cover-03.jpg",
+                    src: collection ? collection?.featured?.data?.url : "/images/profile/cover-03.jpg",
                     width: 277,
                     height: 60
                   }}
@@ -586,8 +586,7 @@ const CreateCollectionArea = ({ collection }) => {
                           className="name"
                           type="text"
                           id="name"
-                          maxLength={30}
-                          defaultValue={collection ? collection.name : ""}
+                          defaultValue={collection ? collection?.name : ""}
                           {...register("title", {
                             required: "title is required"
                           })}
@@ -602,7 +601,7 @@ const CreateCollectionArea = ({ collection }) => {
                         Symbol
                       </label>
                       <div className="create-collection-input">
-                        <input className="symbol" type="text" id="symbol" defaultValue={collection ? collection.symbol : ""} {...register("symbol")} />
+                        <input className="symbol" type="text" id="symbol" defaultValue={collection ? collection?.symbol : ""} {...register("symbol")} />
                         {errors.symbol && <ErrorText>{errors.symbol?.message}</ErrorText>}
                       </div>
                     </div>
@@ -613,7 +612,7 @@ const CreateCollectionArea = ({ collection }) => {
                         URL
                       </label>
                       <div className="create-collection-input">
-                        <input className="url" type="text" id="url" defaultValue={collection ? collection.url : ""} {...register("url")} />
+                        <input className="url" type="text" id="url" defaultValue={collection ? collection?.url : ""} {...register("url")} />
                         {errors.url && <ErrorText>{errors.url?.message}</ErrorText>}
                       </div>
                     </div>
@@ -628,7 +627,7 @@ const CreateCollectionArea = ({ collection }) => {
                           name="category"
                           placeholder="Add Category"
                           options={categoryOptionsList}
-                          defaultCurrent={collection?.category ? categoryOptionsList.findIndex(obj => obj.value == collection.category) : -1}
+                          defaultCurrent={collection?.category ? categoryOptionsList.findIndex(obj => obj.value == collection?.category) : -1}
                           onChange={categoryHandler}
                         />
                         {((!category && !isEmpty(errors)) || hasCatError) && <ErrorText>Select a category</ErrorText>}
@@ -646,7 +645,7 @@ const CreateCollectionArea = ({ collection }) => {
                           placeholder="Add Blockchain"
                           options={
                             collection?.networkType ?
-                              [blockchainNetworkOptionsList.find(obj => obj.value == collection.networkType)] :
+                              [blockchainNetworkOptionsList.find(obj => obj.value == collection?.networkType)] :
                               walletData.isConnected
                                 ? blockchainNetworkOptionsList
                                 : []
@@ -666,7 +665,7 @@ const CreateCollectionArea = ({ collection }) => {
                         Description
                       </label>
                       <div className="create-collection-input">
-                        <textarea className="text-area" {...register("description")} defaultValue={collection ? collection.description : ""} />
+                        <textarea className="text-area" {...register("description")} defaultValue={collection ? collection?.description : ""} />
                         {errors.description && <ErrorText>{errors.description?.message}</ErrorText>}
                       </div>
                     </div>
@@ -714,7 +713,7 @@ const CreateCollectionArea = ({ collection }) => {
                             onSelect={(event) => {
                               setSelectedPaymentTokens(event);
                             }}
-                            selectedValues={collection.paymentTokens ? convertPaymentTokenObjToOptions(collection.paymentTokens) : []}
+                            selectedValues={collection?.paymentTokens ? convertPaymentTokenObjToOptions(collection?.paymentTokens) : []}
                             showCheckbox
                           />
                         )}
@@ -749,7 +748,7 @@ const CreateCollectionArea = ({ collection }) => {
                           id="wallet"
                           className="url"
                           type="text"
-                          defaultValue={collection ? collection.payoutWalletAddress : ""}
+                          defaultValue={collection ? collection?.payoutWalletAddress : ""}
                           {...register("wallet", {
                             required: "wallet address is required"
                           })}
