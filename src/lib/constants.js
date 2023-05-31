@@ -20,46 +20,46 @@ export const NETWORKS = {
 };
 // chain id to rpc url
 export const NETWORKS_CHAINS = {
-  // "0x5": {
-  //   chainId: "0x5",
-  //   chainName: "Goerli test network",
-  //   nativeCurrency: { name: "GoerliETH", symbol: "GoerliETH", decimals: 18 },
-  //   rpcUrls: ["https://goerli.infura.io/v3/"],
-  //   blockExplorerUrls: ["https://goerli.etherscan.io"]
-  // },
-  // "0x13881": {
-  //   chainId: "0x13881",
-  //   chainName: "Mumbai",
-  //   nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-  //   rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
-  //   blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
-  // },
-  // "0x61": {
-  //   chainId: "0x61",
-  //   chainName: "BNB Smart Chain Testnet",
-  //   nativeCurrency: { name: "tBNB", symbol: "tBNB", decimals: 18 },
-  //   rpcUrls: ["https://data-seed-prebsc-1-s3.binance.org:8545/"],
-  //   blockExplorerUrls: ["https://testnet.bscscan.com/"]
-  // }
-  "0x1": {
-    chainId: "0x1",
-    chainName: "Ethereum Mainnet",
-    nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
-    rpcUrls: ["https://mainnet.infura.io/v3/"],
-    blockExplorerUrls: ["https://etherscan.io"]
+  "0x5": {
+    chainId: "0x5",
+    chainName: "Goerli test network",
+    nativeCurrency: { name: "GoerliETH", symbol: "GoerliETH", decimals: 18 },
+    rpcUrls: ["https://goerli.infura.io/v3/"],
+    blockExplorerUrls: ["https://goerli.etherscan.io"]
   },
-  "0x89": {
-    chainId: "0x89",
-    chainName: "Polygon Mainnet",
+  "0x13881": {
+    chainId: "0x13881",
+    chainName: "Mumbai",
     nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-    rpcUrls: ["https://polygon-rpc.com/"],
-    blockExplorerUrls: ["https://polygonscan.com/"]
+    rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
+    blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
   },
-  "0x38": {
-    chainId: "0x38",
-    chainName: "BNB Smart Chain",
-    nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-    rpcUrls: ["https://rpc.ankr.com/bsc"],
-    blockExplorerUrls: ["https://bscscan.com"]
+  "0x61": {
+    chainId: "0x61",
+    chainName: "BNB Smart Chain Testnet",
+    nativeCurrency: { name: "tBNB", symbol: "tBNB", decimals: 18 },
+    rpcUrls: ["https://data-seed-prebsc-1-s3.binance.org:8545/"],
+    blockExplorerUrls: ["https://testnet.bscscan.com/"]
   }
+  // "0x1": {
+  //   chainId: "0x1",
+  //   chainName: "Ethereum Mainnet",
+  //   nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
+  //   rpcUrls: ["https://mainnet.infura.io/v3/"],
+  //   blockExplorerUrls: ["https://etherscan.io"]
+  // },
+  // "0x89": {
+  //   chainId: "0x89",
+  //   chainName: "Polygon Mainnet",
+  //   nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
+  //   rpcUrls: ["https://polygon-rpc.com/"],
+  //   blockExplorerUrls: ["https://polygonscan.com/"]
+  // },
+  // "0x38": {
+  //   chainId: "0x38",
+  //   chainName: "BNB Smart Chain",
+  //   nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+  //   rpcUrls: ["https://rpc.ankr.com/bsc"],
+  //   blockExplorerUrls: ["https://bscscan.com"]
+  // }
 };
