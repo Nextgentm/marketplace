@@ -440,11 +440,11 @@ const CreateNewArea = ({ className, space, collectible }) => {
     }
     if (collectible) {
       setDataCollection([{
-        value: collectible.collection,
-        text: collectible.collection.data.name
+        value: collectible?.collection,
+        text: collectible?.collection?.data?.name
       }])
       let allCollectibleProperties = [];
-      collectible.collectibleProperties.data.map((ele) => {
+      collectible?.collectibleProperties?.data.map((ele) => {
         allCollectibleProperties.push({ properties_name: ele.name, properties_type: ele.type });
       });
       setFormValues(allCollectibleProperties);
@@ -516,7 +516,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
   }, [selectedCollection]);
 
   const reloadCollectibleData = async () => {
-    let res = await strapi.findOne("collectibles", collectible.id, {
+    let res = await strapi.findOne("collectibles", collectible?.id, {
       populate: "*",
     });
     // console.log(res);
@@ -530,16 +530,16 @@ const CreateNewArea = ({ className, space, collectible }) => {
         return;
       }
       const validationValue = await addressIsAdmin(walletData);
-      const isAuctionLive = collectible.auction.data.every(({ status }) => status === "Live");
+      const isAuctionLive = false;//collectible?.auction?.data.every(({ status }) => status === "Live");
       if (validationValue && !isAuctionLive) {
 
-        const slug = data.name ? data.name.toLowerCase().split(" ").join("-") : collectible.slug;
+        const slug = data.name ? data.name.toLowerCase().split(" ").join("-") : collectible?.slug;
         let updatedCollectibleObj = {
-          name: data.name ? data.name : collectible.name,
-          description: data.discription ? data.discription : collectible.discription,
-          price: data.price ? Number(data.price) : collectible.price,
-          external_url: data?.external_url ? data?.external_url : collectible.external_url,
-          properties: formValues || collectible.collectibleProperties.data,
+          name: data.name ? data.name : collectible?.name,
+          description: data.discription ? data.discription : collectible?.discription,
+          price: data.price ? Number(data.price) : collectible?.price,
+          external_url: data?.external_url ? data?.external_url : collectible?.external_url,
+          properties: formValues || collectible?.collectibleProperties?.data,
           slug: slug,
         }
         if (nftImagePath) {
@@ -548,11 +548,11 @@ const CreateNewArea = ({ className, space, collectible }) => {
         }
         // console.log(updatedCollectibleObj);
 
-        const resp = await strapi.update("collectibles", collectible.id, updatedCollectibleObj);
+        const resp = await strapi.update("collectibles", collectible?.id, updatedCollectibleObj);
         // console.log(resp);
 
-        const collectiblesId = collectible.id;
-        const collectiblePropertiesLength = collectible.collectibleProperties.data.length;
+        const collectiblesId = collectible?.id;
+        const collectiblePropertiesLength = collectible?.collectibleProperties?.data.length;
         for (let i = 0; i < formValues.length; i++) {
           if (formValues[i].properties_name && formValues[i].properties_type) {
             if (i > (collectiblePropertiesLength - 1)) {
@@ -575,7 +575,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
         if (formValues.length < collectiblePropertiesLength) {
           for (let i = (formValues.length); i < collectiblePropertiesLength; i++) {
             //update old
-            await strapi.delete("collectible-properties", collectible.collectibleProperties.data[i].id);
+            await strapi.delete("collectible-properties", collectible?.collectibleProperties?.data[i].id);
           }
         }
         toast("collectible updated successfully");
@@ -683,7 +683,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
                         </label>
                         <input
                           id="name"
-                          defaultValue={collectible ? collectible.name : ""}
+                          defaultValue={collectible ? collectible?.name : ""}
                           placeholder="e. g. `Digital Awesome Game`"
                           {...register("name", {
                             required: "Name is required"
@@ -721,7 +721,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
                           {...register("discription", {
                             required: "Discription is required"
                           })}
-                          defaultValue={collectible ? collectible.description : ""}
+                          defaultValue={collectible ? collectible?.description : ""}
                         />
                         {errors.discription && <ErrorText>{errors.discription?.message}</ErrorText>}
                       </div>
@@ -771,10 +771,11 @@ const CreateNewArea = ({ className, space, collectible }) => {
                         <input
                           id="price"
                           placeholder="e. g. `20$`"
-                          defaultValue={collectible ? collectible.price : ""}
+                          type="number" step="0.0000001" min="0.000000000000000001"
+                          defaultValue={collectible ? collectible?.price : ""}
                           {...register("price", {
                             pattern: {
-                              value: /^[0-9]+$/,
+                              // value: /^[0-9]+$/,
                               message: "Please enter a number"
                             },
                             required: "Price is required"
@@ -792,7 +793,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
                         <input
                           id="royality"
                           placeholder="e. g. `20%`"
-                          defaultValue={collectible ? collectible.royalty : ""}
+                          defaultValue={collectible ? collectible?.royalty : ""}
                           readOnly={collectible ? true : false}
                           {...register("royality", {
                             pattern: {
@@ -812,7 +813,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
                           External URL
                         </label>
                         <input id="external_url" placeholder="External URL"
-                          defaultValue={collectible ? collectible.external_url : ""} {...register("externalurl")} />
+                          defaultValue={collectible ? collectible?.external_url : ""} {...register("externalurl")} />
                       </div>
                     </div>
 
@@ -825,7 +826,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
                           <input
                             id="supply"
                             placeholder="e. g. `1-100`"
-                            defaultValue={collectible ? collectible.supply : ""}
+                            defaultValue={collectible ? collectible?.supply : ""}
                             {...register("supply", {
                               pattern: {
                                 value: /^[0-9]+$/,
