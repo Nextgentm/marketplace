@@ -5,12 +5,12 @@ export const HOME_OG_IMAGE_URL =
 
 export const DEFAULT_NETWORK = "Binance"; // testnet chain Id's
 
-// export const ETHEREUM_NETWORK_CHAIN_ID = "0x5"; // testnet chain Id's
-// export const POLYGON_NETWORK_CHAIN_ID = "0x13881"; // testnet chain Id's
-// export const BINANCE_NETWORK_CHAIN_ID = "0x61"; // testnet chain Id's
-export const ETHEREUM_NETWORK_CHAIN_ID = "0x1"; // mainnet chain Id's
-export const POLYGON_NETWORK_CHAIN_ID = "0x89"; // mainnet chain Id's
-export const BINANCE_NETWORK_CHAIN_ID = "0x38"; // mainnet chain Id's
+export const ETHEREUM_NETWORK_CHAIN_ID = "0x5"; // testnet chain Id's
+export const POLYGON_NETWORK_CHAIN_ID = "0x13881"; // testnet chain Id's
+export const BINANCE_NETWORK_CHAIN_ID = "0x61"; // testnet chain Id's
+// export const ETHEREUM_NETWORK_CHAIN_ID = "0x1"; // mainnet chain Id's
+// export const POLYGON_NETWORK_CHAIN_ID = "0x89"; // mainnet chain Id's
+// export const BINANCE_NETWORK_CHAIN_ID = "0x38"; // mainnet chain Id's
 
 // network name to chain id
 export const NETWORKS = {
