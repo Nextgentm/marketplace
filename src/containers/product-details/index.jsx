@@ -192,7 +192,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       await updateCollectible({
         variables: {
           "data": {
-            putOnSale: true
+            "putOnSale": true
           },
           "updateCollectibleId": product.id
         }
