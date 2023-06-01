@@ -133,8 +133,9 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
     }
   }
 
-  async function cancelAuction(data) {
+  async function cancelAuction(event) {
     try {
+      event.preventDefault();
       // Add cancel auction call of trade contract
       // update auction to complete
       const res = await strapi.update("auctions", auction?.data?.id, {
@@ -189,10 +190,11 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
       endTimeStamp: event.target.endDate.value,
       sellType: auction.data.sellType,
       paymentToken: event.target.paymentToken.value,
-      currency: event.target.paymentToken.text ? event.target.paymentToken.text : event.target.currency.value,
+      currency: event.target.paymentToken?.options[event.target?.paymentToken?.selectedIndex]?.text ? event.target.paymentToken.options[event.target.paymentToken.selectedIndex].text : event.target.currency.value,
       quantity: event.target.quantity?.value ? event.target.quantity?.value : 1
     };
-    console.log(data);
+    // console.log(event.target.paymentToken.options[event.target.paymentToken.selectedIndex].text);
+    // console.log(data);
     updateAuctionData(data);
   };
 
