@@ -244,10 +244,10 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       endTimeStamp: event.target.endDate.value,
       sellType: _sellType,
       paymentToken: event.target.paymentToken.value,
-      currency: event.target.paymentToken.text ? event.target.paymentToken.text : event.target.currency.value,
+      currency: event.target.paymentToken?.options[event.target?.paymentToken?.selectedIndex]?.text ? event.target.paymentToken.options[event.target.paymentToken.selectedIndex].text : event.target.currency.value,
       quantity: event.target.quantity?.value ? event.target.quantity?.value : 1
     };
-    console.log(data);
+    // console.log(data);
     StoreData(data);
   };
 

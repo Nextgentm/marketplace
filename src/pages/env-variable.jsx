@@ -21,85 +21,87 @@ const Home = () => (
     <main id="main-content">
       <div className="container">
         <table>
-          <tr>
-            <td colSpan={2}>DEFAULT_NETWORK</td>
-            <td>{DEFAULT_NETWORK}</td>
-          </tr>
-          <tr>
-            <td>ETHEREUM_NETWORK_CHAIN_ID</td>
-            <td>{ETHEREUM_NETWORK_CHAIN_ID}</td>
-            <td>{NETWORKS_CHAINS[ETHEREUM_NETWORK_CHAIN_ID].chainName}</td>
-          </tr>
-          <tr>
-            <td>POLYGON_NETWORK_CHAIN_ID</td>
-            <td>{POLYGON_NETWORK_CHAIN_ID}</td>
-            <td>{NETWORKS_CHAINS[POLYGON_NETWORK_CHAIN_ID].chainName}</td>
-          </tr>
-          <tr>
-            <td>BINANCE_NETWORK_CHAIN_ID</td>
-            <td>{BINANCE_NETWORK_CHAIN_ID}</td>
-            <td>{NETWORKS_CHAINS[BINANCE_NETWORK_CHAIN_ID].chainName}</td>
-          </tr>
+          <tbody>
+            <tr>
+              <td colSpan={2}>DEFAULT_NETWORK</td>
+              <td>{DEFAULT_NETWORK}</td>
+            </tr>
+            <tr>
+              <td>ETHEREUM_NETWORK_CHAIN_ID</td>
+              <td>{ETHEREUM_NETWORK_CHAIN_ID}</td>
+              <td>{NETWORKS_CHAINS[ETHEREUM_NETWORK_CHAIN_ID].chainName}</td>
+            </tr>
+            <tr>
+              <td>POLYGON_NETWORK_CHAIN_ID</td>
+              <td>{POLYGON_NETWORK_CHAIN_ID}</td>
+              <td>{NETWORKS_CHAINS[POLYGON_NETWORK_CHAIN_ID].chainName}</td>
+            </tr>
+            <tr>
+              <td>BINANCE_NETWORK_CHAIN_ID</td>
+              <td>{BINANCE_NETWORK_CHAIN_ID}</td>
+              <td>{NETWORKS_CHAINS[BINANCE_NETWORK_CHAIN_ID].chainName}</td>
+            </tr>
 
-          <tr>
-            <td colSpan={3}><br /></td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS}</td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS}</td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS}</td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS}</td>
-          </tr>
+            <tr>
+              <td colSpan={3}><br /></td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS}</td>
+            </tr>
 
-          <tr>
-            <td colSpan={3}><br /></td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_BINANCE_FACTORY721_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_BINANCE_FACTORY721_CONTRACT_ADDRESS}</td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_BINANCE_FACTORY1155_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_BINANCE_FACTORY1155_CONTRACT_ADDRESS}</td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_BINANCE_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_BINANCE_TRANSFER_PROXY_CONTRACT_ADDRESS}</td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_BINANCE_TRADE_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_BINANCE_TRADE_CONTRACT_ADDRESS}</td>
-          </tr>
+            <tr>
+              <td colSpan={3}><br /></td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_BINANCE_FACTORY721_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_BINANCE_FACTORY721_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_BINANCE_FACTORY1155_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_BINANCE_FACTORY1155_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_BINANCE_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_BINANCE_TRANSFER_PROXY_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_BINANCE_TRADE_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_BINANCE_TRADE_CONTRACT_ADDRESS}</td>
+            </tr>
 
-          <tr>
-            <td colSpan={3}><br /></td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS}</td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS}</td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS}</td>
-          </tr>
-          <tr>
-            <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS</td>
-            <td>{process.env.NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS}</td>
-          </tr>
+            <tr>
+              <td colSpan={3}><br /></td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS}</td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </main>
