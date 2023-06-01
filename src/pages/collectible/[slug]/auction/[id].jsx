@@ -32,11 +32,30 @@ const AuctionDetails = ({ auction, recentViewProducts }) => (
     <Footer />
   </Wrapper>
 );
+
 export async function getStaticPaths() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions?populate[0]=collectible`);//?filters[id]=${id}
-    const productData = await res.json();
-    const path = productData.data.map((product) => ({
+    let productData = [];
+    let page = 1, pageCount = 1, pageSize = 25;
+    do {
+      // console.log(page, pageCount, pageSize);
+      const resData = await strapi.find("auctions", {
+        populate: {
+          collectible: {
+            fields: ["id", "slug"],
+          }
+        },
+        pagination: {
+          page: page,
+          pageSize: pageSize
+        }
+      });
+      productData = productData.concat(resData.data);
+      page++;
+      pageCount = resData.meta.pagination.pageCount;
+    } while (page <= pageCount);
+    // console.log(productData);
+    const path = productData.map((product) => ({
       params: {
         id: product.id.toString(),
         slug: product.collectible.data.slug

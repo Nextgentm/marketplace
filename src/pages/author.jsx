@@ -30,6 +30,27 @@ const Author = () => {
   const { walletData, setWalletData } = useContext(AppData);
   const [isAdminWallet, setIsAdminWallet] = useState(false);
 
+  const [onSaleDatapagination, setOnSaleDataPagination] = useState({
+    page: 1,
+    pageCount: 1,
+    pageSize: 10,
+    total: 0
+  });
+
+  const [ownedDatapagination, setOwnedDataPagination] = useState({
+    page: 1,
+    pageCount: 1,
+    pageSize: 10,
+    total: 0
+  });
+
+  const [createdDatapagination, setCreatedDataPagination] = useState({
+    page: 1,
+    pageCount: 1,
+    pageSize: 10,
+    total: 0
+  });
+
   useEffect(() => {
     if (authorData) {
       if (walletData.isConnected) {
@@ -51,7 +72,48 @@ const Author = () => {
   }, [walletData]);
 
   const getAllCollectionsData = async () => {
+    getOwnedDatapaginationRecord(1);
 
+    getCreatedDatapaginationRecord(1);
+
+    getOnSaleDatapaginationRecord(1);
+  };
+
+  const getOnSaleDatapaginationRecord = async (page) => {
+    let onsaleResponse = await strapi.find("auctions", {
+      filters: {
+        $and: [
+          {
+            status: {
+              $eq: "Live"
+            }
+          },
+          {
+            walletAddress: {
+              $eq: walletData.account
+            }
+          }
+        ]
+      },
+      populate: {
+        collectible: {
+          populate: ["image", "collection"]
+        },
+        biddings: {
+          fields: ["id"]
+        }
+      },
+      pagination: {
+        page,
+        pageSize: onSaleDatapagination.pageSize
+      },
+    });
+    // console.log(onsaleResponse);
+    setOnSaleDataPagination(onsaleResponse.meta.pagination);
+    setAllOnSaleProductsData(onsaleResponse.data);
+  };
+
+  const getOwnedDatapaginationRecord = async (page) => {
     let response = await strapi.find("collectibles", {
       filters: {
         $or: [{
@@ -83,10 +145,17 @@ const Author = () => {
         }]
       },
       populate: "*",
+      pagination: {
+        page,
+        pageSize: onSaleDatapagination.pageSize
+      },
     });
-    // console.log(response.data);
+    // console.log(response);
+    setOwnedDataPagination(response.meta.pagination);
     setAllProductsData(response.data);
+  };
 
+  const getCreatedDatapaginationRecord = async (page) => {
     let creatorResponse = await strapi.find("collectibles", {
       filters: {
         creator: {
@@ -94,36 +163,14 @@ const Author = () => {
         }
       },
       populate: "*",
+      pagination: {
+        page,
+        pageSize: createdDatapagination.pageSize
+      },
     });
     console.log(creatorResponse);
+    setCreatedDataPagination(creatorResponse.meta.pagination);
     setAllCreatedProductsData(creatorResponse.data);
-
-    let onsaleResponse = await strapi.find("auctions", {
-      filters: {
-        $and: [
-          {
-            status: {
-              $eq: "Live"
-            }
-          },
-          {
-            walletAddress: {
-              $eq: walletData.account
-            }
-          }
-        ]
-      },
-      populate: {
-        collectible: {
-          populate: ["image", "collection"]
-        },
-        biddings: {
-          fields: ["id"]
-        }
-      },
-    });
-    // console.log(onsaleResponse.data);
-    setAllOnSaleProductsData(onsaleResponse.data);
   };
 
   return (
@@ -133,7 +180,10 @@ const Author = () => {
       <main id="main-content">
         <AuthorIntroArea data={authorData} />
         <AuthorProfileArea productData={allProductsData} allCreatedProductsData={allCreatedProductsData}
-          allOnSaleProductsData={allOnSaleProductsData} isAdminWallet={isAdminWallet} />
+          allOnSaleProductsData={allOnSaleProductsData} isAdminWallet={isAdminWallet}
+          getOnSaleDatapaginationRecord={getOnSaleDatapaginationRecord} onSaleDatapagination={onSaleDatapagination}
+          getOwnedDatapaginationRecord={getOwnedDatapaginationRecord} ownedDatapagination={ownedDatapagination}
+          getCreatedDatapaginationRecord={getCreatedDatapaginationRecord} createdDatapagination={createdDatapagination} />
       </main>
       <Footer />
     </Wrapper>

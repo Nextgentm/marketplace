@@ -8,8 +8,12 @@ import Product from "@components/product/layout-01";
 import { ProductType } from "@utils/types";
 import { shuffleArray } from "@utils/methods";
 import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
+import Pagination from "@components/pagination-02";
 
-const AuthorProfileArea = ({ className, productData, allCreatedProductsData, allOnSaleProductsData, isAdminWallet }) => (
+const AuthorProfileArea = ({ className, productData, allCreatedProductsData, allOnSaleProductsData, isAdminWallet,
+  getOnSaleDatapaginationRecord, onSaleDatapagination,
+  getOwnedDatapaginationRecord, ownedDatapagination,
+  getCreatedDatapaginationRecord, createdDatapagination }) => (
   <div className={clsx("rn-authore-profile-area", className)}>
     <TabContainer defaultActiveKey="nav-profile">
       <div className="container">
@@ -65,6 +69,14 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                 </div>
               )
             )}
+            {onSaleDatapagination?.pageCount > 1 ? (
+              <Pagination
+                className="single-column-blog"
+                currentPage={onSaleDatapagination.page}
+                numberOfPages={onSaleDatapagination.pageCount}
+                onClick={getOnSaleDatapaginationRecord}
+              />
+            ) : null}
           </TabPane>
           <TabPane className="row g-5 d-flex" eventKey="nav-profile" id="nav-profile">
             {productData?.map(
@@ -89,6 +101,14 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                 </div>
               )
             )}
+            {ownedDatapagination?.pageCount > 1 ? (
+              <Pagination
+                className="single-column-blog"
+                currentPage={ownedDatapagination.page}
+                numberOfPages={ownedDatapagination.pageCount}
+                onClick={getOwnedDatapaginationRecord}
+              />
+            ) : null}
           </TabPane>
           {isAdminWallet &&
             <TabPane className="row g-5 d-flex" eventKey="nav-contact" id="nav-profile">
@@ -114,6 +134,14 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                   </div>
                 )
               )}
+              {createdDatapagination?.pageCount > 1 ? (
+                <Pagination
+                  className="single-column-blog"
+                  currentPage={createdDatapagination.page}
+                  numberOfPages={createdDatapagination.pageCount}
+                  onClick={getCreatedDatapaginationRecord}
+                />
+              ) : null}
             </TabPane>
           }
           {/* <TabPane
