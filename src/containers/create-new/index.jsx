@@ -530,7 +530,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
         return;
       }
       const validationValue = await addressIsAdmin(walletData);
-      const isAuctionLive = false;//collectible?.auction?.data.every(({ status }) => status === "Live");
+      const isAuctionLive = collectible?.auction?.data.every(({ status }) => status === "Live");
       if (validationValue && !isAuctionLive) {
 
         const slug = data.name ? data.name.toLowerCase().split(" ").join("-") : collectible?.slug;
