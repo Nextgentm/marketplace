@@ -19,11 +19,12 @@ import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CH
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
 import TransferPopupModal from "@components/modals/transfer";
-import { getERC1155Balance, validateInputAddresses, getERC1155Contract, getERC721Contract, switchNetwork } from "../../lib/BlokchainHelperFunctions";
+import { getERC1155Balance, validateInputAddresses, getERC1155Contract, getERC721Contract, switchNetwork, addressIsAdmin } from "../../lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
+import ConfirmModal from "@components/modals/confirm-modal";
 
 // Demo Image
 
@@ -54,6 +55,23 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   const handleShowTransferModal = () => {
     setShowTransferModal((prev) => !prev);
   };
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const handleShowConfirmModal = () => {
+    setShowConfirmModal((prev) => !prev);
+  };
+
+  const [isAdminWallet, setIsAdminWallet] = useState(false);
+
+  useEffect(() => {
+    if (walletData.isConnected) {
+      addressIsAdmin(walletData).then((validationValue) => {
+        setIsAdminWallet(validationValue);
+      }).catch((error) => { console.log("Error while factory call " + error) });
+    } else {
+      setIsAdminWallet(false);
+    }
+  }, [walletData]);
 
   useEffect(() => {
     // if (updatedCollectible) {
@@ -174,7 +192,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       await updateCollectible({
         variables: {
           "data": {
-            putOnSale: true
+            "putOnSale": true
           },
           "updateCollectibleId": product.id
         }
@@ -226,10 +244,10 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       endTimeStamp: event.target.endDate.value,
       sellType: _sellType,
       paymentToken: event.target.paymentToken.value,
-      currency: event.target.paymentToken.text ? event.target.paymentToken.text : event.target.currency.value,
+      currency: event.target.paymentToken?.options[event.target?.paymentToken?.selectedIndex]?.text ? event.target.paymentToken.options[event.target.paymentToken.selectedIndex].text : event.target.currency.value,
       quantity: event.target.quantity?.value ? event.target.quantity?.value : 1
     };
-    console.log(data);
+    // console.log(data);
     StoreData(data);
   };
 
@@ -332,6 +350,103 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     }
   };
 
+  const handleSubmitBurnNFT = async (event) => {
+    // const { target } = e;
+    event.preventDefault();
+    // console.log(event);
+    // console.log(product);
+    if (!walletData.isConnected) {
+      toast.error("Please connect wallet first");
+      return;
+    } // chnage network
+    if (product.collection.data.networkType === "Ethereum") {
+      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+        // ethereum testnet
+        return;
+      }
+    } else if (product.collection.data.networkType === "Polygon") {
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    } else if (product.collection.data.networkType === "Binance") {
+      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    }
+    // NFT quantity to burn
+    const quantity = event.target.quantity?.value ? event.target.quantity?.value : 1;
+    // console.log(quantity);
+    try {
+      if (quantity) {
+
+        const signer = walletData.provider.getSigner();
+        let transactionHash = null;
+        if (product.collection.data.collectionType === "Single") {
+          const contractAddress = product.collection.data.contractAddress;
+          // console.log(contractAddress);
+
+          // Pull the deployed contract instance
+          const contract721 = await getERC721Contract(walletData, contractAddress);
+
+          // approve nft first
+          const transaction = await contract721.burn(product.nftID);
+          const receipt = await transaction.wait();
+          // console.log(receipt);
+          transactionHash = receipt.transactionHash;
+        } else if (product.collection.data.collectionType === "Multiple") {
+          const contractAddress = product.collection.data.contractAddress1155;
+          // Pull the deployed contract instance
+          const contract1155 = await getERC1155Contract(walletData, contractAddress);
+
+          // transfer token
+          const transaction = await contract1155.burn(
+            walletData.account,
+            product.nftID,
+            quantity
+          );
+          const receipt = await transaction.wait();
+          console.log(receipt);
+          transactionHash = receipt.transactionHash;
+        }
+        await updateCollectible({
+          variables: {
+            "data": {
+              "owner": "",
+              "supply": product.supply - quantity,
+            },
+            "updateCollectibleId": product.id
+          }
+        });
+        await createOwnerHistory({
+          variables: {
+            data: {
+              collectible: product.id,
+              event: "Burn",
+              fromWalletAddress: walletData.account,
+              quantity: quantity,
+              toWalletAddress: "0x0000000000000000000000000000000000000000",
+              transactionHash: transactionHash
+            }
+          }
+        });
+
+        toast.success("NFT burn succesfully");
+        // router.reload();
+        // later update this product to hook
+        product.owner = "";
+        product.supply = product.supply - quantity;
+        updateMyERC1155Balance();
+        setShowConfirmModal(false);
+      } else {
+        toast.error("Invalid address");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className={clsx("product-details-area", space === 1 && "rn-section-gapTop", className)}>
       <div className="container">
@@ -395,25 +510,37 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                   <>
                     {((!product.putOnSale && product.owner === walletData.account && walletData.isConnected) ||
                       (product.supply > 1 && erc1155MyBalance > 0 && walletData.isConnected)) && (
-                        <div className="row">
-                          <div className="col-md-6">
-                            <Button
-                              color="primary-alta"
-                              onClick={() =>
-                                product.collection.data.collectionType === "Multiple"
-                                  ? setShowDirectSalesModal(true)
-                                  : setShowAuctionInputModel(true)
-                              }
-                            >
-                              Put on Sale
-                            </Button>
+                        <>
+                          <div className="row">
+                            <div className="col-md-6">
+                              <Button
+                                color="primary-alta" fullwidth
+                                onClick={() =>
+                                  product.collection.data.collectionType === "Multiple"
+                                    ? setShowDirectSalesModal(true)
+                                    : setShowAuctionInputModel(true)
+                                }
+                              >
+                                Put on Sale
+                              </Button>
+                            </div>
+                            <div className="col-md-6">
+                              <Button color="primary-alta" fullwidth onClick={() => handleShowTransferModal(true)}>
+                                Transfer
+                              </Button>
+                            </div>
                           </div>
-                          <div className="col-md-6">
-                            <Button color="primary-alta" onClick={() => handleShowTransferModal(true)}>
-                              Transfer
-                            </Button>
-                          </div>
-                        </div>
+
+                          {isAdminWallet &&
+                            <div className="row">
+                              <div className="col-md-12">
+                                <br />
+                                <Button color="primary-alta" fullwidth onClick={() => setShowConfirmModal(true)}>
+                                  Burn NFT
+                                </Button>
+                              </div>
+                            </div>}
+                        </>
                       )}
 
                     <div className="rn-bid-details">
@@ -471,6 +598,14 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         supply={product?.supply}
         maxQuantity={product?.supply > 1 ? erc1155MyBalance : product?.supply}
         handleSubmit={handleSubmitTransfer}
+      />
+      <ConfirmModal
+        show={showConfirmModal}
+        handleModal={handleShowConfirmModal}
+        headingText={"Do you really want to burn this NFT?"}
+        handleSubmit={handleSubmitBurnNFT}
+        supply={product?.supply}
+        maxQuantity={product?.supply > 1 ? erc1155MyBalance : product?.supply}
       />
     </div>
   );

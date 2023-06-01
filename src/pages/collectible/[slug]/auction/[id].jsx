@@ -38,8 +38,8 @@ export async function getStaticPaths() {
     const productData = await res.json();
     const path = productData.data.map((product) => ({
       params: {
-        slug: product.collectible.data.slug,
-        id: product.id.toString()
+        id: product.id.toString(),
+        slug: product.collectible.data.slug
       }
     }));
     return {
@@ -58,7 +58,13 @@ export async function getStaticProps({ params }) {
   // console.log(auction);
 
   let collectible = await strapi.findOne("collectibles", auction.data.collectible.data.id, {
-    populate: ["owner_histories", "image", "collectibleProperties", "collection"],
+    // populate: ["owner_histories", "image", "collectibleProperties", "collection"],
+    populate: {
+      owner_histories: { populate: "*" },
+      image: { populate: "*" },
+      collectibleProperties: { populate: "*" },
+      collection: { populate: ["paymentTokens"] },
+    }
   });
   auction.data.collectible = collectible;
   // console.log(collectible);

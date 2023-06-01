@@ -22,7 +22,7 @@ const TransferPopupModal = ({ show, handleModal, supply, maxQuantity, handleSubm
             <div className="bid-content">
               <div className="bid-content-top">
                 <div className="bid-content-left">
-                  <input id="receiver" type="text" name="receiver" required placeholder="Paste Polygon Address" />
+                  <input id="receiver" type="text" name="receiver" required placeholder="Paste Recipient Address" />
                 </div>
               </div>
 

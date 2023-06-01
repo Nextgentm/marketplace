@@ -15,12 +15,12 @@ import Modal from "react-bootstrap/Modal";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
-import { getERC721Contract, getERC1155Contract } from "src/lib/BlokchainHelperFunctions";
+import { getERC721Contract, getERC1155Contract, addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
 
-const CreateNewArea = ({ className, space }) => {
+const CreateNewArea = ({ className, space, collectible }) => {
   const [showProductModal, setShowProductModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState();
   const [hasImageError, setHasImageError] = useState(false);
@@ -61,6 +61,11 @@ const CreateNewArea = ({ className, space }) => {
   const selectedCollectionHandler = (item) => {
     setSelectedCollection(item.value);
   };
+
+  useEffect(() => {
+    // console.log(nftImagePath);
+    console.log("Image uploaded");
+  }, [nftImagePath])
 
   /** Dynamic_fields */
   const [formValues, setFormValues] = useState([{ properties_name: "", properties_type: "" }]);
@@ -362,7 +367,7 @@ const CreateNewArea = ({ className, space }) => {
                           onChange: (e) => {
                             handleNameChange(index, e);
                           },
-                          required: "Enter properties name"
+                          // required: "Enter properties name"
                         })}
                       />
                     </div>
@@ -378,7 +383,7 @@ const CreateNewArea = ({ className, space }) => {
                           onChange: (e) => {
                             handleChange(index, e);
                           },
-                          required: "Enter properties type"
+                          // required: "Enter properties type"
                         })}
                       />
                     </div>
@@ -433,37 +438,49 @@ const CreateNewArea = ({ className, space }) => {
         }
       }
     }
-    strapi.find("collections", collectionType ? filter : null)
-      .then((response) => {
-        let paramCollection = null;
-        const results = [];
-        if (router.query.collection) {
-          response.data.map((ele, i) => {
-            if (router.query.collection === ele.slug) {
-              paramCollection = ele;
-              paramCollection.index = i;
+    if (collectible) {
+      setDataCollection([{
+        value: collectible?.collection,
+        text: collectible?.collection?.data?.name
+      }])
+      let allCollectibleProperties = [];
+      collectible?.collectibleProperties?.data.map((ele) => {
+        allCollectibleProperties.push({ properties_name: ele.name, properties_type: ele.type });
+      });
+      setFormValues(allCollectibleProperties);
+    } else {
+      strapi.find("collections", collectionType ? filter : null)
+        .then((response) => {
+          let paramCollection = null;
+          const results = [];
+          if (router.query.collection) {
+            response.data.map((ele, i) => {
+              if (router.query.collection === ele.slug) {
+                paramCollection = ele;
+                paramCollection.index = i;
+                results.push({
+                  value: ele,
+                  text: ele.name
+                });
+              }
+              // console.log(ele.slug);
+            });
+          } else {
+            response.data.map((ele, i) => {
               results.push({
                 value: ele,
                 text: ele.name
               });
-            }
-            // console.log(ele.slug);
-          });
-        } else {
-          response.data.map((ele, i) => {
-            results.push({
-              value: ele,
-              text: ele.name
+              // console.log(ele.slug);
             });
-            // console.log(ele.slug);
-          });
-        }
-        setDataCollection(results);
-        // console.log(paramCollection);
-        if (paramCollection) {
-          setSelectedCollection(paramCollection);
-        }
-      });
+          }
+          setDataCollection(results);
+          // console.log(paramCollection);
+          if (paramCollection) {
+            setSelectedCollection(paramCollection);
+          }
+        });
+    }
   }, [router.query.type]);
   // console.log(dataCollection);
 
@@ -498,6 +515,84 @@ const CreateNewArea = ({ className, space }) => {
     }
   }, [selectedCollection]);
 
+  const reloadCollectibleData = async () => {
+    let res = await strapi.findOne("collectibles", collectible?.id, {
+      populate: "*",
+    });
+    // console.log(res);
+    collectible = res.data;
+  }
+
+  const updateCollectible = async (data, e) => {
+    try {
+      if (!walletData.isConnected) {
+        toast.error("Please connect wallet first");
+        return;
+      }
+      const validationValue = await addressIsAdmin(walletData);
+      const isAuctionLive = collectible?.auction?.data.every(({ status }) => status === "Live");
+      if (validationValue && !isAuctionLive) {
+
+        const slug = data.name ? data.name.toLowerCase().split(" ").join("-") : collectible?.slug;
+        let updatedCollectibleObj = {
+          name: data.name ? data.name : collectible?.name,
+          description: data.discription ? data.discription : collectible?.discription,
+          price: data.price ? Number(data.price) : collectible?.price,
+          external_url: data?.external_url ? data?.external_url : collectible?.external_url,
+          properties: formValues || collectible?.collectibleProperties?.data,
+          slug: slug,
+        }
+        if (nftImagePath) {
+          updatedCollectibleObj.image = JSON.parse(nftImagePath);
+          updatedCollectibleObj.imageID = nftImageId;
+        }
+        // console.log(updatedCollectibleObj);
+
+        const resp = await strapi.update("collectibles", collectible?.id, updatedCollectibleObj);
+        // console.log(resp);
+
+        const collectiblesId = collectible?.id;
+        const collectiblePropertiesLength = collectible?.collectibleProperties?.data.length;
+        for (let i = 0; i < formValues.length; i++) {
+          if (formValues[i].properties_name && formValues[i].properties_type) {
+            if (i > (collectiblePropertiesLength - 1)) {
+              //create new
+              await strapi.create("collectible-properties", {
+                name: formValues[i].properties_name,
+                type: formValues[i].properties_type,
+                collectibles: collectiblesId
+              });
+            } else {
+              //update old
+              await strapi.update("collectible-properties", collectible.collectibleProperties.data[i].id, {
+                name: formValues[i].properties_name,
+                type: formValues[i].properties_type,
+              });
+            }
+          }
+        }
+        // loop to remove properties
+        if (formValues.length < collectiblePropertiesLength) {
+          for (let i = (formValues.length); i < collectiblePropertiesLength; i++) {
+            //update old
+            await strapi.delete("collectible-properties", collectible?.collectibleProperties?.data[i].id);
+          }
+        }
+        toast("collectible updated successfully");
+        reloadCollectibleData();
+      } else {
+        if (!validationValue)
+          toast.error("Only admin can update collectible");
+        if (isAuctionLive)
+          toast.error("Please close live auctions for this NFT to edit.");
+
+      }
+    } catch (error) {
+      toast.error("Error while updating collectible");
+      console.log(error);
+    }
+  }
+
   return (
     <>
       <div className={clsx("create-area", space === 1 && "rn-section-gapTop", className)}>
@@ -507,7 +602,7 @@ const CreateNewArea = ({ className, space }) => {
           formValues={formValues}
           setFormValues={setFormValues}
         />
-        <form action="#" onSubmit={handleSubmit(onSubmit)}>
+        <form action="#" onSubmit={collectible ? handleSubmit(updateCollectible) : handleSubmit(onSubmit)}>
           <div className="container">
             <div className="row g-5">
               <div className="col-lg-3 offset-1 ml_md--0 ml_sm--0">
@@ -525,17 +620,29 @@ const CreateNewArea = ({ className, space }) => {
                       className="inputfile"
                       data-multiple-caption="{count} files selected"
                       multiple
-                      {...register("file", {
+                      {...register("file", collectible ? {
+                        onChange: () => {
+                          updateImage("file");
+                        }
+                      } : {
                         required: "Upload logo image",
                         onChange: () => {
                           updateImage("file");
                         }
                       })}
                     />
-                    {selectedImage && (
+                    {(selectedImage) && (
                       <img
                         id="createfileImage"
                         src={URL.createObjectURL(selectedImage)}
+                        alt=""
+                        data-black-overlay="6"
+                      />
+                    )}
+                    {(collectible?.image?.data?.url && !nftImagePath) && (
+                      <img
+                        id="createfileImage"
+                        src={collectible?.image?.data?.url}
                         alt=""
                         data-black-overlay="6"
                       />
@@ -576,6 +683,7 @@ const CreateNewArea = ({ className, space }) => {
                         </label>
                         <input
                           id="name"
+                          defaultValue={collectible ? collectible?.name : ""}
                           placeholder="e. g. `Digital Awesome Game`"
                           {...register("name", {
                             required: "Name is required"
@@ -613,6 +721,7 @@ const CreateNewArea = ({ className, space }) => {
                           {...register("discription", {
                             required: "Discription is required"
                           })}
+                          defaultValue={collectible ? collectible?.description : ""}
                         />
                         {errors.discription && <ErrorText>{errors.discription?.message}</ErrorText>}
                       </div>
@@ -629,7 +738,7 @@ const CreateNewArea = ({ className, space }) => {
                               placeholder="Select Collection"
                               options={dataCollection}
                               onChange={selectedCollectionHandler}
-                              defaultCurrent={router.query?.type ? 0 : null}
+                              defaultCurrent={router.query?.type || collectible ? 0 : null}
                             />
                           )}
                         </div>
@@ -662,9 +771,11 @@ const CreateNewArea = ({ className, space }) => {
                         <input
                           id="price"
                           placeholder="e. g. `20$`"
+                          type="number" step="0.0000001" min="0.000000000000000001"
+                          defaultValue={collectible ? collectible?.price : ""}
                           {...register("price", {
                             pattern: {
-                              value: /^[0-9]+$/,
+                              // value: /^[0-9]+$/,
                               message: "Please enter a number"
                             },
                             required: "Price is required"
@@ -682,6 +793,8 @@ const CreateNewArea = ({ className, space }) => {
                         <input
                           id="royality"
                           placeholder="e. g. `20%`"
+                          defaultValue={collectible ? collectible?.royalty : ""}
+                          readOnly={collectible ? true : false}
                           {...register("royality", {
                             pattern: {
                               value: /^[0-9]+$/,
@@ -699,7 +812,8 @@ const CreateNewArea = ({ className, space }) => {
                         <label htmlFor="External URL" className="form-label">
                           External URL
                         </label>
-                        <input id="external_url" placeholder="External URL" {...register("externalurl")} />
+                        <input id="external_url" placeholder="External URL"
+                          defaultValue={collectible ? collectible?.external_url : ""} {...register("externalurl")} />
                       </div>
                     </div>
 
@@ -712,6 +826,7 @@ const CreateNewArea = ({ className, space }) => {
                           <input
                             id="supply"
                             placeholder="e. g. `1-100`"
+                            defaultValue={collectible ? collectible?.supply : ""}
                             {...register("supply", {
                               pattern: {
                                 value: /^[0-9]+$/,
@@ -782,27 +897,44 @@ const CreateNewArea = ({ className, space }) => {
                                             </div>
                                         </div> */}
 
-                    <div className="col-md-12 col-xl-4">
-                      <div className="input-box">
-                        <Button
-                          color="primary-alta"
-                          fullwidth
-                          type="submit"
-                          data-btn="preview"
-                          onClick={handleSubmit(onSubmit)}
-                        >
-                          Preview
-                        </Button>
+                    {collectible ?
+                      <div className="col-lg-12">
+                        <div className="button-wrapper">
+                          <Button
+                            type="submit"
+                            color="primary-alta"
+                            data-btn="update"
+                            name="update"
+                            value="update"
+                            fullwidth
+                          >
+                            Update Collection
+                          </Button>
+                        </div>
                       </div>
-                    </div>
+                      : <>
+                        <div className="col-md-12 col-xl-4">
+                          <div className="input-box">
+                            <Button
+                              color="primary-alta"
+                              fullwidth
+                              type="submit"
+                              data-btn="preview"
+                              onClick={handleSubmit(onSubmit)}
+                            >
+                              Preview
+                            </Button>
+                          </div>
+                        </div>
 
-                    <div className="col-md-12 col-xl-8 mt_lg--15 mt_md--15 mt_sm--15">
-                      <div className="input-box">
-                        <Button type="submit" fullwidth>
-                          Submit Item
-                        </Button>
-                      </div>
-                    </div>
+                        <div className="col-md-12 col-xl-8 mt_lg--15 mt_md--15 mt_sm--15">
+                          <div className="input-box">
+                            <Button type="submit" fullwidth>
+                              Submit Item
+                            </Button>
+                          </div>
+                        </div>
+                      </>}
                   </div>
                   <div className="mt--100 mt_sm--30 mt_md--30 d-block d-lg-none">
                     {/* <h5> Note: </h5>

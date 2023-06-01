@@ -12,10 +12,75 @@ import { AppData } from "src/context/app-context";
 import { useRouter } from "next/router";
 import Multiselect from "multiselect-react-dropdown";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, BINANCE_NETWORK_CHAIN_ID } from "src/lib/constants";
-import { getERC721FactoryContract, getERC1155FactoryContract } from "src/lib/BlokchainHelperFunctions";
+import { getERC721FactoryContract, getERC1155FactoryContract, addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import strapi from "@utils/strapi";
 
-const CreateCollectionArea = () => {
+const categoryOptionsList = [
+  {
+    value: "Art",
+    text: "Art"
+  },
+  {
+    value: "Domain Names",
+    text: "Domain Names"
+  },
+  {
+    value: "Memberships",
+    text: "Memberships"
+  },
+  {
+    value: "Music",
+    text: "Music"
+  },
+  {
+    value: "PFPs",
+    text: "PFPs"
+  },
+  {
+    value: "Photography",
+    text: "Photography"
+  },
+  {
+    value: "Sports Collectibles",
+    text: "Sports Collectibles"
+  },
+  {
+    value: "Virtual World",
+    text: "Virtual World"
+  },
+  {
+    value: "No category",
+    text: "No category"
+  }
+];
+
+const blockchainNetworkOptionsList = [
+  {
+    value: "Ethereum",
+    text: "Ethereum"
+  },
+  {
+    value: "Polygon",
+    text: "Polygon"
+  },
+  {
+    value: "Binance",
+    text: "Binance"
+  },
+];
+
+const convertPaymentTokenObjToOptions = (arr) => {
+  const results = [];
+  arr.data.map((data) =>
+    results.push({
+      value: data.id,
+      key: data.name
+    })
+  );
+  return results;
+}
+
+const CreateCollectionArea = ({ collection }) => {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [category, setCategory] = useState(""); // cateory
   const [blockchainNetwork, setBlockchainNetwork] = useState(""); // selected network
@@ -94,16 +159,72 @@ const CreateCollectionArea = () => {
 
   useEffect(() => {
     strapi.find("payment-tokens").then((response) => {
-      const results = [];
-      response.data.map((data) =>
-        results.push({
-          value: data.id,
-          key: data.name
-        })
-      );
+      const results = convertPaymentTokenObjToOptions(response);
       setPaymentTokensData(results);
     });
   }, []);
+
+  //load collection data
+  useEffect(() => {
+    if (collection) {
+      setSelectedPaymentTokens(convertPaymentTokenObjToOptions(collection?.paymentTokens));
+      setCategory(collection?.category);
+      setBlockchainNetwork(collection?.networkType);
+      // setLogoImagePath(collection.logo.data.url);
+      // setlogoImageId(collection.logoID);
+      // setCoverImagePath(collection.cover.data.url);
+      // setCoverImageId(collection.coverID);
+      // setFeatureImagePath(collection.featured.data.url);
+      // setFeatureImageId(collection.featuredID);
+    }
+  }, [collection]);
+
+  const updateCollection = async (data, e) => {
+    try {
+      if (!walletData.isConnected) {
+        toast.error("Please connect wallet first");
+        return;
+      }
+      const validationValue = await addressIsAdmin(walletData);
+      if (validationValue) {
+        const slug = data.title ? data.title.toLowerCase().split(" ").join("-") : null;
+        const selectedPaymentTokensList = Array.from(selectedPaymentTokens).map(({ value }) => value);
+        // console.log(selectedPaymentTokens);
+        let updatedCollectionObj = {
+          name: data.title ? data.title : collection?.name,
+          symbol: data.symbol,
+          url: data.url ? data.url : collection?.url,
+          description: data.description ? data.description : collection?.description,
+          category,
+          slug,
+          paymentTokens: selectedPaymentTokensList,
+          payoutWalletAddress: data.wallet ? data.wallet : collection?.payoutWalletAddress,
+          explicitAndSensitiveContent: data.themeSwitch
+        }
+        if (logoImagePath) {
+          updatedCollectionObj.logo = JSON.parse(logoImagePath);
+          updatedCollectionObj.logoID = Number(logoImageId);
+        }
+        if (coverImagePath) {
+          updatedCollectionObj.cover = JSON.parse(coverImagePath);
+          updatedCollectionObj.coverID = Number(coverImageId);
+        }
+        if (featureImagePath) {
+          updatedCollectionObj.featured = JSON.parse(featureImagePath);
+          updatedCollectionObj.featuredID = Number(featureImageId);
+        }
+        // console.log(updatedCollectionObj);
+        const resp = await strapi.update("collections", collection?.id, updatedCollectionObj);
+        console.log(resp);
+        toast("Collection updated successfully");
+      } else {
+        toast.error("Only admin can update collection");
+      }
+    } catch (error) {
+      toast.error("Error while updating collection");
+      console.log(error);
+    }
+  }
 
   async function updateImage(e) {
     if (logoImageId) {
@@ -367,7 +488,7 @@ const CreateCollectionArea = () => {
     <>
       <div className="creat-collection-area pt--80">
         <div className="container">
-          <form className="row g-5" encType="multipart/form-data" onSubmit={handleSubmit(onSubmit)}>
+          <form className="row g-5" encType="multipart/form-data" onSubmit={collection ? handleSubmit(updateCollection) : handleSubmit(onSubmit)}>
             <div className="col-lg-3 offset-1 ml_md--0 ml_sm--0">
               <div className="collection-single-wized banner">
                 <label htmlFor="logoImg" className="title required">
@@ -378,17 +499,22 @@ const CreateCollectionArea = () => {
                   className="logo-image"
                   id="logoImg"
                   placeholder={{
-                    src: "/images/profile/profile-01.jpg",
+                    src: collection ? collection?.logo?.data?.url : "/images/profile/profile-01.jpg",
                     width: 277,
                     height: 277
                   }}
                   preview={getValues("logoImg")?.[0]}
-                  {...register("logoImg", {
+                  {...register("logoImg", collection ? {
+                    onChange: (e) => {
+                      updateImage("logoImg");
+                    }
+                  } : {
                     required: "Upload logo image",
                     onChange: (e) => {
                       updateImage("logoImg");
                     }
-                  })}
+                  }
+                  )}
                 />
                 <label htmlFor="logoImg" className="imagerecommended">
                   4500 x 4500px recommended
@@ -404,7 +530,7 @@ const CreateCollectionArea = () => {
                   className="feature-image"
                   id="featImg"
                   placeholder={{
-                    src: "/images/profile/cover-04.jpg",
+                    src: collection ? collection?.cover?.data?.url : "/images/profile/cover-04.jpg",
                     width: 277,
                     height: 138
                   }}
@@ -429,7 +555,7 @@ const CreateCollectionArea = () => {
                   className="banner-image"
                   id="bannerImg"
                   placeholder={{
-                    src: "/images/profile/cover-03.jpg",
+                    src: collection ? collection?.featured?.data?.url : "/images/profile/cover-03.jpg",
                     width: 277,
                     height: 60
                   }}
@@ -460,7 +586,7 @@ const CreateCollectionArea = () => {
                           className="name"
                           type="text"
                           id="name"
-                          maxLength={30}
+                          defaultValue={collection ? collection?.name : ""}
                           {...register("title", {
                             required: "title is required"
                           })}
@@ -475,7 +601,7 @@ const CreateCollectionArea = () => {
                         Symbol
                       </label>
                       <div className="create-collection-input">
-                        <input className="symbol" type="text" id="symbol" {...register("symbol")} />
+                        <input className="symbol" type="text" id="symbol" defaultValue={collection ? collection?.symbol : ""} {...register("symbol")} />
                         {errors.symbol && <ErrorText>{errors.symbol?.message}</ErrorText>}
                       </div>
                     </div>
@@ -486,7 +612,7 @@ const CreateCollectionArea = () => {
                         URL
                       </label>
                       <div className="create-collection-input">
-                        <input className="url" type="text" id="url" {...register("url")} />
+                        <input className="url" type="text" id="url" defaultValue={collection ? collection?.url : ""} {...register("url")} />
                         {errors.url && <ErrorText>{errors.url?.message}</ErrorText>}
                       </div>
                     </div>
@@ -500,44 +626,8 @@ const CreateCollectionArea = () => {
                         <NiceSelect
                           name="category"
                           placeholder="Add Category"
-                          options={[
-                            {
-                              value: "Art",
-                              text: "Art"
-                            },
-                            {
-                              value: "Domain Names",
-                              text: "Domain Names"
-                            },
-                            {
-                              value: "Memberships",
-                              text: "Memberships"
-                            },
-                            {
-                              value: "Music",
-                              text: "Music"
-                            },
-                            {
-                              value: "PFPs",
-                              text: "PFPs"
-                            },
-                            {
-                              value: "Photography",
-                              text: "Photography"
-                            },
-                            {
-                              value: "Sports Collectibles",
-                              text: "Sports Collectibles"
-                            },
-                            {
-                              value: "Virtual World",
-                              text: "Virtual World"
-                            },
-                            {
-                              value: "No category",
-                              text: "No category"
-                            }
-                          ]}
+                          options={categoryOptionsList}
+                          defaultCurrent={collection?.category ? categoryOptionsList.findIndex(obj => obj.value == collection?.category) : -1}
                           onChange={categoryHandler}
                         />
                         {((!category && !isEmpty(errors)) || hasCatError) && <ErrorText>Select a category</ErrorText>}
@@ -554,23 +644,13 @@ const CreateCollectionArea = () => {
                           name="blockchain"
                           placeholder="Add Blockchain"
                           options={
-                            walletData.isConnected
-                              ? [
-                                {
-                                  value: "Ethereum",
-                                  text: "Ethereum"
-                                },
-                                {
-                                  value: "Polygon",
-                                  text: "Polygon"
-                                },
-                                {
-                                  value: "Binance",
-                                  text: "Binance"
-                                },
-                              ]
-                              : []
+                            collection?.networkType ?
+                              [blockchainNetworkOptionsList.find(obj => obj.value == collection?.networkType)] :
+                              walletData.isConnected
+                                ? blockchainNetworkOptionsList
+                                : []
                           }
+                          defaultCurrent={collection ? 0 : -1}
                           onChange={blockchainNetworkHandler}
                         />
                         {((!blockchainNetwork && !isEmpty(errors)) || hasBlockchainNetworkError) && (
@@ -585,7 +665,7 @@ const CreateCollectionArea = () => {
                         Description
                       </label>
                       <div className="create-collection-input">
-                        <textarea className="text-area" {...register("description")} />
+                        <textarea className="text-area" {...register("description")} defaultValue={collection ? collection?.description : ""} />
                         {errors.description && <ErrorText>{errors.description?.message}</ErrorText>}
                       </div>
                     </div>
@@ -633,6 +713,7 @@ const CreateCollectionArea = () => {
                             onSelect={(event) => {
                               setSelectedPaymentTokens(event);
                             }}
+                            selectedValues={collection?.paymentTokens ? convertPaymentTokenObjToOptions(collection?.paymentTokens) : []}
                             showCheckbox
                           />
                         )}
@@ -667,6 +748,7 @@ const CreateCollectionArea = () => {
                           id="wallet"
                           className="url"
                           type="text"
+                          defaultValue={collection ? collection?.payoutWalletAddress : ""}
                           {...register("wallet", {
                             required: "wallet address is required"
                           })}
@@ -698,19 +780,30 @@ const CreateCollectionArea = () => {
                   </div>
                   <div className="col-lg-12">
                     <div className="button-wrapper">
-                      <Button className="mr--30" type="submit" data-btn="preview" onClick={handleSubmit(onSubmit)}>
-                        Preview
-                      </Button>
-                      <Button
-                        type="submit"
-                        color="primary-alta"
-                        data-btn="create"
-                        name="create"
-                        value="create"
-                        onClick={() => setShowPreviewModal(false)}
-                      >
-                        Create
-                      </Button>
+                      {collection ?
+                        <Button
+                          type="submit"
+                          color="primary-alta"
+                          data-btn="update"
+                          name="update"
+                          value="update"
+                        >
+                          Update Collection
+                        </Button> : <>
+                          <Button className="mr--30" type="submit" data-btn="preview" onClick={handleSubmit(onSubmit)}>
+                            Preview
+                          </Button>
+                          <Button
+                            type="submit"
+                            color="primary-alta"
+                            data-btn="create"
+                            name="create"
+                            value="create"
+                            onClick={() => setShowPreviewModal(false)}
+                          >
+                            Create
+                          </Button>
+                        </>}
                     </div>
                   </div>
                 </div>

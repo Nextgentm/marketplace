@@ -15,13 +15,16 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
-import { getERC1155Balance, validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
+import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { getERC1155Balance, switchNetwork, validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
 
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
+import TimeAuctionModal from "@components/modals/time-auction";
+import DirectSalesModal from "@components/modals/direct-sales";
+import ConfirmModal from "@components/modals/confirm-modal";
 
 // Demo Image
 
@@ -35,6 +38,21 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
   const router = useRouter();
   const [auction, setAuction] = useState(auctionData);
   const [erc1155MyBalance, setERC1155MyBalance] = useState(0);
+
+  const [showDirectSalesModal, setShowDirectSalesModal] = useState(false);
+  const handleDirectSaleModal = () => {
+    setShowDirectSalesModal((prev) => !prev);
+  };
+
+  const [showTimeAuctionModal, setShowTimeAuctionModal] = useState(false);
+  const handleTimeAuctionModal = () => {
+    setShowTimeAuctionModal((prev) => !prev);
+  };
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const handleConfirmModal = () => {
+    setShowConfirmModal((prev) => !prev);
+  };
 
   useEffect(() => {
     // if (updatedCollectible) {
@@ -80,6 +98,106 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
     updateMyERC1155Balance();
   }, [walletData])
 
+  // Auction Edit
+
+  async function updateAuctionData(data) {
+    try {
+      // update auction to complete
+      const res = await strapi.update("auctions", auction?.data?.id, {
+        bidPrice: data.price,
+        priceCurrency: data.currency,
+        // sellType: data.sellType,
+        status: "Live",
+        startTimestamp: data.startTimestamp,
+        endTimeStamp: data.endTimeStamp,
+        paymentToken: data.paymentToken,
+        quantity: data.quantity ? data.quantity : 1,
+        remainingQuantity: data.quantity ? data.quantity : 1,
+      });
+      // console.log(res);
+      toast.success("Auction updated successfully");
+      setShowDirectSalesModal(false);
+      setShowTimeAuctionModal(false);
+      //update page data
+      auction.data.bidPrice = data.price;
+      auction.data.priceCurrency = data.currency;
+      auction.data.status = "Live";
+      auction.data.startTimestamp = data.startTimestamp;
+      auction.data.endTimeStamp = data.endTimeStamp;
+      auction.data.paymentToken = data.paymentToken;
+      auction.data.quantity = data.quantity ? data.quantity : 1;
+      auction.data.remainingQuantity = data.quantity ? data.quantity : 1;
+    } catch (error) {
+      toast.error("Error while creating auction");
+      console.log(error);
+    }
+  }
+
+  async function cancelAuction(event) {
+    try {
+      event.preventDefault();
+      // Add cancel auction call of trade contract
+      // update auction to complete
+      const res = await strapi.update("auctions", auction?.data?.id, {
+        status: "Completed",
+      });
+      // console.log(res);
+      await updateCollectible({
+        variables: {
+          "data": {
+            putOnSale: false
+          },
+          "updateCollectibleId": auction?.data?.collectible.data.id
+        }
+      });
+      toast.success("Auction closed successfully");
+      setShowConfirmModal(false);
+      router.push(`/collectible/${auction?.data?.collectible.data.slug}`);
+    } catch (error) {
+      toast.error("Error while creating auction");
+      console.log(error);
+    }
+  }
+
+  const handleSubmitEdit = async (event) => {
+    // const { target } = e;
+    event.preventDefault();
+    // console.log(event);
+    if (!walletData.isConnected) {
+      toast.error("Please connect wallet first");
+      return;
+    } // chnage network
+    if (auction?.data?.collectible.data.collection.data.networkType === "Ethereum") {
+      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+        // ethereum testnet
+        return;
+      }
+    } else if (auction?.data?.collectible.data.collection.data.networkType === "Polygon") {
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    } else if (auction?.data?.collectible.data.collection.data.networkType === "Binance") {
+      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    }
+
+    const data = {
+      price: event.target.price.value,
+      startTimestamp: event.target.startDate.value,
+      endTimeStamp: event.target.endDate.value,
+      sellType: auction.data.sellType,
+      paymentToken: event.target.paymentToken.value,
+      currency: event.target.paymentToken?.options[event.target?.paymentToken?.selectedIndex]?.text ? event.target.paymentToken.options[event.target.paymentToken.selectedIndex].text : event.target.currency.value,
+      quantity: event.target.quantity?.value ? event.target.quantity?.value : 1
+    };
+    // console.log(event.target.paymentToken.options[event.target.paymentToken.selectedIndex].text);
+    // console.log(data);
+    updateAuctionData(data);
+  };
+
   return (
     <div className={clsx("product-details-area", space === 1 && "rn-section-gapTop", className)}>
       <div className="container">
@@ -103,6 +221,20 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
               <div className="catagory-collection">
                 <ProductCategory owner={auction?.data?.collectible.data.collection} royalty={auction?.data?.royalty} />
                 <ProductCollection collection={auction?.data?.collectible.data.collection} />
+              </div>
+              <div>
+                {auction?.data?.walletAddress == walletData.account && auction?.data?.status == "Live" ? (
+                  <div className="rn-bid-details">
+                    <div className="row">
+                      <div className="col-md-6">
+                        <Button onClick={() => auction.data.sellType == "FixedPrice" ? handleDirectSaleModal(true) : handleTimeAuctionModal(true)}>Edit Auction</Button>
+                      </div>
+                      <div className="col-md-6">
+                        <Button onClick={() => setShowConfirmModal(true)}>Cancel Auction</Button>
+                      </div>
+                    </div>
+                  </div>
+                ) : <></>}
               </div>
               <div className="rn-bid-details">
                 <BidTab
@@ -137,6 +269,30 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
           </div>
         </div>
       </div>
+      <DirectSalesModal
+        show={showDirectSalesModal}
+        handleModal={handleDirectSaleModal}
+        supply={auction?.data?.collectible.data.supply}
+        maxQuantity={auction?.data?.collectible.data.supply > 1 ? erc1155MyBalance : auction?.data?.collectible.data.supply}
+        handleSubmit={handleSubmitEdit}
+        paymentTokensList={auction?.data?.collectible.data.collection?.data?.paymentTokens?.data}
+        auctionData={auction?.data}
+      />
+      <TimeAuctionModal
+        show={showTimeAuctionModal}
+        handleModal={handleTimeAuctionModal}
+        supply={auction?.data?.collectible.data.supply}
+        maxQuantity={auction?.data?.collectible.data.supply > 1 ? erc1155MyBalance : auction?.data?.collectible.data.supply}
+        handleSubmit={handleSubmitEdit}
+        paymentTokensList={auction?.data?.collectible.data.collection?.data?.paymentTokens?.data}
+        auctionData={auction?.data}
+      />
+      <ConfirmModal
+        show={showConfirmModal}
+        handleModal={handleConfirmModal}
+        headingText={"Do you really want to cancel this auction?"}
+        handleSubmit={cancelAuction}
+      />
     </div>
   );
 };

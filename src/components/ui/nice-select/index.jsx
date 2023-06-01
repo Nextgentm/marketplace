@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { useClickAway } from "react-use";
@@ -9,6 +9,10 @@ const NiceSelect = ({ options, defaultCurrent, placeholder, className, onChange,
   const onClose = useCallback(() => {
     setOpen(false);
   }, []);
+
+  useEffect(() => {
+    setCurrent(options[defaultCurrent]);
+  }, [defaultCurrent, options]);
   const ref = useRef(null);
 
   useClickAway(ref, onClose);

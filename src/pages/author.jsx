@@ -84,7 +84,7 @@ const Author = () => {
       },
       populate: "*",
     });
-    console.log(response.data);
+    // console.log(response.data);
     setAllProductsData(response.data);
 
     let creatorResponse = await strapi.find("collectibles", {
@@ -95,7 +95,7 @@ const Author = () => {
       },
       populate: "*",
     });
-    // console.log(creatorResponse.data);
+    console.log(creatorResponse);
     setAllCreatedProductsData(creatorResponse.data);
 
     let onsaleResponse = await strapi.find("auctions", {
