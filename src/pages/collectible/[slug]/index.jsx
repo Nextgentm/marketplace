@@ -31,11 +31,27 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
     <Footer />
   </Wrapper>
 );
+
 export async function getStaticPaths() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles/?populate=*`);
-    const productData = await res.json();
-    const path = productData.data.map(({ slug }) => ({
+    let productData = [];
+    let page = 1, pageCount = 1, pageSize = 25;
+    do {
+      // console.log(page, pageCount, pageSize);
+      const resData = await strapi.find("collectibles", {
+        fields: ["id", "slug"],
+        pagination: {
+          page: page,
+          pageSize: pageSize
+        }
+      });
+      productData = productData.concat(resData.data);
+      page++;
+      pageCount = resData.meta.pagination.pageCount;
+    } while (page <= pageCount);
+    // console.log(productData);
+
+    const path = productData.map(({ slug }) => ({
       params: {
         slug
       }

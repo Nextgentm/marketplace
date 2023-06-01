@@ -22,10 +22,25 @@ const EditCollection = ({ collection }) => (
 
 export async function getStaticPaths() {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections`);
-        const productData = await res.json();
+        let productData = [];
+        let page = 1, pageCount = 1, pageSize = 25;
+        do {
+            // console.log(page, pageCount, pageSize);
+            const resData = await strapi.find("collections", {
+                fields: ["id", "slug"],
+                pagination: {
+                    page: page,
+                    pageSize: pageSize
+                }
+            });
+            productData = productData.concat(resData.data);
+            page++;
+            pageCount = resData.meta.pagination.pageCount;
+        } while (page <= pageCount);
+        // console.log(productData);
+
         return {
-            paths: productData.data.map(({ slug }) => ({
+            paths: productData.map(({ slug }) => ({
                 params: {
                     slug
                 }
