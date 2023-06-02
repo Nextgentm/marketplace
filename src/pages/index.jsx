@@ -52,14 +52,14 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, o
             products: newestData
           }}
         />
-        <OtherMarketplaceCollectibles
+        {/* <OtherMarketplaceCollectibles
           data={
             dataCollectibles && {
               ...content["other-marketplace-product-section"],
               products: otherMarketplaceCollectibles
             }
           }
-        />
+        /> */}
         <CollectionArea
           data={
             dataCollection && {
