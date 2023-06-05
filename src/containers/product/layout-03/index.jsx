@@ -25,14 +25,16 @@ const ProductArea = ({ space, className, data }) => (
             <Product
               title={prod.name || "Untitled NFT"}
               slug={prod.slug}
+              supply={prod.supply}
               latestBid={prod.latestBid || "N/A"}
               price={prod.price || "-"}
               symbol={prod.symbol || ""}
+              collectionName={prod?.collection?.data?.name}
+              image={prod.image.data ? prod.image.data.url : "/images/portfolio/lg/portfolio-01.jpg"}
+              bitCount={prod.bitCount}
+              authors={prod.authors}
               likeCount={prod.likeCount}
               auction_date={prod.auction_date}
-              image={prod.image.data ? prod.image.data.url : "/images/portfolio/lg/portfolio-01.jpg"}
-              authors={prod.authors}
-              bitCount={prod.bitCount}
             />
           </div>
         ))}
