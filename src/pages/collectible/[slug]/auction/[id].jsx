@@ -95,6 +95,11 @@ export async function getStaticProps({ params }) {
       },
       status: {
         $eq: "Live"
+      },
+      collectible: {
+        collection: {
+          id: auction.data?.collectible?.data?.collection?.data?.id
+        }
       }
     },
     populate: {
