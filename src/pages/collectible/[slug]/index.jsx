@@ -19,13 +19,14 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
       <Breadcrumb pageTitle="Product Details" currentPage="Product Details" />
       {product && <ProductDetailsArea product={product} bids={bids} />}
 
-      <AuctionArea
-        data={{
-          section_title: { title: "Related Item" },
-          auctions: recentViewProducts.data,
-        }}
-        collectiblePage={true}
-      />
+      {recentViewProducts?.data?.length > 0 &&
+        <AuctionArea
+          data={{
+            section_title: { title: "Related Item" },
+            auctions: recentViewProducts.data,
+          }}
+          collectiblePage={true}
+        />}
 
     </main>
     <Footer />
@@ -102,11 +103,16 @@ export async function getStaticProps({ params }) {
 
   const filter = {
     filters: {
-      id: {
-        $ne: params.id
-      },
       status: {
         $eq: "Live"
+      },
+      collectible: {
+        id: {
+          $ne: product.id
+        },
+        collection: {
+          id: product.collection?.data?.id
+        }
       }
     },
     populate: {

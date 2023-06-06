@@ -19,12 +19,14 @@ import { getCollectible } from "src/services/collections/collection";
 // }
 
 const Collectibles = ({ dataCollectibles }) => {
+  const router = useRouter();
+
   return (
     <Wrapper>
       <SEO pageTitle="Explore Simple" />
       <Header />
       <main id="main-content">
-        <Breadcrumb pageTitle="Explore NFT" currentPage="Explore NFT" />
+        <Breadcrumb pageTitle={router.query.collection ? "Explore NFT Collection" : "Explore NFT"} currentPage={router.query.collection ? "Explore NFT Collection" : "Explore NFT"} />
         {dataCollectibles && (
           <ExploreProductArea
             data={{
