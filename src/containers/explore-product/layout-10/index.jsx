@@ -92,6 +92,7 @@ const ExploreProductArea = ({
   });
   if (router.query.collection) {
     collectionPage = true;
+    section_title.title = router.query.collection + " Collection";
   }
   useEffect(() => {
     if (collectionData.data) {
