@@ -29,7 +29,7 @@ const ProductFilter = ({
 }) => (
   <div className="nu-course-sidebar">
     <SortWidget onChange={sortHandler} value={sort} />
-    <MarketplaceSort onChange={sortHandler} value={sort} />
+    {/* <MarketplaceSort onChange={sortHandler} value={sort} /> */}
     {networksList && (
       <NetworkFilter
         networks={networksList}
