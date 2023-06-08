@@ -33,113 +33,88 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
   </Wrapper>
 );
 
-export async function getStaticPaths() {
+export async function getServerSideProps({ params }) {
   try {
-    let productData = [];
-    let page = 1, pageCount = 1, pageSize = 25;
-    do {
-      // console.log(page, pageCount, pageSize);
-      const resData = await strapi.find("collectibles", {
-        fields: ["id", "slug"],
-        pagination: {
-          page: page,
-          pageSize: pageSize
-        }
-      });
-      productData = productData.concat(resData.data);
-      page++;
-      pageCount = resData.meta.pagination.pageCount;
-    } while (page <= pageCount);
-    // console.log(productData);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?filters[slug][$eq]=${params.slug}&populate=*`);
+    const productData = await res.json();
+    const product = productData.data[0] || null;
+    let bids = [];
 
-    const path = productData.map(({ slug }) => ({
-      params: {
-        slug
-      }
-    }));
-    return {
-      paths: [...path],
-      fallback: "blocking"
-    };
-  } catch (er) {
-    return { paths: [], fallback: false } // <- ADDED RETURN STMNT
-  }
-}
-
-export async function getStaticProps({ params }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?filters[slug][$eq]=${params.slug}&populate=*`);
-  const productData = await res.json();
-  const product = productData.data[0] || null;
-  let bids = [];
-
-  if (product) {
-    // Get All payment tokens
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections/${product.collection?.data?.id}?populate[0]=paymentTokens`
-    );
-    const collection = await response.json();
-    product.collection.data.paymentTokens = collection.data.paymentTokens;
-
-    // get owner histories
-    let collectible = await strapi.findOne("collectibles", product.id, {
-      populate: ["owner_histories"],
-    });
-    // console.log(product.id);
-    product.owner_histories = collectible.data.owner_histories;
-
-    if (product.putOnSale) {
-      // Get All auction and biddings data
+    if (product) {
+      // Get All payment tokens
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions/${product.auction?.data[0]?.id}?populate=*`
+        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collections/${product.collection?.data?.id}?populate[0]=paymentTokens`
       );
-      const auction = await response.json();
-      // console.log(auction);
-      if (auction.data) {
-        bids = auction.data?.biddings?.data;
-        product.auction.data.paymentToken = auction.data?.paymentToken;
-      }
-    }
-  }
+      const collection = await response.json();
+      product.collection.data.paymentTokens = collection.data.paymentTokens;
 
-  const filter = {
-    filters: {
-      status: {
-        $eq: "Live"
-      },
-      collectible: {
-        id: {
-          $ne: product.id
+      // get owner histories
+      let collectible = await strapi.findOne("collectibles", product.id, {
+        populate: ["owner_histories"],
+      });
+      // console.log(product.id);
+      product.owner_histories = collectible.data.owner_histories;
+
+      // if (product.putOnSale) {
+      //   // Get All auction and biddings data
+      //   const response = await fetch(
+      //     `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/auctions/${product.auction?.data[0]?.id}?populate=*`
+      //   );
+      //   const auction = await response.json();
+      //   // console.log(auction);
+      //   if (auction.data) {
+      //     bids = auction.data?.biddings?.data;
+      //     product.auction.data.paymentToken = auction.data?.paymentToken;
+      //   }
+      // }
+    }
+
+    const filter = {
+      filters: {
+        status: {
+          $eq: "Live"
         },
-        collection: {
-          id: product.collection?.data?.id
+        collectible: {
+          id: {
+            $ne: product.id
+          },
+          collection: {
+            id: product.collection?.data?.id
+          }
         }
-      }
-    },
-    populate: {
-      collectible: {
-        populate: ["image", "collection"]
       },
-      biddings: {
-        fields: ["id"]
+      populate: {
+        collectible: {
+          populate: ["image", "collection"]
+        },
+        biddings: {
+          fields: ["id"]
+        }
+      },
+      pagination: {
+        limit: 5
       }
-    },
-    pagination: {
-      limit: 5
+    }
+    const recentViewProducts = await strapi.find("auctions", filter);
+    // const recentViewProducts = shuffleArray(remaningProducts.data).slice(0, 5);
+    const relatedProducts = [];
+    return {
+      props: {
+        className: "template-color-1",
+        product,
+        bids,
+        recentViewProducts,
+        relatedProducts
+      }
+    };
+
+  } catch (er) {
+    return {
+      redirect: {
+        destination: "/404",
+      }
     }
   }
-  const recentViewProducts = await strapi.find("auctions", filter);
-  // const recentViewProducts = shuffleArray(remaningProducts.data).slice(0, 5);
-  const relatedProducts = [];
-  return {
-    props: {
-      className: "template-color-1",
-      product,
-      bids,
-      recentViewProducts,
-      relatedProducts
-    },
-    revalidate: 1, // In seconds
-  };
 }
 
 ProductDetails.propTypes = {
