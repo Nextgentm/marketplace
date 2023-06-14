@@ -249,7 +249,7 @@ const ExploreProductArea = ({
       };
     }
 
-    let sort = [];
+    let sort = ["priority:asc"];
     if (onChangeValue == "oldest") {
       sort = ["createdAt:asc"];
     }
@@ -689,7 +689,7 @@ const ExploreProductArea = ({
           }
         },
         pagination: pagination,
-        sort: ["createdAt:asc"]
+        sort: ["priority:asc"]
       });
       setCollectionData(data);
     }
@@ -795,7 +795,8 @@ const ExploreProductArea = ({
             fields: "*"
           }
         },
-        pagination: { pageSize: 6 }
+        pagination: { pageSize: 6 },
+        sort: ["priority:asc"]
       });
       setCollectionData(data);
     }
@@ -838,7 +839,7 @@ const ExploreProductArea = ({
         filters = {
           isOpenseaCollectible: true,
         };
-      } let sortedFilter = [];
+      } let sortedFilter = ["priority:asc"];
       if (router.query.sort == "newest") {
         sortedFilter = ["createdAt:desc"]
       }
@@ -993,7 +994,8 @@ const ExploreProductArea = ({
             fields: "*"
           }
         },
-        pagination: { pageSize: 6 }
+        pagination: { pageSize: 6 },
+        sort: ["priority:asc"]
       });
       setCollectionData(data);
       // getCollectiblesdata({
