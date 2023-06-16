@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 
+
 const ProductBid = ({ price, symbol, likeCount }) => (
   <div className="bid-react-area">
     <div className="last-bid">
@@ -18,6 +19,11 @@ const ProductBid = ({ price, symbol, likeCount }) => (
         <span className="number">{likeCount}</span>
       </div>
     }
+    <div className="cypto-icons">
+      <img src="/images/connect/ethereum.png" alt="Icon" title="Ethereum" />
+      {/*<img src="/images/connect/coinbase.png" alt="Icon" />
+      <img src="/images/connect/polygon.png" alt="Icon" />*/}
+    </div>
   </div>
 );
 
