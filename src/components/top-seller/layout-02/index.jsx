@@ -183,7 +183,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
             </Anchor>
           </div>
         )}
-        <div className="top-seller-content">
+        <div className="top-seller-content col-lg-9 col-md-7 col-sm-12 mt_md--50 mt_sm--60">
           <span>
             {eth && (
               <>
@@ -196,7 +196,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
           </span>
           {time && <span className="count-number">{new Date(time).toLocaleString()}</span>}
         </div>
-        <div className="ms-4 accept-bid-button-div">
+        <div className="ms-4 accept-bid-button-div col-lg-3 col-md-5 col-sm-12 mt_md--50 mt_sm--60">
           {product.owner === walletData.account && auction.data.status == "Live" && (
             <Button size="lg" onClick={() => acceptBid()}>
               {" "}

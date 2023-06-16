@@ -33,100 +33,71 @@ const AuctionDetails = ({ auction, recentViewProducts }) => (
   </Wrapper>
 );
 
-export async function getStaticPaths() {
+export async function getServerSideProps({ params }) {
   try {
-    let productData = [];
-    let page = 1, pageCount = 1, pageSize = 25;
-    do {
-      // console.log(page, pageCount, pageSize);
-      const resData = await strapi.find("auctions", {
-        populate: {
-          collectible: {
-            fields: ["id", "slug"],
-          }
+    let auction = await strapi.findOne("auctions", params.id, {
+      populate: ["collectible", "paymentToken", "biddings"],
+    });
+    // console.log(auction);
+
+    let collectible = await strapi.findOne("collectibles", auction.data.collectible.data.id, {
+      // populate: ["owner_histories", "image", "collectibleProperties", "collection"],
+      populate: {
+        owner_histories: { populate: "*" },
+        image: { populate: "*" },
+        collectibleProperties: { populate: "*" },
+        collection: { populate: ["paymentTokens"] },
+      }
+    });
+    auction.data.collectible = collectible;
+    // console.log(collectible);
+
+    const filter = {
+      filters: {
+        id: {
+          $ne: params.id
         },
-        pagination: {
-          page: page,
-          pageSize: pageSize
+        status: {
+          $eq: "Live"
+        },
+        collectible: {
+          collection: {
+            id: auction.data?.collectible?.data?.collection?.data?.id
+          }
         }
-      });
-      productData = productData.concat(resData.data);
-      page++;
-      pageCount = resData.meta.pagination.pageCount;
-    } while (page <= pageCount);
-    // console.log(productData);
-    const path = productData.map((product) => ({
-      params: {
-        id: product.id.toString(),
-        slug: product.collectible.data.slug
+      },
+      populate: {
+        collectible: {
+          populate: ["image", "collection"]
+        },
+        biddings: {
+          fields: ["id"]
+        }
+      },
+      pagination: {
+        limit: 5
       }
-    }));
+    }
+    let recentViewProducts = await strapi.find("auctions", filter);
+    // console.log(recentViewProducts);
+
+    const relatedProducts = [];
     return {
-      paths: [...path],
-      fallback: "blocking"
+      props: {
+        className: "template-color-1",
+        auction,
+        recentViewProducts,
+        relatedProducts
+      },
     };
+
   } catch (er) {
-    return { paths: [], fallback: false } // <- ADDED RETURN STMNT
-  }
-}
-
-export async function getStaticProps({ params }) {
-  let auction = await strapi.findOne("auctions", params.id, {
-    populate: ["collectible", "paymentToken", "biddings"],
-  });
-  // console.log(auction);
-
-  let collectible = await strapi.findOne("collectibles", auction.data.collectible.data.id, {
-    // populate: ["owner_histories", "image", "collectibleProperties", "collection"],
-    populate: {
-      owner_histories: { populate: "*" },
-      image: { populate: "*" },
-      collectibleProperties: { populate: "*" },
-      collection: { populate: ["paymentTokens"] },
-    }
-  });
-  auction.data.collectible = collectible;
-  // console.log(collectible);
-
-  const filter = {
-    filters: {
-      id: {
-        $ne: params.id
-      },
-      status: {
-        $eq: "Live"
-      },
-      collectible: {
-        collection: {
-          id: auction.data?.collectible?.data?.collection?.data?.id
-        }
+    return {
+      redirect: {
+        destination: "/404",
       }
-    },
-    populate: {
-      collectible: {
-        populate: ["image", "collection"]
-      },
-      biddings: {
-        fields: ["id"]
-      }
-    },
-    pagination: {
-      limit: 5
     }
   }
-  let recentViewProducts = await strapi.find("auctions", filter);
-  // console.log(recentViewProducts);
-
-  const relatedProducts = [];
-  return {
-    props: {
-      className: "template-color-1",
-      auction,
-      recentViewProducts,
-      relatedProducts
-    },
-    revalidate: 1, // In seconds
-  };
 }
 
 AuctionDetails.propTypes = {
