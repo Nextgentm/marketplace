@@ -16,12 +16,12 @@
             }
           ],
           "image": {
-            "src": "/images/bg/NFTPosterImage-min.png",
-            "video": "/images/bg/NftMarketplace_Banner.mp4"
+            "src": "/images/bg/nft_homepage_banner-min.png",
+            "video": "https://lootmogul.s3.us-west-2.amazonaws.com/NFT+Marketplace+video+banner.mp4"
           },
           "mobile": {
-            "src": "/images/bg/NFTPosterImage-min.png",
-            "video": "/images/bg/NftMarketplace_Banner.mp4"
+            "src": "/images/bg/nft_homepage_banner-min.png",
+            "video": "https://lootmogul.s3.us-west-2.amazonaws.com/NFT+Marketplace+video+banner.mp4"
           }
         }
       ]
