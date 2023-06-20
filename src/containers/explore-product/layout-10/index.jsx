@@ -1079,7 +1079,7 @@ const ExploreProductArea = ({
                         supply={prod.supply}
                         price={prod?.auction?.data[0]?.bidPrice}
                         symbol={prod?.auction?.data[0]?.priceCurrency}
-                        image={prod?.image?.data?.url}
+                        image={prod?.image?.data ? prod?.image?.data?.url : prod?.image_url}
                         collectionName={prod?.collection?.data?.name}
                         bitCount={
                           prod?.auction?.data[0]?.sellType == "Bidding" ? prod?.auction?.data?.biddings?.data.length : 0
@@ -1088,6 +1088,7 @@ const ExploreProductArea = ({
                         likeCount={prod.likeCount}
                         authors={prod.authors}
                         isOpenseaCollectible={prod.isOpenseaCollectible}
+                        network={prod.collection?.data?.networkType}
                       />
                     </div>
                   ))}

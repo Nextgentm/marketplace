@@ -42,6 +42,7 @@ const ProductArea = ({ space, className, data }) =>
                 data-sal-duration="800"
                 className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
               >
+                {prod.collectible.data?.image?.image_url}
                 <Product
                   isAuction={true}
                   title={prod.collectible.data.name}
@@ -49,12 +50,13 @@ const ProductArea = ({ space, className, data }) =>
                   supply={prod.collectible.data.supply}
                   price={prod.bidPrice}
                   symbol={prod.priceCurrency}
-                  image={prod.collectible.data?.image?.data?.url}
+                  image={prod.collectible.data?.image?.data?.url ? prod.collectible.data?.image?.data?.url : prod.collectible.data?.image_url}
                   collectionName={prod.collectible.data?.collection?.data?.name}
                   bitCount={prod.sellType == "Bidding" ? prod.biddings?.data.length : 0}
                   latestBid={prod.latestBid}
                   likeCount={prod.likeCount}
                   authors={prod.authors}
+                  network={prod.collectible.data?.collection?.data?.networkType}
                 />
               </div>
             ))}

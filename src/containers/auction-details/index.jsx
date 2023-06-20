@@ -204,7 +204,7 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
         <div className="row g-5">
           <div className="col-lg-7 col-md-12 col-sm-12">
             <Sticky>
-              <GalleryTab images={[{ data: auction?.data?.collectible.data.image.data }, auction?.data?.collectible.data.front_image_url ? { data: { id: "front_image_url", url: auction?.data?.collectible.data.front_image_url, alternativeText: "Front Image" } } : null, auction?.data?.collectible.data.back_image_url ? { data: { id: "back_image_url", url: auction?.data?.collectible.data.back_image_url, alternativeText: "Back Image" } } : null]} />
+              <GalleryTab images={[auction?.data?.collectible.data.image.data ? { data: { id: "image_url", url: auction?.data?.collectible.data.image.data, alternativeText: "Image URL" } } : { data: { id: "image_url", url: auction?.data?.collectible.data?.image_url, alternativeText: "Image URL" } }, auction?.data?.collectible.data.front_image_url ? { data: { id: "front_image_url", url: auction?.data?.collectible.data.front_image_url, alternativeText: "Front Image" } } : null, auction?.data?.collectible.data.back_image_url ? { data: { id: "back_image_url", url: auction?.data?.collectible.data.back_image_url, alternativeText: "Back Image" } } : null]} />
             </Sticky>
           </div>
           <div className="col-lg-5 col-md-12 col-sm-12 mt_md--50 mt_sm--60">

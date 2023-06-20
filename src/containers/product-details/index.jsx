@@ -453,7 +453,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         <div className="row g-5">
           <div className="col-lg-7 col-md-12 col-sm-12">
             <Sticky>
-              <GalleryTab images={[product?.image, product?.front_image_url ? { data: { id: "front_image_url", url: product?.front_image_url, alternativeText: "Front Image" } } : null, product?.back_image_url ? { data: { id: "back_image_url", url: product?.back_image_url, alternativeText: "Back Image" } } : null]} />
+              <GalleryTab images={[product?.image.data ? product?.image : { data: { id: "image_url", url: product?.image_url, alternativeText: "Image URL" } }, product?.front_image_url ? { data: { id: "front_image_url", url: product?.front_image_url, alternativeText: "Front Image" } } : null, product?.back_image_url ? { data: { id: "back_image_url", url: product?.back_image_url, alternativeText: "Back Image" } } : null]} />
             </Sticky>
           </div>
           <div className="col-lg-5 col-md-12 col-sm-12 mt_md--50 mt_sm--60">
@@ -549,7 +549,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                         owner={product?.owner}
                         product={product}
                         supply={product.supply}
-                        auction={{ data: product.auction?.data[0] }}
+                        // auction={{ data: product.auction?.data[0] }}
                         allAuctions={product.auction.data}
                         properties={product?.collectibleProperties?.data}
                         tags={product?.tags}

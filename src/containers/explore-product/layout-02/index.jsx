@@ -47,12 +47,13 @@ const ExploreProductArea = ({ className, space, data }) => {
                     supply={prod.collectible.data.supply}
                     price={prod.bidPrice}
                     symbol={prod.priceCurrency}
-                    image={prod.collectible.data?.image?.data?.url}
+                    image={prod.collectible.data?.image?.data ? prod.collectible.data?.image?.data?.url : prod.collectible.data?.image_url}
                     collectionName={prod.collectible.data?.collection?.data?.name}
                     bitCount={prod.sellType == "Bidding" ? prod.biddings?.data.length : 0}
                     latestBid={prod.latestBid}
                     likeCount={prod.likeCount}
                     authors={prod.authors}
+                    network={prod.collectible.data?.collection?.data?.networkType}
                   />
                 </motion.div>
               ))}
