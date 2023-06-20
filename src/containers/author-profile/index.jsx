@@ -57,7 +57,7 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                     supply={prod.collectible.data.supply}
                     price={prod.bidPrice}
                     symbol={prod.priceCurrency}
-                    image={prod.collectible.data?.image?.data?.url}
+                    image={prod.collectible.data?.image?.data ? prod.collectible.data?.image?.data?.url : prod.collectible.data?.image_url}
                     collectionName={prod.collectible.data?.collection?.data?.name}
                     auction_date={prod.endTimeStamp}
                     bitCount={prod.sellType == "Bidding" ? prod.biddings?.data.length : 0}
@@ -65,6 +65,7 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                     likeCount={prod.likeCount}
                     authors={prod.authors}
                     owner={prod.owner}
+                    network={prod.collectible.data?.collection?.data?.networkType}
                   />
                 </div>
               )
@@ -90,13 +91,14 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                     supply={prod.supply}
                     // price={prod.attributes?.auction?.data?.attributes?.bidPrice}
                     // symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
-                    image={prod.image?.data?.url}
+                    image={prod.image?.data ? prod.image?.data?.url : prod.image_url}
                     collectionName={prod.collection?.data?.name}
                     auction_date={prod.auction?.data?.endTimeStamp}
                     latestBid={prod.latestBid}
                     likeCount={prod.likeCount}
                     authors={prod.authors}
                     owner={prod.owner}
+                    network={prod.collection?.data?.networkType}
                   />
                 </div>
               )
@@ -122,7 +124,7 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                       slug={prod.slug}
                       // price={prod.auction?.data?.bidPrice}
                       // symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
-                      image={prod.image?.data?.url}
+                      image={prod.image?.data ? prod.image?.data?.url : prod.image_url}
                       collectionName={prod.collection?.data?.name}
                       auction_date={prod.auction?.data?.endTimeStamp}
                       latestBid={prod.latestBid}
@@ -130,6 +132,7 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                       authors={prod.authors}
                       owner={prod.owner}
                       editProductSlug={prod.slug}
+                      network={prod.collection?.data?.networkType}
                     />
                   </div>
                 )

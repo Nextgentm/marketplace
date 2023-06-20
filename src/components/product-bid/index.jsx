@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 
 
-const ProductBid = ({ price, symbol, likeCount }) => (
+const ProductBid = ({ price, symbol, likeCount, network }) => (
   <div className="bid-react-area">
     <div className="last-bid">
       {price?.amount ? price?.amount : price}{" "}
@@ -20,9 +20,11 @@ const ProductBid = ({ price, symbol, likeCount }) => (
       </div>
     }
     <div className="cypto-icons">
-      <img src="/images/connect/ethereum.png" alt="Icon" title="Ethereum" />
-      {/*<img src="/images/connect/coinbase.png" alt="Icon" />
-      <img src="/images/connect/polygon.png" alt="Icon" />*/}
+      {network == "Ethereum" ?
+        <img src="/images/connect/ethereum.png" alt="Icon" title="Ethereum" />
+        : network == "Polygon" ?
+          <img src="/images/connect/polygon.png" alt="Icon" title="Polygon" /> :
+          <img src="/images/connect/binance.png" alt="Icon" title="Binance" />}
     </div>
   </div>
 );

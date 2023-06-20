@@ -81,6 +81,7 @@ const LiveExploreArea = ({ data, className, space }) => (
                       latestBid={prod.latestBid}
                       likeCount={prod.likeCount}
                       authors={prod.authors}
+                      network={prod.collectible.data?.collection?.data?.networkType}
                     />
                   </SliderItem>
                 ))}
