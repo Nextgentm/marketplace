@@ -31,9 +31,10 @@ const AuctionArea = ({ space, className, collectiblePage, data }) => (
               symbol={auction.priceCurrency || ""}
               likeCount={auction.likeCount}
               auction_date={auction.auction_date}
-              image={auction.collectible?.data?.image?.data ? auction.collectible?.data?.image?.data?.url : "/images/portfolio/lg/portfolio-01.jpg"}
+              image={auction.collectible?.data?.image?.data ? auction.collectible?.data?.image?.data?.url : auction.collectible?.data?.image_url}
               bitCount={auction.biddings.length}
               isAuction={true}
+              network={auction.collectible.data?.collection?.data?.networkType}
             />
           </div>
         ))}
