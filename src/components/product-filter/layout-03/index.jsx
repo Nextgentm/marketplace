@@ -40,9 +40,6 @@ const ProductFilter = ({
       <CategoryFilter
         categories={inputcheck}
         onChange={checkHandler}
-        collectionPage={collectionPage}
-        products={products}
-        routerQuery={routerQuery}
       />
     )}
     {/* {!collectionPage && (

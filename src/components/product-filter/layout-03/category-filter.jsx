@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
-const CategoryFilter = ({ categories, onChange, products, collectionPage, routerQuery }) => {
+const CategoryFilter = ({ categories, onChange, routerQuery }) => {
   const [isCheck, setIsCheck] = useState([]);
 
 

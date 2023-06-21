@@ -12,13 +12,13 @@ import productData from "../data/products.json";
 import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/getCollectible";
 import client from "@utils/apollo-client";
 import { useRouter } from "next/router";
-import { getCollectible } from "src/services/collections/collection";
+import { getCollectible, getCollection } from "src/services/collections/collection";
 
 // export async function getStaticProps() {
 //   return { props: { className: "template-color-1" } };
 // }
 
-const Collectibles = ({ dataCollectibles }) => {
+const Collectibles = ({ dataCollectibles, categoriesolds }) => {
   const router = useRouter();
 
   return (
@@ -33,8 +33,8 @@ const Collectibles = ({ dataCollectibles }) => {
               section_title: {
                 title: "Find Your Non Replaceable Token"
               },
-              products: dataCollectibles.data,
               placeBid: true,
+              categoriesolds: categoriesolds,
               collectionData: dataCollectibles,
               paginationdata: dataCollectibles.meta.pagination
             }}
@@ -47,6 +47,42 @@ const Collectibles = ({ dataCollectibles }) => {
 };
 
 Collectibles.getInitialProps = async (ctx) => {
+  // collection count
+  let categoriesolds = {};
+  const getAllCollections = await getCollection({
+    fields: ["name", "id"],
+    filters: {
+      collectibles: {
+        auction: {
+          status: "Live"
+        }
+      }
+    },
+    pagination: {
+      limit: 25,
+    }
+  });
+  // console.log(getAllCollections);
+  const allCollections = getAllCollections.data;
+  for (let i = 0; i < allCollections.length; i++) {
+    const collection = allCollections[i];
+    const getdataAll = await getCollectible({
+      filters: {
+        auction: {
+          status: "Live"
+        },
+        collection: collection.id
+      },
+      populate: {
+        fields: ["name", "id"],
+      },
+      pagination: {
+        limit: 1,
+      }
+    });
+    // console.log(collection.name, getdataAll);
+    categoriesolds[collection.name] = getdataAll.meta.pagination.total;
+  }
   const data = await getCollectible({
     filters: {
       $or: [{
@@ -88,7 +124,8 @@ Collectibles.getInitialProps = async (ctx) => {
   });
   return {
     className: "template-color-1",
-    dataCollectibles: data
+    dataCollectibles: data,
+    categoriesolds: categoriesolds
   };
 };
 
