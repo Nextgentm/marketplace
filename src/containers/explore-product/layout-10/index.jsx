@@ -17,7 +17,7 @@ import strapi from "@utils/strapi";
 const ExploreProductArea = ({
   className,
   space,
-  data: { section_title, products, placeBid, collectionPage, paginationdata, collectionData }
+  data: { section_title, categoriesolds, placeBid, collectionPage, paginationdata, collectionData }
 }) => {
 
   const [collectionsData, setCollectionsData] = useState();
@@ -28,61 +28,55 @@ const ExploreProductArea = ({
   const [checkedCollection, setCheckedCollection] = useState([]);
   const [dataAll, setDataAll] = useState([]);
   const [selectedFilterNetworks, setSelectedFilterNetworks] = useState([]);
-  let categoriesolds = [];
-
-  let cats = {};
-  products.map((prod) => {
-    if (!cats[prod?.collectible?.data?.collection?.data?.name])
-      cats[prod?.collectible?.data?.collection?.data?.name] = [prod?.collectible?.data?.name];
-    if (!cats[prod?.collectible?.data?.collection?.data?.name].includes(prod?.collectible?.data?.name))
-      cats[prod?.collectible?.data?.collection?.data?.name].push(prod?.collectible?.data?.name);
-  });
-  // console.log(cats, catsData);
-  Object.entries(cats).map(([key, value]) => {
-    categoriesolds[key] = value.length;
-  });
 
   const [onchangecheckData, setonchangecheckData] = useState(categoriesolds);
   const setCollectionData = (data, page = 1) => {
     setCollectionsData(data.data);
     setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 6), page });
   };
-  let categoriesold = [];
-  useEffect(() => {
-    async function fetchData() {
-      const getdataAll = await getCollectible({
-        filters: {
-          $or: [{
-            auction: {
-              status: "Live"
-            },
-          }, {
-            isOpenseaCollectible: true
-          }]
-        },
-        populate: {
-          fields: ["name", "id"],
-          collection: {
-            fields: ["name", "id"],
-          },
-        },
-        pagination: {
-          limit: 25,
-        }
-      });
-      // console.log(getdataAll);
-      const cats = flatDeep(getdataAll.data.map((prod) => prod?.collection?.data?.name));
-      // console.log(cats);
-      categoriesold = cats.reduce((obj, b) => {
-        const newObj = { ...obj };
-        newObj[b] = obj[b] + 1 || 1;
-        return newObj;
-      }, {});
-      // console.log(categoriesold);
-      setonchangecheckData(categoriesold);
-    }
-    fetchData();
-  }, []);
+  let categoriesold = {};
+  // set categories with count
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const getAllCollections = await getCollection({
+  //       fields: ["name", "id"],
+  //       filters: {
+  //         collectibles: {
+  //           auction: {
+  //             status: "Live"
+  //           }
+  //         }
+  //       },
+  //       pagination: {
+  //         limit: 25,
+  //       }
+  //     });
+  //     // console.log(getAllCollections);
+  //     const allCollections = getAllCollections.data;
+  //     for (let i = 0; i < allCollections.length; i++) {
+  //       const collection = allCollections[i];
+  //       const getdataAll = await getCollectible({
+  //         filters: {
+  //           auction: {
+  //             status: "Live"
+  //           },
+  //           collection: collection.id
+  //         },
+  //         populate: {
+  //           fields: ["name", "id"],
+  //         },
+  //         pagination: {
+  //           limit: 1,
+  //         }
+  //       });
+  //       // console.log(collection.name, getdataAll);
+  //       categoriesold[collection.name] = getdataAll.meta.pagination.total;
+  //     }
+  //     console.log(categoriesold);
+  //     setonchangecheckData(categoriesold);
+  //   }
+  //   fetchData();
+  // }, []);
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -217,7 +211,7 @@ const ExploreProductArea = ({
   const getCollectionPaginationRecord = async (page) => {
     const start = page * 6 - 6;
     const limit = 6;
-    console.log("getCollectionPaginationRecord");
+    // console.log("getCollectionPaginationRecord");
 
     let filters = {
       auction: {
@@ -395,7 +389,7 @@ const ExploreProductArea = ({
 
   const getCollectibleSortData = async (onchangeSort) => {
     setOnChangeValue(onchangeSort);
-    console.log("getCollectibleSortData");
+    // console.log("getCollectibleSortData");
 
     let filters = {
       auction: {
@@ -628,7 +622,7 @@ const ExploreProductArea = ({
   };
   const getauctionFilterData = async (onchangefilter) => {
     setOnChangeValue(onchangefilter);
-    console.log("getauctionFilterData");
+    // console.log("getauctionFilterData");
 
     let filters = {};
     if (selectedFilterNetworks.length > 0) {
@@ -735,7 +729,7 @@ const ExploreProductArea = ({
   };
   const getCollectibleFilterData = async (onchangefilter) => {
 
-    console.log("getCollectibleFilterData");
+    // console.log("getCollectibleFilterData");
     let filters = {
       auction: {
         status: {
@@ -803,7 +797,7 @@ const ExploreProductArea = ({
   };
   const getCollectiblecheckData = async (onchangefilter) => {
     setCheckedCollection(onchangefilter);
-    console.log("getCollectiblecheckData");
+    // console.log("getCollectiblecheckData");
 
     let filters = {
       auction: {
@@ -932,7 +926,7 @@ const ExploreProductArea = ({
 
   const getSelectedFilterNetworksCheckData = async (onchangefilter) => {
     setSelectedFilterNetworks(onchangefilter);
-    console.log("getSelectedFilterNetworksCheckData");
+    // console.log("getSelectedFilterNetworksCheckData");
     let filters = {
       auction: {
         status: {
@@ -1059,7 +1053,6 @@ const ExploreProductArea = ({
               priceHandler={getCollectibleFilterData}
               auctionfilter={getauctionFilterData}
               collectionPage={collectionPage}
-              products={products}
               routerQuery={routerQuery}
               networksList={networksList}
               networksCheckHandler={getSelectedFilterNetworksCheckData}
@@ -1117,12 +1110,12 @@ ExploreProductArea.propTypes = {
   space: PropTypes.oneOf([1, 2]),
   data: PropTypes.shape({
     section_title: SectionTitleType,
-    products: PropTypes.arrayOf(
-      PropTypes.shape({
-        __typename: PropTypes.string,
-        attributes: ProductType
-      })
-    ).isRequired,
+    // products: PropTypes.arrayOf(
+    //   PropTypes.shape({
+    //     __typename: PropTypes.string,
+    //     attributes: ProductType
+    //   })
+    // ).isRequired,
     placeBid: PropTypes.bool,
     collectionPage: PropTypes.bool
     // collectionData: PropTypes.arrayOf(ProductType)
