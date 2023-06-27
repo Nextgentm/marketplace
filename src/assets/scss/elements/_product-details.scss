@@ -186,10 +186,15 @@
 
     h6 {
         &.title-name {
-            font-size: 20px;
+            font-size: 17px;
             font-weight: 500;
             margin-top: 15px;
             margin-bottom: 30px;
+            text-align: justify;
+            white-space: pre-line;
+            a{
+                color: var(--color-subtitle);
+            }
         }
     }
 

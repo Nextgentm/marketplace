@@ -7,22 +7,49 @@ import Product from "@components/product/layout-01";
 import FilterButtons from "@components/filter-buttons";
 import { flatDeep } from "@utils/methods";
 import { SectionTitleType, ProductType } from "@utils/types";
+import strapi from "@utils/strapi";
 
 const ExploreProductArea = ({ className, space, data }) => {
-  const filters = [...new Set(flatDeep(data?.products.map((item) => item.collectible.data?.collection?.data?.name) || []))];
+  const filters = [...new Set(flatDeep(data?.allCollections.map((item) => item.name) || []))];
   const [products, setProducts] = useState([]);
   useEffect(() => {
     setProducts(data?.products);
   }, [data?.products]);
 
-  const filterHandler = (filterKey) => {
+  const filterHandler = async (filterKey) => {
     const prods = data?.products ? [...data.products] : [];
     if (filterKey === "all") {
       setProducts(data?.products);
       return;
     }
-    const filterProds = prods.filter((prod) => prod.collectible.data?.collection?.data?.name.includes(filterKey));
-    setProducts(filterProds);
+    // const filterProds = prods.filter((prod) => prod.collectible.data?.collection?.data?.name.includes(filterKey));
+    // setProducts(filterProds);
+    const dataCollectiblesFilter = {
+      filters: {
+        status: {
+          $eq: "Live"
+        },
+        collectible: {
+          collection: {
+            name: {
+              $eq: filterKey
+            }
+          }
+        }
+      },
+      populate: {
+        collectible: {
+          populate: ["image", "collection"]
+        },
+        biddings: {
+          fields: ["id"]
+        }
+      },
+      sort: { startTimestamp: "desc" }
+    }
+    let filterProds = await strapi.find("auctions", dataCollectiblesFilter);
+    // console.log(filterProds.data);
+    setProducts(filterProds.data);
   };
   return (
     <div className={clsx("rn-product-area masonary-wrapper-activation", space === 1 && "rn-section-gapTop", className)}>
