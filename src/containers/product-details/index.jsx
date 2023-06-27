@@ -63,6 +63,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
 
   const [isAdminWallet, setIsAdminWallet] = useState(false);
 
+  const [descriptionShowMore, setDescriptionShowMore] = useState(false);
+
   useEffect(() => {
     if (walletData.isConnected) {
       addressIsAdmin(walletData).then((validationValue) => {
@@ -466,7 +468,10 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                   {product.symbol}
                 </span>
               </span>
-              <h6 className="title-name">{`${product.description.substring(0, 110)}...`}</h6>
+              <h6 className="title-name">
+                <span>{descriptionShowMore ? product.description : `${product.description.substring(0, 110)}`}</span>
+                <a href="#" onClick={() => descriptionShowMore ? setDescriptionShowMore(false) : setDescriptionShowMore(true)}>{descriptionShowMore ? <><br />show less</> : "...show more"}</a>
+              </h6>
               <div className="catagory-collection">
                 <ProductCategory owner={product.collection} royalty={product.royalty} />
                 <ProductCollection collection={product.collection} />

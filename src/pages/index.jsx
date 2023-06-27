@@ -19,7 +19,7 @@ import strapi from "@utils/strapi";
 import ServiceArea from "@containers/services/layout-01";
 import { getCollection, getCollectible } from "src/services/collections/collection";
 
-const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, otherMarketplaceCollectibles }) => {
+const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, allCollections }) => {
   const content = normalizedData(homepageData?.content || []);
   const submit = async () => {
     const filter = {
@@ -72,7 +72,8 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, o
           data={
             dataCollectibles && {
               ...content["explore-product-section"],
-              products: dataCollectibles
+              products: dataCollectibles,
+              allCollections: allCollections
             }
           }
         />
@@ -167,6 +168,19 @@ Home.getInitialProps = async () => {
   //   fetchPolicy: "network-only"
   // });
 
+  const allCollections = await getCollection({
+    fields: ["name", "id"],
+    filters: {
+      collectibles: {
+        auction: {
+          status: "Live"
+        }
+      }
+    },
+    pagination: {
+      limit: 25,
+    }
+  });
   const dataCollectiblesFilter = {
     filters: {
       status: {
@@ -244,39 +258,39 @@ Home.getInitialProps = async () => {
 
   // console.log("dataCollection654", dataCollection);
 
-  const otherMarketplaceData = await getCollectible({
-    filters: {
-      isOpenseaCollectible: true
-    },
-    populate: {
-      collection: {
-        fields: "*",
-        populate: {
-          cover: {
-            fields: "*"
-          },
-          logo: {
-            fields: "*"
-          }
-        }
-      },
-      auction: {
-        fields: "*",
-        filters: {
-          status: "Live",
-          id: { $notNull: true }
-        }
-      },
-      image: {
-        fields: "*"
-      }
-    },
-    pagination: {
-      limit: 6,
-      start: 0,
-      withCount: true
-    }
-  });
+  // const otherMarketplaceData = await getCollectible({
+  //   filters: {
+  //     isOpenseaCollectible: true
+  //   },
+  //   populate: {
+  //     collection: {
+  //       fields: "*",
+  //       populate: {
+  //         cover: {
+  //           fields: "*"
+  //         },
+  //         logo: {
+  //           fields: "*"
+  //         }
+  //       }
+  //     },
+  //     auction: {
+  //       fields: "*",
+  //       filters: {
+  //         status: "Live",
+  //         id: { $notNull: true }
+  //       }
+  //     },
+  //     image: {
+  //       fields: "*"
+  //     }
+  //   },
+  //   pagination: {
+  //     limit: 6,
+  //     start: 0,
+  //     withCount: true
+  //   }
+  // });
 
   return {
     className: "template-color-1",
@@ -284,7 +298,8 @@ Home.getInitialProps = async () => {
     newestData: newestItems.data,
     dataCollectibles: dataCollectibles.data,
     dataCollection: dataCollection.data,
-    otherMarketplaceCollectibles: otherMarketplaceData.data,
+    allCollections: allCollections.data,
+    // otherMarketplaceCollectibles: otherMarketplaceData.data,
   };
 };
 

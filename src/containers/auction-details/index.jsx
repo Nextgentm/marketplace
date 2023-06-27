@@ -54,6 +54,8 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
     setShowConfirmModal((prev) => !prev);
   };
 
+  const [descriptionShowMore, setDescriptionShowMore] = useState(false);
+
   useEffect(() => {
     // if (updatedCollectible) {
     //   console.log(updatedCollectible);
@@ -217,7 +219,10 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
                   {auction?.data?.priceCurrency}
                 </span>
               </span>
-              <h6 className="title-name">{`${auction?.data?.collectible.data.description.substring(0, 110)}...`}</h6>
+              <h6 className="title-name">
+                <span>{descriptionShowMore ? auction?.data?.collectible.data.description : `${auction?.data?.collectible.data.description.substring(0, 110)}`}</span>
+                <a href="#" onClick={() => descriptionShowMore ? setDescriptionShowMore(false) : setDescriptionShowMore(true)}>{descriptionShowMore ? <><br />show less</> : "...show more"}</a>
+              </h6>
               <div className="catagory-collection">
                 <ProductCategory owner={auction?.data?.collectible.data.collection} royalty={auction?.data?.royalty} />
                 <ProductCollection collection={auction?.data?.collectible.data.collection} />
