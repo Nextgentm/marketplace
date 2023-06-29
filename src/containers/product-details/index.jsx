@@ -39,6 +39,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
 
   const router = useRouter();
   const [erc1155MyBalance, setERC1155MyBalance] = useState(0);
+  const [totalNFTInAuction, setTotalNFTInAuction] = useState(0);
   const [showDirectSalesModal, setShowDirectSalesModal] = useState(false);
   const handleDirectSaleModal = () => {
     setShowAuctionInputModel(!showDirectSalesModal); // close model close on sale buttons option
@@ -109,6 +110,13 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           getERC1155Balance(walletData, walletData.account, contractAddress, product.nftID).then((balance) => {
             setERC1155MyBalance(balance);
           }).catch((error) => { console.log("Error while factory call " + error) });
+          // total count of nft in auction by user
+          let total = 0;
+          product.auction?.data.map((auction) => {
+            if (auction.walletAddress == walletData.account)
+              total += auction.remainingQuantity;
+          })
+          setTotalNFTInAuction(total);
         }
       } else {
         setERC1155MyBalance(0);
@@ -514,7 +522,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                 ) : (
                   <>
                     {((!product.putOnSale && product.owner === walletData.account && walletData.isConnected) ||
-                      (product.supply > 1 && erc1155MyBalance > 0 && walletData.isConnected)) && (
+                      (product.supply > 1 && erc1155MyBalance > totalNFTInAuction && walletData.isConnected)) && (
                         <>
                           <div className="row">
                             <div className="col-md-6">
