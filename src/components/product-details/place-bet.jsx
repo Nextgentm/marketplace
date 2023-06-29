@@ -56,7 +56,9 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
           apiKey: "pk_test_QqYG1ANNXmj2IriEfER1LdiCKPChVuwp",
           contractAddress: product.collection.data.collectionType == "Single" ? product.collection.data.contractAddress : product.collection.data.contractAddress1155,
           tokenId: product.nftID,
-          listingId: auction.data.id.toString()
+          listingId: auction.data.id.toString(),
+          redirectURL: window.location.href,
+          // quantity: 1
         }
       });
       setMoonpaySdk(_moonpaySdk);
@@ -326,7 +328,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         </div>
         <span>{isOwner && "You are the owner of this auction"}</span>
 
-        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" &&
+        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && process.env.NEXT_PUBLIC_SENTRY_ENV == "development" &&
           moonpaySdk &&
           <Button
             color={btnColor || "primary-alta"}
