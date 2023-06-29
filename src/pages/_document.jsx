@@ -9,7 +9,9 @@ class MyDocument extends Document {
   render() {
     return (
       <Html>
-        <Head />
+        <Head>
+          <script async defer src="https://static.moonpay.com/web-sdk/v1/moonpay-web-sdk.min.js" />
+        </Head>
         <body>
           <Main />
           <NextScript />
