@@ -43,6 +43,47 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
+  //moonpay integration
+  const [moonpaySdk, setMoonpaySdk] = useState(null);
+
+  const setupMoonpaySdk = () => {
+    try {
+      let _moonpaySdk = window.MoonPayWebSdk.init({
+        flow: "nft",
+        environment: "sandbox",
+        variant: "overlay",
+        params: {
+          apiKey: "pk_test_QqYG1ANNXmj2IriEfER1LdiCKPChVuwp",
+          contractAddress: product.collection.data.collectionType == "Single" ? product.collection.data.contractAddress : product.collection.data.contractAddress1155,
+          tokenId: product.nftID,
+          listingId: auction.data.id.toString()
+        }
+      });
+      setMoonpaySdk(_moonpaySdk);
+      // console.log("Yes, `window` is defined");
+    } catch (err) {
+      // console.log("Failed to load moonpay SDK");
+      setMoonpaySdk(null);
+    }
+  }
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      // console.log("Oops, `window` is not defined")
+    } else {
+      setupMoonpaySdk();
+    }
+  }, [product])
+
+  const payUsingMoonpay = () => {
+    // show the moonpay integration part
+    if (moonpaySdk) {
+      moonpaySdk.show();
+    } else {
+      toast.error("Error while moonpay integration");
+    }
+  }
+
   useEffect(() => {
   }, [updatedCollectible]);
 
@@ -279,6 +320,17 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
           )}
         </div>
         <span>{isOwner && "You are the owner of this auction"}</span>
+
+        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" &&
+          moonpaySdk &&
+          <Button
+            color={btnColor || "primary-alta"}
+            className="mt--30"
+            onClick={() => payUsingMoonpay()}
+            disabled={isOwner || (auction_date && new Date() > new Date(auction_date))}>Pay using Moonpay
+          </Button>
+        }
+
         <Button
           color={btnColor || "primary-alta"}
           className="mt--30"
