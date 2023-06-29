@@ -78,7 +78,12 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const payUsingMoonpay = () => {
     // show the moonpay integration part
     if (moonpaySdk) {
-      moonpaySdk.show();
+      if (userData) {
+        moonpaySdk.show();
+      } else {
+        toast.error("Please login first");
+        return;
+      }
     } else {
       toast.error("Error while moonpay integration");
     }
