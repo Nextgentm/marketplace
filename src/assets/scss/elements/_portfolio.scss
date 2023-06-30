@@ -1095,3 +1095,16 @@
     }
     
 }
+
+.product-style-one .card-thumbnail a img {
+    transform: scale(.95);
+}
+.product-style-one:hover .card-thumbnail a img {
+    transform: scale(1);
+}
+.rn-collection-inner-one .collection-wrapper .collection-big-thumbnail img{
+    transform: scale(.95);
+}
+.rn-collection-inner-one .collection-wrapper:hover .collection-big-thumbnail img {
+    transform: scale(1);
+}
