@@ -25,6 +25,15 @@ const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
 
 const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData, isOwner, btnColor, className }) => {
   const { walletData, setWalletData, userData } = useContext(AppData);
+  const [isMoonPayMethod, setMoonPayMethod] = useState(false);
+  const handleBidModalForMoonpay = () => {
+    if (!userData) {
+      toast.error("Please login first");
+      return;
+    }
+    setMoonPayMethod((prev) => !prev);
+    setShowBidModal((prev) => !prev);
+  };
   const [showBidModal, setShowBidModal] = useState(false);
   const handleBidModal = () => {
     if (!userData) {
@@ -44,49 +53,30 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   //moonpay integration
-  const [moonpaySdk, setMoonpaySdk] = useState(null);
-
-  const setupMoonpaySdk = () => {
-    try {
-      let _moonpaySdk = window.MoonPayWebSdk.init({
-        flow: "nft",
-        environment: "sandbox",
-        variant: "overlay",
-        params: {
-          apiKey: "pk_test_QqYG1ANNXmj2IriEfER1LdiCKPChVuwp",
-          contractAddress: product.collection.data.collectionType == "Single" ? product.collection.data.contractAddress : product.collection.data.contractAddress1155,
-          tokenId: product.nftID,
-          listingId: auction.data.id.toString(),
-          redirectURL: window.location.href,
-          // quantity: 1
-        }
-      });
-      setMoonpaySdk(_moonpaySdk);
-      // console.log("Yes, `window` is defined");
-    } catch (err) {
-      // console.log("Failed to load moonpay SDK");
-      setMoonpaySdk(null);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      // console.log("Oops, `window` is not defined")
-    } else {
-      setupMoonpaySdk();
-    }
-  }, [product])
-
-  const payUsingMoonpay = () => {
+  const payUsingMoonpay = (quantity) => {
     // show the moonpay integration part
-    if (moonpaySdk) {
+    try {
       if (userData) {
+        const moonpaySdk = window.MoonPayWebSdk.init({
+          flow: "nft",
+          environment: "sandbox",
+          variant: "overlay",
+          params: {
+            apiKey: process.env.NEXT_PUBLIC_MOONPAY_API_KEY,
+            contractAddress: product.collection.data.collectionType == "Single" ? product.collection.data.contractAddress : product.collection.data.contractAddress1155,
+            tokenId: product.nftID,
+            listingId: auction.data.id.toString(),
+            redirectURL: window.location.href,
+            quantity: quantity ? quantity : 1
+          }
+        });
         moonpaySdk.show();
       } else {
         toast.error("Please login first");
         return;
       }
-    } else {
+    } catch (error) {
+      console.log("Error: " + error);
       toast.error("Error while moonpay integration");
     }
   }
@@ -273,6 +263,18 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
     }
   };
 
+  const handleSubmitForMoonpay = async (event) => {
+    event.preventDefault();
+    if (!userData) {
+      toast.error("Please login first");
+      return;
+    }
+    const quantity = event.target.quantity?.value ? event.target.quantity?.value : auction.data.quantity;
+
+    payUsingMoonpay(quantity);
+  };
+
+
   return (
     <>
       <div className={clsx("place-bet-area", className)}>
@@ -329,11 +331,10 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         <span>{isOwner && "You are the owner of this auction"}</span>
 
         {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && process.env.NEXT_PUBLIC_SENTRY_ENV == "development" &&
-          moonpaySdk &&
           <Button
             color={btnColor || "primary-alta"}
             className="mt--30"
-            onClick={() => payUsingMoonpay()}
+            onClick={() => auction.data.quantity > 1 ? handleBidModalForMoonpay() : payUsingMoonpay()}
             disabled={isOwner || (auction_date && new Date() > new Date(auction_date))}>Pay using Moonpay
           </Button>
         }
@@ -354,6 +355,9 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         </Button>
       </div>
       <PlaceBidModal show={showBidModal} handleModal={handleBidModal} bidPrice={auction.data.bidPrice} supply={product.supply} maxQuantity={auction.data.remainingQuantity} handleSubmit={handleSubmit} auction={auction}
+        currency={highest_bid?.priceCurrency} />
+      {/* for moonpay */}
+      <PlaceBidModal show={isMoonPayMethod} handleModal={handleBidModalForMoonpay} bidPrice={auction.data.bidPrice} supply={product.supply} maxQuantity={auction.data.remainingQuantity} handleSubmit={handleSubmitForMoonpay} auction={auction}
         currency={highest_bid?.priceCurrency} />
     </>
   );
