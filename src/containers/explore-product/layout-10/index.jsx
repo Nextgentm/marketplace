@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import { getCollectible, getCollection } from "src/services/collections/collection";
 import { networksList } from "@utils/wallet";
 import strapi from "@utils/strapi";
+import { Spinner } from "react-bootstrap";
 
 const ExploreProductArea = ({
   className,
@@ -20,6 +21,7 @@ const ExploreProductArea = ({
   data: { section_title, categoriesolds, placeBid, collectionPage, paginationdata, collectionData }
 }) => {
 
+  const [loading, setLoading] = useState(false);
   const [collectionsData, setCollectionsData] = useState();
   const router = useRouter();
   const routerQuery = router?.query?.collection?.split();
@@ -196,8 +198,9 @@ const ExploreProductArea = ({
         console.error("Error fetching data:", error);
         // Handle the error appropriately (e.g., show an error message)
       }
+      setLoading(false);
     };
-
+    setLoading(true);
     fetchData();
   }, [router.query.collection]);
 
@@ -1059,45 +1062,53 @@ const ExploreProductArea = ({
             />
           </div>
           <div className="col-lg-9 order-1 order-lg-2">
-            <div className="row g-5">
-              {/* {console.log("collectionsData", collectionsData)} */}
-              {collectionsData?.length > 0 ? (
-                <>
-                  {collectionsData?.map((prod, index) => (
-                    <div key={index} className="col-lg-4 col-md-6 col-sm-12">
-                      <Product
-                        placeBid={prod?.auction?.data?.sellType == "Bidding"}
-                        title={prod.name}
-                        slug={prod.isOpenseaCollectible ? prod.marketURL : prod.slug}
-                        supply={prod.supply}
-                        price={prod?.auction?.data[0]?.bidPrice}
-                        symbol={prod?.auction?.data[0]?.priceCurrency}
-                        image={prod?.image?.data ? prod?.image?.data?.url : prod?.image_url}
-                        collectionName={prod?.collection?.data?.name}
-                        bitCount={
-                          prod?.auction?.data[0]?.sellType == "Bidding" ? prod?.auction?.data?.biddings?.data.length : 0
-                        }
-                        latestBid={prod.latestBid}
-                        likeCount={prod.likeCount}
-                        authors={prod.authors}
-                        isOpenseaCollectible={prod.isOpenseaCollectible}
-                        network={prod.collection?.data?.networkType}
-                      />
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <p>No item to show</p>
-              )}
-              {pagination?.pageCount > 1 ? (
-                <Pagination
-                  className="single-column-blog"
-                  currentPage={pagination.page}
-                  numberOfPages={pagination.pageCount}
-                  onClick={getCollectionPaginationRecord}
-                />
-              ) : null}
-            </div>
+            {loading ?
+              <div className="row spinner-container">
+                <Spinner animation="border" role="status" style={{ width: "4rem", height: "4rem" }}>
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+              :
+              <div className="row g-5">
+                {/* {console.log("collectionsData", collectionsData)} */}
+                {collectionsData?.length > 0 ? (
+                  <>
+                    {collectionsData?.map((prod, index) => (
+                      <div key={index} className="col-lg-4 col-md-6 col-sm-12">
+                        <Product
+                          placeBid={prod?.auction?.data?.sellType == "Bidding"}
+                          title={prod.name}
+                          slug={prod.isOpenseaCollectible ? prod.marketURL : prod.slug}
+                          supply={prod.supply}
+                          price={prod?.auction?.data[0]?.bidPrice}
+                          symbol={prod?.auction?.data[0]?.priceCurrency}
+                          image={prod?.image?.data ? prod?.image?.data?.url : prod?.image_url}
+                          collectionName={prod?.collection?.data?.name}
+                          bitCount={
+                            prod?.auction?.data[0]?.sellType == "Bidding" ? prod?.auction?.data?.biddings?.data.length : 0
+                          }
+                          latestBid={prod.latestBid}
+                          likeCount={prod.likeCount}
+                          authors={prod.authors}
+                          isOpenseaCollectible={prod.isOpenseaCollectible}
+                          network={prod.collection?.data?.networkType}
+                        />
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <p>No item to show</p>
+                )}
+                {pagination?.pageCount > 1 ? (
+                  <Pagination
+                    className="single-column-blog"
+                    currentPage={pagination.page}
+                    numberOfPages={pagination.pageCount}
+                    onClick={getCollectionPaginationRecord}
+                  />
+                ) : null}
+              </div>
+            }
           </div>
         </div>
       </div>
