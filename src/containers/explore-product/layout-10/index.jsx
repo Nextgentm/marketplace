@@ -146,6 +146,7 @@ const ExploreProductArea = ({
                 sort: ["createdAt:desc"]
               }
             });
+            setLoading(false);
             setCollectionData(data, page);
           } else {
             const data = await getCollectible({
@@ -216,6 +217,7 @@ const ExploreProductArea = ({
     const limit = 6;
     // console.log("getCollectionPaginationRecord");
 
+    setLoading(true);
     let filters = {
       auction: {
         status: {
@@ -335,6 +337,7 @@ const ExploreProductArea = ({
           pagination: { start, limit },
           sort: ["createdAt:asc"]
         });
+        setLoading(false);
         setCollectionData(data, page);
       }
     } else {
@@ -386,6 +389,7 @@ const ExploreProductArea = ({
         },
         sort: sort
       });
+      setLoading(false);
       setCollectionData(data, page);
     }
   };
@@ -393,6 +397,7 @@ const ExploreProductArea = ({
   const getCollectibleSortData = async (onchangeSort) => {
     setOnChangeValue(onchangeSort);
     // console.log("getCollectibleSortData");
+    setLoading(true);
 
     let filters = {
       auction: {
@@ -465,6 +470,7 @@ const ExploreProductArea = ({
         pagination: pagination,
         sort: ["createdAt:asc"]
       });
+      setLoading(false);
       setCollectionData(data);
     }
     if (onchangeSort == "newest") {
@@ -496,6 +502,7 @@ const ExploreProductArea = ({
         pagination: pagination,
         sort: ["createdAt:desc"]
       });
+      setLoading(false);
       setCollectionData(data);
     }
     if (onchangeSort == "low-to-high") {
@@ -527,6 +534,7 @@ const ExploreProductArea = ({
         pagination: pagination,
         sort: ["price:asc"]
       });
+      setLoading(false);
       setCollectionData(data);
     }
     if (onchangeSort == "high-to-low") {
@@ -558,6 +566,7 @@ const ExploreProductArea = ({
         pagination: pagination,
         sort: ["price:desc"]
       });
+      setLoading(false);
       setCollectionData(data);
     }
     if (onchangeSort == "other-marketplace") {
@@ -590,6 +599,7 @@ const ExploreProductArea = ({
         },
         pagination: pagination,
       });
+      setLoading(false);
       setCollectionData(data);
     }
     if (onchangeSort == "lm-marketplace") {
@@ -620,12 +630,14 @@ const ExploreProductArea = ({
         },
         pagination: pagination,
       });
+      setLoading(false);
       setCollectionData(data);
     }
   };
   const getauctionFilterData = async (onchangefilter) => {
     setOnChangeValue(onchangefilter);
     // console.log("getauctionFilterData");
+    setLoading(true);
 
     let filters = {};
     if (selectedFilterNetworks.length > 0) {
@@ -688,6 +700,7 @@ const ExploreProductArea = ({
         pagination: pagination,
         sort: ["priority:asc"]
       });
+      setLoading(false);
       setCollectionData(data);
     }
     if (onchangefilter == "Auction") {
@@ -727,11 +740,14 @@ const ExploreProductArea = ({
         pagination: pagination,
         sort: ["createdAt:asc"]
       });
+      setLoading(false);
       setCollectionData(data);
     }
+    setLoading(false);
   };
   const getCollectibleFilterData = async (onchangefilter) => {
 
+    setLoading(true);
     // console.log("getCollectibleFilterData");
     let filters = {
       auction: {
@@ -795,12 +811,15 @@ const ExploreProductArea = ({
         pagination: { pageSize: 6 },
         sort: ["priority:asc"]
       });
+      setLoading(false);
       setCollectionData(data);
     }
+    setLoading(false);
   };
   const getCollectiblecheckData = async (onchangefilter) => {
     setCheckedCollection(onchangefilter);
     // console.log("getCollectiblecheckData");
+    setLoading(true);
 
     let filters = {
       auction: {
@@ -868,6 +887,7 @@ const ExploreProductArea = ({
         pagination: { pageSize: 6 },
         sort: sortedFilter
       });
+      setLoading(false);
       setCollectionData(data);
       // getCollectiblesdata({
       //   variables: {
@@ -923,13 +943,16 @@ const ExploreProductArea = ({
         pagination: { pageSize: 6 }
       });
       // console.log(data);
+      setLoading(false);
       setCollectionData(data);
     }
+    setLoading(false);
   };
 
   const getSelectedFilterNetworksCheckData = async (onchangefilter) => {
     setSelectedFilterNetworks(onchangefilter);
     // console.log("getSelectedFilterNetworksCheckData");
+    setLoading(true);
     let filters = {
       auction: {
         status: {
@@ -994,6 +1017,7 @@ const ExploreProductArea = ({
         pagination: { pageSize: 6 },
         sort: ["priority:asc"]
       });
+      setLoading(false);
       setCollectionData(data);
       // getCollectiblesdata({
       //   variables: {
@@ -1034,8 +1058,10 @@ const ExploreProductArea = ({
         },
         pagination: { pageSize: 6 }
       });
+      setLoading(false);
       setCollectionData(data);
     }
+    setLoading(false);
   };
 
   return (
