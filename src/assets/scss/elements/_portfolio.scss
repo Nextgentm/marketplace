@@ -1104,6 +1104,7 @@
 }
 .rn-collection-inner-one .collection-wrapper .collection-big-thumbnail img{
     transform: scale(.95);
+    aspect-ratio: auto;
 }
 .rn-collection-inner-one .collection-wrapper:hover .collection-big-thumbnail img {
     transform: scale(1);
