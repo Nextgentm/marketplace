@@ -63,6 +63,7 @@ const CollectionArea = ({ className, space, id, data }) => {
           isOpenseaCollection: true
         }]
       },
+      sort: ["priority:asc"],
       populate: {
         collectibles: {
           fields: "*",

@@ -32,6 +32,7 @@ Collection.getInitialProps = async () => {
         isOpenseaCollection: true
       }]
     },
+    sort: ["priority:asc"],
     populate: {
       collectibles: {
         fields: "*",
