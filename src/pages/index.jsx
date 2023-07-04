@@ -223,6 +223,7 @@ Home.getInitialProps = async () => {
         }
       }
     },
+    sort: ["priority:asc"],
     populate: {
       collectibles: {
         fields: "*",
