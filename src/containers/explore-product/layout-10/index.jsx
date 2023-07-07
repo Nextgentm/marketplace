@@ -139,6 +139,7 @@ const ExploreProductArea = ({
                   fields: "*"
                 }
               },
+              sort: ["priority:asc"],
               pagination: {
                 limit: 6,
                 start: 0,
@@ -185,6 +186,7 @@ const ExploreProductArea = ({
                   fields: "*"
                 }
               },
+              sort: ["priority:asc"],
               pagination: {
                 limit: 6,
                 start: 0,
@@ -335,7 +337,7 @@ const ExploreProductArea = ({
             }
           },
           pagination: { start, limit },
-          sort: ["createdAt:asc"]
+          sort: ["priority:asc"],
         });
         setLoading(false);
         setCollectionData(data, page);
@@ -738,7 +740,7 @@ const ExploreProductArea = ({
           }
         },
         pagination: pagination,
-        sort: ["createdAt:asc"]
+        sort: ["priority:asc"]
       });
       setLoading(false);
       setCollectionData(data);
@@ -940,6 +942,7 @@ const ExploreProductArea = ({
             fields: "*"
           }
         },
+        sort: ["priority:asc"],
         pagination: { pageSize: 6 }
       });
       // console.log(data);
@@ -1056,6 +1059,7 @@ const ExploreProductArea = ({
             fields: "*"
           }
         },
+        sort: ["priority:asc"],
         pagination: { pageSize: 6 }
       });
       setLoading(false);

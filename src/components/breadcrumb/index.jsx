@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import clsx from "clsx";
 import Anchor from "@ui/anchor";
 
-const Breadcrumb = ({ pageTitle, currentPage, className, space }) => (
+const Breadcrumb = ({ pageTitle, currentPage, className, space, isCollection }) => (
   <div className={clsx("rn-breadcrumb-inner", className, space === 1 && "ptb--30")}>
     <div className="container">
       <div className="row align-items-center">
@@ -14,6 +14,16 @@ const Breadcrumb = ({ pageTitle, currentPage, className, space }) => (
             <li className="item">
               <Anchor path="/">Home</Anchor>
             </li>
+            {isCollection &&
+              <>
+                <li className="separator">
+                  <i className="feather-chevron-right" />
+                </li>
+                <li className="item">
+                  <Anchor path="/collection">Collection</Anchor>
+                </li>
+              </>
+            }
             <li className="separator">
               <i className="feather-chevron-right" />
             </li>
