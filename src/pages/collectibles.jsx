@@ -26,7 +26,7 @@ const Collectibles = ({ dataCollectibles, categoriesolds }) => {
       <SEO pageTitle="Explore Simple" />
       <Header />
       <main id="main-content">
-        <Breadcrumb pageTitle={router.query.collection ? "Explore NFT Collection" : "Explore NFT"} currentPage={router.query.collection ? "Explore NFT Collection" : "Explore NFT"} />
+        <Breadcrumb pageTitle={router.query.collection ? "Explore NFT Collection" : "Explore NFT"} currentPage={router.query.collection ? "Explore NFT Collection" : "Explore NFT"} isCollection={true} />
         {dataCollectibles && (
           <ExploreProductArea
             data={{
@@ -58,6 +58,7 @@ Collectibles.getInitialProps = async (ctx) => {
         }
       }
     },
+    sort: ["priority:asc"],
     pagination: {
       limit: 25,
     }
@@ -76,6 +77,7 @@ Collectibles.getInitialProps = async (ctx) => {
       populate: {
         fields: ["name", "id"],
       },
+      sort: ["priority:asc"],
       pagination: {
         limit: 1,
       }
@@ -93,6 +95,7 @@ Collectibles.getInitialProps = async (ctx) => {
         isOpenseaCollectible: true
       }]
     },
+    sort: ["priority:asc"],
     populate: {
       collection: {
         fields: "*",
