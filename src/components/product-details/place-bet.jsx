@@ -53,7 +53,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   //moonpay integration
-  const payUsingMoonpay = (quantity) => {
+  const payUsingMoonpay = async (quantity) => {
     // show the moonpay integration part
     try {
       if (userData) {
@@ -70,6 +70,17 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
             quantity: quantity ? quantity : 1
           }
         });
+        const urlForSignature = moonpaySdk.generateUrlForSigning();
+        console.log(urlForSignature);
+        // sign it with API secret and return the signature.
+        const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/sign_url`, {
+          method: "POST",
+          body: urlForSignature,
+        });
+        const signature = await response.text();
+        console.log(signature);
+        // Once you have the signature, you can update the SDK with it
+        moonpaySdk.updateSignature(decodeURIComponent(signature));
         moonpaySdk.show();
       } else {
         toast.error("Please login first");
