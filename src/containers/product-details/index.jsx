@@ -19,7 +19,7 @@ import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CH
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
 import TransferPopupModal from "@components/modals/transfer";
-import { getERC1155Balance, validateInputAddresses, getERC1155Contract, getERC721Contract, switchNetwork, addressIsAdmin } from "../../lib/BlokchainHelperFunctions";
+import { getERC1155Balance, validateInputAddresses, getERC1155Contract, getERC721Contract, switchNetwork, addressIsAdmin, getTradeContract, getTokenContract, convertEthertoWei, getDateForSolidity, signMessage } from "../../lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
@@ -133,7 +133,6 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
 
   async function approveNFT() {
     try {
-      const signer = walletData.provider.getSigner();
       let contractAddress;
       if (product.collection.data.collectionType === "Single") {
         contractAddress = product.collection.data.contractAddress;
@@ -179,9 +178,78 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     }
   }
 
+  async function getOrderSellerHash(data) {
+    try {
+      let contractAddress, nftType;
+      if (product.collection.data.collectionType === "Single") {
+        contractAddress = product.collection.data.contractAddress;
+        nftType = 1;
+      } else if (product.collection.data.collectionType === "Multiple") {
+        contractAddress = product.collection.data.contractAddress1155;
+        nftType = 0;
+      }
+      let paymentToken = product.collection?.data?.paymentTokens?.data.find(token => token.id == data.paymentToken);
+      // console.log(paymentToken);
+      let TokenContractAddress;
+      //Select token contract address according to current network
+      if (walletData.network == "Polygon") {
+        TokenContractAddress = paymentToken?.polygonAddress;
+      } else if (walletData.network == "Ethereum") {
+        TokenContractAddress = paymentToken?.ethAddress;
+      } else if (walletData.network == "Binance") {
+        TokenContractAddress = paymentToken?.binanceAddress;
+      }
+      if (!TokenContractAddress) {
+        toast.error("Token address not found for current network!");
+        return;
+      }
+      const tokenContract = await getTokenContract(walletData, TokenContractAddress);
+      // const allowance = await tokenContract.allowance(walletData.account, walletData.contractData.TransferProxy.address);
+      // const allowanceAmount = parseInt(allowance._hex, 16);
+      const decimals = await tokenContract.decimals();
+      //convert price
+      let convertedPrice;
+      if (decimals == 18) {
+        convertedPrice = convertEthertoWei(walletData.ethers, data.price);
+      } else {
+        convertedPrice = (data.price * (10 ** decimals));
+      }
+      const tradeContract = await getTradeContract(walletData);
+
+      const orderSellerHash = await tradeContract.getOrderSellerHash([
+        walletData.account, // seller
+        walletData.account, // buyer (skip)
+        TokenContractAddress, // erc20Address
+        contractAddress, // NFT contractAddress
+        nftType, // nftType
+        convertedPrice, // unit price
+        data.quantity ? data.quantity : 1, // total onsale quantity
+        false, // skip royalty
+        getDateForSolidity(data.startTimestamp),
+        getDateForSolidity(data.endTimeStamp),
+        product.nftID, // tokenID
+        convertedPrice, // total price (skip)
+        1, // total purchase quantity (skip)
+        "0x", // seller signaure (skip)
+        "0x" // buyer signaure (skip)
+      ]);
+      console.log(orderSellerHash);
+      return orderSellerHash;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
   async function StoreData(data) {
     try {
       if (!(await approveNFT())) {
+        return;
+      }
+      const sellerHash = await getOrderSellerHash(data);
+      const sellerOrderSignature = await signMessage(walletData.provider, walletData.account, sellerHash);
+      // console.log(sellerOrderSignature);
+      if (!sellerOrderSignature) {
         return;
       }
       // update auction to complete
@@ -197,6 +265,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         paymentToken: data.paymentToken,
         quantity: data.quantity ? data.quantity : 1,
         remainingQuantity: data.quantity ? data.quantity : 1,
+        signature: sellerOrderSignature
       });
       // console.log(res);
       await updateCollectible({

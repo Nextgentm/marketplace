@@ -16,7 +16,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
-import { getERC1155Balance, switchNetwork, validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
+import { convertEthertoWei, getDateForSolidity, getERC1155Balance, getTokenContract, getTradeContract, signMessage, switchNetwork, validateInputAddresses } from "../../lib/BlokchainHelperFunctions";
 
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
@@ -101,9 +101,15 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
   }, [walletData])
 
   // Auction Edit
-
   async function updateAuctionData(data) {
     try {
+      //update seller hash
+      const sellerHash = await getOrderSellerHash(data);
+      const sellerOrderSignature = await signMessage(walletData.provider, walletData.account, sellerHash);
+      // console.log(sellerOrderSignature);
+      if (!sellerOrderSignature) {
+        return;
+      }
       // update auction to complete
       const res = await strapi.update("auctions", auction?.data?.id, {
         bidPrice: data.price,
@@ -115,6 +121,7 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
         paymentToken: data.paymentToken,
         quantity: data.quantity ? data.quantity : 1,
         remainingQuantity: data.quantity ? data.quantity : 1,
+        signature: sellerOrderSignature
       });
       // console.log(res);
       toast.success("Auction updated successfully");
@@ -135,10 +142,143 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
     }
   }
 
+  async function getOrderSellerHash(data) {
+    try {
+      let contractAddress, nftType;
+      if (auction?.data?.collectible.data.collection.data.collectionType === "Single") {
+        contractAddress = auction?.data?.collectible.data.collection.data.contractAddress;
+        nftType = 1;
+      } else if (auction?.data?.collectible.data.collection.data.collectionType === "Multiple") {
+        contractAddress = auction?.data?.collectible.data.collection.data.contractAddress1155;
+        nftType = 0;
+      }
+      let paymentToken = auction?.data?.collectible.data.collection?.data?.paymentTokens?.data.find(token => token.id == data.paymentToken);
+      // console.log(paymentToken);
+      let TokenContractAddress;
+      //Select token contract address according to current network
+      if (walletData.network == "Polygon") {
+        TokenContractAddress = paymentToken?.polygonAddress;
+      } else if (walletData.network == "Ethereum") {
+        TokenContractAddress = paymentToken?.ethAddress;
+      } else if (walletData.network == "Binance") {
+        TokenContractAddress = paymentToken?.binanceAddress;
+      }
+      if (!TokenContractAddress) {
+        toast.error("Token address not found for current network!");
+        return;
+      }
+      const tokenContract = await getTokenContract(walletData, TokenContractAddress);
+      // const allowance = await tokenContract.allowance(walletData.account, walletData.contractData.TransferProxy.address);
+      // const allowanceAmount = parseInt(allowance._hex, 16);
+      const decimals = await tokenContract.decimals();
+      //convert price
+      let convertedPrice;
+      if (decimals == 18) {
+        convertedPrice = convertEthertoWei(walletData.ethers, data.price);
+      } else {
+        convertedPrice = (data.price * (10 ** decimals));
+      }
+      const tradeContract = await getTradeContract(walletData);
+
+      const orderSellerHash = await tradeContract.getOrderSellerHash([
+        walletData.account, // seller
+        walletData.account, // buyer (skip)
+        TokenContractAddress, // erc20Address
+        contractAddress, // NFT contractAddress
+        nftType, // nftType
+        convertedPrice, // unit price
+        data.quantity ? data.quantity : 1, // total onsale quantity
+        false, // skip royalty
+        getDateForSolidity(data.startTimestamp),
+        getDateForSolidity(data.endTimeStamp),
+        auction?.data?.collectible.data.nftID, // tokenID
+        convertedPrice, // total price (skip)
+        1, // total purchase quantity (skip)
+        "0x", // seller signaure (skip)
+        "0x" // buyer signaure (skip)
+      ]);
+      console.log(orderSellerHash);
+      return orderSellerHash;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
   async function cancelAuction(event) {
     try {
       event.preventDefault();
       // Add cancel auction call of trade contract
+      let contractAddress, nftType;
+      if (auction?.data?.collectible.data.collection.data.collectionType === "Single") {
+        contractAddress = auction?.data?.collectible.data.collection.data.contractAddress;
+        nftType = 1;
+      } else if (auction?.data?.collectible.data.collection.data.collectionType === "Multiple") {
+        contractAddress = auction?.data?.collectible.data.collection.data.contractAddress1155;
+        nftType = 0;
+      }
+      // Pull the deployed contract instance
+      let TokenContractAddress;
+      //Select token contract address according to current network
+      if (walletData.network == "Polygon") {
+        TokenContractAddress = auction.data.paymentToken?.data?.polygonAddress;
+      } else if (walletData.network == "Ethereum") {
+        TokenContractAddress = auction.data.paymentToken?.data?.ethAddress;
+      } else if (walletData.network == "Binance") {
+        TokenContractAddress = auction.data.paymentToken?.data?.binanceAddress;
+      }
+      if (!TokenContractAddress) {
+        toast.error("Token address not found for current network!");
+        return;
+      }
+      const tokenContract = await getTokenContract(walletData, TokenContractAddress);
+      // const allowance = await tokenContract.allowance(walletData.account, walletData.contractData.TransferProxy.address);
+      // const allowanceAmount = parseInt(allowance._hex, 16);
+      const decimals = await tokenContract.decimals();
+      //convert price
+      let convertedPrice;
+      if (decimals == 18) {
+        convertedPrice = convertEthertoWei(walletData.ethers, auction?.data?.bidPrice);
+      } else {
+        convertedPrice = (auction?.data?.bidPrice * (10 ** decimals));
+      }
+      const tradeContract = await getTradeContract(walletData);
+      // console.log([
+      //   walletData.account, // seller
+      //   walletData.account, // buyer (skip)
+      //   TokenContractAddress, // erc20Address
+      //   contractAddress, // NFT contractAddress
+      //   nftType, // nftType
+      //   convertedPrice, // unit price
+      //   auction.data.quantity ? auction.data.quantity : 1, // total onsale quantity
+      //   false, // skip royalty
+      //   getDateForSolidity(auction.data.startTimestamp),
+      //   getDateForSolidity(auction.data.endTimeStamp),
+      //   auction?.data?.collectible.data.nftID, // tokenID
+      //   convertedPrice, // total price (skip)
+      //   1, // total purchase quantity (skip)
+      //   auction.data.signature, // seller signaure (skip)
+      //   "0x" // buyer signaure (skip)
+      // ]);
+      const transaction = await tradeContract.cancelOrder([
+        walletData.account, // seller
+        walletData.account, // buyer (skip)
+        TokenContractAddress, // erc20Address
+        contractAddress, // NFT contractAddress
+        nftType, // nftType
+        convertedPrice, // unit price
+        auction.data.quantity ? auction.data.quantity : 1, // total onsale quantity
+        false, // skip royalty
+        getDateForSolidity(auction.data.startTimestamp),
+        getDateForSolidity(auction.data.endTimeStamp),
+        auction?.data?.collectible.data.nftID, // tokenID
+        convertedPrice, // total price (skip)
+        1, // total purchase quantity (skip)
+        auction.data.signature, // seller signaure (skip)
+        "0x" // buyer signaure (skip)
+      ]);
+      console.log(transaction);
+
       // update auction to complete
       const res = await strapi.update("auctions", auction?.data?.id, {
         status: "Completed",
@@ -156,7 +296,7 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
       setShowConfirmModal(false);
       router.push(`/collectible/${auction?.data?.collectible.data.slug}`);
     } catch (error) {
-      toast.error("Error while creating auction");
+      toast.error("Error while cancel auction");
       console.log(error);
     }
   }

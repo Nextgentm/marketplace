@@ -230,7 +230,16 @@ export function validateInputAddresses(address) {
   return /^(0x){1}[0-9a-fA-F]{40}$/i.test(address);
 }
 
-export async function signMessage(provider, ethers, walletAddress) {
+export async function signMessage(provider, walletAddress, msg) {
+  if (!provider) {
+    throw new Error("Provider not connected");
+  }
+  const sig = await provider.send("personal_sign", [msg, walletAddress]);
+  // console.log("Signature", sig);
+  return sig;
+}
+
+export async function signLoginMessage(provider, ethers, walletAddress) {
   if (!provider) {
     throw new Error("Provider not connected");
   }
@@ -245,6 +254,13 @@ export async function signMessage(provider, ethers, walletAddress) {
   return isValid;
 }
 
+export function getDateForSolidity(_date) {
+  if (!_date) {
+    throw new Error("invalid date");
+  }
+  const date = new Date(_date);
+  return Math.floor(date.getTime() / 1000);
+}
 //_______________________________________________//
 // convert values
 //_______________________________________________//
