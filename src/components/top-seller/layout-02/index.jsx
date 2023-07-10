@@ -9,7 +9,7 @@ import axios from "axios";
 import { Button } from "react-bootstrap";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { convertEthertoWei, getTradeContract, getTokenContract, switchNetwork } from "../../../lib/BlokchainHelperFunctions";
+import { convertEthertoWei, getTradeContract, getTokenContract, switchNetwork, getDateForSolidity } from "../../../lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { UPDATE_BIDDING } from "src/graphql/mutation/bidding.js/updateBidding";
@@ -17,7 +17,7 @@ import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHis
 import strapi from "@utils/strapi";
 import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 
-const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction, id, refreshPageData }) => {
+const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction, id, refreshPageData, buyerOrderSignature }) => {
   const { walletData, setWalletData } = useContext(AppData);
 
   const router = useRouter();
@@ -106,9 +106,10 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
       const unitPrice = `${convertedPrice}`;
       const amount = `${parseFloat(auction.data.quantity) * parseFloat(unitPrice)}`;
       const tokenId = `${product.nftID}`;
-      const tokenURI = "-";
-      const supply = `${product.supply ? product.supply : 1}`;
-      const royaltyFee = `${product?.royalty ? product?.royalty : 0}`;
+      const nftOrderQuantity = auction.data.quantity;
+      const startTimestamp = getDateForSolidity(auction.data.startTimestamp);
+      const endTimeStamp = getDateForSolidity(auction.data.endTimeStamp);
+      const sellerOrderSignature = auction.data.signature;
       const qty = `${auction.data.quantity ? auction.data.quantity : 1}`;
 
       // Pull the deployed contract instance
@@ -119,6 +120,23 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
         return;
       }
       try {
+        console.log([
+          seller,
+          buyer,
+          erc20Address,
+          nftAddress,
+          nftType,
+          unitPrice,
+          nftOrderQuantity,
+          skipRoyalty,
+          startTimestamp,
+          endTimeStamp,
+          tokenId,
+          amount,
+          qty,
+          sellerOrderSignature,
+          buyerOrderSignature
+        ]);
         const transaction = await tradeContract.executeBid([
           seller,
           buyer,
@@ -126,13 +144,15 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
           nftAddress,
           nftType,
           unitPrice,
+          nftOrderQuantity,
           skipRoyalty,
-          amount,
+          startTimestamp,
+          endTimeStamp,
           tokenId,
-          tokenURI,
-          supply,
-          royaltyFee,
-          qty
+          amount,
+          qty,
+          sellerOrderSignature,
+          buyerOrderSignature
         ]);
         const receipt = await transaction.wait();
         const transactionHash = receipt.transactionHash;
@@ -164,7 +184,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
         console.log(error);
       }
     } catch (error) {
-
+      console.log(error);
     }
   }
 
