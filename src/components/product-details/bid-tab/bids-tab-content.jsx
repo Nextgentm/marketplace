@@ -15,6 +15,7 @@ const BidsTabContent = ({ bids, product, auction, refreshPageData }) => (
         image={{ src: bid?.user?.image?.src, width: 44, height: 44 }}
         product={product}
         auction={auction}
+        buyerOrderSignature={bid?.signature}
         refreshPageData={refreshPageData}
       />
     ))}
