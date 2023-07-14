@@ -72,7 +72,7 @@ contract Trade is AccessControl {
         @param nftAddress address of NFT contract where the NFT token is created/Minted.
         @param nftType an enum value, if the type is ERC721/ERC1155 the enum value is 0/1.
         @param uintprice the Price Each NFT it's not including the buyerFee.
-        @param nftAmount the max Quantity of NFT available for order.
+        @param nftOrderQuantity the max Quantity of NFT available for order.
         @param skipRoyalty skip royalty part or not.
         @param startDate the start Date of the order.
         @param endDate the end Date of the order.
@@ -89,7 +89,7 @@ contract Trade is AccessControl {
         address nftAddress;
         BuyingAssetType nftType;
         uint256 unitPrice;
-        uint256 nftAmount;
+        uint256 nftOrderQuantity;
         bool skipRoyalty;
         uint256 startDate;
         uint256 endDate;
@@ -252,7 +252,7 @@ contract Trade is AccessControl {
         this will validate and update the signature of order for seller
     */
     function validateandUpdateOrderForSeller(Order calldata order)
-        public
+        internal 
         returns (bool)
     {
         bytes32 sellerOrderhash = getOrderSellerHash(order);
@@ -270,7 +270,7 @@ contract Trade is AccessControl {
 
         // if order is new then set its status and max amount
         if (orderLimit[sellerOrderhashMessage].status == Status.NONE) {
-            orderLimit[sellerOrderhashMessage].maxAmount = order.nftAmount;
+            orderLimit[sellerOrderhashMessage].maxAmount = order.nftOrderQuantity;
             orderLimit[sellerOrderhashMessage].status = Status.LIVE;
         } else if (orderLimit[sellerOrderhashMessage].status == Status.LIVE) {
             require(
@@ -457,7 +457,7 @@ contract Trade is AccessControl {
                     order.nftAddress,
                     order.nftType,
                     order.unitPrice,
-                    order.nftAmount,
+                    order.nftOrderQuantity,
                     order.skipRoyalty,
                     order.startDate,
                     order.endDate,
