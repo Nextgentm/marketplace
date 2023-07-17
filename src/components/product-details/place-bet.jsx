@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
 
-import { convertEthertoWei, convertWeitoEther, getTokenContract, getTradeContract, switchNetwork } from "../../lib/BlokchainHelperFunctions";
+import { convertEthertoWei, convertWeitoEther, getDateForSolidity, getTokenContract, getTradeContract, signMessage, switchNetwork } from "../../lib/BlokchainHelperFunctions";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import { useMutation } from "@apollo/client";
@@ -53,7 +53,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   //moonpay integration
-  const payUsingMoonpay = (quantity) => {
+  const payUsingMoonpay = async (quantity) => {
     // show the moonpay integration part
     try {
       if (userData) {
@@ -70,6 +70,17 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
             quantity: quantity ? quantity : 1
           }
         });
+        const urlForSignature = moonpaySdk.generateUrlForSigning();
+        console.log(urlForSignature);
+        // sign it with API secret and return the signature.
+        const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/sign_url`, {
+          method: "POST",
+          body: urlForSignature,
+        });
+        const signature = await response.text();
+        console.log(signature);
+        // Once you have the signature, you can update the SDK with it
+        moonpaySdk.updateSignature(decodeURIComponent(signature));
         moonpaySdk.show();
       } else {
         toast.error("Please login first");
@@ -101,9 +112,21 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
     });
   }
 
+  async function getOrderBidHash(order) {
+    try {
+      const tradeContract = await getTradeContract(walletData);
+
+      const orderSellerHash = await tradeContract.getOrderBuyerHash(order);
+      console.log(orderSellerHash);
+      return orderSellerHash;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
   async function StoreData(price, quantity) {
     try {
-      const signer = walletData.provider.getSigner();
       let contractAddress;
       if (product.collection.data.collectionType === "Single") {
         contractAddress = product.collection.data.contractAddress;
@@ -145,26 +168,66 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       const transaction = await tokenContract.increaseAllowance(walletData.contractData.TransferProxy.address, requireAllowanceAmount);
       const receipt = await transaction.wait();
 
+      const seller = auction.data.walletAddress;
+      const buyer = walletData.account;
+      const erc20Address = TokenContractAddress;
+      const nftAddress = contractAddress;
+      const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
+      const skipRoyalty = false;
+      const unitPrice = `${convertedPrice}`;
+      const amount = `${parseFloat(quantity) * parseFloat(unitPrice)}`;
+      const tokenId = `${product.nftID}`;
+      const nftOrderQuantity = auction.data.quantity;
+      const startTimestamp = getDateForSolidity(auction.data.startTimestamp);
+      const endTimeStamp = getDateForSolidity(auction.data.endTimeStamp);
+      const sellerOrderSignature = auction.data.signature;
+      const qty = `${quantity ? quantity : 1}`;
+
+      const bidHash = await getOrderBidHash([
+        seller,
+        buyer,
+        erc20Address,
+        nftAddress,
+        nftType,
+        unitPrice,
+        nftOrderQuantity,
+        skipRoyalty,
+        startTimestamp,
+        endTimeStamp,
+        tokenId,
+        amount,
+        qty,
+        sellerOrderSignature,
+        "0x"
+      ]);
+      const buyerOrderSignature = await signMessage(walletData.provider, walletData.account, bidHash);
+      console.log(buyerOrderSignature);
+      if (!buyerOrderSignature) {
+        return;
+      }
+
       let isAccepted = false;
       if (auction.data.sellType == "FixedPrice") {
-        const seller = auction.data.walletAddress;
-        const buyer = walletData.account;
-        const erc20Address = TokenContractAddress;
-        const nftAddress = contractAddress;
-        const nftType = product.collection.data.collectionType === "Single" ? 1 : 0;
-        const skipRoyalty = false;
-        const unitPrice = `${convertedPrice}`;
-        const amount = `${parseFloat(quantity) * parseFloat(unitPrice)}`;
-        const tokenId = `${product.nftID}`;
-        const tokenURI = "-";
-        const supply = `${product.supply ? product.supply : 1}`;
-        const royaltyFee = `${product?.royalty ? product?.royalty : 0}`;
-        const qty = `${quantity ? quantity : 1}`;
 
         // Pull the deployed contract instance
         const tradeContract = await getTradeContract(walletData);
-
-
+        console.log([
+          seller,
+          buyer,
+          erc20Address,
+          nftAddress,
+          nftType,
+          unitPrice,
+          nftOrderQuantity,
+          skipRoyalty,
+          startTimestamp,
+          endTimeStamp,
+          tokenId,
+          amount,
+          qty,
+          sellerOrderSignature,
+          buyerOrderSignature
+        ]);
         const transaction = await tradeContract.buyAsset([
           seller,
           buyer,
@@ -172,13 +235,15 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
           nftAddress,
           nftType,
           unitPrice,
+          nftOrderQuantity,
           skipRoyalty,
-          amount,
+          startTimestamp,
+          endTimeStamp,
           tokenId,
-          tokenURI,
-          supply,
-          royaltyFee,
-          qty
+          amount,
+          qty,
+          sellerOrderSignature,
+          buyerOrderSignature
         ]);
         const receipt = await transaction.wait();
 
@@ -208,6 +273,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         bidderAddress: walletData.account,
         timeStamp: new Date(),
         auction: auction.data.id,
+        signature: buyerOrderSignature,
         isAccepted
       });
       console.log(res);

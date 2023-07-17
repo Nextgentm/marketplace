@@ -26,7 +26,7 @@ const Collectibles = ({ dataCollectibles, categoriesolds }) => {
       <SEO pageTitle="Explore Simple" />
       <Header />
       <main id="main-content">
-        <Breadcrumb pageTitle={router.query.collection ? "Explore NFT Collection" : "Explore NFT"} currentPage={router.query.collection ? "Explore NFT Collection" : "Explore NFT"} isCollection={true} />
+        <Breadcrumb pageTitle={router.query.collection ? router.query.collection : "Explore NFT"} currentPage={router.query.collection ? router.query.collection : "Explore NFT"} isCollection={true} />
         {dataCollectibles && (
           <ExploreProductArea
             data={{
