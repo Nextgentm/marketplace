@@ -164,7 +164,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         // Pull the deployed contract instance
         const contract1155 = await getERC1155Contract(walletData, contractAddress);
 
-        const approved = await contract1155.isApprovedForAll(walletData.account, walletData.contractData.TradeContract.address);
+        const approved = await contract1155.isApprovedForAll(walletData.account, walletData.contractData.TransferProxy.address);
         // console.log(approved);
         if (!approved) {
           const transaction = await contract1155.setApprovalForAll(walletData.contractData.TransferProxy.address, true);
