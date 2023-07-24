@@ -120,6 +120,19 @@ export async function getTransferProxyContract(walletData) {
   return null;
 }
 
+export async function getStakingNFTContract(walletData) {
+  // Pull the deployed contract instance
+  if (walletData.contractData) {
+    const signer = walletData.provider.getSigner();
+    const stakingContract = new walletData.ethers.Contract(
+      walletData.contractData.StakingContract.address,
+      walletData.contractData.StakingContract.abi,
+      signer
+    );
+    return stakingContract;
+  }
+  return null;
+}
 //_______________________________________________//
 // get value from smart contracts
 //_______________________________________________//
@@ -148,6 +161,38 @@ export async function addressIsAdmin(walletData) {
   return false;
 }
 
+export async function getStakingReward(walletData, walletAddress, NFTContractAddress, tokenId, index) {
+  if (!walletAddress || !NFTContractAddress) return false;
+  try {
+    const stakingContract = await getStakingNFTContract(walletData);
+    // console.log(walletData, walletAddress, NFTContractAddress, tokenId, index);
+    if (stakingContract) {
+      const balanceData = await stakingContract.calculateRewards(walletAddress, NFTContractAddress, tokenId, index);
+      // console.log(balanceData);
+      const balance = parseInt(balanceData._hex, 16);
+      return balance;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  return 0;
+}
+
+export async function getStakingRewardTokenDecimal(walletData) {
+  try {
+    const stakingContract = await getStakingNFTContract(walletData);
+    if (stakingContract) {
+      const erc20Address = await stakingContract.rewardToken();
+      // console.log(erc20Address);
+      const tokenContract = await getTokenContract(walletData, erc20Address);
+      const decimals = await tokenContract.decimals();
+      return decimals;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  return 18;
+}
 // ================================================//
 
 //_______________________________________________//
