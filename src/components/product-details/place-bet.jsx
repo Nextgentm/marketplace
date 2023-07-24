@@ -286,7 +286,20 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       }
       // router.reload();
     } catch (error) {
-
+      if (error.message.includes("execution reverted:")) {
+        // Extract the error message
+        const startIndex = error.message.indexOf("execution reverted:");
+        const endIndex = error.message.indexOf('",', startIndex);
+        const extractedErrorMessage = (startIndex !== -1 && endIndex !== -1) ? error.message.substring(startIndex + 20, endIndex).trim() : null;
+        if (extractedErrorMessage) {
+          toast.error(`Transaction failed: ${extractedErrorMessage}`);
+        } else {
+          toast.error("Error while purchasing NFT!");
+        }
+      } else {
+        toast.error("Error while purchasing NFT!");
+        console.log(error);
+      }
     }
   }
 
