@@ -19,12 +19,13 @@ import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CH
 import DirectSalesModal from "@components/modals/direct-sales";
 import TimeAuctionModal from "@components/modals/time-auction";
 import TransferPopupModal from "@components/modals/transfer";
-import { getERC1155Balance, validateInputAddresses, getERC1155Contract, getERC721Contract, switchNetwork, addressIsAdmin, getTradeContract, getTokenContract, convertEthertoWei, getDateForSolidity, signMessage } from "../../lib/BlokchainHelperFunctions";
+import { getERC1155Balance, validateInputAddresses, getERC1155Contract, getERC721Contract, switchNetwork, addressIsAdmin, getTradeContract, getTokenContract, convertEthertoWei, getDateForSolidity, signMessage, getStakingNFTContract } from "../../lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateCollectible";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
 import ConfirmModal from "@components/modals/confirm-modal";
+import StakingTabContent from "@components/product-details/staking-tab/staking-tab-content";
 
 // Demo Image
 
@@ -40,6 +41,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   const router = useRouter();
   const [erc1155MyBalance, setERC1155MyBalance] = useState(0);
   const [totalNFTInAuction, setTotalNFTInAuction] = useState(0);
+  const [totalStakeNFT, setTotalStakeNFT] = useState(0);
   const [showDirectSalesModal, setShowDirectSalesModal] = useState(false);
   const handleDirectSaleModal = () => {
     setShowAuctionInputModel(!showDirectSalesModal); // close model close on sale buttons option
@@ -62,9 +64,16 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     setShowConfirmModal((prev) => !prev);
   };
 
+  const [showStakingConfirmModal, setShowStakingConfirmModal] = useState(false);
+  const handleShowStakingConfirmModal = () => {
+    setShowStakingConfirmModal((prev) => !prev);
+  };
+
   const [isAdminWallet, setIsAdminWallet] = useState(false);
 
   const [descriptionShowMore, setDescriptionShowMore] = useState(false);
+
+  const [stakingData, setStakingData] = useState([]);
 
   useEffect(() => {
     if (walletData.isConnected) {
@@ -100,6 +109,27 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     // console.log(createdOwnerHistory);
   }, [createdOwnerHistory]);
 
+  const getStakingData = async () => {
+    if (walletData.isConnected) {
+      if (walletData.account) {
+        let _stakingData = await strapi.find("collectible-stakings", {
+          filters: {
+            collectible: product.id,
+            walletAddress: walletData.account,
+            isClaimed: false
+          }
+        });
+        // console.log(_stakingData);
+        setStakingData(_stakingData.data);
+        let total = 0;
+        _stakingData.data.map((stake) => {
+          if (stake.walletAddress == walletData.account)
+            total += stake.stakingAmount;
+        })
+        setTotalStakeNFT(total);
+      }
+    }
+  }
 
   const updateMyERC1155Balance = () => {
     if (walletData.isConnected) {
@@ -129,6 +159,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
 
   useEffect(() => {
     updateMyERC1155Balance();
+    getStakingData();
   }, [walletData])
 
   async function approveNFT() {
@@ -519,10 +550,125 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         updateMyERC1155Balance();
         setShowConfirmModal(false);
       } else {
-        toast.error("Invalid address");
+        toast.error("Invalid Quantity");
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleSubmitStakeNFT = async (event) => {
+    // const { target } = e;
+    event.preventDefault();
+    // console.log(event);
+    // console.log(product);
+    if (!walletData.isConnected) {
+      toast.error("Please connect wallet first");
+      return;
+    } // chnage network
+    if (product.collection.data.networkType === "Ethereum") {
+      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+        // ethereum testnet
+        return;
+      }
+    } else if (product.collection.data.networkType === "Polygon") {
+      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    } else if (product.collection.data.networkType === "Binance") {
+      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+        // polygon testnet
+        return;
+      }
+    }
+    // NFT quantity to burn
+    const quantity = event.target.quantity?.value ? event.target.quantity?.value : 1;
+    // console.log(quantity);
+    try {
+      if (quantity) {
+        let index = null;
+        // Pull the deployed contract instance
+        const stakingNFT = await getStakingNFTContract(walletData);
+        if (product.collection.data.collectionType === "Single") {
+          const contractAddress = product.collection.data.contractAddress;
+          // console.log(contractAddress);
+          // Pull the deployed contract instance
+          const contract721 = await getERC721Contract(walletData, contractAddress);
+          let approveAddress = await contract721.getApproved(product.nftID);
+          // approve nft first
+          if (approveAddress.toLowerCase() != walletData.contractData.StakingContract.address.toLowerCase()) {
+            // approve nft first
+            const transaction = await contract721.approve(walletData.contractData.StakingContract.address, product.nftID);
+            const receipt = await transaction.wait();
+            // console.log(receipt);
+          }
+
+          const transaction = await stakingNFT.stakERC721Token(contractAddress, product.nftID);
+          const receipt = await transaction.wait();
+          console.log(receipt);
+          const correctEvent = receipt.events.find((event) => event.event === "TokensStaked");
+          // console.log("correctEvent is ", correctEvent);
+          index = parseInt(correctEvent.args.index._hex, 16);
+          // console.log("index is ", index);
+        } else if (product.collection.data.collectionType === "Multiple") {
+          const contractAddress = product.collection.data.contractAddress1155;
+          // Pull the deployed contract instance
+          const contract1155 = await getERC1155Contract(walletData, contractAddress);
+
+          const approved = await contract1155.isApprovedForAll(walletData.account, walletData.contractData.StakingContract.address);
+          // console.log(approved);
+          if (!approved) {
+            const transaction = await contract1155.setApprovalForAll(walletData.contractData.StakingContract.address, true);
+            const receipt = await transaction.wait();
+          }
+
+          const transaction = await stakingNFT.stakERC1155Token(contractAddress, product.nftID, quantity);
+          const receipt = await transaction.wait();
+
+          const correctEvent = receipt.events.find((event) => event.event === "TokensStaked");
+          console.log("correctEvent is ", correctEvent);
+          index = parseInt(correctEvent.args.index._hex, 16);
+          console.log("index is ", index);
+        }
+
+        // create auction to complete
+        const res = await strapi.create("collectible-stakings", {
+          walletAddress: walletData.account,
+          collectible: product.id,
+          stakingAmount: quantity,
+          stakingStartTime: new Date(),
+          rewardAmount: 0,
+          rewardType: "Crypto",
+          isClaimed: false,
+          index: index
+        });
+        // console.log(res);
+
+        await getStakingData();
+        toast.success("NFT stake succesful");
+        // router.reload();
+        // later update this product to hook
+        setShowConfirmModal(false);
+        setShowStakingConfirmModal(false);
+      } else {
+        toast.error("Invalid Quantity");
+      }
+    } catch (error) {
+      if (error.message.includes("execution reverted:")) {
+        // Extract the error message
+        const startIndex = error.message.indexOf("execution reverted:");
+        const endIndex = error.message.indexOf('",', startIndex);
+        const extractedErrorMessage = (startIndex !== -1 && endIndex !== -1) ? error.message.substring(startIndex + 20, endIndex).trim() : null;
+        if (extractedErrorMessage) {
+          toast.error(`Error: ${extractedErrorMessage}`);
+        } else {
+          toast.error("Error while stake this NFT");
+        }
+      } else {
+        toast.error("Error while stake this NFT");
+        console.log(error);
+      }
     }
   };
 
@@ -590,7 +736,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                   </div>
                 ) : (
                   <>
-                    {((!product.putOnSale && product.owner === walletData.account && walletData.isConnected) ||
+                    {((!product.putOnSale && product.owner === walletData.account && walletData.isConnected && product.supply == 1) ||
                       (product.supply > 1 && erc1155MyBalance > totalNFTInAuction && walletData.isConnected)) && (
                         <>
                           <div className="row">
@@ -622,6 +768,21 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                                 </Button>
                               </div>
                             </div>}
+
+                          {(product.collection.data.collectionType === "Multiple" ? (totalStakeNFT + totalNFTInAuction) < erc1155MyBalance : totalStakeNFT < 1) &&
+                            <div className="row">
+                              <div className="col-md-12">
+                                <br />
+                                <Button color="primary-alta" fullwidth onClick={() => setShowStakingConfirmModal(true)}>
+                                  Stake NFT
+                                </Button>
+                              </div>
+                            </div>
+                          }
+                          {stakingData.length > 0 &&
+                            <StakingTabContent stakingData={stakingData} product={product} refreshPageData={getStakingData} />
+                          }
+
                         </>
                       )}
 
@@ -686,6 +847,14 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         handleModal={handleShowConfirmModal}
         headingText={"Do you really want to burn this NFT?"}
         handleSubmit={handleSubmitBurnNFT}
+        supply={product?.supply}
+        maxQuantity={product?.supply > 1 ? erc1155MyBalance : product?.supply}
+      />
+      <ConfirmModal
+        show={showStakingConfirmModal}
+        handleModal={handleShowStakingConfirmModal}
+        headingText={"Do you really want to stake this NFT?"}
+        handleSubmit={handleSubmitStakeNFT}
         supply={product?.supply}
         maxQuantity={product?.supply > 1 ? erc1155MyBalance : product?.supply}
       />
