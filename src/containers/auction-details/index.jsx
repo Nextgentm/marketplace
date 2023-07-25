@@ -361,7 +361,7 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
               </span>
               <h6 className="title-name">
                 <span>{descriptionShowMore ? auction?.data?.collectible.data.description : `${auction?.data?.collectible.data.description.substring(0, 110)}`}</span>
-                <a href="#" onClick={() => descriptionShowMore ? setDescriptionShowMore(false) : setDescriptionShowMore(true)}>{descriptionShowMore ? <><br />show less</> : "...show more"}</a>
+                {auction?.data?.collectible.data.description > 110 && <a href="#" onClick={() => descriptionShowMore ? setDescriptionShowMore(false) : setDescriptionShowMore(true)}>{descriptionShowMore ? <><br />show less</> : "...show more"}</a>}
               </h6>
               <div className="catagory-collection">
                 <ProductCategory owner={auction?.data?.collectible.data.collection} royalty={auction?.data?.royalty} />
