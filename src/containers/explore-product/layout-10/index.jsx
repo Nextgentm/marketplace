@@ -24,7 +24,7 @@ const ExploreProductArea = ({
   const [loading, setLoading] = useState(false);
   const [collectionsData, setCollectionsData] = useState();
   const router = useRouter();
-  const routerQuery = router?.query?.collection?.split();
+  const routerQuery = router?.query?.collection;
   const [onChangeValue, setOnChangeValue] = useState();
   const [onchangepriceRange, setonchangepriceRange] = useState({ price: [0, 100] });
   const [checkedCollection, setCheckedCollection] = useState([]);
@@ -88,7 +88,8 @@ const ExploreProductArea = ({
   });
   if (router.query.collection) {
     collectionPage = true;
-    section_title.title = router.query.collection + " Collection";
+    const words = router.query.collection.split("-");
+    section_title.title = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") + " Collection";
   }
   useEffect(() => {
     if (collectionData.data) {
@@ -164,7 +165,7 @@ const ExploreProductArea = ({
                 collection: {
                   fields: "*",
                   filter: {
-                    name: routerQuery
+                    slug: routerQuery
                   },
                   populate: {
                     cover: {
@@ -237,8 +238,8 @@ const ExploreProductArea = ({
     }
     if (router.query.collection) {
       filters.collection = {
-        name: {
-          $in: routerQuery
+        slug: {
+          $eq: routerQuery
         }
       };
     }
@@ -289,8 +290,8 @@ const ExploreProductArea = ({
 
       if (router.query.collection) {
         filters.collection = {
-          name: {
-            $in: routerQuery
+          slug: {
+            $eq: routerQuery
           }
         };
       }
@@ -416,8 +417,8 @@ const ExploreProductArea = ({
     }
     if (router.query.collection) {
       filters.collection = {
-        name: {
-          $in: routerQuery
+        slug: {
+          $eq: routerQuery
         }
       };
     }
@@ -652,8 +653,8 @@ const ExploreProductArea = ({
 
     if (router.query.collection) {
       filters.collection = {
-        name: {
-          $in: routerQuery
+        slug: {
+          $eq: routerQuery
         }
       };
     }
@@ -771,8 +772,8 @@ const ExploreProductArea = ({
     }
     if (router.query.collection) {
       filters.collection = {
-        name: {
-          $in: routerQuery
+        slug: {
+          $eq: routerQuery
         }
       };
     }
@@ -839,7 +840,7 @@ const ExploreProductArea = ({
     }
     if (router.query.collection) {
       filters.collection = {
-        name: {
+        slug: {
           $eq: routerQuery
         }
       };
@@ -965,7 +966,7 @@ const ExploreProductArea = ({
     };
     if (router.query.collection) {
       filters.collection = {
-        name: {
+        slug: {
           $eq: routerQuery
         }
       };
@@ -979,7 +980,7 @@ const ExploreProductArea = ({
           }, {
             isOpenseaCollectible: true,
             collection: {
-              name: {
+              slug: {
                 $eq: routerQuery
               }
             }
