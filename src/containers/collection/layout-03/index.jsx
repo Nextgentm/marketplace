@@ -136,7 +136,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                   <Collection
                     title={collection?.name}
                     total_item={collection?.collectibles?.data?.length}
-                    path={`collectibles?collection=${collection?.slug}`}
+                    path={`collection/${collection?.slug}`}
                     image={collection?.cover?.data}
                     thumbnails={collection?.featured?.data}
                     profile_image={collection?.logo?.data}
@@ -149,7 +149,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                   <Collection
                     title={collection?.name}
                     total_item={collection?.collectibles?.data?.length}
-                    path={`collectibles?collection=${collection?.slug}`}
+                    path={`collection/${collection?.slug}`}
                     image={collection?.cover?.data}
                     thumbnails={collection?.featured?.data}
                     profile_image={collection?.logo?.data}
