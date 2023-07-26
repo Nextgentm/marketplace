@@ -3,35 +3,34 @@ import Wrapper from "@layout/wrapper";
 import Header from "@layout/header/header";
 import Footer from "@layout/footer/footer-01";
 import Breadcrumb from "@components/breadcrumb";
-import ExploreProductArea from "@containers/explore-product/layout-10";
+import ExploreProductArea from "@containers/explore-product/layout-09";
 
 // Demo data
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import client from "@utils/apollo-client";
-import { GET_COLLECTION_LISTDATA_QUERY } from "src/graphql/query/collection/getCollection";
+import { getCollectible, getCollection } from "src/services/collections/collection";
 import strapi from "@utils/strapi";
 // import productData from "../data/products.json";
 
-const CollectionDetail = ({ collections }) => {
+const CollectionDetail = ({ collection, collectibles }) => {
 
   return (
     <Wrapper>
-      <SEO pageTitle={collections?.name} />
+      <SEO pageTitle={collection?.name} />
       <Header />
       <main id="main-content">
-        <Breadcrumb pageTitle={collections?.name} currentPage={collections?.name} />
-        {collections?.collectibles.data && (
+        <Breadcrumb pageTitle={"Explore Collection"} currentPage={collection?.name} isCollection={true} />
+        {collectibles.data && (
           <ExploreProductArea
             data={{
               section_title: {
-                title: "Find Your Non Replaceable Token"
+                title: `${collection?.name} Collection`
               },
-              products: collections?.collectibles?.data,
-              placeBid: true,
+              products: collectibles,
               collectionPage: true,
-              collectionData: collections
+              collection: collection
             }}
           />
         )}
@@ -73,31 +72,65 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const { data } = await client.query({
-    query: GET_COLLECTION_LISTDATA_QUERY,
-    variables: {
-      filters: {
-        slug: {
-          eq: params.slug
-        },
-      },
-      collectiblesFilters: {
-        auction: {
-          status: {
-            eq: "Live"
-          }
-        },
-      },
-      pagination: {
-        pageSize: 8
+  // collection
+  const getCollections = await getCollection({
+    filters: {
+      slug: {
+        $eq: params.slug
       }
     },
-    fetchPolicy: "network-only"
   });
+  // console.log(getCollections);
+  const collection = getCollections.data[0];
+  // console.log(collection);
+  const getCollectiblecheckData = await getCollectible({
+    filters: {
+      auction: {
+        status: "Live"
+      },
+      collection: {
+        id: {
+          $eq: collection.id
+        }
+      }
+    },
+    populate: {
+      collection: {
+        fields: "*",
+        populate: {
+          cover: {
+            fields: "*"
+          },
+          logo: {
+            fields: "*"
+          }
+        }
+      },
+      auction: {
+        fields: "*",
+        filters: {
+          status: "Live",
+          // id: { $notNull: true }
+        }
+      },
+      image: {
+        fields: "*"
+      }
+    },
+    sort: ["priority:asc"],
+    pagination: {
+      page: 1,
+      pageCount: 1,
+      pageSize: 6
+    }
+  });
+  // console.log(getCollectiblecheckData.data);
+
   return {
     props: {
       className: "template-color-1",
-      collections: data?.collections?.data[0]?.attributes
+      collection: collection,
+      collectibles: getCollectiblecheckData
     } // will be passed to the page component as props
   };
 }

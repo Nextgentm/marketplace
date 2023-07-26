@@ -9,6 +9,7 @@ import LanguageFilter from "./language-flter";
 import RatingFilter from "./rating-filter";
 import PriceRangeFilter from "./price-range-filter";
 import SalesTypeSort from "./salestype-sort";
+import CardTypeFilter from "./card-type-filter";
 
 const ProductFilter = ({
   sortHandler,
@@ -25,7 +26,9 @@ const ProductFilter = ({
   routerQuery,
   languages,
   networksList,
-  networksCheckHandler
+  networksCheckHandler,
+  cardTypeList,
+  cardTypeCheckHandler
 }) => (
   <div className="nu-course-sidebar">
     <SortWidget onChange={sortHandler} value={sort} />
@@ -34,6 +37,12 @@ const ProductFilter = ({
       <NetworkFilter
         networks={networksList}
         onChange={networksCheckHandler}
+      />
+    )}
+    {cardTypeList && (
+      <CardTypeFilter
+        cardType={cardTypeList}
+        onChange={cardTypeCheckHandler}
       />
     )}
     {!collectionPage && (
