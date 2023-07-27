@@ -774,7 +774,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                               <div className="col-md-12">
                                 <br />
                                 <Button color="primary-alta" fullwidth onClick={() => setShowStakingConfirmModal(true)}>
-                                  Stake NFT
+                                  Stake Collectible
                                 </Button>
                               </div>
                             </div>
