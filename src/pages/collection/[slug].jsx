@@ -121,7 +121,7 @@ export async function getStaticProps({ params }) {
     pagination: {
       page: 1,
       pageCount: 1,
-      pageSize: 6
+      pageSize: 9
     }
   });
   // console.log(getCollectiblecheckData.data);

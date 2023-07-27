@@ -17,7 +17,9 @@ const TopSeller = ({ id, walletAddress, stakingAmount, stakingStartTime, isClaim
   const [totalReward, setTotalReward] = useState(0);
 
   useEffect(() => {
-    getTotalStakingReward();
+    setInterval(function () {
+      getTotalStakingReward();
+    }, 60 * 1000);
   }, [walletData]);
 
   async function getTotalStakingReward() {
@@ -25,14 +27,14 @@ const TopSeller = ({ id, walletAddress, stakingAmount, stakingStartTime, isClaim
     // console.log(rewardAmount);
     const decimals = await getStakingRewardTokenDecimal(walletData);
     //convert price
-    console.log(decimals);
+    // console.log(decimals);
     let convertedPrice;
     if (decimals == 18) {
       convertedPrice = convertWeitoEther(walletData.ethers, rewardAmount);
     } else {
       convertedPrice = (eth * (10 ** decimals));
     }
-    console.log(convertedPrice);
+    // console.log(convertedPrice);
     setTotalReward(convertedPrice);
   }
 

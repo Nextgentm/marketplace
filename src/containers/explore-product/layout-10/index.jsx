@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import { getCollectible, getCollection } from "src/services/collections/collection";
 import { networksList } from "@utils/wallet";
 import strapi from "@utils/strapi";
-import { Spinner } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 
 const ExploreProductArea = ({
   className,
@@ -32,9 +32,17 @@ const ExploreProductArea = ({
   const [selectedFilterNetworks, setSelectedFilterNetworks] = useState([]);
 
   const [onchangecheckData, setonchangecheckData] = useState(categoriesolds);
-  const setCollectionData = (data, page = 1) => {
-    setCollectionsData(data.data);
-    setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 6), page });
+
+  const PAGE_SIZE = 9; //set for index page manually collectibles.jsx
+
+
+  const setCollectionData = (data, page = 1, loadmore) => {
+    if (loadmore && collectionsData) {
+      setCollectionsData([...collectionsData, ...data.data]);
+    } else {
+      setCollectionsData(data.data);
+    }
+    setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / PAGE_SIZE), page });
   };
   let categoriesold = {};
   // set categories with count
@@ -98,126 +106,182 @@ const ExploreProductArea = ({
     }
   }, [collectionData.data]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (router.query.collection) {
-          if (checkedCollection.length) {
-            const data = await getCollectible({
-              filters: {
+  const fetchData = async () => {
+    try {
+      if (router.query.collection) {
+        if (checkedCollection.length) {
+          const data = await getCollectible({
+            filters: {
+              auction: {
+                status: "Live"
+              }
+            },
+            populate: {
+              collection: {
+                fields: "*",
+                filter: {
+                  name: {
+                    $in: checkedCollection
+                  },
+                  id: {
+                    $notNull: true
+                  }
+                },
+                populate: {
+                  cover: {
+                    fields: "*"
+                  },
+                  logo: {
+                    fields: "*"
+                  }
+                }
+              },
+              auction: {
+                fields: "*",
+                filters: {
+                  status: "Live",
+                  id: { $notNull: true }
+                }
+              },
+              image: {
+                fields: "*"
+              }
+            },
+            sort: ["priority:asc"],
+            pagination: {
+              limit: PAGE_SIZE,
+              start: 0,
+              withCount: true,
+              sort: ["createdAt:desc"]
+            }
+          });
+          setLoading(false);
+          setCollectionData(data, page);
+        } else {
+          const data = await getCollectible({
+            filter: {
+              $or: [{
                 auction: {
                   status: "Live"
                 }
-              },
-              populate: {
-                collection: {
-                  fields: "*",
-                  filter: {
-                    name: {
-                      $in: checkedCollection
-                    },
-                    id: {
-                      $notNull: true
-                    }
+              }, {
+                isOpenseaCollectible: true
+              }]
+            },
+            populate: {
+              collection: {
+                fields: "*",
+                filter: {
+                  slug: routerQuery
+                },
+                populate: {
+                  cover: {
+                    fields: "*"
                   },
-                  populate: {
-                    cover: {
-                      fields: "*"
-                    },
-                    logo: {
-                      fields: "*"
-                    }
+                  logo: {
+                    fields: "*"
                   }
-                },
-                auction: {
-                  fields: "*",
-                  filters: {
-                    status: "Live",
-                    id: { $notNull: true }
-                  }
-                },
-                image: {
-                  fields: "*"
                 }
               },
-              sort: ["priority:asc"],
-              pagination: {
-                limit: 6,
-                start: 0,
-                withCount: true,
-                sort: ["createdAt:desc"]
-              }
-            });
-            setLoading(false);
-            setCollectionData(data, page);
-          } else {
-            const data = await getCollectible({
-              filter: {
-                $or: [{
-                  auction: {
-                    status: "Live"
-                  }
-                }, {
-                  isOpenseaCollectible: true
-                }]
-              },
-              populate: {
-                collection: {
-                  fields: "*",
-                  filter: {
-                    slug: routerQuery
-                  },
-                  populate: {
-                    cover: {
-                      fields: "*"
-                    },
-                    logo: {
-                      fields: "*"
-                    }
-                  }
-                },
-                auction: {
-                  fields: "*",
-                  filter: {
-                    status: "Live",
-                    id: { $exists: true }
-                  }
-                },
-                image: {
-                  fields: "*"
+              auction: {
+                fields: "*",
+                filter: {
+                  status: "Live",
+                  id: { $exists: true }
                 }
               },
-              sort: ["priority:asc"],
-              pagination: {
-                limit: 6,
-                start: 0,
-                withCount: true,
-                sort: ["createdAt:desc"]
+              image: {
+                fields: "*"
               }
-            });
-            setCollectionData(data, page);
-          }
+            },
+            sort: ["priority:asc"],
+            pagination: {
+              limit: PAGE_SIZE,
+              start: 0,
+              withCount: true,
+              sort: ["createdAt:desc"]
+            }
+          });
+          setCollectionData(data, page);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        // Handle the error appropriately (e.g., show an error message)
       }
-      setLoading(false);
-    };
-    setLoading(true);
-    fetchData();
-  }, [router.query.collection]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // Handle the error appropriately (e.g., show an error message)
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
+    if (router.query.collection) {
+      setLoading(true);
+      fetchData();
+    }
     if (router.query.sort) {
       setOnChangeValue(router.query.sort);
       getCollectibleSortData(router.query.sort);
     }
-  }, [router.query.sort]);
+    if (router.query.search) {
+      // console.log(router.query.search);
+      getSearchQueryData(1);
+    }
+  }, [router.query]);
+
+
+  const getSearchQueryData = async (page) => {
+    const start = page * PAGE_SIZE - PAGE_SIZE;
+    const limit = PAGE_SIZE;
+    setLoading(true);
+    let filters = {
+      // auction: {
+      //   status: {
+      //     $eq: "Live"
+      //   }
+      // },
+      name: {
+        $containsi: router.query.search
+      }
+    };
+    console.log(filters);
+    let sort = ["priority:asc"];
+    const data = await getCollectible({
+      filters: filters,
+      populate: {
+        collection: {
+          fields: "*",
+          populate: {
+            cover: {
+              fields: "*"
+            },
+            logo: {
+              fields: "*"
+            }
+          }
+        },
+        auction: {
+          fields: "*",
+          filters: {
+            status: "Live",
+            // id: { $notNull: true }
+          }
+        },
+        image: {
+          fields: "*"
+        }
+      },
+      pagination: {
+        start,
+        limit
+      },
+      sort: sort
+    });
+    setLoading(false);
+    setCollectionData(data, page, page != 1);
+  };
 
   const getCollectionPaginationRecord = async (page) => {
-    const start = page * 6 - 6;
-    const limit = 6;
+    const start = page * PAGE_SIZE - PAGE_SIZE;
+    const limit = PAGE_SIZE;
     // console.log("getCollectionPaginationRecord");
 
     setLoading(true);
@@ -341,7 +405,7 @@ const ExploreProductArea = ({
           sort: ["priority:asc"],
         });
         setLoading(false);
-        setCollectionData(data, page);
+        setCollectionData(data, page, true);
       }
     } else {
       if ((onChangeValue == "oldest" || onChangeValue == "newest" || onChangeValue == "other-marketplace" || selectedFilterNetworks.length < 1)
@@ -393,7 +457,7 @@ const ExploreProductArea = ({
         sort: sort
       });
       setLoading(false);
-      setCollectionData(data, page);
+      setCollectionData(data, page, true);
     }
   };
 
@@ -443,7 +507,7 @@ const ExploreProductArea = ({
       };
     }
     // console.log(filters);
-    let pagination = { pageSize: 6 };
+    let pagination = { pageSize: PAGE_SIZE };
     if (onchangeSort == "oldest") {
       const data = await getCollectible({
         filters: filters,
@@ -665,7 +729,7 @@ const ExploreProductArea = ({
         }
       };
     }
-    let pagination = { pageSize: 6 };
+    let pagination = { pageSize: PAGE_SIZE };
     if (onchangefilter == "Fixed-price") {
       filters.auction = {
         status: {
@@ -811,7 +875,7 @@ const ExploreProductArea = ({
             fields: "*"
           }
         },
-        pagination: { pageSize: 6 },
+        pagination: { pageSize: PAGE_SIZE },
         sort: ["priority:asc"]
       });
       setLoading(false);
@@ -887,7 +951,7 @@ const ExploreProductArea = ({
             fields: "*"
           }
         },
-        pagination: { pageSize: 6 },
+        pagination: { pageSize: PAGE_SIZE },
         sort: sortedFilter
       });
       setLoading(false);
@@ -895,7 +959,7 @@ const ExploreProductArea = ({
       // getCollectiblesdata({
       //   variables: {
       //     filter: filters,
-      //     pagination: { pageSize: 6 }
+      //     pagination: { pageSize: PAGE_SIZE }
       //   }
       // });
     } else if (onchangefilter) {
@@ -944,7 +1008,7 @@ const ExploreProductArea = ({
           }
         },
         sort: ["priority:asc"],
-        pagination: { pageSize: 6 }
+        pagination: { pageSize: PAGE_SIZE }
       });
       // console.log(data);
       setLoading(false);
@@ -1018,7 +1082,7 @@ const ExploreProductArea = ({
             fields: "*"
           }
         },
-        pagination: { pageSize: 6 },
+        pagination: { pageSize: PAGE_SIZE },
         sort: ["priority:asc"]
       });
       setLoading(false);
@@ -1026,7 +1090,7 @@ const ExploreProductArea = ({
       // getCollectiblesdata({
       //   variables: {
       //     filter: filters,
-      //     pagination: { pageSize: 6 }
+      //     pagination: { pageSize: PAGE_SIZE }
       //   }
       // });
     } else if (onchangefilter) {
@@ -1061,7 +1125,7 @@ const ExploreProductArea = ({
           }
         },
         sort: ["priority:asc"],
-        pagination: { pageSize: 6 }
+        pagination: { pageSize: PAGE_SIZE }
       });
       setLoading(false);
       setCollectionData(data);
@@ -1093,57 +1157,56 @@ const ExploreProductArea = ({
             />
           </div>
           <div className="col-lg-9 order-1 order-lg-2">
-            {loading ?
-              <div className="row spinner-container">
-                <Spinner animation="border" role="status" style={{ width: "4rem", height: "4rem" }}>
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              </div>
-              :
-              <div className="row g-5">
-                {/* {console.log("collectionsData", collectionsData)} */}
-                {collectionsData?.length > 0 ? (
-                  <>
-                    {collectionsData?.map((prod, index) => (
-                      <div key={index} className="col-lg-4 col-md-6 col-sm-12">
-                        <Product
-                          placeBid={prod?.auction?.data?.sellType == "Bidding"}
-                          title={prod.name}
-                          slug={prod.isOpenseaCollectible ? prod.marketURL : prod.slug}
-                          supply={prod.supply}
-                          price={prod?.auction?.data[0]?.bidPrice}
-                          symbol={prod?.auction?.data[0]?.priceCurrency}
-                          image={prod?.image?.data ? prod?.image?.data?.url : prod?.image_url}
-                          collectionName={prod?.collection?.data?.name}
-                          bitCount={
-                            prod?.auction?.data[0]?.sellType == "Bidding" ? prod?.auction?.data?.biddings?.data.length : 0
-                          }
-                          latestBid={prod.latestBid}
-                          likeCount={prod.likeCount}
-                          authors={prod.authors}
-                          isOpenseaCollectible={prod.isOpenseaCollectible}
-                          network={prod.collection?.data?.networkType}
-                        />
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <p>No item to show</p>
-                )}
-                {pagination?.pageCount > 1 ? (
-                  <Pagination
-                    className="single-column-blog"
-                    currentPage={pagination.page}
-                    numberOfPages={pagination.pageCount}
-                    onClick={getCollectionPaginationRecord}
-                  />
-                ) : null}
-              </div>
-            }
+            <div className="row g-5">
+              {/* {console.log("collectionsData", collectionsData)} */}
+              {collectionsData?.length > 0 ? (
+                <>
+                  {collectionsData?.map((prod, index) => (
+                    <div key={index} className="col-lg-4 col-md-6 col-sm-12">
+                      <Product
+                        placeBid={prod?.auction?.data?.sellType == "Bidding"}
+                        title={prod.name}
+                        slug={prod.isOpenseaCollectible ? prod.marketURL : prod.slug}
+                        supply={prod.supply}
+                        price={prod?.auction?.data[0]?.bidPrice}
+                        symbol={prod?.auction?.data[0]?.priceCurrency}
+                        image={prod?.image?.data ? prod?.image?.data?.url : prod?.image_url}
+                        collectionName={prod?.collection?.data?.name}
+                        bitCount={
+                          prod?.auction?.data[0]?.sellType == "Bidding" ? prod?.auction?.data?.biddings?.data.length : 0
+                        }
+                        latestBid={prod.latestBid}
+                        likeCount={prod.likeCount}
+                        authors={prod.authors}
+                        isOpenseaCollectible={prod.isOpenseaCollectible}
+                        network={prod.collection?.data?.networkType}
+                      />
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <p>No item to show</p>
+              )}
+
+              {loading &&
+                <div className="row spinner-container">
+                  <Spinner animation="border" role="status" style={{ width: "4rem", height: "4rem" }}>
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </div>
+              }
+              {pagination?.pageCount > 1 && pagination.page < pagination?.pageCount ? (
+                <div className="row page-load-more">
+                  <Button onClick={() => router.query.search ? getSearchQueryData(pagination.page + 1) : getCollectionPaginationRecord(pagination.page + 1)}>
+                    ...Load More
+                  </Button>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
