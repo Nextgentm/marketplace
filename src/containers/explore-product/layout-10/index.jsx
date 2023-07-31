@@ -94,17 +94,6 @@ const ExploreProductArea = ({
     pageSize: 0,
     total: 0
   });
-  if (router.query.collection) {
-    collectionPage = true;
-    const words = router.query.collection.split("-");
-    section_title.title = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") + " Collection";
-  }
-  useEffect(() => {
-    if (collectionData.data) {
-      setCollectionsData(collectionData.data);
-      setPagination(collectionData.meta.pagination);
-    }
-  }, [collectionData.data]);
 
   const fetchData = async () => {
     try {
@@ -213,17 +202,22 @@ const ExploreProductArea = ({
   };
 
   useEffect(() => {
-    if (router.query.collection) {
-      setLoading(true);
-      fetchData();
-    }
-    if (router.query.sort) {
-      setOnChangeValue(router.query.sort);
-      getCollectibleSortData(router.query.sort);
-    }
     if (router.query.search) {
       // console.log(router.query.search);
       getSearchQueryData(1);
+    } else if (router.query.sort) {
+      setOnChangeValue(router.query.sort);
+      getCollectibleSortData(router.query.sort);
+    } else if (router.query.collection) {
+      collectionPage = true;
+      const words = router.query.collection.split("-");
+      section_title.title = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") + " Collection";
+      setLoading(true);
+      fetchData();
+    } else if (collectionData.data) {
+      setCollectionsData(collectionData.data);
+      setPagination(collectionData.meta.pagination);
+      getCollectionPaginationRecord(1);
     }
   }, [router.query]);
 

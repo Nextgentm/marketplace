@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 const NetworkFilter = ({ networks, onChange }) => {
   const [isCheck, setIsCheck] = useState([]);
+  const [render, setRender] = useState(false);// use handle unnecessary render for first time
 
   const handleClick = (e) => {
 
@@ -13,7 +14,10 @@ const NetworkFilter = ({ networks, onChange }) => {
     }
   };
   useEffect(() => {
-    onChange(isCheck);
+    if (render) {
+      onChange(isCheck);
+    }
+    setRender(true);
   }, [isCheck]);
 
   return (
