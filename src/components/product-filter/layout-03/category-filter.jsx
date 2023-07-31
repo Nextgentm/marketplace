@@ -3,21 +3,21 @@ import PropTypes from "prop-types";
 
 const CategoryFilter = ({ categories, onChange, routerQuery }) => {
   const [isCheck, setIsCheck] = useState([]);
-
-
-  // const checkvalue = routerQuery?.join();
-  // let checkisthisvalue = "Collect12;
+  const [render, setRender] = useState(false);// use handle unnecessary render for first time
 
   const handleClick = (e) => {
-
     const { value, checked } = e.target;
     setIsCheck([...isCheck, value]);
     if (!checked) {
       setIsCheck(isCheck.filter((item) => item !== value));
     }
   };
+
   useEffect(() => {
-    onChange(isCheck);
+    if (render) {
+      onChange(isCheck);
+    }
+    setRender(true);
   }, [isCheck]);
 
   return (

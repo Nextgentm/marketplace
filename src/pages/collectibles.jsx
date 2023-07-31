@@ -121,8 +121,7 @@ Collectibles.getInitialProps = async (ctx) => {
     },
     pagination: {
       limit: 9,
-      start: 0,
-      withCount: true
+      start: 0
     }
   });
   return {
