@@ -5,15 +5,17 @@ import TabContainer from "react-bootstrap/TabContainer";
 import TabPane from "react-bootstrap/TabPane";
 import Nav from "react-bootstrap/Nav";
 import Product from "@components/product/layout-01";
+import StakeProduct from "@components/product/layout-02";
 import { ProductType } from "@utils/types";
 import { shuffleArray } from "@utils/methods";
 import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import Pagination from "@components/pagination-02";
 
 const AuthorProfileArea = ({ className, productData, allCreatedProductsData, allOnSaleProductsData, isAdminWallet,
-  getOnSaleDatapaginationRecord, onSaleDatapagination,
+  getOnSaleDatapaginationRecord, onSaleDatapagination, allStakeData,
   getOwnedDatapaginationRecord, ownedDatapagination,
-  getCreatedDatapaginationRecord, createdDatapagination }) => (
+  getCreatedDatapaginationRecord, createdDatapagination,
+  getStakeDatapaginationRecord, stakeDatapagination }) => (
   <div className={clsx("rn-authore-profile-area", className)}>
     <TabContainer defaultActiveKey="nav-profile">
       <div className="container">
@@ -31,12 +33,14 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                   {isAdminWallet && <Nav.Link as="button" eventKey="nav-contact">
                     Created
                   </Nav.Link>}
-                  {/* <Nav.Link
-                                            as="button"
-                                            eventKey="nav-liked"
-                                        >
-                                            Liked
-                                        </Nav.Link> */}
+                  {process.env.NEXT_PUBLIC_SENTRY_ENV == "development" &&
+                    <Nav.Link
+                      as="button"
+                      eventKey="nav-liked"
+                    >
+                      Stake
+                    </Nav.Link>
+                  }
                 </Nav>
               </nav>
             </div>
@@ -113,7 +117,7 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
             ) : null}
           </TabPane>
           {isAdminWallet &&
-            <TabPane className="row g-5 d-flex" eventKey="nav-contact" id="nav-profile">
+            <TabPane className="row g-5 d-flex" eventKey="nav-contact" id="nav-contact">
               {allCreatedProductsData?.map(
                 (prod, index) => (
                   <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -147,6 +151,42 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
               ) : null}
             </TabPane>
           }
+          {process.env.NEXT_PUBLIC_SENTRY_ENV == "development" &&
+            <TabPane className="row g-5 d-flex" eventKey="nav-liked" id="nav-liked">
+              {allStakeData?.map(
+                (stake, index) => (
+                  <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
+                    <StakeProduct
+                      id={stake.id}
+                      title={stake.collectible.data.name}
+                      slug={stake.collectible.data.slug}
+                      stakingAmount={stake.stakingAmount}
+                      image={stake.collectible.data.image?.data ? stake.collectible.data.image?.data?.url : stake.collectible.data.image_url}
+                      collectionName={stake.collectible.data.collection?.data?.name}
+                      stakingIndex={stake.index}
+                      restakingCount={stake.restakingCount}
+                      stakingStartTime={stake.stakingStartTime}
+                      stakingEndTime={stake.stakingEndTime}
+                      collectionType={stake.collectible.data.collection?.data?.collectionType}
+                      NFTContractAddress={stake.collectible.data.collection?.data?.collectionType === "Single" ?
+                        stake.collectible.data.collection?.data?.contractAddress
+                        : stake.collectible.data.collection?.data?.contractAddress1155}
+                      nftID={stake.collectible.data.nftID}
+                      network={stake.collectible.data.collection?.data?.networkType}
+                      refreshPageData={getStakeDatapaginationRecord}
+                    />
+                  </div>
+                )
+              )}
+              {stakeDatapagination?.pageCount > 1 ? (
+                <Pagination
+                  className="single-column-blog"
+                  currentPage={createdDatapagination.page}
+                  numberOfPages={createdDatapagination.pageCount}
+                  onClick={getStakeDatapaginationRecord}
+                />
+              ) : null}
+            </TabPane>}
           {/* <TabPane
                             className="row g-5 d-flex"
                             eventKey="nav-liked"
