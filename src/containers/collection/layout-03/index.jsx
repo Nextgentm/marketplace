@@ -11,6 +11,7 @@ import _ from "lodash";
 import { getCollection } from "src/services/collections/collection";
 import { AppData } from "src/context/app-context";
 import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
+import { Button, Spinner } from "react-bootstrap";
 
 const CollectionArea = ({ className, space, id, data }) => {
   // console.log("data data ", data);
@@ -35,22 +36,27 @@ const CollectionArea = ({ className, space, id, data }) => {
     pageSize: 0,
     total: 0
   });
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (data) {
       setCollectionData(data);
     }
   }, [data]);
 
-  const setCollectionData = (data, page = 1) => {
-    // console.log("data123465", Math.ceil(data.meta.pagination.total / 8));
-    setCollectionsData(data.data);
+  const setCollectionData = (data, page = 1, loadmore) => {
+    if (loadmore && collectionsData) {
+      setCollectionsData([...collectionsData, ...data.data]);
+    } else {
+      setCollectionsData(data.data);
+    }
     setPagination({ ...data.meta.pagination, pageCount: Math.ceil(data.meta.pagination.total / 8), page });
   };
 
   const getCollectionPaginationRecord = async (page) => {
     const start = page * 8 - 8;
     const limit = 8;
-
+    setLoading(true);
     const data = await getCollection({
       filters: {
         $or: [{
@@ -95,8 +101,8 @@ const CollectionArea = ({ className, space, id, data }) => {
         limit
       }
     });
-
-    setCollectionData(data, page);
+    setLoading(false);
+    setCollectionData(data, page, true);
   };
 
   // const getCollectionPaginationRecord = (page) => {
@@ -159,20 +165,23 @@ const CollectionArea = ({ className, space, id, data }) => {
                 </div>
               ) : null
             ) : <p>No collections to show</p>}
-          </div>
-        ) : <p>No collections to show</p>}
-        <div className="row">
-          <div className="col-lg-12" data-sal="slide-up" data-sal-delay="950" data-sal-duration="800">
-            {pagination?.pageCount > 1 ? (
-              <Pagination
-                className="single-column-blog"
-                currentPage={pagination.page}
-                numberOfPages={pagination.pageCount}
-                onClick={getCollectionPaginationRecord}
-              />
+
+            {loading &&
+              <div className="row spinner-container">
+                <Spinner animation="border" role="status" style={{ width: "4rem", height: "4rem" }}>
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+            }
+            {pagination?.pageCount > 1 && pagination.page < pagination?.pageCount ? (
+              <div className="row page-load-more mb-5">
+                <Button onClick={() => getCollectionPaginationRecord(pagination.page + 1)}>
+                  ...Load More
+                </Button>
+              </div>
             ) : null}
           </div>
-        </div>
+        ) : <p>No collections to show</p>}
       </div>
     </div>
   );
