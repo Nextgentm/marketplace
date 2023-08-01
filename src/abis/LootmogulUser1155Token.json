@@ -28338,7 +28338,7 @@
       "ERC1155Upgradeable": [2481],
       "ERC165": [10779],
       "ERC165Upgradeable": [4912],
-      "ERC2981": [14011],
+      "ERC2981": [14537],
       "IAccessControlUpgradeable": [408],
       "IERC1155MetadataURIUpgradeable": [2925],
       "IERC1155ReceiverUpgradeable": [2522],
@@ -28454,7 +28454,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 12315,
-        "sourceUnit": 14012,
+        "sourceUnit": 14538,
         "src": "645:30:66",
         "symbolAliases": [],
         "unitAlias": ""
@@ -28503,7 +28503,7 @@
               "id": 11959,
               "name": "ERC2981",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 14011,
+              "referencedDeclaration": 14537,
               "src": "795:7:66"
             },
             "id": 11960,
@@ -28529,7 +28529,7 @@
         "fullyImplemented": true,
         "id": 12314,
         "linearizedBaseContracts": [
-          12314, 335, 14011, 10779, 6316, 10791, 2910, 2733, 2481, 2925, 2644, 4912, 4924, 408, 4559, 973
+          12314, 335, 14537, 10779, 6316, 10791, 2910, 2733, 2481, 2925, 2644, 4912, 4924, 408, 4559, 973
         ],
         "name": "LootmogulUser1155Token",
         "nameLocation": "688:22:66",
@@ -30999,7 +30999,7 @@
                       "name": "_setTokenRoyalty",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 13998,
+                      "referencedDeclaration": 14524,
                       "src": "3287:16:66",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$_t_address_$_t_uint96_$returns$__$",
@@ -32210,7 +32210,7 @@
             "visibility": "public"
           },
           {
-            "baseFunctions": [75, 1329, 13914],
+            "baseFunctions": [75, 1329, 14440],
             "body": {
               "id": 12280,
               "nodeType": "Block",
@@ -32309,7 +32309,7 @@
                   "id": 12268,
                   "name": "ERC2981",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 14011,
+                  "referencedDeclaration": 14537,
                   "src": "4225:7:66"
                 },
                 {
@@ -32804,7 +32804,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.13",
-  "updatedAt": "2023-07-24T12:20:07.345Z",
+  "updatedAt": "2023-08-01T12:31:39.611Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
