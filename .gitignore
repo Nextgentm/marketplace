@@ -42,3 +42,5 @@ yarn-error.log*
 /yarn.lock
 /.env-staging
 .env-prod
+
+package-lock.json

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import SEO from "@components/seo";
 import Wrapper from "@layout/wrapper";
@@ -10,32 +12,65 @@ import ProductArea from "@containers/product/layout-03";
 import { shuffleArray } from "@utils/methods";
 import strapi from "@utils/strapi";
 
-const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) => (
+const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) => {
+  const [extraCrumb, setExtraCrumb] = useState([]);
+  const router = useRouter();
 
-  <Wrapper>
-    <SEO pageTitle="Product Details" />
-    <Header />
-    <main id="main-content">
-      <Breadcrumb pageTitle="Product Details" currentPage="Product Details" />
-      {product && <ProductDetailsArea product={product} bids={bids} />}
+  useEffect(() => {
+    const routeArr = router.asPath.split("/");
+    const mainPath = routeArr[1];
+    const crumbArr = [];
+    let collectionName = "";
+    if (mainPath === "collectible" && routeArr.length > 2) {
+      collectionName = routeArr[2];
 
-      {recentViewProducts?.data?.length > 0 &&
-        <AuctionArea
-          data={{
-            section_title: { title: "Related Item" },
-            auctions: recentViewProducts.data,
-          }}
-          collectiblePage={true}
-        />}
+      let crumbData = {};
+      crumbData["name"] = "Collection";
+      crumbData["path"] = `/collection`;
+      crumbArr.push(crumbData);
 
-    </main>
-    <Footer />
-  </Wrapper>
-);
+      crumbData = {};
+      crumbData["name"] = product.collection?.data?.name;
+      crumbData["path"] = `/collection/${product.collection?.data?.slug}`;
+      crumbArr.push(crumbData);
+
+      crumbData = {};
+      crumbData["name"] = collectionName;
+      crumbData["path"] = `/collectible/${collectionName}`;
+      crumbArr.push(crumbData);
+    }
+
+    setExtraCrumb(crumbArr);
+  }, []);
+
+  return (
+    <Wrapper>
+      <SEO pageTitle="Product Details" />
+      <Header />
+      <main id="main-content">
+        <Breadcrumb pageTitle="Product Details" currentPage="Product Details" extraCrumb={extraCrumb} />
+        {product && <ProductDetailsArea product={product} bids={bids} />}
+
+        {recentViewProducts?.data?.length > 0 && (
+          <AuctionArea
+            data={{
+              section_title: { title: "Related Item" },
+              auctions: recentViewProducts.data
+            }}
+            collectiblePage={true}
+          />
+        )}
+      </main>
+      <Footer />
+    </Wrapper>
+  );
+};
 
 export async function getServerSideProps({ params }) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?filters[slug][$eq]=${params.slug}&populate=*`);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/collectibles?filters[slug][$eq]=${params.slug}&populate=*`
+    );
     const productData = await res.json();
     const product = productData.data[0] || null;
     let bids = [];
@@ -50,7 +85,7 @@ export async function getServerSideProps({ params }) {
 
       // get owner histories
       let collectible = await strapi.findOne("collectibles", product.id, {
-        populate: ["owner_histories"],
+        populate: ["owner_histories"]
       });
       // console.log(product.id);
       product.owner_histories = collectible.data.owner_histories;
@@ -94,7 +129,7 @@ export async function getServerSideProps({ params }) {
       pagination: {
         limit: 5
       }
-    }
+    };
     const recentViewProducts = await strapi.find("auctions", filter);
     // const recentViewProducts = shuffleArray(remaningProducts.data).slice(0, 5);
     const relatedProducts = [];
@@ -107,13 +142,12 @@ export async function getServerSideProps({ params }) {
         relatedProducts
       }
     };
-
   } catch (er) {
     return {
       redirect: {
-        destination: "/404",
+        destination: "/404"
       }
-    }
+    };
   }
 }
 
