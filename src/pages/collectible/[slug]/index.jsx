@@ -11,37 +11,40 @@ import AuctionArea from "@containers/auction-area";
 import ProductArea from "@containers/product/layout-03";
 import { shuffleArray } from "@utils/methods";
 import strapi from "@utils/strapi";
+import { useBreadCrumbData } from "@hooks";
 
 const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) => {
-  const [extraCrumb, setExtraCrumb] = useState([]);
-  const router = useRouter();
+  //   const [extraCrumb, setExtraCrumb] = useState([]);
+  //   const router = useRouter();
 
-  useEffect(() => {
-    const routeArr = router.asPath.split("/");
-    const mainPath = routeArr[1];
-    const crumbArr = [];
-    let collectionName = "";
-    if (mainPath === "collectible" && routeArr.length > 2) {
-      collectionName = routeArr[2];
+  //   useEffect(() => {
+  //     const routeArr = router.asPath.split("/");
+  //     const mainPath = routeArr[1];
+  //     const crumbArr = [];
+  //     let collectionName = "";
+  //     if (mainPath === "collectible" && routeArr.length > 2) {
+  //       collectionName = routeArr[2];
 
-      let crumbData = {};
-      crumbData["name"] = "Collection";
-      crumbData["path"] = `/collection`;
-      crumbArr.push(crumbData);
+  //       let crumbData = {};
+  //       crumbData["name"] = "Collection";
+  //       crumbData["path"] = `/collection`;
+  //       crumbArr.push(crumbData);
 
-      crumbData = {};
-      crumbData["name"] = product.collection?.data?.name;
-      crumbData["path"] = `/collection/${product.collection?.data?.slug}`;
-      crumbArr.push(crumbData);
+  //       crumbData = {};
+  //       crumbData["name"] = product.collection?.data?.name;
+  //       crumbData["path"] = `/collection/${product.collection?.data?.slug}`;
+  //       crumbArr.push(crumbData);
 
-      crumbData = {};
-      crumbData["name"] = collectionName;
-      crumbData["path"] = `/collectible/${collectionName}`;
-      crumbArr.push(crumbData);
-    }
+  //       crumbData = {};
+  //       crumbData["name"] = collectionName;
+  //       crumbData["path"] = `/collectible/${collectionName}`;
+  //       crumbArr.push(crumbData);
+  //     }
 
-    setExtraCrumb(crumbArr);
-  }, []);
+  //     setExtraCrumb(crumbArr);
+  //   }, []);
+
+  const extraCrumb = useBreadCrumbData(product.collection?.data?.name, product.collection?.data?.slug);
 
   return (
     <Wrapper>

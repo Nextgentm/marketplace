@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import SEO from "@components/seo";
 import Wrapper from "@layout/wrapper";
@@ -15,39 +15,44 @@ import {
 } from "../../../../graphql/query/auctions/getAuctions";
 import client from "@utils/apollo-client";
 import strapi from "@utils/strapi";
+import { useBreadCrumbData } from "@hooks";
 
 const AuctionDetails = ({ auction, recentViewProducts }) => {
-  const [extraCrumb, setExtraCrumb] = useState([]);
-  const router = useRouter();
+  //   const [extraCrumb, setExtraCrumb] = useState([]);
+  //   const router = useRouter();
 
-  useEffect(() => {
-    const routeArr = router.asPath.split("/");
-    const mainPath = routeArr[1];
-    const crumbArr = [];
-    let collectionName = "";
-    if (mainPath === "collectible" && routeArr.length > 2) {
-      collectionName = routeArr[2];
+  //   useEffect(() => {
+  //     const routeArr = router.asPath.split("/");
+  //     const mainPath = routeArr[1];
+  //     const crumbArr = [];
+  //     let collectionName = "";
+  //     if (mainPath === "collectible" && routeArr.length > 2) {
+  //       collectionName = routeArr[2];
 
-      let crumbData = {};
-      crumbData["name"] = "Collection";
-      crumbData["path"] = `/collection`;
-      crumbArr.push(crumbData);
+  //       let crumbData = {};
+  //       crumbData["name"] = "Collection";
+  //       crumbData["path"] = `/collection`;
+  //       crumbArr.push(crumbData);
 
-      crumbData = {};
-      crumbData["name"] = auction?.data?.collectible?.data?.collection?.data?.name;
-      crumbData["path"] = `/collection/${auction?.data?.collectible?.data?.collection?.data?.slug}`;
-      crumbArr.push(crumbData);
+  //       crumbData = {};
+  //       crumbData["name"] = auction?.data?.collectible?.data?.collection?.data?.name;
+  //       crumbData["path"] = `/collection/${auction?.data?.collectible?.data?.collection?.data?.slug}`;
+  //       crumbArr.push(crumbData);
 
-      crumbData = {};
-      crumbData["name"] = collectionName;
-      crumbData["path"] = `/collectible/${collectionName}`;
-      crumbArr.push(crumbData);
-    }
+  //       crumbData = {};
+  //       crumbData["name"] = collectionName;
+  //       crumbData["path"] = `/collectible/${collectionName}`;
+  //       crumbArr.push(crumbData);
+  //     }
 
-    console.log("crumbArr", crumbArr);
+  //     setExtraCrumb(crumbArr);
+  //   }, []);
 
-    setExtraCrumb(crumbArr);
-  }, []);
+  const extraCrumb = useBreadCrumbData(
+    auction?.data?.collectible?.data?.collection?.data?.name,
+    auction?.data?.collectible?.data?.collection?.data?.slug
+  );
+
   return (
     <Wrapper>
       <SEO pageTitle="Product Details" />
