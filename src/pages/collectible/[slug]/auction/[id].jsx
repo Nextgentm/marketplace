@@ -21,7 +21,6 @@ const AuctionDetails = ({ auction, recentViewProducts }) => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("auction", auction);
     const routeArr = router.asPath.split("/");
     const mainPath = routeArr[1];
     const crumbArr = [];
