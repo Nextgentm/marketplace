@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+// import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import SEO from "@components/seo";
 import Wrapper from "@layout/wrapper";
@@ -7,36 +9,76 @@ import Breadcrumb from "@components/breadcrumb";
 import AuctionDetailsArea from "@containers/auction-details";
 import AuctionArea from "@containers/auction-area";
 import { shuffleArray } from "@utils/methods";
-import { GET_AUCTION_DATA_BY_ID_QUERY, ALL_AUCTION_LISTDATA_QUERY } from "../../../../graphql/query/auctions/getAuctions";
+import {
+  GET_AUCTION_DATA_BY_ID_QUERY,
+  ALL_AUCTION_LISTDATA_QUERY
+} from "../../../../graphql/query/auctions/getAuctions";
 import client from "@utils/apollo-client";
 import strapi from "@utils/strapi";
+import { useBreadCrumbData } from "@hooks";
 
-const AuctionDetails = ({ auction, recentViewProducts }) => (
+const AuctionDetails = ({ auction, recentViewProducts }) => {
+  //   const [extraCrumb, setExtraCrumb] = useState([]);
+  //   const router = useRouter();
 
-  <Wrapper>
-    <SEO pageTitle="Product Details" />
-    <Header />
-    <main id="main-content">
-      <Breadcrumb pageTitle="Product Details" currentPage="Product Details" />
-      {auction && <AuctionDetailsArea auctionData={auction} />}
+  //   useEffect(() => {
+  //     const routeArr = router.asPath.split("/");
+  //     const mainPath = routeArr[1];
+  //     const crumbArr = [];
+  //     let collectionName = "";
+  //     if (mainPath === "collectible" && routeArr.length > 2) {
+  //       collectionName = routeArr[2];
 
-      {recentViewProducts?.data.length > 0 &&
-        <AuctionArea
-          data={{
-            section_title: { title: "Related Item" },
-            auctions: recentViewProducts.data,
-          }}
-        />
-      }
-    </main>
-    <Footer />
-  </Wrapper>
-);
+  //       let crumbData = {};
+  //       crumbData["name"] = "Collection";
+  //       crumbData["path"] = `/collection`;
+  //       crumbArr.push(crumbData);
+
+  //       crumbData = {};
+  //       crumbData["name"] = auction?.data?.collectible?.data?.collection?.data?.name;
+  //       crumbData["path"] = `/collection/${auction?.data?.collectible?.data?.collection?.data?.slug}`;
+  //       crumbArr.push(crumbData);
+
+  //       crumbData = {};
+  //       crumbData["name"] = collectionName;
+  //       crumbData["path"] = `/collectible/${collectionName}`;
+  //       crumbArr.push(crumbData);
+  //     }
+
+  //     setExtraCrumb(crumbArr);
+  //   }, []);
+
+  const extraCrumb = useBreadCrumbData(
+    auction?.data?.collectible?.data?.collection?.data?.name,
+    auction?.data?.collectible?.data?.collection?.data?.slug
+  );
+
+  return (
+    <Wrapper>
+      <SEO pageTitle="Product Details" />
+      <Header />
+      <main id="main-content">
+        <Breadcrumb pageTitle="Product Details" currentPage="Product Details" extraCrumb={extraCrumb} />
+        {auction && <AuctionDetailsArea auctionData={auction} />}
+
+        {recentViewProducts?.data.length > 0 && (
+          <AuctionArea
+            data={{
+              section_title: { title: "Related Item" },
+              auctions: recentViewProducts.data
+            }}
+          />
+        )}
+      </main>
+      <Footer />
+    </Wrapper>
+  );
+};
 
 export async function getServerSideProps({ params }) {
   try {
     let auction = await strapi.findOne("auctions", params.id, {
-      populate: ["collectible", "paymentToken", "biddings"],
+      populate: ["collectible", "paymentToken", "biddings"]
     });
     // console.log(auction);
 
@@ -46,7 +88,7 @@ export async function getServerSideProps({ params }) {
         owner_histories: { populate: "*" },
         image: { populate: "*" },
         collectibleProperties: { populate: "*" },
-        collection: { populate: ["paymentTokens"] },
+        collection: { populate: ["paymentTokens"] }
       }
     });
     auction.data.collectible = collectible;
@@ -77,7 +119,7 @@ export async function getServerSideProps({ params }) {
       pagination: {
         limit: 5
       }
-    }
+    };
     let recentViewProducts = await strapi.find("auctions", filter);
     // console.log(recentViewProducts);
 
@@ -88,21 +130,20 @@ export async function getServerSideProps({ params }) {
         auction,
         recentViewProducts,
         relatedProducts
-      },
+      }
     };
-
   } catch (er) {
     return {
       redirect: {
-        destination: "/404",
+        destination: "/404"
       }
-    }
+    };
   }
 }
 
 AuctionDetails.propTypes = {
   auction: PropTypes.shape({}),
-  recentViewProducts: PropTypes.arrayOf(PropTypes.shape({})),
+  recentViewProducts: PropTypes.arrayOf(PropTypes.shape({}))
 };
 
 export default AuctionDetails;
