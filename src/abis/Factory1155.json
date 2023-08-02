@@ -9182,7 +9182,7 @@
       "ERC165": [10779],
       "ERC165Upgradeable": [4912],
       "ERC1967Upgrade": [6647],
-      "ERC2981": [14011],
+      "ERC2981": [14537],
       "Factory1155": [11833],
       "IAccessControl": [6178],
       "IAccessControlUpgradeable": [408],
@@ -10664,7 +10664,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.13",
-  "updatedAt": "2023-07-24T12:20:07.322Z",
+  "updatedAt": "2023-08-01T12:31:39.572Z",
   "devdoc": {
     "kind": "dev",
     "methods": {

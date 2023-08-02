@@ -1,101 +1,236 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import PropTypes from "prop-types";
 import Image from "next/image";
 import clsx from "clsx";
 import Anchor from "@ui/anchor";
-import ClientAvatar from "@ui/client-avatar";
 import Button from "@ui/button";
-import ShareDropdown from "@components/share-dropdown";
-import PlaceBidModal from "@components/modals/placebid-modal";
+import { toast } from "react-toastify";
 import { ImageType } from "@utils/types";
+import { isImgLink } from "@utils/methods";
+import ProductBid from "@components/product-bid";
+import { AppData } from "src/context/app-context";
+import { switchNetwork, getStakingReward, getStakingRewardTokenDecimal, convertWeitoEther, getStakingNFTContract, getStakedBalances } from "../../../lib/BlokchainHelperFunctions";
+import strapi from "@utils/strapi";
+import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { ProgressBar } from "react-bootstrap";
 
-const Product = ({ title, slug, price, latestBid, image, authors, bitCount, likeCount, className }) => {
-  const [showBidModal, setShowBidModal] = useState(false);
-  const handleBidModal = () => {
-    setShowBidModal((prev) => !prev);
-  };
+
+const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
+  ssr: false
+});
+
+const StakeProduct = ({
+  id, title, slug, image, stakingAmount, collectionName, stakingIndex, restakingCount, stakingStartTime, stakingEndTime, network, collectionType, NFTContractAddress, nftID, refreshPageData }) => {
+  const { walletData, setWalletData } = useContext(AppData);
+
+  const [totalReward, setTotalReward] = useState(0);
+  const [totalRewardLoading, setTotalRewardLoading] = useState(false);
+  const [totalDays, setTotalDays] = useState(0);
+  const [completedDays, setCompletedDays] = useState(0);
+
+  async function getTotalDays() {
+    let startTime = new Date(stakingStartTime);
+    let endTime = new Date(stakingEndTime);
+    let total = (endTime.getTime() - startTime.getTime()) / 86400000;
+    setTotalDays(parseInt(total));
+    let completed = (new Date().getTime() - startTime.getTime()) / 86400000;
+    setCompletedDays(parseInt(completed));
+  }
+
+  useEffect(() => {
+    getTotalDays();
+    getTotalStakingReward();
+    const interval = setInterval(function () {
+      // getTotalStakingReward();
+      getTotalDays();
+    }, 60 * 1000);
+
+    return () => {
+      clearInterval(interval);
+    }
+  }, [walletData]);
+
+  async function getTotalStakingReward() {
+    setTotalRewardLoading(true);
+    const oldBalance = await getStakedBalances(walletData, walletData.account, NFTContractAddress, nftID, stakingIndex);
+    console.log(oldBalance);
+    const rewardAmount = oldBalance + await getStakingReward(walletData, walletData.account, NFTContractAddress, nftID, stakingIndex);
+    // console.log(rewardAmount);
+    const decimals = await getStakingRewardTokenDecimal(walletData);
+    //convert price
+    // console.log(decimals);
+    let convertedPrice;
+    if (decimals == 18) {
+      convertedPrice = convertWeitoEther(walletData.ethers, rewardAmount);
+    } else {
+      convertedPrice = (eth * (10 ** decimals));
+    }
+    // console.log(convertedPrice);
+    setTotalReward(convertedPrice);
+    setTotalRewardLoading(false);
+  }
+
+  async function claimReward() {
+    try {
+      // chnage network
+      if (network === "Ethereum") {
+        if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+          // ethereum testnet
+          return;
+        }
+      } else if (network === "Polygon") {
+        if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+          // polygon testnet
+          return;
+        }
+      } else if (network === "Binance") {
+        if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+          // polygon testnet
+          return;
+        }
+      }
+
+      const stakingNFT = await getStakingNFTContract(walletData);
+      if (collectionType === "Single") {
+        const transaction = await stakingNFT.unStakeToken(NFTContractAddress, nftID, 1, stakingIndex, 1);
+        const receipt = await transaction.wait();
+        console.log(receipt);
+      } else if (collectionType === "Multiple") {
+        const transaction = await stakingNFT.unStakeToken(NFTContractAddress, nftID, stakingAmount, stakingIndex, 0);
+        const receipt = await transaction.wait();
+        console.log(receipt);
+      }
+
+      // update auction to complete
+      const res = await strapi.update("collectible-stakings", id, {
+        rewardAmount: totalReward,
+        isClaimed: true
+      });
+
+      await refreshPageData(1);
+      toast.success("NFT unstake successfully!");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function restakeToken() {
+    try {
+      // chnage network
+      if (network === "Ethereum") {
+        if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+          // ethereum testnet
+          return;
+        }
+      } else if (network === "Polygon") {
+        if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+          // polygon testnet
+          return;
+        }
+      } else if (network === "Binance") {
+        if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+          // polygon testnet
+          return;
+        }
+      }
+
+      const stakingNFT = await getStakingNFTContract(walletData);
+      const stakeDuration = await stakingNFT.rewardRateDuration();
+      if (collectionType === "Single") {
+        const transaction = await stakingNFT.reStakeToken(NFTContractAddress, nftID, 1, stakingIndex);
+        const receipt = await transaction.wait();
+        console.log(receipt);
+      } else if (collectionType === "Multiple") {
+        const transaction = await stakingNFT.reStakeToken(NFTContractAddress, nftID, 0, stakingIndex);
+        const receipt = await transaction.wait();
+      }
+
+      // update auction to restaking duration
+      const res = await strapi.update("collectible-stakings", id, {
+        stakingStartTime: new Date(),
+        stakingEndTime: new Date(new Date().getTime() + 1000 * stakeDuration),
+        restakingCount: restakingCount + 1
+      });
+
+      await refreshPageData();
+      toast.success("NFT restake successfully!");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <>
-      <div className={clsx("lg-product-wrapper", className)}>
-        <div className="inner">
-          <div className="lg-left-content">
-            {image?.src && (
-              <Anchor path={`/product/${slug}`} className="thumbnail">
+      <div className={clsx("product-style-one")}>
+        <div className="card-thumbnail">
+          {image && (
+            <Anchor path={`#`}>
+              {isImgLink(image?.src ? image.src : image) ?
                 <Image
-                  src={image.src}
+                  src={image?.src ? image.src : image}
                   alt={image?.alt || "NFT_portfolio"}
-                  width={image?.width ? image.width : 430}
-                  height={image?.height ? image.height : 430}
-                />
-              </Anchor>
-            )}
-            <div className="read-content">
-              <div className="product-share-wrapper">
-                <div className="profile-share">
-                  {authors?.map((author) => (
-                    <ClientAvatar key={author.name} slug={author.slug} name={author.name} image={author.image} />
-                  ))}
-                  <Anchor className="more-author-text" path={`/product/${slug}`}>
-                    {bitCount}+ Place Bit.
-                  </Anchor>
-                </div>
-                <div className="last-bid">
-                  {price.amount}
-                  {price.currency}
-                </div>
-              </div>
-              <Anchor path={`/product/${slug}`}>
-                <h6 className="title">{title}</h6>
-              </Anchor>
-              <span className="latest-bid">Highest bid {latestBid}</span>
-              <div className="share-wrapper d-flex">
-                <div className="react-area mr--15">
-                  <svg viewBox="0 0 17 16" fill="none" width="16" height="16" className="sc-bdnxRM sc-hKFxyN kBvkOu">
-                    <path
-                      d="M8.2112 14L12.1056 9.69231L14.1853 7.39185C15.2497 6.21455 15.3683 4.46116 14.4723 3.15121V3.15121C13.3207 1.46757 10.9637 1.15351 9.41139 2.47685L8.2112 3.5L6.95566 2.42966C5.40738 1.10976 3.06841 1.3603 1.83482 2.97819V2.97819C0.777858 4.36443 0.885104 6.31329 2.08779 7.57518L8.2112 14Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                  </svg>
-                  <span className="number">{likeCount}</span>
-                </div>
-                <ShareDropdown />
-              </div>
+                  width={533}
+                  height={533}
+                /> :
+                <video width={"100%"} height={"auto"}>
+                  <source src={image?.src ? image.src : image} />
+                </video>
+              }
+            </Anchor>
+          )}
+          {stakingEndTime && <CountdownTimer date={new Date(stakingEndTime)} />}
+        </div>
+        <div className="read-content">
+          <div className="product-share-wrapper">
+            <div className="profile-share">
+            </div>
+            <div className="last-bid">
             </div>
           </div>
-          <Button color="primary-alta" size="medium" className="mr--30 bid-btn" onClick={handleBidModal}>
-            Place a Bid
-          </Button>
+          <Anchor path={`#`}>
+            <h6 className="title">{title}</h6>
+          </Anchor>
+          <span className="latest-bid">From {collectionName}</span><br />
+          <span className="latest-bid">Total NFT Stake: {stakingAmount}</span><br />
+          <span className="latest-bid">Days completed: {completedDays}/{totalDays}</span>
+          {/* <div className="row"> */}
+          <ProgressBar variant="success" now={(completedDays * 100) / totalDays} />
+          {/* </div> */}
+          <div className="row">
+            <Button className="mt-3 w-100" onClick={() => claimReward()} size="small" disabled={totalRewardLoading}>
+              {new Date() > new Date(stakingEndTime) ?
+                "Unstake & Claim Reward" : "Unstake Collectible"
+              }
+            </Button>
+            {new Date() > new Date(stakingEndTime) &&
+              <Button className="mt-3 w-100" onClick={() => restakeToken()} size="small" disabled={totalRewardLoading}>
+                Restake NFT
+              </Button>
+            }
+          </div>
         </div>
+        <ProductBid network={network} />
       </div>
-      <PlaceBidModal show={showBidModal} handleModal={handleBidModal} />
     </>
   );
 };
 
-Product.propTypes = {
-  className: PropTypes.string,
+StakeProduct.propTypes = {
   title: PropTypes.string.isRequired,
   slug: PropTypes.string.isRequired,
-  price: PropTypes.shape({
-    amount: PropTypes.number.isRequired,
-    currency: PropTypes.string.isRequired
-  }).isRequired,
-  latestBid: PropTypes.string.isRequired,
-  image: ImageType.isRequired,
-  authors: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      slug: PropTypes.string.isRequired,
-      image: ImageType.isRequired
-    })
-  ),
-  bitCount: PropTypes.number,
-  likeCount: PropTypes.number
+  stakingAmount: PropTypes.number,
+  image: PropTypes.oneOfType([PropTypes.shape(), PropTypes.string]),
+  collectionName: PropTypes.string,
+  stakingIndex: PropTypes.string,
+  network: PropTypes.string,
+  stakingStartTime: PropTypes.string,
+  stakingEndTime: PropTypes.string,
 };
 
-Product.defaultProps = {
+
+StakeProduct.defaultProps = {
   likeCount: 0
 };
 
-export default Product;
+export default StakeProduct;
