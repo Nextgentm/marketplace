@@ -174,6 +174,25 @@ export async function getStakingReward(walletData, walletAddress, NFTContractAdd
     }
   } catch (error) {
     console.log(error);
+    return 0;
+  }
+  return 0;
+}
+
+export async function getStakedBalances(walletData, walletAddress, NFTContractAddress, tokenId, index) {
+  if (!walletAddress || !NFTContractAddress) return false;
+  try {
+    const stakingContract = await getStakingNFTContract(walletData);
+    // console.log(walletData, walletAddress, NFTContractAddress, tokenId, index);
+    if (stakingContract) {
+      const balanceData = await stakingContract.stakedBalances(walletAddress, NFTContractAddress, tokenId, index);
+      // console.log(balanceData.oldBalance);
+      const balance = parseInt(balanceData.oldBalance._hex, 16);
+      return balance;
+    }
+  } catch (error) {
+    console.log(error);
+    return 0;
   }
   return 0;
 }

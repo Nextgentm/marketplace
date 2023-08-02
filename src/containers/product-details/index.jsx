@@ -590,6 +590,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         let index = null;
         // Pull the deployed contract instance
         const stakingNFT = await getStakingNFTContract(walletData);
+        const stakeDuration = await stakingNFT.rewardRateDuration();
         if (product.collection.data.collectionType === "Single") {
           const contractAddress = product.collection.data.contractAddress;
           // console.log(contractAddress);
@@ -604,7 +605,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
             // console.log(receipt);
           }
 
-          const transaction = await stakingNFT.stakERC721Token(contractAddress, product.nftID);
+          const transaction = await stakingNFT.stakeToken(contractAddress, product.nftID, 1, 1);
           const receipt = await transaction.wait();
           console.log(receipt);
           const correctEvent = receipt.events.find((event) => event.event === "TokensStaked");
@@ -623,7 +624,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
             const receipt = await transaction.wait();
           }
 
-          const transaction = await stakingNFT.stakERC1155Token(contractAddress, product.nftID, quantity);
+          const transaction = await stakingNFT.stakeToken(contractAddress, product.nftID, quantity, 0);
           const receipt = await transaction.wait();
 
           const correctEvent = receipt.events.find((event) => event.event === "TokensStaked");
@@ -638,7 +639,9 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           collectible: product.id,
           stakingAmount: quantity,
           stakingStartTime: new Date(),
+          stakingEndTime: new Date(new Date().getTime() + 1000 * stakeDuration),
           rewardAmount: 0,
+          restakingCount: 0,
           rewardType: "Crypto",
           isClaimed: false,
           index: index
@@ -769,7 +772,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                               </div>
                             </div>}
 
-                          {(product.collection.data.collectionType === "Multiple" ? (totalStakeNFT + totalNFTInAuction) < erc1155MyBalance : totalStakeNFT < 1) &&
+                          {(product.collection.data.collectionType === "Multiple" ? (totalStakeNFT + totalNFTInAuction) < erc1155MyBalance : totalStakeNFT < 1)
+                            && process.env.NEXT_PUBLIC_SENTRY_ENV == "development" &&
                             <div className="row">
                               <div className="col-md-12">
                                 <br />
@@ -779,7 +783,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                               </div>
                             </div>
                           }
-                          {stakingData.length > 0 &&
+                          {stakingData.length > 0 && process.env.NEXT_PUBLIC_SENTRY_ENV == "development" &&
                             <StakingTabContent stakingData={stakingData} product={product} refreshPageData={getStakingData} />
                           }
 

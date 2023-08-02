@@ -11,9 +11,11 @@ const StakingTabContent = ({ stakingData, product, refreshPageData }) => (
         walletAddress={stake?.walletAddress}
         stakingAmount={stake?.stakingAmount}
         stakingStartTime={stake?.stakingStartTime}
+        stakingEndTime={stake?.stakingEndTime}
         isClaimed={stake?.isClaimed}
         rewardType={stake?.rewardType}
         index={stake?.index}
+        restakingCount={stake?.restakingCount}
         NFTContractAddress={product.collection.data.collectionType === "Single" ? product.collection.data.contractAddress : product.collection.data.contractAddress1155}
         tokenId={product.nftID}
         product={product}

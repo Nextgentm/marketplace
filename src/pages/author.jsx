@@ -27,6 +27,7 @@ const Author = () => {
   const [allProductsData, setAllProductsData] = useState(null);
   const [allCreatedProductsData, setAllCreatedProductsData] = useState(null);
   const [allOnSaleProductsData, setAllOnSaleProductsData] = useState(null);
+  const [allStakeData, setAllStakeData] = useState(null);
   const { walletData, setWalletData } = useContext(AppData);
   const [isAdminWallet, setIsAdminWallet] = useState(false);
 
@@ -45,6 +46,13 @@ const Author = () => {
   });
 
   const [createdDatapagination, setCreatedDataPagination] = useState({
+    page: 1,
+    pageCount: 1,
+    pageSize: 10,
+    total: 0
+  });
+
+  const [stakeDatapagination, setStakeDataPagination] = useState({
     page: 1,
     pageCount: 1,
     pageSize: 10,
@@ -77,6 +85,8 @@ const Author = () => {
     getCreatedDatapaginationRecord(1);
 
     getOnSaleDatapaginationRecord(1);
+
+    getStakeDatapaginationRecord(1);
   };
 
   const getOnSaleDatapaginationRecord = async (page) => {
@@ -168,9 +178,30 @@ const Author = () => {
         pageSize: createdDatapagination.pageSize
       },
     });
-    console.log(creatorResponse);
+    // console.log(creatorResponse);
     setCreatedDataPagination(creatorResponse.meta.pagination);
     setAllCreatedProductsData(creatorResponse.data);
+  };
+
+  const getStakeDatapaginationRecord = async (page) => {
+    let stakingResponse = await strapi.find("collectible-stakings", {
+      filters: {
+        walletAddress: walletData.account,
+        isClaimed: false
+      },
+      populate: {
+        collectible: {
+          populate: ["image", "collection"]
+        }
+      },
+      pagination: {
+        page,
+        pageSize: createdDatapagination.pageSize
+      },
+    });
+    // console.log(stakingResponse);
+    setStakeDataPagination(stakingResponse.meta.pagination);
+    setAllStakeData(stakingResponse.data);
   };
 
   return (
@@ -180,10 +211,12 @@ const Author = () => {
       <main id="main-content">
         <AuthorIntroArea data={authorData} />
         <AuthorProfileArea productData={allProductsData} allCreatedProductsData={allCreatedProductsData}
+          allStakeData={allStakeData}
           allOnSaleProductsData={allOnSaleProductsData} isAdminWallet={isAdminWallet}
           getOnSaleDatapaginationRecord={getOnSaleDatapaginationRecord} onSaleDatapagination={onSaleDatapagination}
           getOwnedDatapaginationRecord={getOwnedDatapaginationRecord} ownedDatapagination={ownedDatapagination}
-          getCreatedDatapaginationRecord={getCreatedDatapaginationRecord} createdDatapagination={createdDatapagination} />
+          getCreatedDatapaginationRecord={getCreatedDatapaginationRecord} createdDatapagination={createdDatapagination}
+          getStakeDatapaginationRecord={getStakeDatapaginationRecord} stakeDatapagination={stakeDatapagination} />
       </main>
       <Footer />
     </Wrapper>

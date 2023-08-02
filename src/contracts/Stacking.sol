@@ -15,6 +15,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgradeable, ReentrancyGuard, ERC1155Holder {
   struct StakingInfo {
     uint256 stakedAmount;
+    uint256 oldBalance;
     uint256 timeOfLastUpdate;
   }
 
@@ -27,15 +28,15 @@ contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgrad
   uint256 public rewardRate;
   // the reward rate duration
   // so the final reward rate will be re (rewardRate/rewardRateDuration)
-  uint256 public rewardRateDuration;
-
-  // Total stake amount
-  uint256 public totalStakedAmount;
+  uint256 public rewardRateDuration; //604800
 
   // pay Reward in crypto
   bool public payReward;
 
   mapping(address => bool) public whitelistContracts;
+
+  //percetage fee charged on unstaking amount
+  uint256 public unstakeFee;
 
   /**************************************************/
   /******************** Events **********************/
@@ -53,6 +54,14 @@ contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgrad
     uint256 indexed tokenId,
     uint256 amount,
     uint256 index
+  );
+  event TokenRestaked(
+    address indexed user,
+    address indexed tokenContract,
+    uint256 indexed tokenId,
+    uint256 amount,
+    uint256 index,
+    uint256 timestamp
   );
   event RewardsClaimed(address indexed user, uint256 amount);
 
@@ -85,8 +94,8 @@ contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgrad
     _;
   }
 
-  modifier onlyWhitelisted(address _stakTokenContractAddress) {
-    require(whitelistContracts[_stakTokenContractAddress], "Whitelist: NFT contract is not whitelisted");
+  modifier onlyWhitelisted(address _stakeTokenContractAddress) {
+    require(whitelistContracts[_stakeTokenContractAddress], "Whitelist: NFT contract is not whitelisted");
     _;
   }
 
@@ -122,6 +131,11 @@ contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgrad
     payReward = _payReward;
   }
 
+  // set the unstakeFee
+  function setUnstakeFee(uint256 _unstakeFee) external onlyAdmin {
+    unstakeFee = _unstakeFee;
+  }
+
   // transfer token from this account to other if needed
   function transferToken(address _to, uint256 _amount) external onlyAdmin {
     require(rewardToken.transfer(_to, _amount), "Token transfer failed!");
@@ -138,96 +152,206 @@ contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgrad
   /**************************************************/
   /********** External Contract Functions ***********/
   /**************************************************/
-  function stakERC721Token(
-    address _erc721Contract,
-    uint256 _tokenId
-  ) external onlyWhitelisted(_erc721Contract) whenNotPaused {
-    require(IERC721(_erc721Contract).ownerOf(_tokenId) == msg.sender, "TokenStaking: Caller must own the ERC721 token");
 
-    IERC721(_erc721Contract).transferFrom(msg.sender, address(this), _tokenId);
-
-    StakingInfo memory newStaking = StakingInfo({ stakedAmount: 1, timeOfLastUpdate: block.timestamp });
-
-    uint256 index = stakedBalances[msg.sender][_erc721Contract][_tokenId].length;
-    stakedBalances[msg.sender][_erc721Contract][_tokenId].push(newStaking);
-
-    emit TokensStaked(msg.sender, _erc721Contract, _tokenId, 1, index);
-  }
-
-  function stakERC1155Token(
-    address _erc1155Contract,
+  //Stake functions
+  function stakeToken(
+    address _tokenContract,
     uint256 _tokenId,
-    uint256 _stakedAmount
-  ) external onlyWhitelisted(_erc1155Contract) whenNotPaused {
-    require(
-      IERC1155(_erc1155Contract).balanceOf(msg.sender, _tokenId) >= _stakedAmount,
-      "TokenStaking: Caller must have sufficient ERC1155 token balance"
-    );
+    uint256 _stakedAmount,
+    uint8 _tokenType // _tokenType 0 for ERC1155 and 1 for ERC71
+  ) external onlyWhitelisted(_tokenContract) whenNotPaused {
+    if (_tokenType == 1) {
+      require(IERC721(_tokenContract).ownerOf(_tokenId) == msg.sender, "TokenStaking: Caller must own the NFT token");
 
-    IERC1155(_erc1155Contract).safeTransferFrom(msg.sender, address(this), _tokenId, _stakedAmount, "0x");
+      IERC721(_tokenContract).transferFrom(msg.sender, address(this), _tokenId);
+    } else {
+      require(
+        IERC1155(_tokenContract).balanceOf(msg.sender, _tokenId) >= _stakedAmount,
+        "TokenStaking: Caller must have sufficient ERC1155 token balance"
+      );
 
-    StakingInfo memory newStaking = StakingInfo({ stakedAmount: _stakedAmount, timeOfLastUpdate: block.timestamp });
-
-    uint256 index = stakedBalances[msg.sender][_erc1155Contract][_tokenId].length;
-    stakedBalances[msg.sender][_erc1155Contract][_tokenId].push(newStaking);
-
-    emit TokensStaked(msg.sender, _erc1155Contract, _tokenId, _stakedAmount, index);
-  }
-
-  function unStakERC721Token(
-    address _erc721Contract,
-    uint256 _tokenId,
-    uint256 _index
-  ) external onlyWhitelisted(_erc721Contract) whenNotPaused nonReentrant {
-    require(
-      stakedBalances[msg.sender][_erc721Contract][_tokenId][_index].stakedAmount >= 1,
-      "TokenStaking: ERC721 token is not Staked"
-    );
-
-    require(
-      IERC721(_erc721Contract).ownerOf(_tokenId) == address(this),
-      "TokenStaking: Contract must own the ERC721 token"
-    );
-
-    // claim all rewards for current time
-    if (payReward) {
-      claimRewards(_erc721Contract, _tokenId, _index);
+      IERC1155(_tokenContract).safeTransferFrom(msg.sender, address(this), _tokenId, _stakedAmount, "0x");
     }
 
-    stakedBalances[msg.sender][_erc721Contract][_tokenId][_index].stakedAmount -= 1;
+    StakingInfo memory newStaking = StakingInfo({
+      stakedAmount: _stakedAmount,
+      timeOfLastUpdate: block.timestamp,
+      oldBalance: 0
+    });
 
-    IERC721(_erc721Contract).transferFrom(address(this), msg.sender, _tokenId);
+    uint256 index = stakedBalances[msg.sender][_tokenContract][_tokenId].length;
+    stakedBalances[msg.sender][_tokenContract][_tokenId].push(newStaking);
 
-    emit TokensUnstaked(msg.sender, _erc721Contract, _tokenId, 1, _index);
+    emit TokensStaked(msg.sender, _tokenContract, _tokenId, _stakedAmount, index);
   }
 
-  function unStakERC1155Token(
-    address _erc1155Contract,
+  function stakeTokenBatch(
+    address[] calldata _tokenContract,
+    uint256[] calldata _tokenType,
+    uint256[] calldata _tokenId,
+    uint256[] calldata _stakedAmount
+  ) external whenNotPaused {
+    // check input length
+    require(
+      _tokenContract.length == _tokenType.length &&
+        _tokenContract.length == _tokenId.length &&
+        _tokenContract.length == _stakedAmount.length,
+      "TokenStaking: input array length is invalid"
+    );
+
+    uint256 len = _tokenContract.length;
+    uint256 i;
+    for (i; i < len; i++) {
+      require(whitelistContracts[_tokenContract[i]], "Whitelist: NFT contract is not whitelisted");
+      // check token type and transfer it
+      if (_tokenType[i] == 0) {
+        require(
+          IERC1155(_tokenContract[i]).balanceOf(msg.sender, _tokenId[i]) >= _stakedAmount[i],
+          "TokenStaking: Caller must have sufficient ERC1155 token balance"
+        );
+        IERC1155(_tokenContract[i]).safeTransferFrom(msg.sender, address(this), _tokenId[i], _stakedAmount[i], "0x");
+      } else {
+        require(
+          IERC721(_tokenContract[i]).ownerOf(_tokenId[i]) == msg.sender,
+          "TokenStaking: Caller must own the ERC721 token"
+        );
+        IERC721(_tokenContract[i]).transferFrom(msg.sender, address(this), _tokenId[i]);
+      }
+      // add stake data
+      StakingInfo memory newStaking = StakingInfo({
+        stakedAmount: _stakedAmount[i],
+        timeOfLastUpdate: block.timestamp,
+        oldBalance: 0
+      });
+      uint256 index = stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]].length;
+      stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]].push(newStaking);
+
+      emit TokensStaked(msg.sender, _tokenContract[i], _tokenId[i], _stakedAmount[i], index);
+    }
+  }
+
+  //Unstake functions
+  function unStakeToken(
+    address _tokenContract,
     uint256 _tokenId,
     uint256 _unStakedAmount,
-    uint256 _index
-  ) external onlyWhitelisted(_erc1155Contract) nonReentrant {
+    uint256 _index,
+    uint8 _tokenType // _tokenType 0 for ERC1155 and 1 for ERC71
+  ) external onlyWhitelisted(_tokenContract) whenNotPaused nonReentrant {
     require(
-      stakedBalances[msg.sender][_erc1155Contract][_tokenId][_index].stakedAmount >= _unStakedAmount,
-      "TokenStaking: Insufficient Staked ERC1155 token balance"
+      stakedBalances[msg.sender][_tokenContract][_tokenId][_index].stakedAmount >= _unStakedAmount,
+      "TokenStaking: Insufficient Staked NFT token balance"
     );
-
-    require(
-      IERC1155(_erc1155Contract).balanceOf(address(this), _tokenId) >= _unStakedAmount,
-      "TokenStaking: Contract must have sufficient ERC1155 token balance"
-    );
-
+    if (_tokenType == 1) {
+      require(
+        IERC721(_tokenContract).ownerOf(_tokenId) == address(this),
+        "TokenStaking: Contract must own the ERC721 token"
+      );
+    } else {
+      require(
+        IERC1155(_tokenContract).balanceOf(address(this), _tokenId) >= _unStakedAmount,
+        "TokenStaking: Contract must have sufficient ERC1155 token balance"
+      );
+    }
     // claim all rewards for current time
     if (payReward) {
-      claimRewards(_erc1155Contract, _tokenId, _index);
+      claimRewards(_tokenContract, _tokenId, _index);
     }
-    stakedBalances[msg.sender][_erc1155Contract][_tokenId][_index].stakedAmount -= _unStakedAmount;
+    stakedBalances[msg.sender][_tokenContract][_tokenId][_index].stakedAmount -= _unStakedAmount;
 
-    IERC1155(_erc1155Contract).safeTransferFrom(address(this), msg.sender, _tokenId, _unStakedAmount, "0x");
+    if (_tokenType == 0) {
+      IERC1155(_tokenContract).safeTransferFrom(address(this), msg.sender, _tokenId, _unStakedAmount, "0x");
+    } else {
+      IERC721(_tokenContract).transferFrom(address(this), msg.sender, _tokenId);
+    }
 
-    emit TokensUnstaked(msg.sender, _erc1155Contract, _tokenId, _unStakedAmount, _index);
+    emit TokensUnstaked(msg.sender, _tokenContract, _tokenId, _unStakedAmount, _index);
   }
 
+  function unStakeTokenBatch(
+    address[] calldata _tokenContract,
+    uint256[] calldata _tokenType,
+    uint256[] calldata _tokenId,
+    uint256[] calldata _unStakedAmount,
+    uint256[] calldata _index
+  ) external whenNotPaused nonReentrant {
+    // check input length
+    require(
+      _tokenContract.length == _tokenType.length &&
+        _tokenContract.length == _tokenId.length &&
+        _tokenContract.length == _unStakedAmount.length &&
+        _tokenContract.length == _index.length,
+      "TokenStaking: input array length is invalid"
+    );
+
+    uint256 len = _tokenContract.length;
+    uint256 i;
+    for (i; i < len; i++) {
+      require(
+        stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]][_index[i]].stakedAmount >= _unStakedAmount[i],
+        "TokenStaking: Insufficient Staked NFT token balance"
+      );
+      if (_tokenType[i] == 0) {
+        require(
+          IERC1155(_tokenContract[i]).balanceOf(address(this), _tokenId[i]) >= _unStakedAmount[i],
+          "TokenStaking: Contract must have sufficient ERC1155 token balance"
+        );
+      } else {
+        require(
+          IERC721(_tokenContract[i]).ownerOf(_tokenId[i]) == address(this),
+          "TokenStaking: Contract must own the ERC721 token"
+        );
+      }
+
+      // claim all rewards for current time
+      if (payReward) {
+        claimRewards(_tokenContract[i], _tokenId[i], _index[i]);
+      }
+      stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]][_index[i]].stakedAmount -= _unStakedAmount[i];
+
+      if (_tokenType[i] == 0) {
+        IERC1155(_tokenContract[i]).safeTransferFrom(address(this), msg.sender, _tokenId[i], _unStakedAmount[i], "0x");
+      } else {
+        IERC721(_tokenContract[i]).transferFrom(address(this), msg.sender, _tokenId[i]);
+      }
+      emit TokensUnstaked(msg.sender, _tokenContract[i], _tokenId[i], _unStakedAmount[i], _index[i]);
+    }
+  }
+
+  //Restake functions
+  function reStakeToken(
+    address _tokenContract,
+    uint256 _tokenId,
+    uint8 _tokenType, // _tokenType 0 for ERC1155 and 1 for ERC71
+    uint256 _index
+  ) external onlyWhitelisted(_tokenContract) whenNotPaused nonReentrant {
+    uint _reStakedAmount = stakedBalances[msg.sender][_tokenContract][_tokenId][_index].stakedAmount;
+    require(_reStakedAmount > 0, "TokenStaking: Staking Data not found");
+    if (_tokenType == 0) {
+      require(
+        IERC1155(_tokenContract).balanceOf(address(this), _tokenId) >= _reStakedAmount,
+        "TokenStaking: Contract must have sufficient ERC1155 token balance"
+      );
+    } else {
+      require(
+        IERC721(_tokenContract).ownerOf(_tokenId) == address(this),
+        "TokenStaking: Contract must own the ERC721 token"
+      );
+    }
+
+    // update old blance and time of last update
+    stakedBalances[msg.sender][_tokenContract][_tokenId][_index].oldBalance = calculateRewards(
+      msg.sender,
+      _tokenContract,
+      _tokenId,
+      _index
+    );
+    stakedBalances[msg.sender][_tokenContract][_tokenId][_index].timeOfLastUpdate = block.timestamp;
+
+    emit TokenRestaked(msg.sender, _tokenContract, _tokenId, _reStakedAmount, _index, block.timestamp);
+  }
+
+  // Claim reward
   function claimRewards(
     address _tokenContract,
     uint256 _tokenId,
@@ -242,7 +366,14 @@ contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgrad
     stakedBalances[msg.sender][_tokenContract][_tokenId][_index].timeOfLastUpdate = block.timestamp;
 
     // transfer reward amount
-    rewardToken.transfer(msg.sender, rewards);
+    uint256 unstakeFeeAmount;
+    if (unstakeFee > 0) {
+      unstakeFeeAmount = _getPortion(rewards, unstakeFee);
+    }
+    rewardToken.transfer(
+      msg.sender,
+      stakedBalances[msg.sender][_tokenContract][_tokenId][_index].oldBalance + rewards - unstakeFeeAmount
+    );
 
     emit RewardsClaimed(msg.sender, rewards);
 
@@ -257,11 +388,10 @@ contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgrad
   ) public view returns (uint256) {
     require(stakedBalances[_user][_tokenContract][_tokenId].length > _index, "TokenStaking: invalid index");
     if (stakedBalances[_user][_tokenContract][_tokenId][_index].stakedAmount > 0) {
-      uint256 StakingTime = block.timestamp - stakedBalances[_user][_tokenContract][_tokenId][_index].timeOfLastUpdate;
-      uint256 rewardDuration = StakingTime / rewardRateDuration;
-      require(rewardDuration > 0, "TokenStaking: Staking duration is not completed");
+      uint256 stakingEndTime = stakedBalances[_user][_tokenContract][_tokenId][_index].timeOfLastUpdate + rewardRateDuration;
+      require(block.timestamp > stakingEndTime, "TokenStaking: Staking duration is not completed");
       uint256 totalRewards = rewardRate *
-        rewardDuration *
+        // rewardDuration *
         stakedBalances[_user][_tokenContract][_tokenId][_index].stakedAmount;
 
       return totalRewards;
