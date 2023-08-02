@@ -33,7 +33,7 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                   {isAdminWallet && <Nav.Link as="button" eventKey="nav-contact">
                     Created
                   </Nav.Link>}
-                  {process.env.NEXT_PUBLIC_SENTRY_ENV == "development" &&
+                  {process.env.NEXT_PUBLIC_SENTRY_ENV !== "production" &&
                     <Nav.Link
                       as="button"
                       eventKey="nav-liked"
@@ -151,7 +151,7 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
               ) : null}
             </TabPane>
           }
-          {process.env.NEXT_PUBLIC_SENTRY_ENV == "development" &&
+          {process.env.NEXT_PUBLIC_SENTRY_ENV !== "production" &&
             <TabPane className="row g-5 d-flex" eventKey="nav-liked" id="nav-liked">
               {allStakeData?.map(
                 (stake, index) => (

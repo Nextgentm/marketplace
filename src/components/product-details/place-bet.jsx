@@ -409,7 +409,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         </div>
         <span>{isOwner && "You are the owner of this auction"}</span>
 
-        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && process.env.NEXT_PUBLIC_SENTRY_ENV == "development" &&
+        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && process.env.NEXT_PUBLIC_SENTRY_ENV !== "production" &&
           <Button
             color={btnColor || "primary-alta"}
             className="mt--30"

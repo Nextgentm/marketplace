@@ -696,7 +696,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
               </span>
               <h6 className="title-name">
                 <span>{descriptionShowMore ? product.description : `${product.description.substring(0, 110)}`}</span>
-                <a href="#" onClick={() => descriptionShowMore ? setDescriptionShowMore(false) : setDescriptionShowMore(true)}>{descriptionShowMore ? <><br />show less</> : "...show more"}</a>
+                {product.description.length > 110 && <a href="#" onClick={() => descriptionShowMore ? setDescriptionShowMore(false) : setDescriptionShowMore(true)}>{descriptionShowMore ? <><br />show less</> : <>...show more</>}</a>}
               </h6>
               <div className="catagory-collection">
                 <ProductCategory owner={product.collection} royalty={product.royalty} />
@@ -773,7 +773,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                             </div>}
 
                           {(product.collection.data.collectionType === "Multiple" ? (totalStakeNFT + totalNFTInAuction) < erc1155MyBalance : totalStakeNFT < 1)
-                            && process.env.NEXT_PUBLIC_SENTRY_ENV == "development" &&
+                            && process.env.NEXT_PUBLIC_SENTRY_ENV !== "production" &&
                             <div className="row">
                               <div className="col-md-12">
                                 <br />
@@ -783,7 +783,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                               </div>
                             </div>
                           }
-                          {stakingData.length > 0 && process.env.NEXT_PUBLIC_SENTRY_ENV == "development" &&
+                          {stakingData.length > 0 && process.env.NEXT_PUBLIC_SENTRY_ENV !== "production" &&
                             <StakingTabContent stakingData={stakingData} product={product} refreshPageData={getStakingData} />
                           }
 
