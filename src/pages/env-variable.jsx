@@ -61,6 +61,10 @@ const Home = () => (
               <td colSpan={2}>NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS</td>
               <td>{process.env.NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS}</td>
             </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_POLYGON_STAKING_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_POLYGON_STAKING_CONTRACT_ADDRESS}</td>
+            </tr>
 
             <tr>
               <td colSpan={3}><br /></td>
@@ -100,6 +104,14 @@ const Home = () => (
             <tr>
               <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS</td>
               <td>{process.env.NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS}</td>
+            </tr>
+
+            <tr>
+              <td colSpan={3}><br /></td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_SENTRY_ENV</td>
+              <td>{process.env.NEXT_PUBLIC_SENTRY_ENV}</td>
             </tr>
           </tbody>
         </table>
