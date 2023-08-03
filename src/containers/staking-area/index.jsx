@@ -8,11 +8,10 @@ import Nav from "react-bootstrap/Nav";
 import Product from "@components/product/layout-01";
 import StakeProduct from "@components/product/layout-02";
 import { ProductType } from "@utils/types";
-import { shuffleArray } from "@utils/methods";
-import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import Pagination from "@components/pagination-02";
 import { Button } from "react-bootstrap";
 import { toast } from "react-toastify";
+import SelectProducts from "@components/modals/select-products";
 
 const StakingArea = ({ className,
   myStakingData, getMyStakingDataPaginationRecord, stakeDatapagination,
@@ -20,6 +19,7 @@ const StakingArea = ({ className,
 }) => {
   // tabs hooks
   const [tabsKey, setTabsKey] = useState("nav-stake");
+  const [stakeMyCollectible, setStakeMyCollectible] = useState(false);
 
   // handle tabs hooks update
   const updateTabKey = (tab) => {
@@ -226,7 +226,7 @@ const StakingArea = ({ className,
       <TabContainer defaultActiveKey={tabsKey}>
         <div className="container">
           <div className="row">
-            <Button>Stake My Collectible</Button>
+            <Button onClick={() => setStakeMyCollectible(true)}>Stake My Collectible</Button>
           </div>
           <div className="row">
             <div className="col-12">
@@ -349,6 +349,8 @@ const StakingArea = ({ className,
           </TabContent>
         </div>
       </TabContainer>
+
+      <SelectProducts show={stakeMyCollectible} handleModal={(prev) => setStakeMyCollectible(!prev)} />
     </div>
   )
 };
