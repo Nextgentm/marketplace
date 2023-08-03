@@ -227,11 +227,11 @@ const ExploreProductArea = ({
     const limit = PAGE_SIZE;
     setLoading(true);
     let filters = {
-      // auction: {
-      //   status: {
-      //     $eq: "Live"
-      //   }
-      // },
+      auction: {
+        status: {
+          $eq: "Live"
+        }
+      },
       name: {
         $containsi: router.query.search
       }
