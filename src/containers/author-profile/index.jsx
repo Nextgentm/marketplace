@@ -181,8 +181,8 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
               {stakeDatapagination?.pageCount > 1 ? (
                 <Pagination
                   className="single-column-blog"
-                  currentPage={createdDatapagination.page}
-                  numberOfPages={createdDatapagination.pageCount}
+                  currentPage={stakeDatapagination.page}
+                  numberOfPages={stakeDatapagination.pageCount}
                   onClick={getStakeDatapaginationRecord}
                 />
               ) : null}
