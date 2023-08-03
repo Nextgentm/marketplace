@@ -21,7 +21,9 @@ const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
 });
 
 const StakeProduct = ({
-  id, title, slug, image, stakingAmount, collectionName, stakingIndex, restakingCount, stakingStartTime, stakingEndTime, network, collectionType, NFTContractAddress, nftID, refreshPageData }) => {
+  id, title, slug, image, stakingAmount, collectionName, stakingIndex, restakingCount,
+  stakingStartTime, stakingEndTime, network, collectionType,
+  NFTContractAddress, nftID, refreshPageData, multiselection, isSelected, updateSelected }) => {
   const { walletData, setWalletData } = useContext(AppData);
 
   const [totalReward, setTotalReward] = useState(0);
@@ -29,7 +31,7 @@ const StakeProduct = ({
   const [totalDays, setTotalDays] = useState(0);
   const [completedDays, setCompletedDays] = useState(0);
 
-  async function getTotalDays() {
+  function getTotalDays() {
     let startTime = new Date(stakingStartTime);
     let endTime = new Date(stakingEndTime);
     let total = (endTime.getTime() - startTime.getTime()) / 86400000;
@@ -162,6 +164,16 @@ const StakeProduct = ({
 
   return (
     <>
+      {multiselection &&
+        <label>
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => updateSelected()}
+          />
+          {isSelected ? "Selected" : "Select"}
+        </label>
+      }
       <div className={clsx("product-style-one")}>
         <div className="card-thumbnail">
           {image && (
