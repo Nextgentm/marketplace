@@ -278,3 +278,21 @@ span.rs-picker-toggle-value {color: #fff !important;}
     .connect-wallets-wrapper.placebid-modal-wrapper .switch-network-form-box.choose-wallet .nuron-form-check {margin: 4px;}
 }
 /*Connect Wallets Popup*/
+
+.select-staking-modal-wrapper  .modal-dialog {
+    max-width: 1000px;
+}
+.select-staking-modal-wrapper .modal-content {
+    padding-top: 0;
+}
+.select-staking-modal-wrapper .nav-stake-selection {
+    position: relative;
+  
+}
+.select-staking-modal-wrapper .nav-stake-selection .stackselection{
+    opacity: 1;
+    position: absolute;
+    left: -43%;
+    top: 5px;
+    height: 20px;
+}

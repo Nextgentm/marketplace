@@ -96,7 +96,7 @@ const SelectProducts = ({ show, handleModal, handleSubmit }) => {
     };
 
     return (
-        <Modal className="rn-popup-modal select-collectible-modal-wrapper" show={show} onHide={handleModal} size="xl" centered>
+        <Modal className="rn-popup-modal select-staking-modal-wrapper select-collectible-modal-wrapper" show={show} onHide={handleModal} size="xl" centered>
             {show && (
                 <button type="button" className="btn-close" aria-label="Close" onClick={handleModal}>
                     <i className="feather-x" />
@@ -106,11 +106,14 @@ const SelectProducts = ({ show, handleModal, handleSubmit }) => {
                 <h3 className="modal-title">Select NFT</h3>
             </Modal.Header>
             <Modal.Body>
+                <div className="col-md-4">
+                    <span>{allSelectedItems.length} items selected</span>
+                </div>
                 <hr />
                 <div className="row g-4 d-flex">
                     {ownedData?.map(
                         (prod, index) => (
-                            <div key={index} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div key={index} className="col-3 col-lg-3 col-md-6 col-sm-6 col-12">
                                 <Product
                                     title={prod.name}
                                     supply={prod.supply}
@@ -140,9 +143,7 @@ const SelectProducts = ({ show, handleModal, handleSubmit }) => {
                             Cancel
                         </Button>
                     </div>
-                    <div className="col-md-4">
-                        <span>{allSelectedItems.length} items selected</span>
-                    </div>
+
                     <div className="col-md-4">
                         <Button size="medium" className="mr--10 w-100">
                             confirm
