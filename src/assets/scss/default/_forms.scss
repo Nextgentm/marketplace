@@ -290,3 +290,15 @@ input[type="submit"] {
         transform: translateY(-5px);
     }
 }
+
+.nav-stake-selection {
+    position: relative;
+  
+}
+.nav-stake-selection .stackselection{
+    opacity: 1;
+    position: absolute;
+    left: -43%;
+    top: 5px;
+    height: 20px;
+}

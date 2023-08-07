@@ -18396,7 +18396,7 @@
       "CountersUpgradeable": [4633],
       "ERC165": [10779],
       "ERC165Upgradeable": [4912],
-      "ERC2981": [14537],
+      "ERC2981": [14738],
       "ERC721BurnableUpgradeable": [4061],
       "ERC721URIStorageUpgradeable": [4206],
       "ERC721Upgradeable": [3877],
@@ -18488,7 +18488,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 12619,
-        "sourceUnit": 14538,
+        "sourceUnit": 14739,
         "src": "539:30:67",
         "symbolAliases": [],
         "unitAlias": ""
@@ -18549,7 +18549,7 @@
               "id": 12331,
               "name": "ERC2981",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 14537,
+              "referencedDeclaration": 14738,
               "src": "787:7:67"
             },
             "id": 12332,
@@ -18563,7 +18563,7 @@
         "fullyImplemented": true,
         "id": 12618,
         "linearizedBaseContracts": [
-          12618, 14537, 10779, 6316, 10791, 4061, 4206, 3877, 4233, 4011, 4912, 4924, 4559, 973
+          12618, 14738, 10779, 6316, 10791, 4061, 4206, 3877, 4233, 4011, 4912, 4924, 4559, 973
         ],
         "name": "NFTMarketplace",
         "nameLocation": "664:14:67",
@@ -21450,7 +21450,7 @@
                       "name": "_setTokenRoyalty",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 14524,
+                      "referencedDeclaration": 14725,
                       "src": "4149:16:67",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$_t_address_$_t_uint96_$returns$__$",
@@ -21689,7 +21689,7 @@
             "visibility": "public"
           },
           {
-            "baseFunctions": [3039, 14440],
+            "baseFunctions": [3039, 14641],
             "body": {
               "id": 12616,
               "nodeType": "Block",
@@ -21737,7 +21737,7 @@
                       "lValueRequested": false,
                       "memberName": "supportsInterface",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 14440,
+                      "referencedDeclaration": 14641,
                       "src": "9588:23:67",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_view$_t_bytes4_$returns$_t_bool_$",
@@ -21788,7 +21788,7 @@
                   "id": 12605,
                   "name": "ERC2981",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 14537,
+                  "referencedDeclaration": 14738,
                   "src": "9531:7:67"
                 },
                 {
@@ -21889,7 +21889,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.13",
-  "updatedAt": "2023-08-01T12:31:39.648Z",
+  "updatedAt": "2023-08-06T17:11:52.348Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
