@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import clsx from "clsx";
 import TabContent from "react-bootstrap/TabContent";
 import TabContainer from "react-bootstrap/TabContainer";
@@ -12,11 +12,17 @@ import Pagination from "@components/pagination-02";
 import { Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import SelectProducts from "@components/modals/select-products";
+import { getStakingNFTContract, getStakingRewardTokenDecimal } from "src/lib/BlokchainHelperFunctions";
+import { AppData } from "src/context/app-context";
+import strapi from "@utils/strapi";
 
 const StakingArea = ({ className,
   myStakingData, getMyStakingDataPaginationRecord, stakeDatapagination,
-  myStakingCompletedData, getMyStakingCompletedDataPaginationRecord, stakeCompletedDatapagination
+  myStakingCompletedData, getMyStakingCompletedDataPaginationRecord, stakeCompletedDatapagination,
+  totalStakingReward, stakingDuration,
+  loading, setLoading
 }) => {
+  const { walletData, setWalletData } = useContext(AppData);
   // tabs hooks
   const [tabsKey, setTabsKey] = useState("nav-stake");
   const [stakeMyCollectible, setStakeMyCollectible] = useState(false);
@@ -24,7 +30,7 @@ const StakingArea = ({ className,
   // handle tabs hooks update
   const updateTabKey = (tab) => {
     setTabsKey(tab);
-    setAllSelectedStake([]);
+    refreshPageData();
   }
 
   // hook to hold selected data for unstaking
@@ -49,87 +55,9 @@ const StakingArea = ({ className,
 
   // function to refresh collectible and data
   const refreshPageData = async () => {
-    getMyStakingDataPaginationRecord(1);
-    getMyStakingCompletedDataPaginationRecord(1);
-  }
-
-
-  const stakeAllSelectedNFT = async () => {
-    try {
-      // chnage network
-      // if (network === "Ethereum") {
-      //   if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
-      //     // ethereum testnet
-      //     return;
-      //   }
-      // } else if (network === "Polygon") {
-      //   if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
-      //     // polygon testnet
-      //     return;
-      //   }
-      // } else if (network === "Binance") {
-      //   if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
-      //     // polygon testnet
-      //     return;
-      //   }
-      // }
-      // create data for it
-      let NFTContractAddresses = [],
-        tokenTypes = [],
-        tokenIds = [],
-        unstakedAmounts = [];
-      let selectedNetworks = [];
-
-      _allSelectedStake = allSelectedStake;
-      _allSelectedStake.map((stake) => {
-        // //NFTContractAddresses
-        // const contractAddress = collectible.data.collection?.data?.collectionType === "Single" ?
-        //   collectible.data.collection?.data?.contractAddress
-        //   : collectible.data.collection?.data?.contractAddress1155;
-        // NFTContractAddresses.push(contractAddress);
-        // //tokenTypes
-        // const tokenType = collectible.data.collection?.data?.collectionType === "Single" ? 1 : 0;
-        // tokenTypes.push(tokenType);
-        // //tokenIds
-        // const tokenId = collectible.data.nftID;
-        // tokenIds.push(tokenId);
-        // //stakedAmount
-        // const unstakedAmount = stake.stakingAmount;
-        // unstakedAmounts.push(unstakedAmount);
-        // //network
-        // if (!selectedNetworks.includes(stake.collectible.data.collection?.data?.networkType)) {
-        //   selectedNetworks.push(stake.collectible.data.collection?.data?.networkType);
-        // }
-      })
-
-      if (selectedNetworks.length > 1) {
-        toast.error("Can't unstake Collectible with multiple Networks");
-      }
-
-      const stakingNFT = await getStakingNFTContract(walletData);
-      if (collectionType === "Single") {
-        const transaction = await stakingNFT.stakeTokenBatch(NFTContractAddresses, tokenTypes, tokenIds, unstakedAmounts);
-        const receipt = await transaction.wait();
-        console.log(receipt);
-      } else if (collectionType === "Multiple") {
-        const transaction = await stakingNFT.stakeTokenBatch(NFTContractAddresses, tokenTypes, tokenIds, unstakedAmounts);
-        const receipt = await transaction.wait();
-      }
-
-      _allSelectedStake.map(async (stake) => {
-        // update auction to complete
-        const res = await strapi.update("collectible-stakings", stake.id, {
-          rewardAmount: totalReward,
-          isClaimed: true
-        });
-        console.log(res);
-      })
-
-      await refreshPageData();
-      toast.success("all stake successfully!");
-    } catch (error) {
-      console.log(error);
-    }
+    setAllSelectedStake([]);
+    await getMyStakingDataPaginationRecord(1);
+    await getMyStakingCompletedDataPaginationRecord(1);
   }
 
   // unstake batch collectibles
@@ -160,7 +88,7 @@ const StakingArea = ({ className,
         stakingIndexs = [];
       let selectedNetworks = [];
 
-      _allSelectedStake = allSelectedStake;
+      let _allSelectedStake = allSelectedStake;
       _allSelectedStake.map((stake) => {
         //NFTContractAddresses
         const contractAddress = stake.collectible.data.collection?.data?.collectionType === "Single" ?
@@ -194,24 +122,101 @@ const StakingArea = ({ className,
       console.log(unstakedAmounts);
       console.log(stakingIndexs);
 
-      // const stakingNFT = await getStakingNFTContract(walletData);
-      // if (collectionType === "Single") {
-      //   const transaction = await stakingNFT.unStakeTokenBatch(NFTContractAddresses, tokenTypes, tokenIds, unstakedAmounts, stakingIndexs);
-      //   const receipt = await transaction.wait();
-      //   console.log(receipt);
-      // } else if (collectionType === "Multiple") {
-      //   const transaction = await stakingNFT.unStakeTokenBatch(NFTContractAddresses, tokenTypes, tokenIds, unstakedAmounts, stakingIndexs);
-      //   const receipt = await transaction.wait();
-      // }
+      const stakingNFT = await getStakingNFTContract(walletData);
+      const transaction = await stakingNFT.unStakeTokenBatch(NFTContractAddresses, tokenTypes, tokenIds, unstakedAmounts, stakingIndexs);
+      const receipt = await transaction.wait();
+      console.log(receipt);
 
-      // _allSelectedStake.map(async (stake) => {
-      //   // update auction to complete
-      //   const res = await strapi.update("collectible-stakings", stake.id, {
-      //     rewardAmount: totalReward,
-      //     isClaimed: true
-      //   });
-      //   console.log(res);
-      // })
+      _allSelectedStake.map(async (stake, index) => {
+        // update auction to complete
+        const res = await strapi.update("collectible-stakings", stake.id, {
+          rewardAmount: unstakedAmounts[index],
+          isClaimed: true
+        });
+        console.log(res);
+      })
+
+      await refreshPageData();
+      toast.success("all unstake successfully!");
+    } catch (error) {
+      console.log(error);
+      toast.error("Error while unstake");
+    }
+  }
+
+  // unstake batch collectibles
+  const restakeAllSelectedNFT = async () => {
+    try {
+      // chnage network
+      // if (network === "Ethereum") {
+      //   if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
+      //     // ethereum testnet
+      //     return;
+      //   }
+      // } else if (network === "Polygon") {
+      //   if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
+      //     // polygon testnet
+      //     return;
+      //   }
+      // } else if (network === "Binance") {
+      //   if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
+      //     // polygon testnet
+      //     return;
+      //   }
+      // }
+      // create data for it
+      let NFTContractAddresses = [],
+        tokenTypes = [],
+        tokenIds = [],
+        stakingIndexs = [];
+      let selectedNetworks = [];
+
+      let _allSelectedStake = allSelectedStake;
+      _allSelectedStake.map((stake) => {
+        //NFTContractAddresses
+        const contractAddress = stake.collectible.data.collection?.data?.collectionType === "Single" ?
+          stake.collectible.data.collection?.data?.contractAddress
+          : stake.collectible.data.collection?.data?.contractAddress1155;
+        NFTContractAddresses.push(contractAddress);
+        //tokenTypes
+        const tokenType = stake.collectible.data.collection?.data?.collectionType === "Single" ? 1 : 0;
+        tokenTypes.push(tokenType);
+        //tokenIds
+        const tokenId = stake.collectible.data.nftID;
+        tokenIds.push(tokenId);
+        //stakingIndexs
+        stakingIndexs.push(stake.index);
+        //network
+        if (!selectedNetworks.includes(stake.collectible.data.collection?.data?.networkType)) {
+          selectedNetworks.push(stake.collectible.data.collection?.data?.networkType);
+        }
+      })
+
+      if (selectedNetworks.length > 1) {
+        toast.error("Can't unstake Collectible with multiple Networks");
+        return;
+      }
+      console.log(NFTContractAddresses);
+      console.log(tokenTypes);
+      console.log(tokenIds);
+      console.log(stakingIndexs);
+
+      const stakingNFT = await getStakingNFTContract(walletData);
+      const stakeDuration = await stakingNFT.rewardRateDuration();
+      const transaction = await stakingNFT.reStakeTokenBatch(NFTContractAddresses, tokenTypes, tokenIds, stakingIndexs);
+      const receipt = await transaction.wait();
+      console.log(receipt);
+
+      for (let i = 0; i < _allSelectedStake.length; i++) {
+        const stake = _allSelectedStake[i];
+        // update stake
+        const res = await strapi.update("collectible-stakings", stake.id, {
+          stakingStartTime: new Date(),
+          stakingEndTime: new Date(new Date().getTime() + 1000 * stakeDuration),
+          restakingCount: stake.restakingCount + 1
+        });
+        console.log(res);
+      }
 
       await refreshPageData();
       toast.success("all unstake successfully!");
@@ -226,7 +231,13 @@ const StakingArea = ({ className,
       <TabContainer defaultActiveKey={tabsKey}>
         <div className="container">
           <div className="row">
-            <Button onClick={() => setStakeMyCollectible(true)}>Stake My Collectible</Button>
+            <div className="col-6">
+              {stakingDuration && <><span>Staking Duration: {stakingDuration}</span><br /></>}
+              {totalStakingReward && <span>Staking Reward: {totalStakingReward}</span>}
+            </div>
+            <div className="col-6">
+              <Button onClick={() => setStakeMyCollectible(true)} disabled={loading}>Stake My Collectible</Button>
+            </div>
           </div>
           <div className="row">
             <div className="col-12">
@@ -259,7 +270,11 @@ const StakingArea = ({ className,
                 <span>{allSelectedStake.length} items selected</span>
               </div>
               <div className="col selection-button">
-                <Button onClick={() => unstakeAllSelectedNFT()}>
+                {tabsKey == "nav-completed" &&
+                  <Button onClick={() => restakeAllSelectedNFT()} disabled={loading}>
+                    restake all selected
+                  </Button>}
+                <Button onClick={() => unstakeAllSelectedNFT()} disabled={loading}>
                   {tabsKey == "nav-stake" ? "Unstake All selected" : "Unstake & claim reward for all selected"}
                 </Button>
               </div>
@@ -350,7 +365,7 @@ const StakingArea = ({ className,
         </div>
       </TabContainer>
 
-      <SelectProducts show={stakeMyCollectible} handleModal={(prev) => setStakeMyCollectible(!prev)} />
+      <SelectProducts show={stakeMyCollectible} handleModal={(prev) => setStakeMyCollectible(!prev)} refreshPageData={refreshPageData} />
     </div>
   )
 };

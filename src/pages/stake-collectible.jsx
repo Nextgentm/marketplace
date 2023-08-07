@@ -9,6 +9,7 @@ import { AppData } from "../context/app-context";
 import strapi from "@utils/strapi";
 import StakingArea from "@containers/staking-area";
 import Breadcrumb from "@components/breadcrumb";
+import { convertWeitoEther, getStakingNFTContract, getTokenContract, secondsToHumanReadableString } from "src/lib/BlokchainHelperFunctions";
 
 export async function getStaticProps() {
   return { props: { className: "template-color-1" } };
@@ -17,6 +18,10 @@ export async function getStaticProps() {
 const StakeCollectible = () => {
   const { userData: authorData } = useContext(AppData);
   const { walletData, setWalletData } = useContext(AppData);
+  const [totalStakingReward, setTotalStakingReward] = useState(null); //page values
+  const [stakingDuration, setStakingDuration] = useState(null); //page values
+  const [loading, setLoading] = useState(false); //page values
+
   const [myStakingData, setMyStakingData] = useState(null);
   const [myStakingCompletedData, setMyStakingCompletedData] = useState(null);
 
@@ -34,17 +39,46 @@ const StakeCollectible = () => {
     total: 0
   });
 
+  async function getTotalStakingRewardAndDurationData() {
+    const stakingContract = await getStakingNFTContract(walletData);
+    if (stakingContract) {
+      const rewardRate = await stakingContract.rewardRate();
+      const rewardRateDuration = await stakingContract.rewardRateDuration();
+      const strrewardRateDuration = secondsToHumanReadableString(rewardRateDuration);// solidity second to js second
+      const erc20Address = await stakingContract.rewardToken();
+      // console.log(erc20Address);
+      const tokenContract = await getTokenContract(walletData, erc20Address);
+      const tokenName = await tokenContract.name();
+      const symbol = await tokenContract.symbol();
+      const decimals = await tokenContract.decimals();
+      // console.log(decimals);
+      let convertedPrice = 0;
+      if (decimals == 18) {
+        convertedPrice = convertWeitoEther(walletData.ethers, rewardRate);
+      } else {
+        convertedPrice = (rewardRate * (10 ** decimals));
+      }
+      console.log(convertedPrice);
+      setTotalStakingReward(`${convertedPrice} ${symbol} (${tokenName})`);
+      setStakingDuration(strrewardRateDuration);
+    }
+  }
 
   useEffect(() => {
     if (authorData) {
       if (walletData.isConnected) {
         if (walletData.account) {
           getAllCollectionsData();
+          getTotalStakingRewardAndDurationData();
         } else {
+          setMyStakingData(null);
+          setMyStakingCompletedData(null);
           setMyStakingData(null);
           setMyStakingCompletedData(null);
         }
       } else {
+        setMyStakingData(null);
+        setMyStakingCompletedData(null);
         setMyStakingData(null);
         setMyStakingCompletedData(null);
       }
@@ -52,18 +86,20 @@ const StakeCollectible = () => {
   }, [walletData]);
 
   const getAllCollectionsData = async () => {
-    getMyStakingDataPaginationRecord(1);
-    getMyStakingDataCompletedPaginationRecord(1);
+    setLoading(true);
+    await getMyStakingDataPaginationRecord(1);
+    await getMyStakingDataCompletedPaginationRecord(1);
+    setLoading(false);
   };
 
   const getMyStakingDataPaginationRecord = async (page) => {
     let stakingResponse = await strapi.find("collectible-stakings", {
       filters: {
-        walletAddress: "0x47af5440658eb8cb28a8fef88d18e10b7f48d38b"//walletData.account,
-        // isClaimed: false,
-        // stakingEndTime: {
-        //   $gte: new Date()
-        // }
+        walletAddress: walletData.account,
+        isClaimed: false,
+        stakingEndTime: {
+          $gte: new Date()
+        }
       },
       populate: {
         collectible: {
@@ -74,6 +110,7 @@ const StakeCollectible = () => {
         page,
         pageSize: myStakingDataPagination.pageSize
       },
+      sort: ["id:asc"]
     });
     // console.log(stakingResponse);
     setMyStakingDataPagination(stakingResponse.meta.pagination);
@@ -83,11 +120,11 @@ const StakeCollectible = () => {
   const getMyStakingDataCompletedPaginationRecord = async (page) => {
     let stakingResponse = await strapi.find("collectible-stakings", {
       filters: {
-        walletAddress: "0x47af5440658eb8cb28a8fef88d18e10b7f48d38b"//walletData.account,
-        // isClaimed: false,
-        // stakingEndTime: {
-        //   $lt: new Date()
-        // }
+        walletAddress: walletData.account,
+        isClaimed: false,
+        stakingEndTime: {
+          $lt: new Date()
+        }
       },
       populate: {
         collectible: {
@@ -98,6 +135,7 @@ const StakeCollectible = () => {
         page,
         pageSize: myStakingCompletedDataPagination.pageSize
       },
+      sort: ["id:asc"]
     });
     // console.log(stakingResponse);
     setMyStakingCompletedDataPagination(stakingResponse.meta.pagination);
@@ -116,6 +154,8 @@ const StakeCollectible = () => {
             getMyStakingDataPaginationRecord={getMyStakingDataPaginationRecord} stakeDatapagination={myStakingDataPagination}
             myStakingCompletedData={myStakingCompletedData} getMyStakingCompletedDataPaginationRecord={getMyStakingDataCompletedPaginationRecord}
             stakeCompletedDatapagination={myStakingCompletedDataPagination}
+            totalStakingReward={totalStakingReward} stakingDuration={stakingDuration}
+            loading={loading} setLoading={setLoading}
           />
         }
       </main>

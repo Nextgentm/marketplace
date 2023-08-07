@@ -775,6 +775,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                           {(product.collection.data.collectionType === "Multiple" ? (totalStakeNFT + totalNFTInAuction) < erc1155MyBalance : totalStakeNFT < 1)
                             && process.env.NEXT_PUBLIC_SENTRY_ENV !== "production" &&
                             <div className="row">
+                              <span>Stake Duration: 6 min</span>
+                              <span>Stake Reward: 0.0000000000000001 WETH (MaticWETH)</span>
                               <div className="col-md-12">
                                 <br />
                                 <Button color="primary-alta" fullwidth onClick={() => setShowStakingConfirmModal(true)}>
