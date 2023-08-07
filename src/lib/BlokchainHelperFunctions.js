@@ -325,6 +325,32 @@ export function getDateForSolidity(_date) {
   const date = new Date(_date);
   return Math.floor(date.getTime() / 1000);
 }
+
+// pass js seconds = sec/1000 and solidity seconds = sec
+export function secondsToHumanReadableString(seconds) {
+  let result = "";
+  let numyears = Math.floor(seconds / 31536000);
+  let numdays = Math.floor((seconds % 31536000) / 86400);
+  let numhours = Math.floor(((seconds % 31536000) % 86400) / 3600);
+  let numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
+  let numseconds = (((seconds % 31536000) % 86400) % 3600) % 60;
+  if (numyears > 0) {
+    result += numyears + " years ";
+  }
+  if (numdays > 0) {
+    result += numdays + " days ";
+  }
+  if (numhours > 0) {
+    result += numhours + " hours ";
+  }
+  if (numminutes > 0) {
+    result += numminutes + " minutes ";
+  }
+  if (numseconds > 0) {
+    result += numseconds + " seconds ";
+  }
+  return result;
+}
 //_______________________________________________//
 // convert values
 //_______________________________________________//
