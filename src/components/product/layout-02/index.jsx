@@ -66,7 +66,7 @@ const StakeProduct = ({
     if (decimals == 18) {
       convertedPrice = convertWeitoEther(walletData.ethers, rewardAmount);
     } else {
-      convertedPrice = (eth * (10 ** decimals));
+      convertedPrice = (rewardRate * (10 ** decimals));
     }
     // console.log(convertedPrice);
     setTotalReward(convertedPrice);

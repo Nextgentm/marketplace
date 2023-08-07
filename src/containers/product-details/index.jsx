@@ -143,7 +143,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           // total count of nft in auction by user
           let total = 0;
           product.auction?.data.map((auction) => {
-            if (auction.walletAddress == walletData.account)
+            if (auction.walletAddress == walletData.account && auction.status == "Live")
               total += auction.remainingQuantity;
           })
           setTotalNFTInAuction(total);
