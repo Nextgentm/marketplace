@@ -74,21 +74,25 @@ const StakeProduct = ({
   }
 
   async function claimReward() {
+    setTotalRewardLoading(true);
     try {
       // chnage network
       if (network === "Ethereum") {
         if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
           // ethereum testnet
+          setTotalRewardLoading(false);
           return;
         }
       } else if (network === "Polygon") {
         if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
           // polygon testnet
+          setTotalRewardLoading(false);
           return;
         }
       } else if (network === "Binance") {
         if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
           // polygon testnet
+          setTotalRewardLoading(false);
           return;
         }
       }
@@ -112,27 +116,34 @@ const StakeProduct = ({
 
       await refreshPageData(1);
       toast.success("NFT unstake successfully!");
+      setTotalRewardLoading(false);
     } catch (error) {
       console.log(error);
+      setTotalRewardLoading(false);
     }
+    setTotalRewardLoading(false);
   }
 
   async function restakeToken() {
+    setTotalRewardLoading(true);
     try {
       // chnage network
       if (network === "Ethereum") {
         if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
           // ethereum testnet
+          setTotalRewardLoading(false);
           return;
         }
       } else if (network === "Polygon") {
         if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
           // polygon testnet
+          setTotalRewardLoading(false);
           return;
         }
       } else if (network === "Binance") {
         if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
           // polygon testnet
+          setTotalRewardLoading(false);
           return;
         }
       }
@@ -157,24 +168,16 @@ const StakeProduct = ({
 
       await refreshPageData();
       toast.success("NFT restake successfully!");
+      setTotalRewardLoading(false);
     } catch (error) {
       console.log(error);
+      setTotalRewardLoading(false);
     }
+    setTotalRewardLoading(false);
   }
 
   return (
     <>
-      {/*multiselection &&
-        <label>
-          <input
-            type="checkbox"
-            checked={isSelected}
-            onChange={() => updateSelected()}
-            className="stackselection"
-          />
-          {isSelected ? "Selected" : "Select"}
-        </label>
-  */}
 
       <div className={clsx("product-style-one")}>
         <div className="card-thumbnail">
