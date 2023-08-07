@@ -22,8 +22,8 @@ const StakeCollectible = () => {
   const [stakingDuration, setStakingDuration] = useState(null); //page values
   const [loading, setLoading] = useState(false); //page values
 
-  const [myStakingData, setMyStakingData] = useState(null);
-  const [myStakingCompletedData, setMyStakingCompletedData] = useState(null);
+  const [myStakingData, setMyStakingData] = useState([]);
+  const [myStakingCompletedData, setMyStakingCompletedData] = useState([]);
 
   const [myStakingDataPagination, setMyStakingDataPagination] = useState({
     page: 1,
