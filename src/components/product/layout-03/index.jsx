@@ -32,7 +32,7 @@ const Product = ({ title, slug, collectionName, network, image,
             setMaxCount(balance);
           }).catch((error) => {
             setTotalCount(0);
-            setMaxCount(balance);
+            setMaxCount(0);
           });
         }
       } else {
@@ -82,7 +82,7 @@ const Product = ({ title, slug, collectionName, network, image,
                     width={533}
                     height={533}
                   />
-                  {multiselection &&
+                  {multiselection && isSelected &&
                     <input
                       type="checkbox"
                       checked={isSelected}
@@ -110,11 +110,13 @@ const Product = ({ title, slug, collectionName, network, image,
             <h6 className="title">{title}</h6>
           </Anchor>
           <span className="latest-bid">From {collectionName}</span><br />
-          <span>Supply {supply}</span><br />
-          <span>Your Balance {totalCount}</span>
+          {contractAddress && <>
+            <span>Supply {supply}</span><br />
+            <span>Your Balance {totalCount}</span>
+          </>}
         </div>
-        {isSelected &&
-          <div className="row">
+        {isSelected && contractAddress &&
+          <div className="row increament_stack">
             <div className="col-md-4">
               <Button onClick={() => decrementTotalCount()}> - </Button>
             </div>

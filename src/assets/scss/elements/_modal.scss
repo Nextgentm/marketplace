@@ -296,3 +296,20 @@ span.rs-picker-toggle-value {color: #fff !important;}
     top: 5px;
     height: 20px;
 }
+
+.row.increament_stack {
+    margin: 10px;
+    border: 1px solid #811475;
+    padding: 10px 5px;
+    border-radius: 10px;
+}
+.row.increament_stack .col-md-4 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.row.increament_stack button.btn.btn-primary {
+    height: 30px;
+    padding: 0 10px;
+    width: 30px;
+}
