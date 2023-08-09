@@ -223,7 +223,7 @@ const StakeProduct = ({
             <h6 className="title">{title}</h6>
           </Anchor>
           <span className="latest-bid">From {collectionName}</span><br />
-          <span className="latest-bid">Total NFT Stake: {stakingAmount}</span><br />
+          <span className="latest-bid">Stake Amount: {stakingAmount}</span><br />
           <span className="latest-bid">Days completed: {completedDays}/{totalDays}</span>
           {/* <div className="row"> */}
           <ProgressBar variant="success" now={(completedDays * 100) / totalDays} />
