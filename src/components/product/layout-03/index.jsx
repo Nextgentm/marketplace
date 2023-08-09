@@ -112,7 +112,7 @@ const Product = ({ title, slug, collectionName, network, image,
           <span className="latest-bid">From {collectionName}</span><br />
           {contractAddress && <>
             <span>Supply {supply}</span><br />
-            <span>Your Balance {totalCount}</span>
+            <span>Your Balance {maxCount}</span>
           </>}
         </div>
         {isSelected && contractAddress &&
