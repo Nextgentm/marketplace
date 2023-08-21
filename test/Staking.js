@@ -40,101 +40,127 @@ contract("Staking NFT", (accounts) => {
     );
   });
 
-  // describe(`Staking ERC721 NFT contract address`, async () => {
-  //   let erc721ContractInstance, erc721TokenId;
-  //   it(`All Contract Address`, async () => {
-  //     console.log(erc721Instance.address);
-  //     console.log(erc1155Instance.address);
-  //     console.log(beaconERC721Instance.address);
-  //     console.log(beaconERC1155Instance.address);
-  //     console.log(factoryERC721Instance.address);
-  //     console.log(factoryERC1155Instance.address);
-  //     console.log(stakingNFTInstance.address);
-  //     console.log(tokenInstance.address);
-  //   });
+  describe(`Staking ERC721 NFT contract address`, async () => {
+    let erc721ContractInstance, erc721TokenId;
+    it(`All Contract Address`, async () => {
+      console.log(erc721Instance.address);
+      console.log(erc1155Instance.address);
+      console.log(beaconERC721Instance.address);
+      console.log(beaconERC1155Instance.address);
+      console.log(factoryERC721Instance.address);
+      console.log(factoryERC1155Instance.address);
+      console.log(stakingNFTInstance.address);
+      console.log(tokenInstance.address);
+    });
 
-  //   it(`Deposite ERC20 token to staking contract`, async () => {
-  //     let transaction = await tokenInstance.mint(stakingNFTInstance.address, 10000000000);
-  //     // console.log(transaction);
-  //   });
+    it(`Deposite ERC20 token to staking contract`, async () => {
+      let transaction = await tokenInstance.mint(stakingNFTInstance.address, 10000000000);
+      // console.log(transaction);
+    });
 
-  //   it(`Allow pay reward in crypto`, async () => {
-  //     let transaction = await stakingNFTInstance.setPayReward(true);
-  //     // console.log(transaction);
-  //   });
+    it(`Allow pay reward in crypto`, async () => {
+      let transaction = await stakingNFTInstance.setPayReward(true);
+      // console.log(transaction);
+    });
 
-  //   it(`Grant role to mint for ERC721 contract`, async () => {
-  //     let transaction = await factoryERC721Instance.grantRole("0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775", accounts[1]);
-  //     // console.log(transaction);
-  //   });
+    it(`Grant role to mint for ERC721 contract`, async () => {
+      let transaction = await factoryERC721Instance.grantRole(
+        "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
+        accounts[1]
+      );
+      // console.log(transaction);
+    });
 
-  //   it(`Deploy ERC721 Collection Contract Address`, async () => {
-  //     let transaction = await factoryERC721Instance.deploy("0x3078463335343861443044353838313242313632436136653137324362654431", "Test721", "TST", "", { from: accounts[1] });
-  //     const event = transaction.receipt.logs[0];
-  //     const erc721ContractAddress = event.args.contractAddress;
-  //     erc721ContractInstance = await ERC721.at(erc721ContractAddress);
-  //   });
+    it(`Deploy ERC721 Collection Contract Address`, async () => {
+      let transaction = await factoryERC721Instance.deploy(
+        "0x3078463335343861443044353838313242313632436136653137324362654431",
+        "Test721",
+        "TST",
+        "",
+        { from: accounts[1] }
+      );
+      const event = transaction.receipt.logs[0];
+      const erc721ContractAddress = event.args.contractAddress;
+      erc721ContractInstance = await ERC721.at(erc721ContractAddress);
+    });
 
-  //   it(`Mint ERC721 Token`, async () => {
-  //     let mint = await erc721ContractInstance.createToken("", 10, { from: accounts[1] });
-  //     const event = mint.receipt.logs[0];
-  //     erc721TokenId = Number(event.args[2]);
-  //   });
+    it(`Mint ERC721 Token`, async () => {
+      let mint = await erc721ContractInstance.createToken("", 10, { from: accounts[1] });
+      const event = mint.receipt.logs[0];
+      erc721TokenId = Number(event.args[2]);
+    });
 
-  //   it(`setApproval Functionality for erc721`, async () => {
-  //     let transaction = await erc721ContractInstance.setApprovalForAll(stakingNFTInstance.address, true, { from: accounts[1] });
-  //   });
+    it(`setApproval Functionality for erc721`, async () => {
+      let transaction = await erc721ContractInstance.setApprovalForAll(stakingNFTInstance.address, true, {
+        from: accounts[1]
+      });
+    });
 
-  //   it(`Whitelist token contract`, async () => {
-  //     let transaction = await stakingNFTInstance.addToWhitelist([erc721ContractInstance.address]);
-  //     // console.log(transaction);
-  //   });
+    it(`Whitelist token contract`, async () => {
+      let transaction = await stakingNFTInstance.addToWhitelist([erc721ContractInstance.address]);
+      // console.log(transaction);
+    });
 
-  //   it(`Staking ERC721 Token`, async () => {
-  //     const transaction = await stakingNFTInstance.stakeToken(erc721ContractInstance.address, erc721TokenId, 1, 1,
-  //       { from: accounts[1] });
-  //     // console.log(accounts[1], stakingNFTInstance.address, erc721ContractInstance.address, erc721TokenId);
-  //   });
+    it(`Staking ERC721 Token`, async () => {
+      const transaction = await stakingNFTInstance.stakeToken(erc721ContractInstance.address, erc721TokenId, 1, 1, {
+        from: accounts[1]
+      });
+      // console.log(accounts[1], stakingNFTInstance.address, erc721ContractInstance.address, erc721TokenId);
+    });
 
-  //   it(`Unstaking ERC721 Token and claim reward`, async () => {
-  //     function timeout(ms) {
-  //       return new Promise(resolve => setTimeout(resolve, ms));
-  //     }
+    it(`Unstaking ERC721 Token and claim reward`, async () => {
+      function timeout(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
 
-  //     await timeout(40000);
-  //     const transaction = await stakingNFTInstance.unStakeToken(erc721ContractInstance.address, erc721TokenId, 1, 0, 1,
-  //       { from: accounts[1] });
-  //     // console.log(transaction);
-  //   });
+      await timeout(40000);
+      const transaction = await stakingNFTInstance.unStakeToken(
+        erc721ContractInstance.address,
+        erc721TokenId,
+        1,
+        0,
+        1,
+        { from: accounts[1] }
+      );
+      // console.log(transaction);
+    });
 
-  //   it(`Staking ERC721 Token`, async () => {
-  //     const transaction = await stakingNFTInstance.stakeToken(erc721ContractInstance.address, erc721TokenId, 1, 1,
-  //       { from: accounts[1] });
-  //     // console.log(accounts[1], stakingNFTInstance.address, erc721ContractInstance.address, erc721TokenId);
-  //   });
+    it(`Staking ERC721 Token`, async () => {
+      const transaction = await stakingNFTInstance.stakeToken(erc721ContractInstance.address, erc721TokenId, 1, 1, {
+        from: accounts[1]
+      });
+      // console.log(accounts[1], stakingNFTInstance.address, erc721ContractInstance.address, erc721TokenId);
+    });
 
-  //   it(`Restaking ERC721 Token and claim reward`, async () => {
-  //     function timeout(ms) {
-  //       return new Promise(resolve => setTimeout(resolve, ms));
-  //     }
+    it(`Restaking ERC721 Token and claim reward`, async () => {
+      function timeout(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
 
-  //     await timeout(40000);
-  //     const transaction = await stakingNFTInstance.reStakeToken(erc721ContractInstance.address, erc721TokenId, 1, 1,
-  //       { from: accounts[1] });
-  //     // console.log(transaction);
-  //   });
+      await timeout(40000);
+      const transaction = await stakingNFTInstance.reStakeToken(erc721ContractInstance.address, erc721TokenId, 1, 1, {
+        from: accounts[1]
+      });
+      // console.log(transaction);
+    });
 
-  //   it(`Unstaking ERC721 Token and claim reward`, async () => {
-  //     function timeout(ms) {
-  //       return new Promise(resolve => setTimeout(resolve, ms));
-  //     }
+    it(`Unstaking ERC721 Token and claim reward`, async () => {
+      function timeout(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
 
-  //     await timeout(40000);
-  //     const transaction = await stakingNFTInstance.unStakeToken(erc721ContractInstance.address, erc721TokenId, 1, 1, 1,
-  //       { from: accounts[1] });
-  //     // console.log(transaction);
-  //   });
-  // });
+      await timeout(40000);
+      const transaction = await stakingNFTInstance.unStakeToken(
+        erc721ContractInstance.address,
+        erc721TokenId,
+        1,
+        1,
+        1,
+        { from: accounts[1] }
+      );
+      // console.log(transaction);
+    });
+  });
 
   describe(`Staking ERC1155 NFT contract address`, async () => {
     let erc1155ContractInstance, erc1155TokenId;
