@@ -7,6 +7,7 @@ const { italic } = require("ansi-colors");
 const { use, Assertion } = require("chai");
 let chai = require("chai");
 const { on } = require("events");
+const { ethers } = require("ethers");
 
 let { expect } = chai;
 const ERC721 = artifacts.require("NFTMarketplace");
@@ -18,6 +19,11 @@ const Factory1155 = artifacts.require("Factory1155");
 const TransferProxy = artifacts.require("TransferProxy");
 const Trade = artifacts.require("Trade");
 const ERC20 = artifacts.require("token");
+
+const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+//truffle wallet private key's for signature
+const wallet1PrivateKey = "276e8ee4b4b62a902c037f31bd5d4c2df2dc2df04d40b9f6e752889986652f65";
+const wallet2PrivateKey = "d431515afb70213c9ee5c62f687285b3b719886b7d7137e78b8c68891f20000c";
 
 contract("Marketplace", (accounts) => {
   before(async () => {
@@ -119,7 +125,9 @@ contract("Marketplace", (accounts) => {
         ]);
         // console.log(orderSellerHash);
         // Sign the message using the private key of the signer account
-        sellerSignature = await web3.eth.sign(orderSellerHash, accounts[1]);
+        // Sign the message using the etherjs wallet signer account
+        const wallet = new ethers.Wallet(wallet1PrivateKey, provider);
+        sellerSignature = await wallet.signMessage(ethers.utils.arrayify(orderSellerHash));
         // Verify the signature
         const recoveredSigner = await web3.eth.accounts.recover(orderSellerHash, sellerSignature);
 
@@ -134,7 +142,7 @@ contract("Marketplace", (accounts) => {
       });
 
       it(`create buyer Signature`, async () => {
-        const orderSellerHash = await tradeInstance.getOrderBuyerHash([
+        const orderBuyerHash = await tradeInstance.getOrderBuyerHash([
           accounts[1], // seller (skip)
           accounts[2], // buyer
           tokenInstance.address, // erc20Address
@@ -151,13 +159,78 @@ contract("Marketplace", (accounts) => {
           "0x", // seller signaure (skip)
           "0x" // buyer signaure (skip)
         ]);
-        // console.log(orderSellerHash);
+        // console.log(orderBuyerHash);
         // Sign the message using the private key of the signer account
-        buyerSignature = await web3.eth.sign(orderSellerHash, accounts[2]);
+        const wallet = new ethers.Wallet(wallet2PrivateKey, provider);
+        buyerSignature = await wallet.signMessage(ethers.utils.arrayify(orderBuyerHash));
         // Verify the signature
-        const recoveredSigner = await web3.eth.accounts.recover(orderSellerHash, buyerSignature);
+        const recoveredSigner = await web3.eth.accounts.recover(orderBuyerHash, buyerSignature);
 
         expect(recoveredSigner).to.equal(accounts[2]);
+      });
+
+      it(`Failed Direct Buy NFT without signature`, async () => {
+        let error = false;
+        try {
+          let transaction = await tradeInstance.buyAsset(
+            [
+              accounts[1], // seller
+              accounts[2], // buyer
+              tokenInstance.address, // erc20Address
+              erc721ContractInstance.address, // NFT contractAddress
+              1, // nftType 1-erc721 | 0- erc1155
+              convertedPrice, // unit price
+              1, // total onsale quantity
+              false, // skip royalty
+              startTimestamp,
+              endTimeStamp,
+              erc721TokenId, // tokenID
+              convertedPrice, // total price
+              1, // total purchase quantity
+              "0x", // seller signaure
+              buyerSignature // buyer signaure
+            ],
+            { from: accounts[2] }
+          );
+          // console.log(transaction);
+        } catch (err) {
+          // console.log(err);
+          error = true;
+        }
+
+        expect(error).to.equal(true);
+      });
+
+      it(`Failed Direct Buy NFT with wrong price`, async () => {
+        let error = false;
+        try {
+          let transaction = await tradeInstance.buyAsset(
+            [
+              accounts[1], // seller
+              accounts[2], // buyer
+              tokenInstance.address, // erc20Address
+              erc721ContractInstance.address, // NFT contractAddress
+              1, // nftType 1-erc721 | 0- erc1155
+              5, // unit price
+              1, // total onsale quantity
+              false, // skip royalty
+              startTimestamp,
+              endTimeStamp,
+              erc721TokenId, // tokenID
+              5, // total price
+              1, // total purchase quantity
+              sellerSignature, // seller signaure
+              buyerSignature // buyer signaure
+            ],
+            { from: accounts[2] }
+          );
+          // console.log(transaction);
+        } catch (err) {
+          // console.log(err);
+          error = true;
+        }
+
+        expect(error).to.equal(true);
       });
 
       it(`Direct Buy NFT`, async () => {
@@ -181,7 +254,10 @@ contract("Marketplace", (accounts) => {
           ],
           { from: accounts[2] }
         );
-        console.log(transaction);
+        // console.log(transaction);
+
+        newOwner = await erc721ContractInstance.ownerOf(erc721TokenId);
+        assert.equal(newOwner, accounts[2], "NFT havn't transfer successfully");
       });
     });
 
@@ -191,6 +267,13 @@ contract("Marketplace", (accounts) => {
       const date = new Date();
       const startTimestamp = Math.floor(date.getTime() / 1000);
       const endTimeStamp = Math.floor((date.getTime() + 1000 * 60 * 60) / 1000);
+
+      it(`Mint ERC721 Token`, async () => {
+        let mint = await erc721ContractInstance.createToken("", 10, { from: accounts[1] });
+        const event = mint.receipt.logs[0];
+        erc721TokenId = Number(event.args[2]);
+        // console.log(erc721TokenId);
+      });
 
       it(`create seller Signature`, async () => {
         const orderSellerHash = await tradeInstance.getOrderSellerHash([
@@ -211,8 +294,9 @@ contract("Marketplace", (accounts) => {
           "0x" // buyer signaure (skip)
         ]);
         // console.log(orderSellerHash);
-        // Sign the message using the private key of the signer account
-        sellerSignature = await web3.eth.sign(orderSellerHash, accounts[1]);
+        // Sign the message using the etherjs wallet signer account
+        const wallet = new ethers.Wallet(wallet1PrivateKey, provider);
+        sellerSignature = await wallet.signMessage(ethers.utils.arrayify(orderSellerHash));
         // Verify the signature
         const recoveredSigner = await web3.eth.accounts.recover(orderSellerHash, sellerSignature);
 
@@ -227,7 +311,7 @@ contract("Marketplace", (accounts) => {
       });
 
       it(`create buyer Signature`, async () => {
-        const orderSellerHash = await tradeInstance.getOrderBuyerHash([
+        const orderBuyerHash = await tradeInstance.getOrderBuyerHash([
           accounts[1], // seller (skip)
           accounts[2], // buyer
           tokenInstance.address, // erc20Address
@@ -244,16 +328,82 @@ contract("Marketplace", (accounts) => {
           "0x", // seller signaure (skip)
           "0x" // buyer signaure (skip)
         ]);
-        // console.log(orderSellerHash);
+        // console.log(orderBuyerHash);
         // Sign the message using the private key of the signer account
-        buyerSignature = await web3.eth.sign(orderSellerHash, accounts[2]);
+        const wallet = new ethers.Wallet(wallet2PrivateKey, provider);
+        buyerSignature = await wallet.signMessage(ethers.utils.arrayify(orderBuyerHash));
         // Verify the signature
-        const recoveredSigner = await web3.eth.accounts.recover(orderSellerHash, buyerSignature);
+        const recoveredSigner = await web3.eth.accounts.recover(orderBuyerHash, buyerSignature);
 
         expect(recoveredSigner).to.equal(accounts[2]);
       });
 
+      it(`Failed Auction Buy NFT without signature`, async () => {
+        let error = false;
+        try {
+          let transaction = await tradeInstance.executeBid(
+            [
+              accounts[1], // seller
+              accounts[2], // buyer
+              tokenInstance.address, // erc20Address
+              erc721ContractInstance.address, // NFT contractAddress
+              1, // nftType 1-erc721 | 0- erc1155
+              convertedPrice, // unit price
+              1, // total onsale quantity
+              false, // skip royalty
+              startTimestamp,
+              endTimeStamp,
+              erc721TokenId, // tokenID
+              convertedPrice, // total price
+              1, // total purchase quantity
+              "0x", // seller signaure
+              "0x" // buyer signaure
+            ],
+            { from: accounts[1] }
+          );
+          // console.log(transaction);
+        } catch (err) {
+          // console.log(err);
+          error = true;
+        }
+
+        expect(error).to.equal(true);
+      });
+
+      it(`Failed Auction Buy NFT with wrong price`, async () => {
+        let error = false;
+        try {
+          let transaction = await tradeInstance.executeBid(
+            [
+              accounts[1], // seller
+              accounts[2], // buyer
+              tokenInstance.address, // erc20Address
+              erc721ContractInstance.address, // NFT contractAddress
+              1, // nftType 1-erc721 | 0- erc1155
+              5, // unit price
+              1, // total onsale quantity
+              false, // skip royalty
+              startTimestamp,
+              endTimeStamp,
+              erc721TokenId, // tokenID
+              5, // total price
+              1, // total purchase quantity
+              sellerSignature, // seller signaure
+              buyerSignature // buyer signaure
+            ],
+            { from: accounts[1] }
+          );
+          // console.log(transaction);
+        } catch (err) {
+          // console.log(err);
+          error = true;
+        }
+
+        expect(error).to.equal(true);
+      });
+
       it(`Accept Bid`, async () => {
+        // console.log(erc721TokenId);
         let transaction = await tradeInstance.executeBid(
           [
             accounts[1], // seller
@@ -274,7 +424,10 @@ contract("Marketplace", (accounts) => {
           ],
           { from: accounts[1] }
         );
-        console.log(transaction);
+        // console.log(transaction);
+
+        newOwner = await erc721ContractInstance.ownerOf(erc721TokenId);
+        assert.equal(newOwner, accounts[2], "NFT havn't transfer successfully");
       });
     });
 
@@ -351,8 +504,10 @@ contract("Marketplace", (accounts) => {
           "0x" // buyer signaure (skip)
         ]);
         // console.log(orderSellerHash);
-        // Sign the message using the private key of the signer account
-        sellerSignature = await web3.eth.sign(orderSellerHash, accounts[1]);
+        // Sign the message using the etherjs wallet signer account
+        const wallet = new ethers.Wallet(wallet1PrivateKey, provider);
+        sellerSignature = await wallet.signMessage(ethers.utils.arrayify(orderSellerHash));
+        // console.log(sellerSignature);
         // Verify the signature
         const recoveredSigner = await web3.eth.accounts.recover(orderSellerHash, sellerSignature);
 
@@ -367,7 +522,7 @@ contract("Marketplace", (accounts) => {
       });
 
       it(`create buyer Signature`, async () => {
-        const orderSellerHash = await tradeInstance.getOrderBuyerHash([
+        const orderBuyerHash = await tradeInstance.getOrderBuyerHash([
           accounts[1], // seller (skip)
           accounts[2], // buyer
           tokenInstance.address, // erc20Address
@@ -384,13 +539,79 @@ contract("Marketplace", (accounts) => {
           "0x", // seller signaure (skip)
           "0x" // buyer signaure (skip)
         ]);
-        // console.log(orderSellerHash);
+        // console.log(orderBuyerHash);
         // Sign the message using the private key of the signer account
-        buyerSignature = await web3.eth.sign(orderSellerHash, accounts[2]);
+        const wallet = new ethers.Wallet(wallet2PrivateKey, provider);
+        buyerSignature = await wallet.signMessage(ethers.utils.arrayify(orderBuyerHash));
+        // console.log(buyerSignature);
         // Verify the signature
-        const recoveredSigner = await web3.eth.accounts.recover(orderSellerHash, buyerSignature);
+        const recoveredSigner = await web3.eth.accounts.recover(orderBuyerHash, buyerSignature);
 
         expect(recoveredSigner).to.equal(accounts[2]);
+      });
+
+      it(`Failed Direct Buy NFT without signature`, async () => {
+        let error = false;
+        try {
+          let transaction = await tradeInstance.buyAsset(
+            [
+              accounts[1], // seller (skip)
+              accounts[2], // buyer
+              tokenInstance.address, // erc20Address
+              erc1155ContractInstance.address, // NFT contractAddress
+              0, // nftType 1-erc721 | 0- erc1155
+              convertedPrice, // unit price
+              10, // total onsale quantity (skip)
+              false, // skip royalty (skip)
+              startTimestamp, // (skip)
+              endTimeStamp, // (skip)
+              erc1155TokenId, // tokenID
+              convertedPrice * 10, // total price
+              10, // total purchase quantity
+              "0x", // seller signaure
+              buyerSignature // buyer signaure
+            ],
+            { from: accounts[2] }
+          );
+          // console.log(transaction);
+        } catch (err) {
+          // console.log(err);
+          error = true;
+        }
+
+        expect(error).to.equal(true);
+      });
+
+      it(`Failed Direct Buy NFT with wrong price`, async () => {
+        let error = false;
+        try {
+          let transaction = await tradeInstance.buyAsset(
+            [
+              accounts[1], // seller (skip)
+              accounts[2], // buyer
+              tokenInstance.address, // erc20Address
+              erc1155ContractInstance.address, // NFT contractAddress
+              0, // nftType 1-erc721 | 0- erc1155
+              5, // unit price
+              10, // total onsale quantity (skip)
+              false, // skip royalty (skip)
+              startTimestamp, // (skip)
+              endTimeStamp, // (skip)
+              erc1155TokenId, // tokenID
+              5 * 10, // total price
+              10, // total purchase quantity
+              sellerSignature, // seller signaure
+              buyerSignature // buyer signaure
+            ],
+            { from: accounts[2] }
+          );
+          // console.log(transaction);
+        } catch (err) {
+          // console.log(err);
+          error = true;
+        }
+
+        expect(error).to.equal(true);
       });
 
       it(`Direct Buy NFT`, async () => {
