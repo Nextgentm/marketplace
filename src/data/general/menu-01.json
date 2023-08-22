@@ -2,6 +2,11 @@
   {
     "id": 1,
     "text": "Home",
+    "path": "https://metaverse.lootmogul.com/"
+  },
+  {
+    "id": 2,
+    "text": "Marketplace",
     "path": "/"
   },
   {
