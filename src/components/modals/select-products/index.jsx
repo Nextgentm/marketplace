@@ -84,7 +84,17 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
                     }]
                 }]
             },
-            populate: "*",
+            populate: {
+                collection: {
+                    fields: "*",
+                },
+                collectible_stakings: {
+                    fields: "*",
+                    filters: {
+                        isClaimed: false,
+                    }
+                },
+            },
             pagination: {
                 page,
                 pageSize: ownedDatapagination.pageSize
@@ -230,23 +240,24 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
                 <hr />
                 <div className="row g-4 d-flex">
                     {ownedData?.map(
-                        (prod, index) => (
-                            <div key={index} className="col-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                                <Product
-                                    title={prod.name}
-                                    supply={prod.supply}
-                                    image={prod.image?.data ? prod.image?.data?.url : prod.image_url}
-                                    collectionName={prod.collection?.data?.name}
-                                    network={prod.collection?.data?.networkType}
-                                    contractAddress={prod.collection?.data?.collectionType === "Single" ?
-                                        null : prod.collection?.data?.contractAddress1155}
-                                    nftID={prod.nftID}
-                                    multiselection={true}
-                                    isSelected={selectedItem?.id == prod.id}
-                                    updateSelected={(totalCount) => updateSelectedItems(prod, totalCount)}
-                                />
-                            </div>
-                        )
+                        (prod, index) =>
+                            (prod.collectible_stakings == null || prod.collectible_stakings?.data[0]?.isClaimed == true) && (
+                                <div key={index} className="col-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                    <Product
+                                        title={prod.name}
+                                        supply={prod.supply}
+                                        image={prod.image?.data ? prod.image?.data?.url : prod.image_url}
+                                        collectionName={prod.collection?.data?.name}
+                                        network={prod.collection?.data?.networkType}
+                                        contractAddress={prod.collection?.data?.collectionType === "Single" ?
+                                            null : prod.collection?.data?.contractAddress1155}
+                                        nftID={prod.nftID}
+                                        multiselection={true}
+                                        isSelected={selectedItem?.id == prod.id}
+                                        updateSelected={(totalCount) => updateSelectedItems(prod, totalCount)}
+                                    />
+                                </div>
+                            )
                     )}
                     {loadingSpinner &&
                         <div className="row spinner-container">

@@ -60,7 +60,7 @@
       "type": "event"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.14+commit.80d49f37\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"AdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\"}],\"name\":\"BeaconUpgraded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"}],\"devdoc\":{\"custom:oz-upgrades-unsafe-allow\":\"delegatecall\",\"details\":\"This abstract contract provides getters and event emitting update functions for https://eips.ethereum.org/EIPS/eip-1967[EIP1967] slots. _Available since v4.1._\",\"kind\":\"dev\",\"methods\":{},\"stateVariables\":{\"_ADMIN_SLOT\":{\"details\":\"Storage slot with the admin of the contract. This is the keccak-256 hash of \\\"eip1967.proxy.admin\\\" subtracted by 1, and is validated in the constructor.\"},\"_BEACON_SLOT\":{\"details\":\"The storage slot of the UpgradeableBeacon contract which defines the implementation for this proxy. This is bytes32(uint256(keccak256('eip1967.proxy.beacon')) - 1)) and is validated in the constructor.\"},\"_IMPLEMENTATION_SLOT\":{\"details\":\"Storage slot with the address of the current implementation. This is the keccak-256 hash of \\\"eip1967.proxy.implementation\\\" subtracted by 1, and is validated in the constructor.\"},\"__gap\":{\"details\":\"This empty reserved space is put in place to allow future versions to add new variables without shifting down storage in the inheritance chain. See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol\":\"ERC1967UpgradeUpgradeable\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts-upgradeable/interfaces/IERC1967Upgradeable.sol\":{\"keccak256\":\"0xb8d68221343ed784c7b76edb6a686cb65e49c476d9e22bb89a5c0c3947ff14db\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5badb66ffcbf3face237054083aaef757d4f3a56f47a35497f433a5bc93fb952\",\"dweb:/ipfs/Qmbw8k45NEQb5uF3KsqYTFeiG81PspKgnM2UM61iQxJ9FU\"]},\"@openzeppelin/contracts-upgradeable/interfaces/draft-IERC1822Upgradeable.sol\":{\"keccak256\":\"0x77c89f893e403efc6929ba842b7ccf6534d4ffe03afe31670b4a528c0ad78c0f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://496bd9b3df2455d571018c09f0c6badd29713fdeb907c6aa09d8d28cb603f053\",\"dweb:/ipfs/QmXdJDyYs6WMwMh21dez2BYPxhSUaUYFMDtVNcn2cgFR79\"]},\"@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol\":{\"keccak256\":\"0x1599637b52d20dc3954cea44914b2a4a9a8a5caade58d9da947e0b6c9acc07ba\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f3b6c04e928ac1e7660cde91b7bf5ae8cc0ded3b7a71fd11c832b67623b351ff\",\"dweb:/ipfs/QmSoZxP838eUa3guVb2LDRF2m7Uau7gxV6sgs5G3V8jdiu\"]},\"@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol\":{\"keccak256\":\"0x24b86ac8c005b8c654fbf6ac34a5a4f61580d7273541e83e013e89d66fbf0908\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4dbfe1a3b3b3fb64294ce41fd2ad362e7b7012208117864f42c1a67620a6d5c1\",\"dweb:/ipfs/QmVMU5tWt7zBQMmf5cpMX8UMHV86T3kFeTxBTBjFqVWfoJ\"]},\"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\":{\"keccak256\":\"0x037c334add4b033ad3493038c25be1682d78c00992e1acb0e2795caff3925271\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8a313cf42389440e2706837c91370323b85971c06afd6d056d21e2bc86459618\",\"dweb:/ipfs/QmT8XUrUvQ9aZaPKrqgRU2JVGWnaxBcUYJA7Q7K5KcLBSZ\"]},\"@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol\":{\"keccak256\":\"0x2edcb41c121abc510932e8d83ff8b82cf9cdde35e7c297622f5c29ef0af25183\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://72460c66cd1c3b1c11b863e0d8df0a1c56f37743019e468dc312c754f43e3b06\",\"dweb:/ipfs/QmPExYKiNb9PUsgktQBupPaM33kzDHxaYoVeJdLhv8s879\"]},\"@openzeppelin/contracts-upgradeable/utils/StorageSlotUpgradeable.sol\":{\"keccak256\":\"0x09864aea84f01e39313375b5610c73a3c1c68abbdc51e5ccdd25ff977fdadf9a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://aedb48081190fa828d243529ce25c708202c7d4ccfe99f0e4ecd6bc0cfcd03f3\",\"dweb:/ipfs/QmWyiDQHPZA56iqsAwTmiJoxvNeRQLUVr4gTfzpdpXivpo\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.14+commit.80d49f37\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"AdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\"}],\"name\":\"BeaconUpgraded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"}],\"devdoc\":{\"custom:oz-upgrades-unsafe-allow\":\"delegatecall\",\"details\":\"This abstract contract provides getters and event emitting update functions for https://eips.ethereum.org/EIPS/eip-1967[EIP1967] slots. _Available since v4.1._\",\"kind\":\"dev\",\"methods\":{},\"stateVariables\":{\"_ADMIN_SLOT\":{\"details\":\"Storage slot with the admin of the contract. This is the keccak-256 hash of \\\"eip1967.proxy.admin\\\" subtracted by 1, and is validated in the constructor.\"},\"_BEACON_SLOT\":{\"details\":\"The storage slot of the UpgradeableBeacon contract which defines the implementation for this proxy. This is bytes32(uint256(keccak256('eip1967.proxy.beacon')) - 1)) and is validated in the constructor.\"},\"_IMPLEMENTATION_SLOT\":{\"details\":\"Storage slot with the address of the current implementation. This is the keccak-256 hash of \\\"eip1967.proxy.implementation\\\" subtracted by 1, and is validated in the constructor.\"},\"__gap\":{\"details\":\"This empty reserved space is put in place to allow future versions to add new variables without shifting down storage in the inheritance chain. See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol\":\"ERC1967UpgradeUpgradeable\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts-upgradeable/interfaces/IERC1967Upgradeable.sol\":{\"keccak256\":\"0xb8d68221343ed784c7b76edb6a686cb65e49c476d9e22bb89a5c0c3947ff14db\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5badb66ffcbf3face237054083aaef757d4f3a56f47a35497f433a5bc93fb952\",\"dweb:/ipfs/Qmbw8k45NEQb5uF3KsqYTFeiG81PspKgnM2UM61iQxJ9FU\"]},\"@openzeppelin/contracts-upgradeable/interfaces/draft-IERC1822Upgradeable.sol\":{\"keccak256\":\"0x77c89f893e403efc6929ba842b7ccf6534d4ffe03afe31670b4a528c0ad78c0f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://496bd9b3df2455d571018c09f0c6badd29713fdeb907c6aa09d8d28cb603f053\",\"dweb:/ipfs/QmXdJDyYs6WMwMh21dez2BYPxhSUaUYFMDtVNcn2cgFR79\"]},\"@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol\":{\"keccak256\":\"0x1599637b52d20dc3954cea44914b2a4a9a8a5caade58d9da947e0b6c9acc07ba\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f3b6c04e928ac1e7660cde91b7bf5ae8cc0ded3b7a71fd11c832b67623b351ff\",\"dweb:/ipfs/QmSoZxP838eUa3guVb2LDRF2m7Uau7gxV6sgs5G3V8jdiu\"]},\"@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol\":{\"keccak256\":\"0x24b86ac8c005b8c654fbf6ac34a5a4f61580d7273541e83e013e89d66fbf0908\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4dbfe1a3b3b3fb64294ce41fd2ad362e7b7012208117864f42c1a67620a6d5c1\",\"dweb:/ipfs/QmVMU5tWt7zBQMmf5cpMX8UMHV86T3kFeTxBTBjFqVWfoJ\"]},\"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\":{\"keccak256\":\"0x037c334add4b033ad3493038c25be1682d78c00992e1acb0e2795caff3925271\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8a313cf42389440e2706837c91370323b85971c06afd6d056d21e2bc86459618\",\"dweb:/ipfs/QmT8XUrUvQ9aZaPKrqgRU2JVGWnaxBcUYJA7Q7K5KcLBSZ\"]},\"@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol\":{\"keccak256\":\"0x2edcb41c121abc510932e8d83ff8b82cf9cdde35e7c297622f5c29ef0af25183\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://72460c66cd1c3b1c11b863e0d8df0a1c56f37743019e468dc312c754f43e3b06\",\"dweb:/ipfs/QmPExYKiNb9PUsgktQBupPaM33kzDHxaYoVeJdLhv8s879\"]},\"@openzeppelin/contracts-upgradeable/utils/StorageSlotUpgradeable.sol\":{\"keccak256\":\"0x09864aea84f01e39313375b5610c73a3c1c68abbdc51e5ccdd25ff977fdadf9a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://aedb48081190fa828d243529ce25c708202c7d4ccfe99f0e4ecd6bc0cfcd03f3\",\"dweb:/ipfs/QmWyiDQHPZA56iqsAwTmiJoxvNeRQLUVr4gTfzpdpXivpo\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -73,13 +73,13 @@
   "ast": {
     "absolutePath": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol",
     "exportedSymbols": {
-      "AddressUpgradeable": [4517],
+      "AddressUpgradeable": [4590],
       "ERC1967UpgradeUpgradeable": [794],
       "IBeaconUpgradeable": [804],
       "IERC1822ProxiableUpgradeable": [439],
       "IERC1967Upgradeable": [429],
       "Initializable": [973],
-      "StorageSlotUpgradeable": [4693]
+      "StorageSlotUpgradeable": [4766]
     },
     "id": 795,
     "license": "MIT",
@@ -134,7 +134,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 795,
-        "sourceUnit": 4518,
+        "sourceUnit": 4591,
         "src": "292:44:4",
         "symbolAliases": [],
         "unitAlias": ""
@@ -146,7 +146,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 795,
-        "sourceUnit": 4694,
+        "sourceUnit": 4767,
         "src": "337:48:4",
         "symbolAliases": [],
         "unitAlias": ""
@@ -426,10 +426,10 @@
                           "name": "StorageSlotUpgradeable",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4693,
+                          "referencedDeclaration": 4766,
                           "src": "1588:22:4",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4693_$",
+                            "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4766_$",
                             "typeString": "type(library StorageSlotUpgradeable)"
                           }
                         },
@@ -440,10 +440,10 @@
                         "lValueRequested": false,
                         "memberName": "getAddressSlot",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 4659,
+                        "referencedDeclaration": 4732,
                         "src": "1588:37:4",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4639_storage_ptr_$",
+                          "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4712_storage_ptr_$",
                           "typeString": "function (bytes32) pure returns (struct StorageSlotUpgradeable.AddressSlot storage pointer)"
                         }
                       },
@@ -458,7 +458,7 @@
                       "src": "1588:59:4",
                       "tryCall": false,
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_AddressSlot_$4639_storage_ptr",
+                        "typeIdentifier": "t_struct$_AddressSlot_$4712_storage_ptr",
                         "typeString": "struct StorageSlotUpgradeable.AddressSlot storage pointer"
                       }
                     },
@@ -469,7 +469,7 @@
                     "lValueRequested": false,
                     "memberName": "value",
                     "nodeType": "MemberAccess",
-                    "referencedDeclaration": 4638,
+                    "referencedDeclaration": 4711,
                     "src": "1588:65:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -579,10 +579,10 @@
                             "name": "AddressUpgradeable",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4517,
+                            "referencedDeclaration": 4590,
                             "src": "1832:18:4",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_type$_t_contract$_AddressUpgradeable_$4517_$",
+                              "typeIdentifier": "t_type$_t_contract$_AddressUpgradeable_$4590_$",
                               "typeString": "type(library AddressUpgradeable)"
                             }
                           },
@@ -593,7 +593,7 @@
                           "lValueRequested": false,
                           "memberName": "isContract",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 4251,
+                          "referencedDeclaration": 4324,
                           "src": "1832:29:4",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_address_$returns$_t_bool_$",
@@ -708,10 +708,10 @@
                             "name": "StorageSlotUpgradeable",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4693,
+                            "referencedDeclaration": 4766,
                             "src": "1940:22:4",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4693_$",
+                              "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4766_$",
                               "typeString": "type(library StorageSlotUpgradeable)"
                             }
                           },
@@ -722,10 +722,10 @@
                           "lValueRequested": false,
                           "memberName": "getAddressSlot",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 4659,
+                          "referencedDeclaration": 4732,
                           "src": "1940:37:4",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4639_storage_ptr_$",
+                            "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4712_storage_ptr_$",
                             "typeString": "function (bytes32) pure returns (struct StorageSlotUpgradeable.AddressSlot storage pointer)"
                           }
                         },
@@ -740,7 +740,7 @@
                         "src": "1940:59:4",
                         "tryCall": false,
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_AddressSlot_$4639_storage_ptr",
+                          "typeIdentifier": "t_struct$_AddressSlot_$4712_storage_ptr",
                           "typeString": "struct StorageSlotUpgradeable.AddressSlot storage pointer"
                         }
                       },
@@ -751,7 +751,7 @@
                       "lValueRequested": true,
                       "memberName": "value",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4638,
+                      "referencedDeclaration": 4711,
                       "src": "1940:65:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -1399,10 +1399,10 @@
                           "name": "StorageSlotUpgradeable",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4693,
+                          "referencedDeclaration": 4766,
                           "src": "3330:22:4",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4693_$",
+                            "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4766_$",
                             "typeString": "type(library StorageSlotUpgradeable)"
                           }
                         },
@@ -1413,10 +1413,10 @@
                         "lValueRequested": false,
                         "memberName": "getBooleanSlot",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 4670,
+                        "referencedDeclaration": 4743,
                         "src": "3330:37:4",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_BooleanSlot_$4642_storage_ptr_$",
+                          "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_BooleanSlot_$4715_storage_ptr_$",
                           "typeString": "function (bytes32) pure returns (struct StorageSlotUpgradeable.BooleanSlot storage pointer)"
                         }
                       },
@@ -1431,7 +1431,7 @@
                       "src": "3330:53:4",
                       "tryCall": false,
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_BooleanSlot_$4642_storage_ptr",
+                        "typeIdentifier": "t_struct$_BooleanSlot_$4715_storage_ptr",
                         "typeString": "struct StorageSlotUpgradeable.BooleanSlot storage pointer"
                       }
                     },
@@ -1442,7 +1442,7 @@
                     "lValueRequested": false,
                     "memberName": "value",
                     "nodeType": "MemberAccess",
-                    "referencedDeclaration": 4641,
+                    "referencedDeclaration": 4714,
                     "src": "3330:59:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
@@ -2113,10 +2113,10 @@
                           "name": "StorageSlotUpgradeable",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4693,
+                          "referencedDeclaration": 4766,
                           "src": "4296:22:4",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4693_$",
+                            "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4766_$",
                             "typeString": "type(library StorageSlotUpgradeable)"
                           }
                         },
@@ -2127,10 +2127,10 @@
                         "lValueRequested": false,
                         "memberName": "getAddressSlot",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 4659,
+                        "referencedDeclaration": 4732,
                         "src": "4296:37:4",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4639_storage_ptr_$",
+                          "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4712_storage_ptr_$",
                           "typeString": "function (bytes32) pure returns (struct StorageSlotUpgradeable.AddressSlot storage pointer)"
                         }
                       },
@@ -2145,7 +2145,7 @@
                       "src": "4296:50:4",
                       "tryCall": false,
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_AddressSlot_$4639_storage_ptr",
+                        "typeIdentifier": "t_struct$_AddressSlot_$4712_storage_ptr",
                         "typeString": "struct StorageSlotUpgradeable.AddressSlot storage pointer"
                       }
                     },
@@ -2156,7 +2156,7 @@
                     "lValueRequested": false,
                     "memberName": "value",
                     "nodeType": "MemberAccess",
-                    "referencedDeclaration": 4638,
+                    "referencedDeclaration": 4711,
                     "src": "4296:56:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2422,10 +2422,10 @@
                             "name": "StorageSlotUpgradeable",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4693,
+                            "referencedDeclaration": 4766,
                             "src": "4579:22:4",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4693_$",
+                              "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4766_$",
                               "typeString": "type(library StorageSlotUpgradeable)"
                             }
                           },
@@ -2436,10 +2436,10 @@
                           "lValueRequested": false,
                           "memberName": "getAddressSlot",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 4659,
+                          "referencedDeclaration": 4732,
                           "src": "4579:37:4",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4639_storage_ptr_$",
+                            "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4712_storage_ptr_$",
                             "typeString": "function (bytes32) pure returns (struct StorageSlotUpgradeable.AddressSlot storage pointer)"
                           }
                         },
@@ -2454,7 +2454,7 @@
                         "src": "4579:50:4",
                         "tryCall": false,
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_AddressSlot_$4639_storage_ptr",
+                          "typeIdentifier": "t_struct$_AddressSlot_$4712_storage_ptr",
                           "typeString": "struct StorageSlotUpgradeable.AddressSlot storage pointer"
                         }
                       },
@@ -2465,7 +2465,7 @@
                       "lValueRequested": true,
                       "memberName": "value",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4638,
+                      "referencedDeclaration": 4711,
                       "src": "4579:56:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -2850,10 +2850,10 @@
                           "name": "StorageSlotUpgradeable",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4693,
+                          "referencedDeclaration": 4766,
                           "src": "5383:22:4",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4693_$",
+                            "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4766_$",
                             "typeString": "type(library StorageSlotUpgradeable)"
                           }
                         },
@@ -2864,10 +2864,10 @@
                         "lValueRequested": false,
                         "memberName": "getAddressSlot",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 4659,
+                        "referencedDeclaration": 4732,
                         "src": "5383:37:4",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4639_storage_ptr_$",
+                          "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4712_storage_ptr_$",
                           "typeString": "function (bytes32) pure returns (struct StorageSlotUpgradeable.AddressSlot storage pointer)"
                         }
                       },
@@ -2882,7 +2882,7 @@
                       "src": "5383:51:4",
                       "tryCall": false,
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_AddressSlot_$4639_storage_ptr",
+                        "typeIdentifier": "t_struct$_AddressSlot_$4712_storage_ptr",
                         "typeString": "struct StorageSlotUpgradeable.AddressSlot storage pointer"
                       }
                     },
@@ -2893,7 +2893,7 @@
                     "lValueRequested": false,
                     "memberName": "value",
                     "nodeType": "MemberAccess",
-                    "referencedDeclaration": 4638,
+                    "referencedDeclaration": 4711,
                     "src": "5383:57:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -3003,10 +3003,10 @@
                             "name": "AddressUpgradeable",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4517,
+                            "referencedDeclaration": 4590,
                             "src": "5594:18:4",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_type$_t_contract$_AddressUpgradeable_$4517_$",
+                              "typeIdentifier": "t_type$_t_contract$_AddressUpgradeable_$4590_$",
                               "typeString": "type(library AddressUpgradeable)"
                             }
                           },
@@ -3017,7 +3017,7 @@
                           "lValueRequested": false,
                           "memberName": "isContract",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 4251,
+                          "referencedDeclaration": 4324,
                           "src": "5594:29:4",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_address_$returns$_t_bool_$",
@@ -3196,10 +3196,10 @@
                             "name": "AddressUpgradeable",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4517,
+                            "referencedDeclaration": 4590,
                             "src": "5707:18:4",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_type$_t_contract$_AddressUpgradeable_$4517_$",
+                              "typeIdentifier": "t_type$_t_contract$_AddressUpgradeable_$4590_$",
                               "typeString": "type(library AddressUpgradeable)"
                             }
                           },
@@ -3210,7 +3210,7 @@
                           "lValueRequested": false,
                           "memberName": "isContract",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 4251,
+                          "referencedDeclaration": 4324,
                           "src": "5707:29:4",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_address_$returns$_t_bool_$",
@@ -3325,10 +3325,10 @@
                             "name": "StorageSlotUpgradeable",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4693,
+                            "referencedDeclaration": 4766,
                             "src": "5868:22:4",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4693_$",
+                              "typeIdentifier": "t_type$_t_contract$_StorageSlotUpgradeable_$4766_$",
                               "typeString": "type(library StorageSlotUpgradeable)"
                             }
                           },
@@ -3339,10 +3339,10 @@
                           "lValueRequested": false,
                           "memberName": "getAddressSlot",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 4659,
+                          "referencedDeclaration": 4732,
                           "src": "5868:37:4",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4639_storage_ptr_$",
+                            "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_struct$_AddressSlot_$4712_storage_ptr_$",
                             "typeString": "function (bytes32) pure returns (struct StorageSlotUpgradeable.AddressSlot storage pointer)"
                           }
                         },
@@ -3357,7 +3357,7 @@
                         "src": "5868:51:4",
                         "tryCall": false,
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_AddressSlot_$4639_storage_ptr",
+                          "typeIdentifier": "t_struct$_AddressSlot_$4712_storage_ptr",
                           "typeString": "struct StorageSlotUpgradeable.AddressSlot storage pointer"
                         }
                       },
@@ -3368,7 +3368,7 @@
                       "lValueRequested": true,
                       "memberName": "value",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4638,
+                      "referencedDeclaration": 4711,
                       "src": "5868:57:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -3965,10 +3965,10 @@
                             "name": "AddressUpgradeable",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 4517,
+                            "referencedDeclaration": 4590,
                             "src": "6895:18:4",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_type$_t_contract$_AddressUpgradeable_$4517_$",
+                              "typeIdentifier": "t_type$_t_contract$_AddressUpgradeable_$4590_$",
                               "typeString": "type(library AddressUpgradeable)"
                             }
                           },
@@ -3979,7 +3979,7 @@
                           "lValueRequested": false,
                           "memberName": "isContract",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 4251,
+                          "referencedDeclaration": 4324,
                           "src": "6895:29:4",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_view$_t_address_$returns$_t_bool_$",
@@ -4247,10 +4247,10 @@
                         "name": "AddressUpgradeable",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4517,
+                        "referencedDeclaration": 4590,
                         "src": "7129:18:4",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_AddressUpgradeable_$4517_$",
+                          "typeIdentifier": "t_type$_t_contract$_AddressUpgradeable_$4590_$",
                           "typeString": "type(library AddressUpgradeable)"
                         }
                       },
@@ -4261,7 +4261,7 @@
                       "lValueRequested": false,
                       "memberName": "verifyCallResult",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4496,
+                      "referencedDeclaration": 4569,
                       "src": "7129:35:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_pure$_t_bool_$_t_bytes_memory_ptr_$_t_string_memory_ptr_$returns$_t_bytes_memory_ptr_$",
@@ -4477,7 +4477,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.13",
-  "updatedAt": "2023-08-06T17:11:52.089Z",
+  "updatedAt": "2023-08-10T13:39:04.431Z",
   "devdoc": {
     "custom:oz-upgrades-unsafe-allow": "delegatecall",
     "details": "This abstract contract provides getters and event emitting update functions for https://eips.ethereum.org/EIPS/eip-1967[EIP1967] slots. _Available since v4.1._",
