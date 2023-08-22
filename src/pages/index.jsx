@@ -135,6 +135,9 @@ Home.getInitialProps = async () => {
       status: {
         $eq: "Live"
       },
+      walletAddress: {
+        $eq: "0x69ca7ed1e033b42c28d5e3a7b802bd74f63e752a"
+      }
     },
     populate: {
       collectible: {
@@ -147,7 +150,11 @@ Home.getInitialProps = async () => {
     pagination: {
       limit: 10
     },
-    sort: { startTimestamp: "desc" }
+    sort: {
+      collectible: {
+        createdAt: "desc"
+      }
+    }
   }
   let newestItems = await strapi.find("auctions", newestItemsFilter);
   // const newestItems = await client.query({
@@ -186,6 +193,9 @@ Home.getInitialProps = async () => {
       status: {
         $eq: "Live"
       },
+      walletAddress: {
+        $eq: "0x69ca7ed1e033b42c28d5e3a7b802bd74f63e752a"
+      }
     },
     populate: {
       collectible: {

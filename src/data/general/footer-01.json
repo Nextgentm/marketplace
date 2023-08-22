@@ -47,13 +47,8 @@
       },
       {
         "id": 7,
-        "text": "Create NFT",
-        "path": "/upload-variants"
-      },
-      {
-        "id": 8,
-        "text": "Create Collection",
-        "path": "/upload-variants-collection"
+        "text": "Newest Items",
+        "path": "/collectibles?sort=newest"
       }
     ]
   },
