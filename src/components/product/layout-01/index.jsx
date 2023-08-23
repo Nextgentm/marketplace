@@ -44,6 +44,17 @@ const Product = ({
   const handleBidModal = () => {
     setShowBidModal((prev) => !prev);
   };
+
+  const CollectiblesEvent = (params) => {
+    clevertap.event.push("Marketplace Collectibles", {
+      "Button Name": "Test",
+      "Collection Name": "Test",
+      "NFT Name": "Test",
+      "Username": "Test",
+    });
+    console.log("CollectiblesEvent");
+  };
+
   return (
     <>
       <div className={clsx("product-style-one", !overlay && "no-overlay", placeBid && "with-placeBid")}>
@@ -56,6 +67,14 @@ const Product = ({
                   alt={image?.alt || "NFT_portfolio"}
                   width={533}
                   height={533}
+                  onClick={() =>
+                    clevertap.event.push("Marketplace Collectibles", {
+                      "Button Name": "Test",
+                      "Collection Name": "Test",
+                      "NFT Name": "Test",
+                      "Username": "Test",
+                    })
+                  }
                 /> :
                 <video width={"100%"} height={"auto"}>
                   <source src={image?.src ? image.src : image} />
