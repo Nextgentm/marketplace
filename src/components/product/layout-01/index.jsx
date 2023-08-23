@@ -105,8 +105,10 @@ const Product = ({
           </div>
           {!disableShareDropdown && <ShareDropdown slug={editProductSlug} />}
         </div>
-        <Anchor target={isOpenseaCollectible ? "_blank" : "_self"} path={isOpenseaCollectible ? `${slug}` : isAuction ? `${slug}` : `/collectible/${slug}`}>
-          <span className="product-name">{title}</span>
+        <Anchor target={isOpenseaCollectible ? "_blank" : "_self"} path={isOpenseaCollectible ? `${slug}` : isAuction ? `${slug}` : `/collectible/${slug}`} >
+          <span className="product-name" onClick={() =>
+            CollectiblesEvent("Name Click")
+          }>{title}</span>
         </Anchor>
         {/* <span className="latest-bid">Highest bid {latestBid}</span> */}
         <span className="latest-bid">From {collectionName}</span><br />
