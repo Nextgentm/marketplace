@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import dynamic from "next/dynamic";
 import PropTypes from "prop-types";
 import Image from "next/image";
@@ -10,7 +10,7 @@ import Button from "@ui/button";
 import { ImageType } from "@utils/types";
 import { isImgLink } from "@utils/methods";
 import PlaceBidModal from "@components/modals/placebid-modal";
-
+import { AppData } from "src/context/app-context";
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
   ssr: false
 });
@@ -18,6 +18,8 @@ const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
 const ShareDropdown = dynamic(() => import("@components/share-dropdown"), {
   ssr: false
 });
+
+
 
 const Product = ({
   overlay,
@@ -45,15 +47,23 @@ const Product = ({
     setShowBidModal((prev) => !prev);
   };
 
-  const CollectiblesEvent = (params) => {
+  const { userData } = useContext(AppData);
+
+  const CollectiblesEvent = async (event) => {
+
+    console.log(title);
     clevertap.event.push("Marketplace Collectibles", {
-      "Button Name": "Test",
-      "Collection Name": "Test",
-      "NFT Name": "Test",
-      "Username": "Test",
+      "Button Name": event,
+      "Collection Name": collectionName,
+      "NFT Name": title,
+      "Username": userData?.username,
+      "Player ID": userData?.id,
+      "Email ID": userData?.email,
+      "Mobile No": userData?.username,
+      "First name": userData?.fullName,
     });
-    console.log("CollectiblesEvent");
   };
+
 
   return (
     <>
@@ -68,12 +78,7 @@ const Product = ({
                   width={533}
                   height={533}
                   onClick={() =>
-                    clevertap.event.push("Marketplace Collectibles", {
-                      "Button Name": "Test",
-                      "Collection Name": "Test",
-                      "NFT Name": "Test",
-                      "Username": "Test",
-                    })
+                    CollectiblesEvent("Image Click")
                   }
                 /> :
                 <video width={"100%"} height={"auto"}>
