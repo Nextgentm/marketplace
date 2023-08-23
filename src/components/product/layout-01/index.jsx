@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import dynamic from "next/dynamic";
 import PropTypes from "prop-types";
 import Image from "next/image";
@@ -10,7 +10,7 @@ import Button from "@ui/button";
 import { ImageType } from "@utils/types";
 import { isImgLink } from "@utils/methods";
 import PlaceBidModal from "@components/modals/placebid-modal";
-
+import { AppData } from "src/context/app-context";
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
   ssr: false
 });
@@ -18,6 +18,8 @@ const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
 const ShareDropdown = dynamic(() => import("@components/share-dropdown"), {
   ssr: false
 });
+
+
 
 const Product = ({
   overlay,
@@ -44,6 +46,25 @@ const Product = ({
   const handleBidModal = () => {
     setShowBidModal((prev) => !prev);
   };
+
+  const { userData } = useContext(AppData);
+
+  const CollectiblesEvent = async (event) => {
+
+    console.log(title);
+    clevertap.event.push("Marketplace Collectibles", {
+      "Button Name": event,
+      "Collection Name": collectionName,
+      "NFT Name": title,
+      "Username": userData?.username,
+      "Player ID": userData?.id,
+      "Email ID": userData?.email,
+      "Mobile No": userData?.username,
+      "First name": userData?.fullName,
+    });
+  };
+
+
   return (
     <>
       <div className={clsx("product-style-one", !overlay && "no-overlay", placeBid && "with-placeBid")}>
@@ -56,6 +77,9 @@ const Product = ({
                   alt={image?.alt || "NFT_portfolio"}
                   width={533}
                   height={533}
+                  onClick={() =>
+                    CollectiblesEvent("Image Click")
+                  }
                 /> :
                 <video width={"100%"} height={"auto"}>
                   <source src={image?.src ? image.src : image} />
@@ -81,8 +105,10 @@ const Product = ({
           </div>
           {!disableShareDropdown && <ShareDropdown slug={editProductSlug} />}
         </div>
-        <Anchor target={isOpenseaCollectible ? "_blank" : "_self"} path={isOpenseaCollectible ? `${slug}` : isAuction ? `${slug}` : `/collectible/${slug}`}>
-          <span className="product-name">{title}</span>
+        <Anchor target={isOpenseaCollectible ? "_blank" : "_self"} path={isOpenseaCollectible ? `${slug}` : isAuction ? `${slug}` : `/collectible/${slug}`} >
+          <span className="product-name" onClick={() =>
+            CollectiblesEvent("Name Click")
+          }>{title}</span>
         </Anchor>
         {/* <span className="latest-bid">Highest bid {latestBid}</span> */}
         <span className="latest-bid">From {collectionName}</span><br />
