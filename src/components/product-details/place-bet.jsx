@@ -62,7 +62,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
           environment: "sandbox",
           variant: "overlay",
           params: {
-            apiKey: process.env.NEXT_PUBLIC_MOONPAY_API_KEY,
+            apiKey: `${process.env.NEXT_PUBLIC_MOONPAY_API_KEY}`,
             contractAddress: product.collection.data.collectionType == "Single" ? product.collection.data.contractAddress : product.collection.data.contractAddress1155,
             tokenId: product.nftID,
             listingId: auction.data.id.toString(),
