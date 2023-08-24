@@ -130,7 +130,7 @@ Home.getInitialProps = async () => {
   //   fetchPolicy: "network-only"
   // });
 
-  const newestItemsFilter = {
+  let newestItemsFilter = {
     filters: {
       status: {
         $eq: "Live"
@@ -147,7 +147,16 @@ Home.getInitialProps = async () => {
     pagination: {
       limit: 10
     },
-    sort: { startTimestamp: "desc" }
+    sort: {
+      collectible: {
+        createdAt: "desc"
+      }
+    }
+  }
+  if (process.env.NEXT_PUBLIC_SENTRY_ENV == "production") {
+    newestItemsFilter.filters.walletAddress = {
+      $eq: "0x69ca7ed1e033b42c28d5e3a7b802bd74f63e752a"
+    }
   }
   let newestItems = await strapi.find("auctions", newestItemsFilter);
   // const newestItems = await client.query({
@@ -175,17 +184,20 @@ Home.getInitialProps = async () => {
         auction: {
           status: "Live"
         }
+      },
+      id: {
+        $ne: 14
       }
     },
     pagination: {
       limit: 25,
     }
   });
-  const dataCollectiblesFilter = {
+  let dataCollectiblesFilter = {
     filters: {
       status: {
         $eq: "Live"
-      },
+      }
     },
     populate: {
       collectible: {
@@ -196,6 +208,11 @@ Home.getInitialProps = async () => {
       }
     },
     sort: { startTimestamp: "desc" }
+  }
+  if (process.env.NEXT_PUBLIC_SENTRY_ENV == "production") {
+    dataCollectiblesFilter.filters.walletAddress = {
+      $eq: "0x69ca7ed1e033b42c28d5e3a7b802bd74f63e752a"
+    }
   }
   let dataCollectibles = await strapi.find("auctions", dataCollectiblesFilter);
   // const dataCollectibles = await client.query({
@@ -219,7 +236,7 @@ Home.getInitialProps = async () => {
         auction: {
           status: {
             $eq: "Live"
-          },
+          }
         }
       }
     },

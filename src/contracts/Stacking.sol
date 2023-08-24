@@ -10,9 +10,15 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
-contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgradeable, ReentrancyGuard, ERC1155Holder {
+contract StakingNFT is
+  PausableUpgradeable,
+  AccessControlUpgradeable,
+  UUPSUpgradeable,
+  ReentrancyGuardUpgradeable,
+  ERC1155Holder
+{
   struct StakingInfo {
     uint256 stakedAmount;
     uint256 oldBalance;
@@ -185,50 +191,50 @@ contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgrad
     emit TokensStaked(msg.sender, _tokenContract, _tokenId, _stakedAmount, index);
   }
 
-  function stakeTokenBatch(
-    address[] calldata _tokenContract,
-    uint256[] calldata _tokenType,
-    uint256[] calldata _tokenId,
-    uint256[] calldata _stakedAmount
-  ) external whenNotPaused {
-    // check input length
-    require(
-      _tokenContract.length == _tokenType.length &&
-        _tokenContract.length == _tokenId.length &&
-        _tokenContract.length == _stakedAmount.length,
-      "TokenStaking: input array length is invalid"
-    );
+  // function stakeTokenBatch(
+  //   address[] calldata _tokenContract,
+  //   uint256[] calldata _tokenType,
+  //   uint256[] calldata _tokenId,
+  //   uint256[] calldata _stakedAmount
+  // ) external whenNotPaused {
+  //   // check input length
+  //   require(
+  //     _tokenContract.length == _tokenType.length &&
+  //       _tokenContract.length == _tokenId.length &&
+  //       _tokenContract.length == _stakedAmount.length,
+  //     "TokenStaking: input array length is invalid"
+  //   );
 
-    uint256 len = _tokenContract.length;
-    uint256 i;
-    for (i; i < len; i++) {
-      require(whitelistContracts[_tokenContract[i]], "Whitelist: NFT contract is not whitelisted");
-      // check token type and transfer it
-      if (_tokenType[i] == 0) {
-        require(
-          IERC1155(_tokenContract[i]).balanceOf(msg.sender, _tokenId[i]) >= _stakedAmount[i],
-          "TokenStaking: Caller must have sufficient ERC1155 token balance"
-        );
-        IERC1155(_tokenContract[i]).safeTransferFrom(msg.sender, address(this), _tokenId[i], _stakedAmount[i], "0x");
-      } else {
-        require(
-          IERC721(_tokenContract[i]).ownerOf(_tokenId[i]) == msg.sender,
-          "TokenStaking: Caller must own the ERC721 token"
-        );
-        IERC721(_tokenContract[i]).transferFrom(msg.sender, address(this), _tokenId[i]);
-      }
-      // add stake data
-      StakingInfo memory newStaking = StakingInfo({
-        stakedAmount: _stakedAmount[i],
-        timeOfLastUpdate: block.timestamp,
-        oldBalance: 0
-      });
-      uint256 index = stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]].length;
-      stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]].push(newStaking);
+  //   uint256 len = _tokenContract.length;
+  //   uint256 i;
+  //   for (i; i < len; i++) {
+  //     require(whitelistContracts[_tokenContract[i]], "Whitelist: NFT contract is not whitelisted");
+  //     // check token type and transfer it
+  //     if (_tokenType[i] == 0) {
+  //       require(
+  //         IERC1155(_tokenContract[i]).balanceOf(msg.sender, _tokenId[i]) >= _stakedAmount[i],
+  //         "TokenStaking: Caller must have sufficient ERC1155 token balance"
+  //       );
+  //       IERC1155(_tokenContract[i]).safeTransferFrom(msg.sender, address(this), _tokenId[i], _stakedAmount[i], "0x");
+  //     } else {
+  //       require(
+  //         IERC721(_tokenContract[i]).ownerOf(_tokenId[i]) == msg.sender,
+  //         "TokenStaking: Caller must own the ERC721 token"
+  //       );
+  //       IERC721(_tokenContract[i]).transferFrom(msg.sender, address(this), _tokenId[i]);
+  //     }
+  //     // add stake data
+  //     StakingInfo memory newStaking = StakingInfo({
+  //       stakedAmount: _stakedAmount[i],
+  //       timeOfLastUpdate: block.timestamp,
+  //       oldBalance: 0
+  //     });
+  //     uint256 index = stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]].length;
+  //     stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]].push(newStaking);
 
-      emit TokensStaked(msg.sender, _tokenContract[i], _tokenId[i], _stakedAmount[i], index);
-    }
-  }
+  //     emit TokensStaked(msg.sender, _tokenContract[i], _tokenId[i], _stakedAmount[i], index);
+  //   }
+  // }
 
   //Unstake functions
   function unStakeToken(
@@ -268,55 +274,55 @@ contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgrad
     emit TokensUnstaked(msg.sender, _tokenContract, _tokenId, _unStakedAmount, _index);
   }
 
-  function unStakeTokenBatch(
-    address[] calldata _tokenContract,
-    uint256[] calldata _tokenType,
-    uint256[] calldata _tokenId,
-    uint256[] calldata _unStakedAmount,
-    uint256[] calldata _index
-  ) external whenNotPaused nonReentrant {
-    // check input length
-    require(
-      _tokenContract.length == _tokenType.length &&
-        _tokenContract.length == _tokenId.length &&
-        _tokenContract.length == _unStakedAmount.length &&
-        _tokenContract.length == _index.length,
-      "TokenStaking: input array length is invalid"
-    );
+  // function unStakeTokenBatch(
+  //   address[] calldata _tokenContract,
+  //   uint256[] calldata _tokenType,
+  //   uint256[] calldata _tokenId,
+  //   uint256[] calldata _unStakedAmount,
+  //   uint256[] calldata _index
+  // ) external whenNotPaused nonReentrant {
+  //   // check input length
+  //   require(
+  //     _tokenContract.length == _tokenType.length &&
+  //       _tokenContract.length == _tokenId.length &&
+  //       _tokenContract.length == _unStakedAmount.length &&
+  //       _tokenContract.length == _index.length,
+  //     "TokenStaking: input array length is invalid"
+  //   );
 
-    uint256 len = _tokenContract.length;
-    uint256 i;
-    for (i; i < len; i++) {
-      require(
-        stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]][_index[i]].stakedAmount >= _unStakedAmount[i],
-        "TokenStaking: Insufficient Staked NFT token balance"
-      );
-      if (_tokenType[i] == 0) {
-        require(
-          IERC1155(_tokenContract[i]).balanceOf(address(this), _tokenId[i]) >= _unStakedAmount[i],
-          "TokenStaking: Contract must have sufficient ERC1155 token balance"
-        );
-      } else {
-        require(
-          IERC721(_tokenContract[i]).ownerOf(_tokenId[i]) == address(this),
-          "TokenStaking: Contract must own the ERC721 token"
-        );
-      }
+  //   uint256 len = _tokenContract.length;
+  //   uint256 i;
+  //   for (i; i < len; i++) {
+  //     require(
+  //       stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]][_index[i]].stakedAmount >= _unStakedAmount[i],
+  //       "TokenStaking: Insufficient Staked NFT token balance"
+  //     );
+  //     if (_tokenType[i] == 0) {
+  //       require(
+  //         IERC1155(_tokenContract[i]).balanceOf(address(this), _tokenId[i]) >= _unStakedAmount[i],
+  //         "TokenStaking: Contract must have sufficient ERC1155 token balance"
+  //       );
+  //     } else {
+  //       require(
+  //         IERC721(_tokenContract[i]).ownerOf(_tokenId[i]) == address(this),
+  //         "TokenStaking: Contract must own the ERC721 token"
+  //       );
+  //     }
 
-      // claim all rewards for current time
-      if (payReward) {
-        claimRewards(_tokenContract[i], _tokenId[i], _index[i]);
-      }
-      stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]][_index[i]].stakedAmount -= _unStakedAmount[i];
+  //     // claim all rewards for current time
+  //     if (payReward) {
+  //       claimRewards(_tokenContract[i], _tokenId[i], _index[i]);
+  //     }
+  //     stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]][_index[i]].stakedAmount -= _unStakedAmount[i];
 
-      if (_tokenType[i] == 0) {
-        IERC1155(_tokenContract[i]).safeTransferFrom(address(this), msg.sender, _tokenId[i], _unStakedAmount[i], "0x");
-      } else {
-        IERC721(_tokenContract[i]).transferFrom(address(this), msg.sender, _tokenId[i]);
-      }
-      emit TokensUnstaked(msg.sender, _tokenContract[i], _tokenId[i], _unStakedAmount[i], _index[i]);
-    }
-  }
+  //     if (_tokenType[i] == 0) {
+  //       IERC1155(_tokenContract[i]).safeTransferFrom(address(this), msg.sender, _tokenId[i], _unStakedAmount[i], "0x");
+  //     } else {
+  //       IERC721(_tokenContract[i]).transferFrom(address(this), msg.sender, _tokenId[i]);
+  //     }
+  //     emit TokensUnstaked(msg.sender, _tokenContract[i], _tokenId[i], _unStakedAmount[i], _index[i]);
+  //   }
+  // }
 
   //Restake functions
   function reStakeToken(
@@ -350,6 +356,50 @@ contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgrad
 
     emit TokenRestaked(msg.sender, _tokenContract, _tokenId, _reStakedAmount, _index, block.timestamp);
   }
+
+  // function reStakeTokenBatch(
+  //   address[] calldata _tokenContract,
+  //   uint256[] calldata _tokenType,
+  //   uint256[] calldata _tokenId,
+  //   uint256[] calldata _index
+  // ) external whenNotPaused {
+  //   // check input length
+  //   require(
+  //     _tokenContract.length == _tokenType.length &&
+  //       _tokenContract.length == _tokenId.length &&
+  //       _tokenContract.length == _index.length,
+  //     "TokenStaking: input array length is invalid"
+  //   );
+
+  //   uint256 len = _tokenContract.length;
+  //   uint256 i;
+  //   for (i; i < len; i++) {
+  //   uint _reStakedAmount = stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]][_index[i]].stakedAmount;
+  //   require(_reStakedAmount > 0, "TokenStaking: Staking Data not found");
+  //   if (_tokenType[i] == 0) {
+  //     require(
+  //       IERC1155(_tokenContract[i]).balanceOf(address(this), _tokenId[i]) >= _reStakedAmount,
+  //       "TokenStaking: Contract must have sufficient ERC1155 token balance"
+  //     );
+  //   } else {
+  //     require(
+  //       IERC721(_tokenContract[i]).ownerOf(_tokenId[i]) == address(this),
+  //       "TokenStaking: Contract must own the ERC721 token"
+  //     );
+  //   }
+
+  //   // update old blance and time of last update
+  //   stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]][_index[i]].oldBalance = calculateRewards(
+  //     msg.sender,
+  //     _tokenContract[i],
+  //     _tokenId[i],
+  //     _index[i]
+  //   );
+  //   stakedBalances[msg.sender][_tokenContract[i]][_tokenId[i]][_index[i]].timeOfLastUpdate = block.timestamp;
+
+  //   emit TokenRestaked(msg.sender, _tokenContract[i], _tokenId[i], _reStakedAmount, _index[i], block.timestamp);
+  //   }
+  // }
 
   // Claim reward
   function claimRewards(
@@ -388,7 +438,8 @@ contract StakingNFT is PausableUpgradeable, AccessControlUpgradeable, UUPSUpgrad
   ) public view returns (uint256) {
     require(stakedBalances[_user][_tokenContract][_tokenId].length > _index, "TokenStaking: invalid index");
     if (stakedBalances[_user][_tokenContract][_tokenId][_index].stakedAmount > 0) {
-      uint256 stakingEndTime = stakedBalances[_user][_tokenContract][_tokenId][_index].timeOfLastUpdate + rewardRateDuration;
+      uint256 stakingEndTime = stakedBalances[_user][_tokenContract][_tokenId][_index].timeOfLastUpdate +
+        rewardRateDuration;
       require(block.timestamp > stakingEndTime, "TokenStaking: Staking duration is not completed");
       uint256 totalRewards = rewardRate *
         // rewardDuration *

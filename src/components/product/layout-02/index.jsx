@@ -21,7 +21,9 @@ const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
 });
 
 const StakeProduct = ({
-  id, title, slug, image, stakingAmount, collectionName, stakingIndex, restakingCount, stakingStartTime, stakingEndTime, network, collectionType, NFTContractAddress, nftID, refreshPageData }) => {
+  id, title, slug, image, stakingAmount, collectionName, stakingIndex, restakingCount,
+  stakingStartTime, stakingEndTime, network, collectionType,
+  NFTContractAddress, nftID, refreshPageData, multiselection, isSelected, updateSelected }) => {
   const { walletData, setWalletData } = useContext(AppData);
 
   const [totalReward, setTotalReward] = useState(0);
@@ -29,7 +31,7 @@ const StakeProduct = ({
   const [totalDays, setTotalDays] = useState(0);
   const [completedDays, setCompletedDays] = useState(0);
 
-  async function getTotalDays() {
+  function getTotalDays() {
     let startTime = new Date(stakingStartTime);
     let endTime = new Date(stakingEndTime);
     let total = (endTime.getTime() - startTime.getTime()) / 86400000;
@@ -64,7 +66,7 @@ const StakeProduct = ({
     if (decimals == 18) {
       convertedPrice = convertWeitoEther(walletData.ethers, rewardAmount);
     } else {
-      convertedPrice = (eth * (10 ** decimals));
+      convertedPrice = (rewardRate * (10 ** decimals));
     }
     // console.log(convertedPrice);
     setTotalReward(convertedPrice);
@@ -72,21 +74,25 @@ const StakeProduct = ({
   }
 
   async function claimReward() {
+    setTotalRewardLoading(true);
     try {
       // chnage network
       if (network === "Ethereum") {
         if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
           // ethereum testnet
+          setTotalRewardLoading(false);
           return;
         }
       } else if (network === "Polygon") {
         if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
           // polygon testnet
+          setTotalRewardLoading(false);
           return;
         }
       } else if (network === "Binance") {
         if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
           // polygon testnet
+          setTotalRewardLoading(false);
           return;
         }
       }
@@ -110,27 +116,34 @@ const StakeProduct = ({
 
       await refreshPageData(1);
       toast.success("NFT unstake successfully!");
+      setTotalRewardLoading(false);
     } catch (error) {
       console.log(error);
+      setTotalRewardLoading(false);
     }
+    setTotalRewardLoading(false);
   }
 
   async function restakeToken() {
+    setTotalRewardLoading(true);
     try {
       // chnage network
       if (network === "Ethereum") {
         if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
           // ethereum testnet
+          setTotalRewardLoading(false);
           return;
         }
       } else if (network === "Polygon") {
         if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
           // polygon testnet
+          setTotalRewardLoading(false);
           return;
         }
       } else if (network === "Binance") {
         if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
           // polygon testnet
+          setTotalRewardLoading(false);
           return;
         }
       }
@@ -155,24 +168,42 @@ const StakeProduct = ({
 
       await refreshPageData();
       toast.success("NFT restake successfully!");
+      setTotalRewardLoading(false);
     } catch (error) {
       console.log(error);
+      setTotalRewardLoading(false);
     }
+    setTotalRewardLoading(false);
   }
 
   return (
     <>
+
       <div className={clsx("product-style-one")}>
         <div className="card-thumbnail">
           {image && (
-            <Anchor path={`#`}>
+            <Anchor path={`#`} className={"nav-stake-selection"}>
               {isImgLink(image?.src ? image.src : image) ?
-                <Image
-                  src={image?.src ? image.src : image}
-                  alt={image?.alt || "NFT_portfolio"}
-                  width={533}
-                  height={533}
-                /> :
+                <>
+                  <Image
+                    src={image?.src ? image.src : image}
+                    alt={image?.alt || "NFT_portfolio"}
+                    width={533}
+                    height={533}
+                  />
+                  {multiselection &&
+
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => updateSelected()}
+                      className="stackselection"
+                    />
+
+
+                  }
+                </>
+                :
                 <video width={"100%"} height={"auto"}>
                   <source src={image?.src ? image.src : image} />
                 </video>
@@ -192,7 +223,7 @@ const StakeProduct = ({
             <h6 className="title">{title}</h6>
           </Anchor>
           <span className="latest-bid">From {collectionName}</span><br />
-          <span className="latest-bid">Total NFT Stake: {stakingAmount}</span><br />
+          <span className="latest-bid">Stake Amount: {stakingAmount}</span><br />
           <span className="latest-bid">Days completed: {completedDays}/{totalDays}</span>
           {/* <div className="row"> */}
           <ProgressBar variant="success" now={(completedDays * 100) / totalDays} />

@@ -290,3 +290,28 @@ input[type="submit"] {
         transform: translateY(-5px);
     }
 }
+
+.nav-stake-selection {
+    position: relative;
+  
+}
+.nav-stake-selection .stackselection{
+    opacity: 1;
+    position: absolute;
+    left: -43%;
+    top: 5px;
+    height: 20px;
+}
+
+button.nav-completed-layout,
+button.nav-stake-layout {
+    margin: 15px;
+    text-transform: capitalize;
+}
+.row.staking-info {
+    margin: 25px auto;
+    font-size: 16px;
+}
+.row.staking-info button.btn.btn-primary {
+    float: right;
+}

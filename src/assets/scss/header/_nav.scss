@@ -332,3 +332,18 @@ span {
         animation: customOne 1.2s infinite;
     }
 }
+
+.mainmenu-nav .mainmenu li.isActiveLink a,
+.mainmenu-nav .mainmenu li .submenu li.isActiveLink a{
+    color: #e90a63;
+    font-weight: 700;
+}
+
+.lm-explore-product .single-slide-product button{
+    width: 100%;
+    display: inline-block;
+    height: auto;
+    padding: 5px 10px;
+    line-height: 24px;
+    min-height: 47px !important;
+}
