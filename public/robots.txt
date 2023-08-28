@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://marketplace.lootmogul.com
+
+# Sitemaps
+Sitemap: https://marketplace.lootmogul.com/sitemap.xml
