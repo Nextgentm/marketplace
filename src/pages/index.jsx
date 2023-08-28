@@ -189,6 +189,7 @@ Home.getInitialProps = async () => {
         $ne: 14
       }
     },
+    sort: ["priority:asc"],
     pagination: {
       limit: 25,
     }
