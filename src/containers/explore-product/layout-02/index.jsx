@@ -8,9 +8,11 @@ import FilterButtons from "@components/filter-buttons";
 import { flatDeep } from "@utils/methods";
 import { SectionTitleType, ProductType } from "@utils/types";
 import strapi from "@utils/strapi";
+import Anchor from "@ui/anchor";
 
 const ExploreProductArea = ({ className, space, data }) => {
   const filters = [...new Set(flatDeep(data?.allCollections.map((item) => item.name) || []))];
+  const [collectionSlug, setCollectionSlug] = useState("/collectibles");
   const [products, setProducts] = useState([]);
   useEffect(() => {
     setProducts(data?.products);
@@ -20,6 +22,7 @@ const ExploreProductArea = ({ className, space, data }) => {
     const prods = data?.products ? [...data.products] : [];
     if (filterKey === "all") {
       setProducts(data?.products);
+      setCollectionSlug("/collectibles");
       return;
     }
     // const filterProds = prods.filter((prod) => prod.collectible.data?.collection?.data?.name.includes(filterKey));
@@ -48,9 +51,13 @@ const ExploreProductArea = ({ className, space, data }) => {
       sort: { startTimestamp: "desc" }
     }
     let filterProds = await strapi.find("auctions", dataCollectiblesFilter);
-    // console.log(filterProds.data);
+    // console.log(filterProds.meta);
     setProducts(filterProds.data);
+    if (filterProds.data.length > 0) {
+      setCollectionSlug(`collection/${filterProds?.data[0]?.collectible?.data?.collection?.data?.slug}`);
+    }
   };
+
   return (
     <div className={clsx("rn-product-area masonary-wrapper-activation", space === 1 && "rn-section-gapTop", className)}>
       <div className="container">
@@ -87,6 +94,14 @@ const ExploreProductArea = ({ className, space, data }) => {
             </motion.div>
             : <p>No item to show</p>}
         </div>
+        {products.length > 10 &&
+          <div className="col-lg-12 view-more-link">
+            <Anchor className="btn-transparent" path={collectionSlug}>
+              VIEW MORE
+              <i className="feather feather-arrow-right" />
+            </Anchor>
+          </div>
+        }
       </div>
     </div>
   );
