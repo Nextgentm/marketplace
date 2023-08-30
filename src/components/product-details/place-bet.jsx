@@ -414,7 +414,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
             color={btnColor || "primary-alta"}
             className="mt--30"
             onClick={() => auction.data.quantity > 1 ? handleBidModalForMoonpay() : payUsingMoonpay()}
-            disabled={isOwner || (auction_date && new Date() > new Date(auction_date))}>Pay using Moonpay
+            disabled={isOwner || (auction_date && new Date() > new Date(auction_date))}>Pay using MoonPay
           </Button>
         }
 
