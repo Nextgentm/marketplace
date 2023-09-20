@@ -32,6 +32,8 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, a
     let response = await strapi.find("collections", null);
     console.log(response);
   };
+  console.log("Marketplace Homepage");
+
   return (
     <Wrapper>
       <SEO pageTitle="NFT Marketplace" />

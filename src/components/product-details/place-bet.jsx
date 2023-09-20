@@ -23,7 +23,7 @@ const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
   ssr: false
 });
 
-const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData, isOwner, btnColor, className }) => {
+const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData, isOwner, btnColor, className, primarySale }) => {
   const { walletData, setWalletData, userData } = useContext(AppData);
   const [isMoonPayMethod, setMoonPayMethod] = useState(false);
   const handleBidModalForMoonpay = () => {
@@ -59,7 +59,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       if (userData) {
         const moonpaySdk = window.MoonPayWebSdk.init({
           flow: "nft",
-          environment: "sandbox",
+          environment: process.env.NEXT_PUBLIC_SENTRY_ENV == "production" ? "production" : "sandbox",
           variant: "overlay",
           params: {
             apiKey: `${process.env.NEXT_PUBLIC_MOONPAY_API_KEY}`,
@@ -409,12 +409,12 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         </div>
         <span>{isOwner && "You are the owner of this auction"}</span>
 
-        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && process.env.NEXT_PUBLIC_SENTRY_ENV !== "production" &&
+        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && primarySale &&
           <Button
             color={btnColor || "primary-alta"}
             className="mt--30"
             onClick={() => auction.data.quantity > 1 ? handleBidModalForMoonpay() : payUsingMoonpay()}
-            disabled={isOwner || (auction_date && new Date() > new Date(auction_date))}>Pay using Moonpay
+            disabled={isOwner || (auction_date && new Date() > new Date(auction_date))}>Pay using MoonPay
           </Button>
         }
 
