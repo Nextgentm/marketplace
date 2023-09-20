@@ -407,6 +407,7 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
                     auction={auction}
                     refreshPageData={refreshPageData}
                     isOwner={auction?.data?.walletAddress == walletData.account}
+                    primarySale={auction?.data?.walletAddress == auction?.data?.collectible.data.creator}
                   />
                 )}
               </div>
