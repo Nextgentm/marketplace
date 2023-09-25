@@ -32,7 +32,6 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, a
     let response = await strapi.find("collections", null);
     console.log(response);
   };
-  console.log("Marketplace Homepage");
 
   return (
     <Wrapper>
@@ -132,11 +131,20 @@ Home.getInitialProps = async () => {
   //   fetchPolicy: "network-only"
   // });
 
+  let newestItemsData = await strapi.find("collectible/newestItems");
+  // console.log(newestItemsData);
+  let newestItemsIds = [];
+  newestItemsIds.push(...newestItemsData.map(emp => emp.id));
+  // console.log(newestItemsIds);
+
   let newestItemsFilter = {
     filters: {
       status: {
         $eq: "Live"
       },
+      id: {
+        $in: newestItemsIds
+      }
     },
     populate: {
       collectible: {
