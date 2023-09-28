@@ -175,18 +175,13 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         //     value: walletData.ethers.utils.parseEther("0.01"),
         // };
         let approveAddress = await contract721.getApproved(product.nftID);
+        const approved = await contract721.isApprovedForAll(walletData.account, walletData.contractData.TransferProxy.address);
+        // console.log(approved);
         // console.log(approveAddress);
-        // if (approveAddress.toLowerCase() != walletData.contractData.TradeContract.address.toLowerCase()) {
-        //   // approve nft first
-        //   const transaction = await contract721.approve(walletData.contractData.TradeContract.address, product.nftID);
-        //   const receipt = await transaction.wait();
-        //   // console.log(receipt);
-        // }
-        // approveAddress = await contract721.getApproved(product.nftID);
-        // console.log(approveAddress);
-        if (approveAddress.toLowerCase() != walletData.contractData.TransferProxy.address.toLowerCase()) {
+        if (approveAddress.toLowerCase() != walletData.contractData.TransferProxy.address.toLowerCase() && !approved) {
           // approve nft first
-          const transaction = await contract721.approve(walletData.contractData.TransferProxy.address, product.nftID);
+          // const transaction = await contract721.approve(walletData.contractData.TransferProxy.address, product.nftID);
+          const transaction = await contract721.setApprovalForAll(walletData.contractData.TransferProxy.address, true);
           const receipt = await transaction.wait();
           // console.log(receipt);
         }
@@ -597,10 +592,13 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           // Pull the deployed contract instance
           const contract721 = await getERC721Contract(walletData, contractAddress);
           let approveAddress = await contract721.getApproved(product.nftID);
+          const approved = await contract721.isApprovedForAll(walletData.account, walletData.contractData.StakingContract.address);
+          // console.log(approved);
           // approve nft first
-          if (approveAddress.toLowerCase() != walletData.contractData.StakingContract.address.toLowerCase()) {
+          if (approveAddress.toLowerCase() != walletData.contractData.StakingContract.address.toLowerCase() && !approved) {
             // approve nft first
-            const transaction = await contract721.approve(walletData.contractData.StakingContract.address, product.nftID);
+            // const transaction = await contract721.approve(walletData.contractData.StakingContract.address, product.nftID);
+            const transaction = await contract721.setApprovalForAll(walletData.contractData.StakingContract.address, true);
             const receipt = await transaction.wait();
             // console.log(receipt);
           }

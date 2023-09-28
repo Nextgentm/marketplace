@@ -22,7 +22,7 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
     const [ownedDatapagination, setOwnedDataPagination] = useState({
         page: 1,
         pageCount: 1,
-        pageSize: 4,
+        pageSize: 8,
         total: 0
     });
     // hook to hold selected data for staking
@@ -42,10 +42,9 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
     useEffect(() => {
         if (authorData) {
             if (walletData.isConnected) {
+                setOwnedData([]);
                 if (walletData.account) {
                     getOwnedDatapaginationRecord(1);
-                } else {
-                    setOwnedData([]);
                 }
             } else {
                 setOwnedData([]);
@@ -54,52 +53,13 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
     }, [walletData]);
 
     const getOwnedDatapaginationRecord = async (page) => {
-        let response = await strapi.find("collectibles", {
-            filters: {
-                $or: [{
-                    $and: [{
-                        owner: {
-                            $eq: walletData.account
-                        },
-                    }, {
-                        collection: {
-                            collectionType: {
-                                $eq: "Single"
-                            }
-                        },
-                    }]
-                }, {
-                    $and: [{
-                        owner_histories: {
-                            toWalletAddress: {
-                                $eq: walletData.account
-                            }
-                        },
-                    }, {
-                        collection: {
-                            collectionType: {
-                                $ne: "Single"
-                            }
-                        },
-                    }]
-                }]
-            },
-            populate: {
-                collection: {
-                    fields: "*",
-                },
-                collectible_stakings: {
-                    fields: "*",
-                    filters: {
-                        isClaimed: false,
-                    }
-                },
-            },
+        let response = await strapi.find("collectible/get-owned-collectible/" + walletData.account, {
+            filters: {},
+            populate: "*",
             pagination: {
                 page,
                 pageSize: ownedDatapagination.pageSize
             },
-            sort: ["id:desc"]
         });
         // console.log(response);
         setOwnedDataPagination(response.meta.pagination);
@@ -115,19 +75,19 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
                 setLoading(false);
                 return;
             } // chnage network
-            if (product.collection.data.networkType === "Ethereum") {
+            if (product.collection.networkType === "Ethereum") {
                 if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
                     // ethereum testnet
                     setLoading(false);
                     return;
                 }
-            } else if (product.collection.data.networkType === "Polygon") {
+            } else if (product.collection.networkType === "Polygon") {
                 if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
                     // polygon testnet
                     setLoading(false);
                     return;
                 }
-            } else if (product.collection.data.networkType === "Binance") {
+            } else if (product.collection.networkType === "Binance") {
                 if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
                     // polygon testnet
                     setLoading(false);
@@ -139,16 +99,19 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
             // Pull the deployed contract instance
             const stakingNFT = await getStakingNFTContract(walletData);
             const stakeDuration = await stakingNFT.rewardRateDuration();
-            if (product.collection.data.collectionType === "Single") {
-                const contractAddress = product.collection.data.contractAddress;
+            if (product.collection.collectionType === "Single") {
+                const contractAddress = product.collection.contractAddress;
                 // console.log(contractAddress);
                 // Pull the deployed contract instance
                 const contract721 = await getERC721Contract(walletData, contractAddress);
                 let approveAddress = await contract721.getApproved(product.nftID);
+                const approved = await contract721.isApprovedForAll(walletData.account, walletData.contractData.StakingContract.address);
+                // console.log(approved);
                 // approve nft first
-                if (approveAddress.toLowerCase() != walletData.contractData.StakingContract.address.toLowerCase()) {
+                if (approveAddress.toLowerCase() != walletData.contractData.StakingContract.address.toLowerCase() && !approved) {
                     // approve nft first
-                    const transaction = await contract721.approve(walletData.contractData.StakingContract.address, product.nftID);
+                    // const transaction = await contract721.approve(walletData.contractData.StakingContract.address, product.nftID);
+                    const transaction = await contract721.setApprovalForAll(walletData.contractData.StakingContract.address, true);
                     const receipt = await transaction.wait();
                     // console.log(receipt);
                 }
@@ -160,8 +123,8 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
                 // console.log("correctEvent is ", correctEvent);
                 index = parseInt(correctEvent.args.index._hex, 16);
                 // console.log("index is ", index);
-            } else if (product.collection.data.collectionType === "Multiple") {
-                const contractAddress = product.collection.data.contractAddress1155;
+            } else if (product.collection.collectionType === "Multiple") {
+                const contractAddress = product.collection.contractAddress1155;
                 // Pull the deployed contract instance
                 const contract1155 = await getERC1155Contract(walletData, contractAddress);
 
@@ -241,16 +204,16 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
                 <div className="row g-4 d-flex">
                     {ownedData?.map(
                         (prod, index) =>
-                            (prod.collectible_stakings == null || prod.collectible_stakings?.data[0]?.isClaimed == true) && (
+                            (prod.collectible_stakings == null || prod.collectible_stakings.length == 0 || prod.collectible_stakings[0]?.isClaimed == true) && (
                                 <div key={index} className="col-3 col-lg-3 col-md-6 col-sm-6 col-12">
                                     <Product
                                         title={prod.name}
                                         supply={prod.supply}
-                                        image={prod.image?.data ? prod.image?.data?.url : prod.image_url}
-                                        collectionName={prod.collection?.data?.name}
-                                        network={prod.collection?.data?.networkType}
-                                        contractAddress={prod.collection?.data?.collectionType === "Single" ?
-                                            null : prod.collection?.data?.contractAddress1155}
+                                        image={prod.image?.url ? prod.image?.url : prod.image_url}
+                                        collectionName={prod.collection?.name}
+                                        network={prod.collection?.networkType}
+                                        contractAddress={prod.collection?.collectionType === "Single" ?
+                                            null : prod.collection?.contractAddress1155}
                                         nftID={prod.nftID}
                                         multiselection={true}
                                         isSelected={selectedItem?.id == prod.id}
