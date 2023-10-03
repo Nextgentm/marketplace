@@ -25,6 +25,8 @@ const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
 
 const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData, isOwner, btnColor, className, primarySale }) => {
   const { walletData, setWalletData, userData } = useContext(AppData);
+  const [isMoonPayDownTimeData, setMoonPayDownTimeData] = useState([]);
+  const [isMoonPayDownTime, setMoonPayDownTime] = useState({ result: false, endTime: null });
   const [isMoonPayMethod, setMoonPayMethod] = useState(false);
   const handleBidModalForMoonpay = () => {
     if (!userData) {
@@ -56,6 +58,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const payUsingMoonpay = async (quantity) => {
     // show the moonpay integration part
     try {
+
       if (userData) {
         const moonpaySdk = window.MoonPayWebSdk.init({
           flow: "nft",
@@ -91,6 +94,55 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       toast.error("Error while moonpay integration");
     }
   }
+
+  const downtimeCheck = async () => {
+    const response = await strapi.find("payment-downtimes", {
+      filters: {
+        paymentType: "moonpay",
+      },
+      sort: "startTime:desc"
+    });
+    setMoonPayDownTimeData(response.data);
+    // console.log(response.data);
+    // on first time load set the value
+    const currentDate = new Date();
+    response.data.map(item => {
+      const startTime = new Date(item.startTime);
+      const endTime = new Date(item.endTime);
+      if (currentDate > startTime && currentDate < endTime) {
+        // console.log({ result: true, endTime: endTime });
+        setMoonPayDownTime({ result: true, endTime: endTime });
+        return;
+      }
+    });
+  }
+
+  useEffect(() => {
+    // check and update current downtime every minute
+    const intervalId = setInterval(() => {
+      const currentDate = new Date();
+      let found = false;
+      isMoonPayDownTimeData.map(item => {
+        const startTime = new Date(item.startTime);
+        const endTime = new Date(item.endTime);
+        if (currentDate > startTime && currentDate < endTime) {
+          // console.log({ result: true, endTime: endTime });
+          setMoonPayDownTime({ result: true, endTime: endTime });
+          found = true;
+          return;
+        }
+      });
+      if (!found) {
+        setMoonPayDownTime({ result: false, endTime: null });
+      };
+    }, 10000);
+
+    return () => clearInterval(intervalId);
+  }, [isMoonPayDownTimeData]);
+
+  useEffect(() => {
+    downtimeCheck();
+  }, []);
 
   useEffect(() => {
   }, [updatedCollectible]);
@@ -414,7 +466,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
             color={btnColor || "primary-alta"}
             className="mt--30"
             onClick={() => auction.data.quantity > 1 ? handleBidModalForMoonpay() : payUsingMoonpay()}
-            disabled={isOwner || (auction_date && new Date() > new Date(auction_date))}>Pay using MoonPay
+            disabled={isOwner || (auction_date && new Date() > new Date(auction_date)) || isMoonPayDownTime.result}>
+            {isMoonPayDownTime.result ? "MoonPay is down. Try after " + new Date(isMoonPayDownTime.endTime).toLocaleString() + "." : "Pay using MoonPay"}
           </Button>
         }
 
