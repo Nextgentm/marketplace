@@ -24,6 +24,7 @@ const Footer = ({ space, className, data }) => (
         space === 3 && "mt--100 mt_md--80 mt_sm--80",
         className
       )}
+      style={{ paddingBottom: "15px" }}
     >
       {data?.items && (
         <div className="footer-top">
@@ -73,9 +74,9 @@ const Footer = ({ space, className, data }) => (
           </div> */}
         </div>
       </div>
-      <div className="row copy-right-one">
-        <h6 className="widget-title">{"Community"}</h6>
-        <div className="col-sm-12 copyright-right">
+      <div className="row copy-right-one row padding-tb-50 align-items-center d-flex">
+        <h6 className="widget-title p-1 text-center m-3">{"Community"}</h6>
+        <div className="col-sm-12 copyright-right" style={{ justifyContent: "center" }}>
           <div className="social-copyright">
             <SocialWidget socials={contactData.socials} />
           </div>
