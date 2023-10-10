@@ -24,6 +24,7 @@ const Footer = ({ space, className, data }) => (
         space === 3 && "mt--100 mt_md--80 mt_sm--80",
         className
       )}
+      style={{ paddingBottom: "15px" }}
     >
       {data?.items && (
         <div className="footer-top">
@@ -53,23 +54,31 @@ const Footer = ({ space, className, data }) => (
 
       <div className="container">
         <div className="row gx-5">
-          <div className="col-lg-3 col-md-6 col-sm-6 col-12">
+          <div className="col-lg-4 col-md-6 col-sm-6 col-12">
             <div className="widget-content-wrapper">
               <LogoWidget data={footerData["logo-widget"]} />
               <NewsletterWidget data={footerData["newsletter-widget"]} />
             </div>
           </div>
 
-          <div className="col-lg-3 col-md-6 col-sm-6 col-12 mt_mobile--40">
+          <div className="col-lg-4 col-md-6 col-sm-6 col-12 mt_mobile--40">
             <QuicklinkWidget data={footerData["quicklink-widget"]} />
           </div>
 
-          <div className="col-lg-3 col-md-6 col-sm-6 col-12 mt_md--40 mt_sm--40">
+          <div className="col-lg-4 col-md-6 col-sm-6 col-12 mt_md--40 mt_sm--40">
             <InformationWidget data={footerData["information-widget"]} />
           </div>
 
-          <div className="col-lg-3 col-md-6 col-sm-6 col-12 mt_md--40 mt_sm--40">
+          {/* <div className="col-lg-3 col-md-6 col-sm-6 col-12 mt_md--40 mt_sm--40">
             <SoldOutWidget data={footerData["soldout-widget"]} />
+          </div> */}
+        </div>
+      </div>
+      <div className="row copy-right-one row padding-tb-50 align-items-center d-flex">
+        <h6 className="widget-title p-1 text-center m-3">{"Community"}</h6>
+        <div className="col-sm-12 copyright-right" style={{ justifyContent: "center" }}>
+          <div className="social-copyright">
+            <SocialWidget socials={contactData.socials} />
           </div>
         </div>
       </div>
@@ -78,18 +87,18 @@ const Footer = ({ space, className, data }) => (
       <div className="container">
         <div className="row align-items-center">
           <div className="col-lg-8 col-md-12 col-sm-12">
-            <div className="copyright-left">
+            <div className="row g-5 d-flex align-items-center">
               <span>{footerData.copyright_text}</span>
               {/* <FooterLinkWidget
                                 data={footerData["footer-link-widget"]}
                                             /> */}
             </div>
           </div>
-          <div className="col-lg-4 col-md-12 col-sm-12">
+          {/* <div className="col-lg-4 col-md-12 col-sm-12">
             <div className="copyright-right">
               <SocialWidget socials={contactData.socials} />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
