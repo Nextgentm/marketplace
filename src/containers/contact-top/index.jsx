@@ -5,7 +5,7 @@ import AddressBox from "@components/address-box";
 const ContactTopArea = ({ space, className }) => (
   <div className={clsx("rn-contact-top-area bg_color--5", space === 1 && "rn-section-gapTop", className)}>
     <div className="container">
-      <div className="row g-5">
+      {/* <div className="row g-5">
         <div className="col-lg-12" data-sal="slide-up" data-sal-delay="150" data-sal-duration="800">
           <div className="section-title mb--30 text-center">
             <h2 className="title">Quick Contact Address</h2>
@@ -15,7 +15,7 @@ const ContactTopArea = ({ space, className }) => (
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="row g-5">
         <div
           className="col-lg-12 col-md-12 col-sm-12 col-12"
