@@ -124,8 +124,38 @@ const Author = () => {
   };
 
   const getOwnedDatapaginationRecord = async (page) => {
-    let response = await strapi.find("collectible/get-owned-collectible/" + walletData.account, {
-      filters: {},
+    let response = await strapi.find("collectibles", {
+      filters: {
+        $or: [{
+          $and: [{
+            owner: {
+              $eq: walletData.account
+            },
+          }, {
+            collection: {
+              collectionType: {
+                $eq: "Single"
+              }
+            },
+          }]
+        }, {
+          $and: [{
+            owner_histories: {
+              toWalletAddress: {
+                $eq: walletData.account
+              }
+            },
+          }, {
+            collection: {
+              collectionType: {
+                $ne: "Single"
+              }
+            },
+          }]
+        }]
+      },
+    // let response = await strapi.find("collectible/get-owned-collectible/" + walletData.account, {
+    //   filters: {},
       populate: "*",
       pagination: {
         page,
