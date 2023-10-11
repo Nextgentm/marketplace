@@ -34,21 +34,6 @@
         "id": 3,
         "text": "About Us",
         "path": "/about"
-      },
-      {
-        "id": 5,
-        "text": "Rankings",
-        "path": "/ranking"
-      },
-      {
-        "id": 6,
-        "text": "Activity Log",
-        "path": "/activity"
-      },
-      {
-        "id": 7,
-        "text": "Newest Items",
-        "path": "/collectibles?sort=newest"
       }
     ]
   },
@@ -143,5 +128,5 @@
       }
     ]
   },
-  "copyright_text": "© 2023 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States"
+  "copyright_text": "© 2023 LootMogul. All Rights Reserved. NextGenTM, Inc."
 }

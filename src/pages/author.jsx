@@ -154,10 +154,12 @@ const Author = () => {
           }]
         }]
       },
+    // let response = await strapi.find("collectible/get-owned-collectible/" + walletData.account, {
+    //   filters: {},
       populate: "*",
       pagination: {
         page,
-        pageSize: onSaleDatapagination.pageSize
+        pageSize: ownedDatapagination.pageSize
       },
     });
     // console.log(response);
@@ -196,7 +198,7 @@ const Author = () => {
       },
       pagination: {
         page,
-        pageSize: createdDatapagination.pageSize
+        pageSize: stakeDatapagination.pageSize
       },
     });
     // console.log(stakingResponse);

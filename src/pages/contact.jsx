@@ -19,7 +19,7 @@ const Contact = () => (
       <Breadcrumb pageTitle="Contact With Us" currentPage="Contact With Us" />
       <ContactTopArea />
       <ContactFormArea />
-      <GoogleMapArea />
+      {/* <GoogleMapArea /> */}
     </main>
     <Footer />
   </Wrapper>

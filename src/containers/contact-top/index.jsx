@@ -5,7 +5,7 @@ import AddressBox from "@components/address-box";
 const ContactTopArea = ({ space, className }) => (
   <div className={clsx("rn-contact-top-area bg_color--5", space === 1 && "rn-section-gapTop", className)}>
     <div className="container">
-      <div className="row g-5">
+      {/* <div className="row g-5">
         <div className="col-lg-12" data-sal="slide-up" data-sal-delay="150" data-sal-duration="800">
           <div className="section-title mb--30 text-center">
             <h2 className="title">Quick Contact Address</h2>
@@ -15,22 +15,10 @@ const ContactTopArea = ({ space, className }) => (
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="row g-5">
         <div
-          className="col-lg-4 col-md-6 col-sm-6 col-12"
-          data-sal="slide-up"
-          data-sal-delay="150"
-          data-sal-duration="800"
-        >
-          <AddressBox
-            icon="feather-headphones"
-            title="Contact Phone Number"
-            phoneNumbers={["+444 555 666 777", "+222 222 222 333"]}
-          />
-        </div>
-        <div
-          className="col-lg-4 col-md-6 col-sm-6 col-12"
+          className="col-lg-12 col-md-12 col-sm-12 col-12"
           data-sal="slide-up"
           data-sal-delay="200"
           data-sal-duration="800"
@@ -39,18 +27,6 @@ const ContactTopArea = ({ space, className }) => (
             icon="feather-mail"
             title="Our Email Address"
             emails={["support@lootmogul.com", "info@lootmogul.com"]}
-          />
-        </div>
-        <div
-          className="col-lg-4 col-md-6 col-sm-6 col-12"
-          data-sal="slide-up"
-          data-sal-delay="250"
-          data-sal-duration="800"
-        >
-          <AddressBox
-            icon="feather-map-pin"
-            title="Our Location"
-            address="831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States"
           />
         </div>
       </div>
