@@ -100,21 +100,6 @@ const ContactForm = () => {
           />
           {errors.contactMessage && <ErrorText>{errors.contactMessage?.message}</ErrorText>}
         </div>
-        <div className="mb-5 rn-check-box">
-          <input
-            id="condition"
-            type="checkbox"
-            className="rn-check-box-input"
-            {...register("condition", {
-              required: "Condition is required"
-            })}
-          />
-          <label htmlFor="condition" className="rn-check-box-label">
-            Allow to all tearms & condition
-          </label>
-          <br />
-          {errors.condition && <ErrorText>{errors.condition?.message}</ErrorText>}
-        </div>
         <Button type="submit" size="medium">
           Send Message
         </Button>

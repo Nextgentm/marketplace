@@ -16,7 +16,7 @@ const Contact = () => (
     <SEO pageTitle="Contact" />
     <Header />
     <main id="main-content">
-      <Breadcrumb pageTitle="Contact With Us" currentPage="Contact With Us" />
+      <Breadcrumb pageTitle="Contact Us" currentPage="Contact Us" />
       <ContactTopArea />
       <ContactFormArea />
       {/* <GoogleMapArea /> */}

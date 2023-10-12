@@ -25,8 +25,8 @@ const ContactTopArea = ({ space, className }) => (
         >
           <AddressBox
             icon="feather-mail"
-            title="Our Email Address"
-            emails={["support@lootmogul.com", "info@lootmogul.com"]}
+            title="Write to us"
+            emails={["support@lootmogul.com"]}
           />
         </div>
       </div>
