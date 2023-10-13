@@ -7,8 +7,8 @@ const PaymentPartnerWidget = ({ data }) => (
     {data?.logo && (
       <ul className="footer-list-one">
         {data.logo.map((nav) => (
-          <li key={nav.id} className="single-list">
-            <Image src={nav.src} alt={nav.alt || "payment-logo"} width={100} height={60} priority />
+          <li key={nav.id} className="single-list" style={{ display: "contents" }}>
+            <Image src={nav.src} alt={nav.alt || "payment-logo"} height={100} width='100' priority style={{ height: "30px", width: "auto", paddingRight: "20px" }} />
           </li>
         ))}
       </ul>
