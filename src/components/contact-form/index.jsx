@@ -28,16 +28,18 @@ const ContactForm = () => {
   const onSubmit = (data, e) => {
     const form = e.target;
     setServerState({ submitting: true });
+    data.toEmail = "support@lootmogul.com";//"mayureshkhemnar19@gmail.com";
+    // console.log(data);
     axios({
       method: "post",
-      url: "https://getform.io/f/7a6695a7-c8e3-442c-bc2f-d46d3b9a535e",
+      url: "http://localhost:1337/api/email-service",
       data
     })
       .then((_res) => {
-        handleServerResponse(true, "Thanks! for being with us", form);
+        handleServerResponse(true, "Thank you for reaching out to LootMogul! We've successfully received your submission, and we appreciate your interest in our platform.\n Our team will be in touch shortly!", form);
       })
       .catch((err) => {
-        handleServerResponse(false, err.response.data.error, form);
+        handleServerResponse(false, err, form);
       });
   };
   return (
@@ -104,9 +106,11 @@ const ContactForm = () => {
           Send Message
         </Button>
         {serverState.status && (
-          <p className={`mt-4 font-14 ${!serverState.status.ok ? "text-danger" : "text-success"}`}>
-            {serverState.status.msg}
-          </p>
+          <>
+            {serverState.status.msg.split("\n").map((i, key) => {
+              return <p className={`mt-4 font-14 ${!serverState.status.ok ? "text-danger" : "text-success"}`} key={key}>{i}</p>;
+            })}
+          </>
         )}
       </form>
     </div>
