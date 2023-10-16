@@ -8,6 +8,7 @@ import QuoteArea from "@containers/quote-area";
 import FunfactArea from "@containers/funfact";
 import CTAArea from "@containers/cta";
 import SectionTitle from "@components/section-title/layout-02";
+import AboutVisionMission from "@containers/about/vision-mission";
 import { normalizedData } from "@utils/methods";
 import { getAllPosts } from "../lib/api";
 import Anchor from "@ui/anchor";
@@ -94,7 +95,7 @@ const About = ({ posts }) => {
               </div>
             </div>
           </div>
-
+          <AboutVisionMission />
         </div>
         {/* <AboutArea data={content["about-section"]} /> */}
         {/* <QuoteArea data={content["quote-section"]} /> */}

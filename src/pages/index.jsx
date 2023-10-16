@@ -218,7 +218,7 @@ Home.getInitialProps = async () => {
         fields: ["id"]
       }
     },
-    sort: { startTimestamp: "desc" }
+    sort: { collectible: { priority: "asc" }, startTimestamp: "desc" }
   }
   if (process.env.NEXT_PUBLIC_SENTRY_ENV == "production") {
     dataCollectiblesFilter.filters.walletAddress = {

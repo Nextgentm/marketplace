@@ -95,7 +95,7 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                     supply={prod.supply}
                     // price={prod.attributes?.auction?.data?.attributes?.bidPrice}
                     // symbol={prod.attributes?.auction?.data?.attributes?.priceCurrency}
-                    
+
                     image={prod.image?.data ? prod.image?.data?.url : prod.image_url}
                     collectionName={prod.collection?.data?.name}
                     auction_date={prod.auction?.data?.endTimeStamp}
@@ -108,10 +108,10 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                     likeCount={prod.likeCount}
                     authors={prod.authors}
                     owner={prod.owner}
-                    
-                    network={prod.collection?.networkType}
-                    // To be move to prod
-                    // network={prod.collection?.networkType}
+
+                    network={prod.collection?.data.networkType}
+                  // To be move to prod
+                  // network={prod.collection?.networkType}
                   />
                 </div>
               )

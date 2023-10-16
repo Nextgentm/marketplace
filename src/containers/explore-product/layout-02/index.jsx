@@ -48,7 +48,7 @@ const ExploreProductArea = ({ className, space, data }) => {
           fields: ["id"]
         }
       },
-      sort: { startTimestamp: "desc" }
+      sort: { collectible: { priority: "asc" }, startTimestamp: "desc" }
     }
     let filterProds = await strapi.find("auctions", dataCollectiblesFilter);
     // console.log(filterProds.meta);

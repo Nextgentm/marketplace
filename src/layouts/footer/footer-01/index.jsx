@@ -13,6 +13,7 @@ import { ItemType } from "@utils/types";
 // Demo data
 import footerData from "../../../data/general/footer-01.json";
 import contactData from "../../../data/general/contact.json";
+import PaymentPartnerWidget from "@components/widgets/payment-partner-widget";
 
 const Footer = ({ space, className, data }) => (
   <>
@@ -63,6 +64,7 @@ const Footer = ({ space, className, data }) => (
 
           <div className="col-lg-4 col-md-6 col-sm-6 col-12 mt_mobile--40">
             <QuicklinkWidget data={footerData["quicklink-widget"]} />
+            <PaymentPartnerWidget data={footerData["payment-partners"]} />
           </div>
 
           <div className="col-lg-4 col-md-6 col-sm-6 col-12 mt_md--40 mt_sm--40">
