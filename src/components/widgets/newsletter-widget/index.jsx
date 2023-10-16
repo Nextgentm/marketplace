@@ -16,11 +16,11 @@ const NewsletterWidget = ({ data }) => (
         </button>
       </div>
     </div>
-    {data?.note && (
+    {/* {data?.note && (
       <div className="newsletter-dsc">
         <p>{data.note}</p>
       </div>
-    )}
+    )} */}
   </div>
 );
 

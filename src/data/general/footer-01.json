@@ -52,7 +52,7 @@
       },
       {
         "id": 3,
-        "text": "Contact",
+        "text": "Contact Us",
         "path": "/contact"
       },
       {
@@ -128,5 +128,18 @@
       }
     ]
   },
-  "copyright_text": "© 2023 LootMogul. All Rights Reserved. NextGenTM, Inc."
+  "payment-partners": {
+    "title": "Our Payment Partners",
+    "logo": [
+      {
+        "src": "/images/logo/bitpay-logo.png",
+        "alt": "bitpay-logo"
+      },
+      {
+        "src": "/images/logo/MoonPay-logo.png",
+        "alt": "MoonPay-logo"
+      }
+    ]
+  },
+  "copyright_text": "© 2023 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States"
 }
