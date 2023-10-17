@@ -32,7 +32,7 @@ const ContactForm = () => {
     // console.log(data);
     axios({
       method: "post",
-      url: "http://localhost:1337/api/email-service",
+      url: `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/email-service`,
       data
     })
       .then((_res) => {
