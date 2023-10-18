@@ -77,30 +77,77 @@ const Footer = ({ space, className, data }) => (
         </div>
       </div>
       <div className="row copy-right-one row padding-tb-50 align-items-center d-flex">
-        <h6 className="widget-title p-1 text-center m-3">{"Community"}</h6>
-        <div className="col-sm-12 copyright-right" style={{ justifyContent: "center" }}>
-          <div className="social-copyright">
-            <SocialWidget socials={contactData.socials} />
-          </div>
-        </div>
+        <SocialWidget />
       </div>
     </div>
+    {/* Footer text */}
     <div className="copy-right-one ptb--20 bg-color--1">
       <div className="container">
-        <div className="row align-items-center">
-          <div className="col-lg-8 col-md-12 col-sm-12">
-            <div className="row g-5 d-flex align-items-center">
-              <span>{footerData.copyright_text}</span>
-              {/* <FooterLinkWidget
-                                data={footerData["footer-link-widget"]}
-                                            /> */}
-            </div>
+        <div className="row">
+          <div className="col-lg-8">
+            <p className="pr-lg-4 variant-footerText font-weight-400 font-size-18 text-left">
+              LootMogul venture is accelerated (1 of 5 ventures) by National Basketball Player Association in collaboration with{" "}
+              <a href="#" style={{ color: "#e90a63" }}>
+                Andreessen Horowitz (a16z)’s Cultural Leadership Fund and Patricof Co
+              </a>
+              .
+            </p>
           </div>
-          {/* <div className="col-lg-4 col-md-12 col-sm-12">
-            <div className="copyright-right">
-              <SocialWidget socials={contactData.socials} />
-            </div>
-          </div> */}
+          <div className="col-lg-4">
+            <img
+              className="w-100 h-auto"
+              src="https://lootmogul-wp-cdn-buckets.s3.us-west-2.amazonaws.com/wp-content/uploads/2022/07/22051935/NBPA.jpg"
+              alt=""
+            />
+            <img
+              className="w-100 h-auto mt-2"
+              src="https://lootmogul-wp-cdn-buckets.s3.us-west-2.amazonaws.com/wp-content/uploads/2022/07/22052008/Andreessen-Horowitz-1.png"
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <p className="pt-4 pr-4 variant-footerText font-weight-400 font-size-18 text-left">
+              Web3 Studios reports LootMogul as one of the top sports metaverse experience platforms
+            </p>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-lg-8">
+            <p className="pr-lg-4 variant-footerText font-weight-400 font-size-18 text-left">
+              LootMogul is competitively selected (1 of 6 ventures) by National Football League Player Association (NFLPA) to
+              participate in their
+              <a href="#" style={{ color: "#e90a63" }}>
+                2023 NFLPA Pitch Day
+              </a>
+              Competition during the 2023 NFL Superbowl LVII Week.
+            </p>
+          </div>
+          <div className="col-lg-4">
+            <img
+              className="w-100 h-auto"
+              src="https://lootmogul-wp-cdn-buckets.s3.us-west-2.amazonaws.com/wp-content/uploads/2022/07/22051955/NFLPA-1.png"
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <p className="py-4 px-4 variant-footerText font-weight-500 font-size-18 text-center">
+              LootMogul is NOT AFFILIATED, AUTHORIZED, LICENSED OR ENDORSED by NBA (National Basketball Association), NFL
+              (National Football League), MLB (Major League Baseball), NHL (National Hockey League), MLS (Major League
+              Soccer), NCAA (National College Athletic Association) or any other professional and amateur organization.
+            </p>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <p className="pb-0 px-4 variant-footerText font-weight-400 font-size-18 text-center">
+              © 2023 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE
+              19801 United States
+            </p>
+          </div>
         </div>
       </div>
     </div>

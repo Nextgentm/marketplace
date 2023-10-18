@@ -36,7 +36,7 @@ const ContactForm = () => {
       data
     })
       .then((_res) => {
-        handleServerResponse(true, "Thank you for reaching out to LootMogul! We've successfully received your submission, and we appreciate your interest in our platform.\n Our team will be in touch shortly!", form);
+        handleServerResponse(true, "Thank you for reaching out to LootMogul!\n Our team will get back to you soon!", form);
       })
       .catch((err) => {
         handleServerResponse(false, err, form);
@@ -103,7 +103,7 @@ const ContactForm = () => {
           {errors.contactMessage && <ErrorText>{errors.contactMessage?.message}</ErrorText>}
         </div>
         <Button type="submit" size="medium">
-          Send Message
+          Submit
         </Button>
         {serverState.status && (
           <>
