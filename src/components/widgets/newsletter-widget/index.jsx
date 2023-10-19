@@ -7,11 +7,12 @@ const NewsletterWidget = ({ data }) => (
       <input
         type="text"
         className="form-control bg-color--2"
-        placeholder="Your email"
+        placeholder=""
         aria-label="Recipient's email"
+        style={{ background: "#fff" }}
       />
       <div className="input-group-append">
-        <button className="btn btn-primary-alta btn-outline-secondary" type="button">
+        <button className="btn btn-primary-alta btn-outline-secondary" type="button" style={{ background: "#e90a63" }}>
           Subscribe
         </button>
       </div>
