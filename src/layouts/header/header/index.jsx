@@ -98,7 +98,7 @@ const Header = ({ className }) => {
                   <div className="icon-box">
                     <Link href="/login">
                       <Button color="primary" className="connectBtn" size="small">
-                        Login/Sign up
+                        Login
                       </Button>
                     </Link>
                   </div>
