@@ -13,7 +13,7 @@ import AppDataContext from "src/context/app-context";
 import { ApolloProvider } from "@apollo/client";
 import { loadNProgress } from "@utils/nprogress";
 import client from "@utils/apollo-client";
-import Snowfall from "react-snowfall";
+//import Snowfall from "react-snowfall";
 
 const MyApp = ({ Component, pageProps }) => {
   const router = useRouter();
@@ -74,6 +74,7 @@ const MyApp = ({ Component, pageProps }) => {
     <ApolloProvider client={client}>
       <AppDataContext>
         <ThemeProvider defaultTheme="dark">
+          {/*
           <Snowfall
             // The color of the snowflake, can be any valid CSS color.
             color="#dee4fd"
@@ -83,6 +84,7 @@ const MyApp = ({ Component, pageProps }) => {
             snowflakeCount={300}
             radius={[0.5, 3]}
           />
+          */}
           <Component {...pageProps} />
         </ThemeProvider>
       </AppDataContext>
