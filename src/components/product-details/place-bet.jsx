@@ -405,6 +405,14 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
     payUsingMoonpay(quantity);
   };
 
+  const isDateLessThan30DaysAway = (auction_date) => {
+    //calculate difference
+    const timeDifference = new Date(auction_date) - new Date();
+    // Calculate the number of days
+    const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+    // Check if the difference is more than 30 days
+    return daysDifference <= 30;
+  }
 
   return (
     <>
@@ -450,12 +458,16 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
           </div>
           {auction_date && (
             <div className="bid-list left-bid">
-              <h6 className="title">{new Date() < new Date(auction_date) ?
-                (auction.data.sellType == "Bidding" ? "Auction will ended in" : "Sale will ended in")
-                :
-                (auction.data.sellType == "Bidding" ? "Auction has ended" : "Sale has ended")
-              }</h6>
-              <Countdown className="mt--15" date={auction_date} />
+              {isDateLessThan30DaysAway(auction_date) &&
+                <>
+                  <h6 className="title">{new Date() < new Date(auction_date) ?
+                    (auction.data.sellType == "Bidding" ? "Auction will ended in" : "Sale will ended in")
+                    :
+                    (auction.data.sellType == "Bidding" ? "Auction has ended" : "Sale has ended")
+                  }</h6>
+                  <Countdown className="mt--15" date={auction_date} />
+                </>
+              }
             </div>
           )}
         </div>
