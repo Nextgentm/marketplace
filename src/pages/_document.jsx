@@ -22,21 +22,7 @@ class MyDocument extends Document {
           }}
           />
 
-          <script defer dangerouslySetInnerHTML={{
-            __html:
-              ` var clevertap = { event: [], profile: [], account: [], onUserLogin:[] };
-        
-              clevertap.account.push({ "id": "${process.env.NEXT_PUBLIC_CLEVER_TAP_PROJECT}" });// prod
-              (function () {
-                var wzrk = document.createElement('script');
-                wzrk.type = 'text/javascript';
-                wzrk.async = true;
-                wzrk.src = ('https:' == document.location.protocol ? 'https://d2r1yp2w7bby2u.cloudfront.net' : 'http://static.clevertap.com') + '/js/a.js';
-                var s = document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(wzrk, s);
-            })();`,
-          }}
-          />
+          
         </Head>
         <body>
           <Main />
