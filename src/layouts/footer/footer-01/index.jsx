@@ -72,7 +72,7 @@ const Footer = ({ space, className, data }) => (
           </div>
 
           <div className="col-lg-2 col-md-6 col-sm-6 col-12 mt_md--40 mt_sm--40">
-            <div className="widget-bottom">
+            {/*<div className="widget-bottom">
               <h6 className="title">Try our App</h6>
               <img
                 className="w-70 h-auto"
@@ -80,7 +80,7 @@ const Footer = ({ space, className, data }) => (
                 alt=""
               />
 
-            </div>
+                      </div>*/}
           </div>
 
           {/* <div className="col-lg-3 col-md-6 col-sm-6 col-12 mt_md--40 mt_sm--40">
