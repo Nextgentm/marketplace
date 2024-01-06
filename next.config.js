@@ -9,6 +9,7 @@ const defaultConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: false
   },
+staticPageGenerationTimeout: 700,
   reactStrictMode: false,
   sassOptions: {
     includePaths: [path.join(__dirname, "./src/assets/scss")]
