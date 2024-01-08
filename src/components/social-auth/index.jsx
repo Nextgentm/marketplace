@@ -41,7 +41,7 @@ const SocialAuth = ({ className, title }) => {
   return (
     <div className={clsx("social-share-media form-wrapper-one", className)}>
       <h6>{title}</h6>
-      <p>Lorem ipsum dolor sit, amet sectetur adipisicing elit.cumque.</p>
+      {/* <p>Lorem ipsum dolor sit, amet sectetur adipisicing elit.cumque.</p> */}
       <button type="button" className="another-login login-facebook" onClick={signIn}>
         <span className="small-image">
           <Image src="/images/icons/google.png" alt="google login" width={26} height={27} />
