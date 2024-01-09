@@ -473,7 +473,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         </div>
         <span>{isOwner && "You are the owner of this auction"}</span>
 
-        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && primarySale &&
+        {/* temporary disable moonpay */}
+        {/* {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && primarySale &&
           <Button
             color={btnColor || "primary-alta"}
             className="mt--30"
@@ -481,7 +482,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
             disabled={isOwner || (auction_date && new Date() > new Date(auction_date)) || isMoonPayDownTime.result}>
             {isMoonPayDownTime.result ? "MoonPay is down. Try after " + new Date(isMoonPayDownTime.endTime).toLocaleString() + "." : "Pay using MoonPay"}
           </Button>
-        }
+        } */}
 
         <Button
           color={btnColor || "primary-alta"}
