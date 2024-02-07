@@ -17,7 +17,7 @@ const AuctionsTabContent = ({ auctions, productSlug }) => {
         <thead>
           <tr>
             <th>Listing Type</th>
-            <th>Owner</th>
+            <th style={{ width: "15%" }}>Owner</th>
             <th>Price</th>
             <th colSpan={2}>Remaning Quantity</th>
 
