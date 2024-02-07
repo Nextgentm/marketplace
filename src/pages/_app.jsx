@@ -74,7 +74,7 @@ const MyApp = ({ Component, pageProps }) => {
     <ApolloProvider client={client}>
       <AppDataContext>
         <ThemeProvider defaultTheme="dark">
-          {/*
+          {/* 
           <Snowfall
             // The color of the snowflake, can be any valid CSS color.
             color="#dee4fd"
@@ -84,7 +84,7 @@ const MyApp = ({ Component, pageProps }) => {
             snowflakeCount={300}
             radius={[0.5, 3]}
           />
-          */}
+           */}
           <Component {...pageProps} />
         </ThemeProvider>
       </AppDataContext>

@@ -16,7 +16,7 @@ const GalleryTab = ({ images }) => {
     <div className="product-tab-wrapper">
       <TabContainer defaultActiveKey="nav-0">
         <div className="pd-tab-inner">
-          <Nav className="rn-pd-nav rn-pd-rt-content nav-pills">
+          <Nav className="rn-pd-nav rn-pd-rt-content nav-pills" style={{ justifyContent: "flex-start" }}>
             {images.length > 0 && images.map((image) =>
               image &&
               <Nav.Link
