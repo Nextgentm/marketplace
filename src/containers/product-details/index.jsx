@@ -26,6 +26,7 @@ import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHis
 import strapi from "@utils/strapi";
 import ConfirmModal from "@components/modals/confirm-modal";
 import StakingTabContent from "@components/product-details/staking-tab/staking-tab-content";
+import AuctionsTabContent from "@components/product-details/bid-tab/auctions-tab-content";
 
 // Demo Image
 
@@ -797,12 +798,31 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                         product={product}
                         supply={product.supply}
                         // auction={{ data: product.auction?.data[0] }}
-                        allAuctions={product.auction.data}
+                        // allAuctions={product.auction.data}
                         properties={product?.collectibleProperties?.data}
                         tags={product?.tags}
                         history={product?.owner_histories?.data}
                         erc1155MyBalance={erc1155MyBalance}
                       />
+
+                      <TabContainer defaultActiveKey={"nav-auctions"}>
+                        <nav className="tab-button-one">
+                          <Nav as="div" className="nav-tabs">
+                            {product.auction.data?.length > 0 &&
+                              <Nav.Link as="button" eventKey="nav-auctions">
+                                Live Sale
+                              </Nav.Link>
+                            }
+                          </Nav>
+                        </nav>
+                        <TabContent className="">
+                          {product.auction.data?.length > 0 &&
+                            <TabPane eventKey="nav-auctions">
+                              <AuctionsTabContent auctions={product.auction.data} productSlug={product.slug} />
+                            </TabPane>
+                          }
+                        </TabContent>
+                      </TabContainer>
                       {/* {product.putOnSale && (
                       <PlaceBet
                         highest_bid={{
