@@ -80,7 +80,7 @@ const LoginForm = ({ className }) => {
         <div className="mb-5 rn-check-box">
           <input type="checkbox" className="rn-check-box-input" id="rememberMe" {...register("rememberMe")} />
           <label className="rn-check-box-label" htmlFor="rememberMe">
-            Remember me leter
+            Remember me later
           </label>
         </div>
         <Button type="submit" size="medium" className="mr--15">
