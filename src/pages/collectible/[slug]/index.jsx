@@ -48,7 +48,7 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
 
   return (
     <Wrapper>
-      <SEO pageTitle="Product Details" />
+      <SEO pageTitle={product?.name} slug={"collectible/" + product?.slug} />
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Product Details" currentPage="Product Details" extraCrumb={extraCrumb} />

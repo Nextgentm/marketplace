@@ -55,7 +55,7 @@ const AuctionDetails = ({ auction, recentViewProducts }) => {
 
   return (
     <Wrapper>
-      <SEO pageTitle="Product Details" />
+      <SEO pageTitle={auction?.data?.collectible?.data?.name} slug={"collectible/" + auction?.data?.collectible?.data?.slug + "/auction/" + auction?.data?.id} />
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Product Details" currentPage="Product Details" extraCrumb={extraCrumb} />
