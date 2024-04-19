@@ -90,7 +90,7 @@ const About = ({ posts }) => {
         {/* <QuoteArea data={content["quote-section"]} /> */}
         {/* <FunfactArea data={content["funfact-section"]} /> */}
         {/* <CTAArea data={content["cta-section"]} /> */}
-      </main >
+      </main>
       <Footer />
     </Wrapper >
   );
