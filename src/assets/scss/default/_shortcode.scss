@@ -729,3 +729,19 @@ textarea:-ms-input-placeholder {
         color: #0d8d2d;
     }
 }
+
+@media #{$sm-layout} {
+    .vision-mission {
+        font-size: 42px;
+        line-height: 20px;
+    }
+
+    .visionbg .col-lg-4>div {
+        height: 122px !important;
+        background-repeat: no-repeat;
+    }
+
+    .visionbg .col-lg-4>div p {
+        font-size: 80%;
+    }
+}

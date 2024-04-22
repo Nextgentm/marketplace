@@ -10,7 +10,7 @@ const AboutVisionMission = ({ space, className, data }) => (
     <div className={clsx("rn-about-banner-area", space === 1 && "rn-section-gapTop", className)}>
         <div className="container">
             <div className="row g-5">
-                <div className="col-lg-4 text-end">
+                <div className="col-2 col-lg-4 text-end">
                     <div className="h--100">
                         <div className="img-wrapper">
                             <Image
@@ -24,12 +24,12 @@ const AboutVisionMission = ({ space, className, data }) => (
                         </div>
                     </div>
                 </div>
-                <div className="col-lg-4 text-center">
+                <div className="col-8 col-lg-4 text-center">
                     <div className="h--100" style={{ display: "grid", alignItems: "center", justifyItems: "center" }}>
-                        <h2>VISION & MISSION</h2>
+                        <h2 className="vision-mission">VISION & MISSION</h2>
                     </div>
                 </div>
-                <div className="col-lg-4 text-start">
+                <div className="col-2 col-lg-4 text-start">
                     <div className="h--100">
                         <div className="img-wrapper">
                             <Image
@@ -47,7 +47,7 @@ const AboutVisionMission = ({ space, className, data }) => (
             <div className="text-left m-5" style={{ marginLeft: "15% !important" }}>
                 <p style={{ color: "#fff" }}><b style={{ color: "#e90a63" }}>Vision:</b>  Revolutionizing Athlete Engagement with Simple and Innovative Web3 Sports Economy</p>
             </div>
-            <div className="row m-2">
+            <div className="row m-2 visionbg">
                 <div className="col-lg-4">
                     <div style={{
                         backgroundImage: "url('/images/bg/vision.png')", height: "188px", backgroundSize: "contain", display: "flex", marginTop:
@@ -82,8 +82,8 @@ const AboutVisionMission = ({ space, className, data }) => (
                     </div>
                 </div>
             </div>
-            <div className="text-left m-5" style={{ marginLeft: "15% !important", marginTop: "45px !important" }}>
-                <p style={{ color: "#fff" }}><b style={{ color: "#e90a63" }}>Mission:</b>  Expanding the Web3 Community by Onboarding Web2 sports fanatics and Gamers into the Metaverse using AI</p>
+            <div className="text-left m-5" style={{ marginLeft: "10% !important", marginTop: "45px !important" }}>
+                <p style={{ color: "#fff" }}><b style={{ color: "#e90a63" }}>Mission:</b>  Expanding the Web3 Community by Onboarding Web2 sports fanatics and Gamers into the Sports Digital Twins using AI</p>
             </div>
         </div>
     </div>
