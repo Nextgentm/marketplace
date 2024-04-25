@@ -26,7 +26,7 @@ const Collectibles = ({ dataCollectibles, categoriesolds }) => {
       <SEO pageTitle="Explore Simple" />
       <Header />
       <main id="main-content">
-        <Breadcrumb pageTitle={router.query.collection ? "Explore Collection" : "Explore Digital Collectible"} currentPage={router.query.collection ? "Explore Collection" : "Explore Digital Collectibles"} isCollection={true} />
+        <Breadcrumb pageTitle={router.query.collection ? "Explore Collection" : "Explore Digital Collectible"} currentPage={router.query.collection ? "Explore Collection" : "Explore Digital Collectible"} isCollection={true} />
         {dataCollectibles && (
           <ExploreProductArea
             data={{
