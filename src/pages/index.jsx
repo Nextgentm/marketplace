@@ -35,7 +35,7 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, a
 
   return (
     <Wrapper>
-      <SEO pageTitle="NFT Marketplace" />
+      <SEO pageTitle="Digital Collectibles Marketplace" />
       <Header />
       <main id="main-content">
         <HeroArea data={content["hero-section"]} />
