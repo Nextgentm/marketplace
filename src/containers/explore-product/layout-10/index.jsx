@@ -22,6 +22,7 @@ const ExploreProductArea = ({
 }) => {
 
   const [loading, setLoading] = useState(false);
+  const [loadMore, setLoadMore] = useState(false);
   const [collectionsData, setCollectionsData] = useState();
   const router = useRouter();
   const routerQuery = router?.query?.collection;
@@ -36,8 +37,8 @@ const ExploreProductArea = ({
   const PAGE_SIZE = 9; //set for index page manually collectibles.jsx
 
 
-  const setCollectionData = (data, page = 1, loadmore) => {
-    if (loadmore && collectionsData) {
+  const setCollectionData = (data, page = 1, loadmoreData) => {
+    if (loadmoreData && collectionsData) {
       setCollectionsData([...collectionsData, ...data.data]);
     } else {
       setCollectionsData(data.data);
@@ -225,7 +226,7 @@ const ExploreProductArea = ({
   const getSearchQueryData = async (page) => {
     const start = page * PAGE_SIZE - PAGE_SIZE;
     const limit = PAGE_SIZE;
-    setLoading(true);
+    page != 1 ? setLoadMore(true) : setLoading(true);
     let filters = {
       auction: {
         status: {
@@ -269,7 +270,7 @@ const ExploreProductArea = ({
       },
       sort: sort
     });
-    setLoading(false);
+    page != 1 ? setLoadMore(false) : setLoading(false);
     setCollectionData(data, page, page != 1);
   };
 
@@ -277,8 +278,9 @@ const ExploreProductArea = ({
     const start = page * PAGE_SIZE - PAGE_SIZE;
     const limit = PAGE_SIZE;
     // console.log("getCollectionPaginationRecord");
-
-    setLoading(true);
+    console.log(page);
+    page != 1 ? setLoadMore(true) : setLoading(true);
+    console.log(page != 1 ? "setLoadMore true" : "setLoading true");
     let filters = {
       auction: {
         status: {
@@ -398,7 +400,8 @@ const ExploreProductArea = ({
           pagination: { start, limit },
           sort: ["priority:asc"],
         });
-        setLoading(false);
+        page != 1 ? setLoadMore(false) : setLoading(false);
+        console.log(page != 1 ? "setLoadMore false" : "setLoading false");
         setCollectionData(data, page, true);
       }
     } else {
@@ -450,7 +453,8 @@ const ExploreProductArea = ({
         },
         sort: sort
       });
-      setLoading(false);
+      page != 1 ? setLoadMore(false) : setLoading(false);
+      console.log(page != 1 ? "setLoadMore false" : "setLoading false");
       setCollectionData(data, page, true);
     }
   };
@@ -1151,52 +1155,60 @@ const ExploreProductArea = ({
             />
           </div>
           <div className="col-lg-9 order-1 order-lg-2">
-            <div className="row g-5">
-              {/* {console.log("collectionsData", collectionsData)} */}
-              {collectionsData?.length > 0 ? (
-                <>
-                  {collectionsData?.map((prod, index) => (
-                    <div key={index} className="col-lg-4 col-md-6 col-sm-12">
-                      <Product
-                        placeBid={prod?.auction?.data?.sellType == "Bidding"}
-                        title={prod.name}
-                        slug={prod.isOpenseaCollectible ? prod.marketURL : prod.slug}
-                        supply={prod.supply}
-                        price={prod?.auction?.data[0]?.bidPrice}
-                        symbol={prod?.auction?.data[0]?.priceCurrency}
-                        image={prod?.image?.data ? prod?.image?.data?.url : prod?.image_url}
-                        collectionName={prod?.collection?.data?.name}
-                        bitCount={
-                          prod?.auction?.data[0]?.sellType == "Bidding" ? prod?.auction?.data?.biddings?.data.length : 0
-                        }
-                        latestBid={prod.latestBid}
-                        likeCount={prod.likeCount}
-                        authors={prod.authors}
-                        isOpenseaCollectible={prod.isOpenseaCollectible}
-                        network={prod.collection?.data?.networkType}
-                      />
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <p>No item to show</p>
-              )}
+            {loading ?
+              <div className="row spinner-container">
+                <Spinner animation="border" role="status" style={{ width: "4rem", height: "4rem" }}>
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+              :
+              <div className="row g-5">
+                {/* {console.log("collectionsData", collectionsData)} */}
+                {collectionsData?.length > 0 ? (
+                  <>
+                    {collectionsData?.map((prod, index) => (
+                      <div key={index} className="col-lg-4 col-md-6 col-sm-12">
+                        <Product
+                          placeBid={prod?.auction?.data?.sellType == "Bidding"}
+                          title={prod.name}
+                          slug={prod.isOpenseaCollectible ? prod.marketURL : prod.slug}
+                          supply={prod.supply}
+                          price={prod?.auction?.data[0]?.bidPrice}
+                          symbol={prod?.auction?.data[0]?.priceCurrency}
+                          image={prod?.image?.data ? prod?.image?.data?.url : prod?.image_url}
+                          collectionName={prod?.collection?.data?.name}
+                          bitCount={
+                            prod?.auction?.data[0]?.sellType == "Bidding" ? prod?.auction?.data?.biddings?.data.length : 0
+                          }
+                          latestBid={prod.latestBid}
+                          likeCount={prod.likeCount}
+                          authors={prod.authors}
+                          isOpenseaCollectible={prod.isOpenseaCollectible}
+                          network={prod.collection?.data?.networkType}
+                        />
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <p>No item to show</p>
+                )}
 
-              {loading &&
-                <div className="row spinner-container">
-                  <Spinner animation="border" role="status" style={{ width: "4rem", height: "4rem" }}>
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
-                </div>
-              }
-              {pagination?.pageCount > 1 && pagination.page < pagination?.pageCount ? (
-                <div className="row page-load-more">
-                  <Button onClick={() => router.query.search ? getSearchQueryData(pagination.page + 1) : getCollectionPaginationRecord(pagination.page + 1)}>
-                    ...Load More
-                  </Button>
-                </div>
-              ) : null}
-            </div>
+                {loadMore &&
+                  <div className="row spinner-container">
+                    <Spinner animation="border" role="status" style={{ width: "4rem", height: "4rem" }}>
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  </div>
+                }
+                {pagination?.pageCount > 1 && pagination.page < pagination?.pageCount ? (
+                  <div className="row page-load-more">
+                    <Button onClick={() => router.query.search ? getSearchQueryData(pagination.page + 1) : getCollectionPaginationRecord(pagination.page + 1)}>
+                      ...Load More
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
+            }
           </div>
         </div>
       </div>

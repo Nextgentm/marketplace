@@ -28,7 +28,7 @@ const ContactForm = () => {
   const onSubmit = (data, e) => {
     const form = e.target;
     setServerState({ submitting: true });
-    data.toEmail = "support@lootmogul.com";//"mayureshkhemnar19@gmail.com";
+    // data.toEmail = "support@lootmogul.com";//"mayureshkhemnar19@gmail.com";
     // console.log(data);
     axios({
       method: "post",
