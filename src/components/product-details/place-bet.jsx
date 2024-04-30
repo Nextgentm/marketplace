@@ -74,14 +74,14 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
           }
         });
         const urlForSignature = moonpaySdk.generateUrlForSigning();
-        console.log(urlForSignature);
+        // console.log(urlForSignature);
         // sign it with API secret and return the signature.
         const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/sign_url`, {
           method: "POST",
           body: urlForSignature,
         });
         const signature = await response.text();
-        console.log(signature);
+        // console.log(signature);
         // Once you have the signature, you can update the SDK with it
         moonpaySdk.updateSignature(decodeURIComponent(signature));
         moonpaySdk.show();
