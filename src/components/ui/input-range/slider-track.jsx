@@ -2,7 +2,7 @@
 import { getTrackBackground } from "react-range";
 
 const SliderTrack = ({ props, children, min, max, values }) => {
-  const colors = ["var(--color-primary-alta)", "var(--color-primary)", "var(--color-primary-alta)"];
+  const colors = ["var(--color-primary-alta)", "#E90A63", "var(--color-primary-alta)"];
   const background = getTrackBackground({
     values: [...values].sort((a, b) => a - b),
     min,
