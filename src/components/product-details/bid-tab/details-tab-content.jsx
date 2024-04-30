@@ -32,7 +32,7 @@ const DetailsTabContent = ({ owner, properties, tags, supply, erc1155MyBalance, 
       <div className="lable">Chain <span>{product.collection.data.networkType}</span></div>
       {supply < 1 && <div className="lable">NFT Owner <span>{owner}</span></div>}
       {erc1155MyBalance > 0 && <div className="lable">Your Balance <span>{erc1155MyBalance}</span></div>}
-      <div className="lable">Total Supply <span>{supply}</span></div>
+      {/* <div className="lable">Total Supply <span>{supply}</span></div> */}
     </div>
     {
       properties && properties?.length > 0 && (
