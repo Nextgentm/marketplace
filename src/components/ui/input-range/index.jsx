@@ -5,9 +5,9 @@ import Button from "@ui/button";
 import SliderTrack from "./slider-track";
 import SliderThumb from "./slider-thumb";
 
-const STEP = 1;
+const STEP = 0.1;
 const MIN = 0;
-const MAX = 100;
+const MAX = 5;
 
 const InputRange = ({ values, onChange, hideButton }) => {
   const renderTrack = (props) => <SliderTrack {...props} min={MIN} max={MAX} values={values} />;
@@ -27,7 +27,7 @@ const InputRange = ({ values, onChange, hideButton }) => {
           <div className="price--output">
             <span>Price :</span>
             <span className="output-label">
-              ${Number(values[0]) || 0 / 100} - ${Number(values[1]) || 0 / 100}
+              ETH {Number(values[0]) || 0 / 10} - ETH {Number(values[1]) || 0 / 10}
             </span>
           </div>
           {/* {hideButton === false && (
