@@ -12,7 +12,8 @@
     "clean": "rimraf node_modules .next",
     "prepare": "husky install",
     "analyze": "ANALYZE=true  next build",
-    "postbuild": "next-sitemap"
+    "postbuild": "next-sitemap",
+    "maintenance-on": "node maintenance.js"
   },
   "dependencies": {
     "@apollo/client": "^3.7.12",
