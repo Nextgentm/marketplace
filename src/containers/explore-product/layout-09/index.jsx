@@ -22,7 +22,7 @@ const ExploreProductArea = ({
   const [collectionsData, setCollectionsData] = useState();
   const router = useRouter();
   const [onChangeValue, setOnChangeValue] = useState();
-  const [onchangepriceRange, setonchangepriceRange] = useState({ price: [0, 100] });
+  const [onchangepriceRange, setonchangepriceRange] = useState({ price: [0, 5] });
 
   const [selectedFilterCardType, setSelectedFilterCardType] = useState([]);
 
