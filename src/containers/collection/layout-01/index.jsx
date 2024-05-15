@@ -87,7 +87,7 @@ const TopCollectionArea = ({ className, id, space, data }) => {
               data-sal-duration="800"
             >
               {data.collections?.length > 4 && (
-                <Anchor className="btn-transparent" path="#!" onClick={() => viewAllCollections()}>
+                <Anchor className="btn-transparent" path="javascript:void(0);" onClick={() => viewAllCollections()}>
                   {viewAll ? "SHOW LESS" : "VIEW ALL"}
                 </Anchor>
               )}
