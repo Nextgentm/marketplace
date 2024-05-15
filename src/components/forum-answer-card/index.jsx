@@ -4,10 +4,10 @@ import Anchor from "@ui/anchor";
 const ForumAnswerCard = () => (
   <div className="forum-single-ans">
     <div className="ans-header">
-      <Anchor path="#!" className="ans-header-author">
+      <Anchor path="javascript:void(0);" className="ans-header-author">
         <Image src="/images/client/client-3.png" alt="Nft-Profile" width={46} height={46} />
       </Anchor>
-      <Anchor path="#!">
+      <Anchor path="javascript:void(0);">
         <p className="name">@Mikle</p>
       </Anchor>
       <div className="date">
@@ -22,11 +22,11 @@ const ForumAnswerCard = () => (
         media But most important, be patient and keep sharing your work in other social media
       </p>
       <div className="reaction">
-        <Anchor path="#!" className="like">
+        <Anchor path="javascript:void(0);" className="like">
           <i className="feather-thumbs-up" />
           <span>27 Like</span>
         </Anchor>
-        <Anchor path="#!" className="dislike">
+        <Anchor path="javascript:void(0);" className="dislike">
           <i className="feather-thumbs-down" />
           <span>27 dislike</span>
         </Anchor>

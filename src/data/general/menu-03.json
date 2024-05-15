@@ -2,7 +2,7 @@
   {
     "id": 1,
     "text": "Settings",
-    "path": "#!",
+    "path": "javascript:void(0);",
     "icon": "feather-settings"
   },
   {
