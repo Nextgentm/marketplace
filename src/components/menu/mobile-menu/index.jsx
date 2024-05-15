@@ -47,7 +47,7 @@ const MobileMenu = ({ isOpen, onClick, menu, logo, isAdmin }) => {
                 >
                   <Anchor
                     className="nav-link its_new"
-                    path={hasChildren ? "#!" : nav.path}
+                    path={hasChildren ? "javascript:void(0);" : nav.path}
                     onClick={hasChildren ? onClickHandler : (e) => e}
                   >
                     {nav.text}
@@ -67,7 +67,7 @@ const MobileMenu = ({ isOpen, onClick, menu, logo, isAdmin }) => {
                 >
                   <Anchor
                     className="nav-link its_new"
-                    path={hasChildren ? "#!" : nav.path}
+                    path={hasChildren ? "javascript:void(0);" : nav.path}
                     onClick={hasChildren ? onClickHandler : (e) => e}
                   >
                     {nav.text}
