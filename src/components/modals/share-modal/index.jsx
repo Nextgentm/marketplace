@@ -15,7 +15,7 @@ const ShareModal = ({ show, handleModal }) => (
     <Modal.Body>
       <ul className="social-share-default">
         <li>
-          <a href="#!">
+          <a href="javascript:void(0);">
             <span className="icon">
               <i className="feather-facebook" />
             </span>
@@ -23,7 +23,7 @@ const ShareModal = ({ show, handleModal }) => (
           </a>
         </li>
         <li>
-          <a href="#!">
+          <a href="javascript:void(0);">
             <span className="icon">
               <i className="feather-twitter" />
             </span>
@@ -31,7 +31,7 @@ const ShareModal = ({ show, handleModal }) => (
           </a>
         </li>
         <li>
-          <a href="#!">
+          <a href="javascript:void(0);">
             <span className="icon">
               <i className="feather-linkedin" />
             </span>
@@ -39,7 +39,7 @@ const ShareModal = ({ show, handleModal }) => (
           </a>
         </li>
         <li>
-          <a href="#!">
+          <a href="javascript:void(0);">
             <span className="icon">
               <i className="feather-instagram" />
             </span>
@@ -47,7 +47,7 @@ const ShareModal = ({ show, handleModal }) => (
           </a>
         </li>
         <li>
-          <a href="#!">
+          <a href="javascript:void(0);">
             <span className="icon">
               <i className="feather-youtube" />
             </span>

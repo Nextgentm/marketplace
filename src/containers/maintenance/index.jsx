@@ -24,7 +24,7 @@ const MaintenanceArea = () => (
             <h2>
               Website Is Under <span>Maintanance</span>
             </h2>
-            <Button path="#!" className="mt--30">
+            <Button path="javascript:void(0);" className="mt--30">
               Learn More
             </Button>
           </div>
