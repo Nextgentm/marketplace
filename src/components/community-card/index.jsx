@@ -20,7 +20,7 @@ const CommunityCard = ({ thumbnail, title, path, published_at, tags, total_comme
           </div>
         )}
         <div className="name-date">
-          <Anchor path="#!" className="name">
+          <Anchor path="javascript:void(0);" className="name">
             Elijavd May
           </Anchor>
 
@@ -52,7 +52,7 @@ const CommunityCard = ({ thumbnail, title, path, published_at, tags, total_comme
               }}
               className="large"
             />
-            <Anchor className="more-author-text" path="#!">
+            <Anchor className="more-author-text" path="javascript:void(0);">
               20+ People.
             </Anchor>
           </div>
