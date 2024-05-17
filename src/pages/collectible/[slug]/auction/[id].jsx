@@ -91,7 +91,7 @@ export async function getServerSideProps({ params }) {
         collection: { populate: ["paymentTokens"] }
       }
     });
-    if (params.slug !== collectible.slug) {
+    if (params.slug !== collectible.data.slug) {
       return {
         redirect: {
           destination: "/404"
