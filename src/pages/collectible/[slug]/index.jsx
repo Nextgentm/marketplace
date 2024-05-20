@@ -44,7 +44,7 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
   //     setExtraCrumb(crumbArr);
   //   }, []);
 
-  const extraCrumb = useBreadCrumbData(product.collection?.data?.name, product.collection?.data?.slug);
+  const extraCrumb = useBreadCrumbData(product.collection?.data?.name, product.collection?.data?.slug, product?.name);
 
   return (
     <Wrapper>
