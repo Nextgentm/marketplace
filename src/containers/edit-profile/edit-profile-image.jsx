@@ -13,7 +13,7 @@ const subdomain = "lootmogul";
 
 const EditProfileImage = () => {
   const { userData: authorData, setUserDataLocal } = useContext(AppData);
-  // console.log("authorData", authorData);
+  console.log("authorData", authorData);
   const [selectedImage, setSelectedImage] = useState({
     profile: "",
     cover: {}
@@ -29,7 +29,7 @@ const EditProfileImage = () => {
   const [updateUserProfile, { data: updatedUserProfile, loading }] = useMutation(UPDATE_USER_PROFILE, {
     fetchPolicy: "network-only"
   });
-  // console.log("loading", loading)
+  console.log("loading", loading)
 
   useEffect(() => {
     if (avatarUrl) {
