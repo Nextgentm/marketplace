@@ -5,9 +5,9 @@ import Button from "@ui/button";
 import SliderTrack from "./slider-track";
 import SliderThumb from "./slider-thumb";
 
-const STEP = 0.1;
+const STEP = 0.0001;
 const MIN = 0;
-const MAX = 5;
+const MAX = 0.5;
 
 const InputRange = ({ values, onChange, hideButton }) => {
   const renderTrack = (props) => <SliderTrack {...props} min={MIN} max={MAX} values={values} />;
