@@ -26,7 +26,7 @@ const Comment = ({ image, username, time, text }) => (
     </div>
     <div className="reply-edit">
       <div className="reply">
-        <a className="comment-reply-link" href="#!">
+        <a className="comment-reply-link" href="javascript:void(0);">
           <i className="rbt feather-corner-down-right" />
           Reply
         </a>

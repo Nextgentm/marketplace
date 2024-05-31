@@ -25,7 +25,7 @@ const Footer = ({ space, className, data }) => (
         space === 3 && "mt--100 mt_md--80 mt_sm--80",
         className
       )}
-      style={{ paddingBottom: "15px" }}
+      style={{ paddingBottom: "15px", backgroundColor: "#0f092d" }}
     >
       {data?.items && (
         <div className="footer-top">
@@ -72,7 +72,7 @@ const Footer = ({ space, className, data }) => (
           </div>
 
           <div className="col-lg-2 col-md-6 col-sm-6 col-12 mt_md--40 mt_sm--40">
-            <div className="widget-bottom">
+            {/*<div className="widget-bottom">
               <h6 className="title">Try our App</h6>
               <img
                 className="w-70 h-auto"
@@ -80,7 +80,7 @@ const Footer = ({ space, className, data }) => (
                 alt=""
               />
 
-            </div>
+                      </div>*/}
           </div>
 
           {/* <div className="col-lg-3 col-md-6 col-sm-6 col-12 mt_md--40 mt_sm--40">
@@ -93,62 +93,49 @@ const Footer = ({ space, className, data }) => (
       </div>
     </div>
     {/* Footer text */}
-    <div className="copy-right-one ptb--20 bg-color--1">
+    <div className="copy-right-one ptb--20 bg-color--1" style={{ backgroundColor: "#0f092d" }}>
       <div className="container" style={{ width: "80%", margin: "auto" }}>
         <div className="row">
-          <div className="col-lg-10">
-            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-18 text-left">
-              LootMogul venture is accelerated (1 of 5 ventures) by National Basketball Player Association in collaboration with{" "}
-              <a href="#" style={{ color: "#e90a63" }}>
-                Andreessen Horowitz (a16z)’s Cultural Leadership Fund and Patricof Co
-              </a>
-              .
-            </p>
-          </div>
-          <div className="col-lg-2">
+          <div className="col-lg-3">
             <img
-              className="w-100 h-auto"
-              src="https://lootmogul-wp-cdn-buckets.s3.us-west-2.amazonaws.com/wp-content/uploads/2022/07/22051935/NBPA.jpg"
+              className="w-100 h-auto w-small"
+              src="https://lootmogulstg.wpengine.com/wp-content/uploads/2023/09/Logo-1.png"
               alt=""
             />
-            <img
-              className="w-100 h-auto mt-2"
-              src="https://lootmogul-wp-cdn-buckets.s3.us-west-2.amazonaws.com/wp-content/uploads/2022/07/22052008/Andreessen-Horowitz-1.png"
-              alt=""
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-12">
-            <p style={{ color: "#fff" }} className="pt-4 pr-4 variant-footerText font-weight-400 font-size-18 text-left">
-              Web3 Studios reports LootMogul as one of the top sports metaverse experience platforms
+            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
+              Official Metaverse and Gaming Partner:<br />
+              Cricket South Africa and SA20 team - Durban Super Giants
             </p>
           </div>
-        </div>
-        <div className="row">
-          <div className="col-lg-10">
-            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-18 text-left">
-              LootMogul is competitively selected (1 of 6 ventures) by National Football League Player Association (NFLPA) to
-              participate in their
-              <a href="#" style={{ color: "#e90a63" }}>
-                2023 NFLPA Pitch Day
-              </a>
-              Competition during the 2023 NFL Superbowl LVII Week.
+
+          <div className="col-lg-4">
+            <img
+              className="w-100 h-auto w-small"
+              src="https://lootmogulstg.wpengine.com/wp-content/uploads/2023/09/Wide-Logo-1.png"
+              alt=""
+              style={{ padding: "5px" }}
+            />
+            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
+              LootMogul venture is accelerated (1 of 5 ventures) by National Basketball Player Association in collaboration with Andreessen Horowitz (a16z)’s Cultural Leadership Fund and Patricof Co
             </p>
           </div>
-          <div className="col-lg-2">
+          <div className="col-lg-5">
             <img
-              className="w-100 h-auto"
-              src="https://lootmogul-wp-cdn-buckets.s3.us-west-2.amazonaws.com/wp-content/uploads/2022/07/22051955/NFLPA-1.png"
+              className="w-100 h-auto w-small"
+              src="https://lootmogulstg.wpengine.com/wp-content/uploads/2023/09/NFLPA-Logo.png"
               alt=""
+              style={{ padding: "10px" }}
             />
+            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
+              LootMogul is competitively selected (1 of 6 ventures) by National Football League Player Association (NFLPA)  to participate in their 2023 NFLPA Pitch Day Competition during the 2023 NFL Superbowl LVII Week.
+            </p>
           </div>
         </div>
       </div>
-      <div className="container" style={{ width: "95%", margin: "auto", paddingTop: "25px" }}>
+      <div className="container" style={{ width: "95%", margin: "auto", paddingTop: "5px", paddingBottom: "25px" }}>
         <div className="row">
           <div className="col-12">
-            <p style={{ color: "#fff" }} className="py-4 px-4 variant-footerText font-weight-500 font-size-18 text-center">
+            <p style={{ color: "#fff" }} className="py-4 px-4 variant-footerText font-weight-500 font-size-10 text-center">
               LootMogul is NOT AFFILIATED, AUTHORIZED, LICENSED OR ENDORSED by NBA (National Basketball Association), NFL
               (National Football League), MLB (Major League Baseball), NHL (National Hockey League), MLS (Major League
               Soccer), NCAA (National College Athletic Association) or any other professional and amateur organization.
@@ -157,8 +144,8 @@ const Footer = ({ space, className, data }) => (
         </div>
         <div className="row">
           <div className="col-12">
-            <p style={{ color: "#fff" }} className="pb-0 px-4 variant-footerText font-weight-400 font-size-18 text-center">
-              © 2023 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States
+            <p style={{ color: "#fff" }} className="pb-0 px-4 variant-footerText font-weight-400 font-size-10 text-center">
+              © 2024 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States
               {/* <br />Office Address : C/105 Varsha Swapna Gawan Pada, Mulund East, Mumbai - 400081 */}
             </p>
           </div>

@@ -12,7 +12,7 @@
   {
     "id": 3,
     "text": "Explore",
-    "path": "#!",
+    "path": "javascript:void(0);",
     "submenu": [
       {
         "id": 11,
@@ -21,7 +21,7 @@
       },
       {
         "id": 31,
-        "text": "NFT's",
+        "text": "Digital Collectibles",
         "path": "/collectibles"
       }
     ]
@@ -29,7 +29,7 @@
   {
     "id": 4,
     "text": "Create",
-    "path": "#!",
+    "path": "javascript:void(0);",
     "submenu": [
       {
         "id": 11,

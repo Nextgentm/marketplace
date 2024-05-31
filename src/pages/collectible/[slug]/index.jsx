@@ -44,11 +44,11 @@ const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) 
   //     setExtraCrumb(crumbArr);
   //   }, []);
 
-  const extraCrumb = useBreadCrumbData(product.collection?.data?.name, product.collection?.data?.slug);
+  const extraCrumb = useBreadCrumbData(product.collection?.data?.name, product.collection?.data?.slug, product?.name);
 
   return (
     <Wrapper>
-      <SEO pageTitle="Product Details" />
+      <SEO pageTitle={product?.name} slug={"collectible/" + product?.slug} />
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Product Details" currentPage="Product Details" extraCrumb={extraCrumb} />

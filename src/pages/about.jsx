@@ -36,55 +36,44 @@ const About = ({ posts }) => {
                   <div class="rn-support-read">
                     <div class="read-card">
                       <div class="content">
+                        <p style={{ color: "#fff", marginBottom: "15px" }}> Welcome to LootMogul, where the thrill of sports meets the forefront of digital innovation. Our platform is a beacon for sports enthusiasts, gamers, brands, investors, and sports game developers seeking to dive into an athlete-led sports technology universe, powered by the most advanced blockchain and artificial intelligence technologies.
+                        </p>
+                        <p style={{ color: "#fff", marginBottom: "15px" }}><b style={{ color: "#e90a63;" }}>Transforming the Sports Experience: </b>At LootMogul, we are not just reimagining the sports world; we are rebuilding it. As the official metaverse and gaming partner for Cricket South Africa and the Durban Super Giants, we are erasing the lines between the physical and the digital world. From creating virtual twins of stadiums to launching blockchain-based mini-games and advanced AI-driven ecommerce storefronts, our ecosystem is a dynamic playground for all sports stakeholders.
+                        </p>
+                        <p style={{ color: "#fff", marginBottom: "15px" }}>
+                          <b style={{ color: "#e90a63;" }}>Innovative Fan Engagement: </b>We have introduced groundbreaking touchpoints to revolutionize fan experiences both in and out of sports venues. By transforming traditional stadiums into S.M.A.R.T. arenas, publishing sports games in engaging, bite-sized formats, and blending the physical with the digital for sports memorabilia, LootMogul is setting new standards for in-stadium and digital fan engagement.
+                        </p>
+                        <p style={{ color: "#fff", marginBottom: "15px" }}>
+                          <b style={{ color: "#e90a63;" }}>Driving the Digital Sports Economy: </b>Our Monetization-First strategy for brands and athletes, coupled with a user-friendly approach to blockchain and AI, offers a sustainable revenue model while enhancing engagement. Whether you are a brand looking to tap into a vibrant sports community, an athlete seeking to connect with fans, or a fan eager for unparalleled access to sports action and merchandise, LootMogul is your ultimate destination.
+                        </p>
+                        <p style={{ color: "#fff", marginBottom: "15px" }}>
+                          <b style={{ color: "#e90a63;" }}>A New Era for Sports Merchandise: </b>Our mission extends to digitizing every aspect of the sports world, from stadiums and players to sports bars and memorabilia, creating a multifaceted universe where fans can experience and shop in both digital and physical realms. This dual-world approach opens new monetization and engagement avenues for brands, teams, and stadium owners.
+                        </p>
+                        <p style={{ color: "#fff", marginBottom: "15px" }}>
+                          <b style={{ color: "#e90a63;" }}>Empowering the Community with <a href="https://mogulx.ai/">MogulX.ai</a>:</b> Our dedicated platform, MogulX.ai, fosters collaboration and AI development, allowing the creation of AI avatars that can be trained and compete globally. This initiative underscores our commitment to innovation and community governance, ensuring a fair and dynamic ecosystem for all.
+                        </p>
+                        <p style={{ color: "#fff", marginBottom: "15px" }}>
+                          <b style={{ color: "#e90a63;" }}>Our Growth and Industry Recognition: </b>Since our inception in 2020, LootMogul has rapidly expanded, attracting 367 professional athletes and numerous sports teams, achieving over 2 million monthly visits, and facilitating more than 1 million games played. Our groundbreaking work has not only placed us among the top unicorns in Gaming, Web3, and Consumer Marketplaces but has also earned us accolades and recognition from prestigious sports associations such as NBA and NFL Player Associations, reinforcing our position as a leader in the sports digital twin technology.
+                        </p>
+                        <p style={{ color: "#fff", marginBottom: "15px" }}>
+                          Join us at LootMogul as we continue to push the boundaries of sports technology, creating a world where every game played, and every fan interaction opens a portal to new possibilities. Whether you are looking to engage with sports in a way never before possible, develop the next big game in the digital space, or invest in the future of sports technology, LootMogul is where your journey begins.
 
-                        <p style={{ color: "#fff", marginBottom: "15px" }}>LootMogul  is an athlete-led sports technology platform that is powered by regenerative AI, multi-player blockchain mini-games, e-commerce shops for brands and athletes, virtual real estates, training academies, and digital collectibles with In-Real-Life (IRL) rewards (e.g., Live Events, Merchandize, Players etc).</p>
-                        <p style={{ color: "#fff", marginBottom: "15px" }}>We are a fast-growing sports web3 gaming and e-commerce platform where athletes own land, studios, stadiums, and experience hubs to generate lifetime royalties by engaging with fans through Learn & Earn and Play & Earn models. The fans get to engage with their idols to learn new skill sets, earn rewards and gain access to real-world VIP events & limited-edition physical and digital merchandizes.</p>
-                        <p style={{ color: "#fff", marginBottom: "15px" }}>The company was launched in 2020 by veteran gaming and technology executives, <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Flinkedin.com%2Fin%2Frajkotia&data=05%7C01%7Carne%40fjlabs.com%7C3454810f94d04b60976308daf5a24aa2%7C4ca8a3498b2a465c917ec5e8a27c38c4%7C0%7C0%7C638092374669354492%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=%2FIuj80ivUhNioWURkUA7anWD7yPqv5GcVwNk%2BL1DZ2I%3D&reserved=0">
-                          Raj Rajkotia
-                        </Anchor> and <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fkuntalsampat%2F&data=05%7C01%7Carne%40fjlabs.com%7C3454810f94d04b60976308daf5a24aa2%7C4ca8a3498b2a465c917ec5e8a27c38c4%7C0%7C0%7C638092374669354492%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=duc41k3091O9iJ7j4qJZ%2FlJVlOF%2BXa5%2B1pkkFXw6lpQ%3D&reserved=0">
-                            Kuntal Sampat
-                          </Anchor>. Since the launch of its multi-chain product release, LootMogul has had exponential growth both in terms of users, brand engagement, and meta-world cities (blockchain assets and digital collectibles).</p>
-                        <p style={{ color: "#fff", marginBottom: "15px" }}>With Goldman Sachs & McKinsey expecting Metaverse commerce and gaming to reach <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://news.bitcoin.com/goldman-sachs-metaverse-8-trillion-opportunity">
-                          $8+ trillion by 2030
-                        </Anchor>, LootMogul is uniquely positioned to capitalize on this opportunity with its fully integrated focus on Sports, Commerce, and True-In-Real-Life (TIRL) rewards for fans, athletes, and brands and was listed as one of the <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://venturebeat.com/games/how-the-landscape-of-sports-will-evolve-in-the-metaverse">
-                            top sports metaverse projects by Venturebeat.com
-                          </Anchor>.</p>
-                        <p style={{ color: "#fff", marginBottom: "15px" }}><Anchor style={{ color: "#e90a63" }} target="_blank" path="https://mogulx.ai/">
-                          MogulX.ai
-                        </Anchor> is a dedicated community product created by LootMogul to drive collaboration and AI development in the sports tech industry. Athletes, fans, brands and game developers can leverage LootMogul’s open architecture to create their non-player-characters (NPCs), aka AI avatars, that can be trained in both a supervised and unsupervised manner by the creator. These newly trained AI avatars can compete globally across all compatible games, sports and esports tournaments to generate revenue for all stakeholders.</p>
-                        <p style={{ color: "#fff", marginBottom: "15px" }}>Community governance for AI will be implemented through LootMogul’s open APIs for all stakeholders to ensure AI’s behavior for both supervised and unsupervised deep learning.</p>
+                        </p>
+
                       </div>
                     </div>
+
                     <div class="read-card">
-                      <h6>Strategy and Approach</h6>
                       <div class="content">
-                        <ul>
-                          <li style={{ fontSize: "18px", color: "#fff", marginBottom: "15px" }}>Monetization-First strategy for brands (SaaS-B2B) and athletes & fans (B2C) drives steady long-term revenue & engagement for all stakeholders.</li>
-                          <li style={{ fontSize: "18px", color: "#fff", marginBottom: "15px" }}>Pragmatic and simplistic approach to onboarding the Web2 sports community (athletes, brands, and fans) into the Web3 ecosystem using AI.</li>
-                        </ul>
-                      </div>
-                    </div>
-                    <div class="read-card">
-                      <h6>Traction</h6>
-                      <div class="content">
-                        <p style={{ color: "#fff", marginBottom: "15px" }}>LootMogul has currently signed up 312 professional athletes from NFL, NBA, WNBA, MLB, UFC, etc., high school and college athletes as well as 16 sports teams under a multi-year contract. The total reach through players is 104M. Additionally, LootMogul is generating significant monthly revenue from 7 live games and Web3 E-Commerce.</p>
-                      </div>
-                    </div>
-                    <div class="read-card">
-                      <h6>Industry Recognition</h6>
-                      <div class="content">
-                        <p style={{ color: "#fff", marginBottom: "15px" }}>In 2022, LootMogul was competitively selected (1 of 5 ventures) by National Basketball Player Association (NBPA) in collaboration with Andreessen Horowitz (a16z)’s Cultural Leadership Fund and Patricof Co in their 2022 NBPA Players Accelerator Program.</p>
-                        <p style={{ color: "#fff", marginBottom: "15px" }}>In 2023, LootMogul is competitively selected (1 of 6 ventures) by National Football League Player Association (NFLPA) to participate in their 2023 NFLPA Pitch Day Competition.</p>
-                        <p style={{ color: "#fff", marginBottom: "15px" }}>In addition, LootMogul is the only Web3 venture selected by both NBA Player Association and NFL Player Association in their accelerator/pitch day program.</p>
                         <p style={{ color: "#fff", marginBottom: "15px" }}>Stay connected:</p>
                         <ul>
-                          <li style={{ fontSize: "18px", color: "#fff", marginBottom: "15px" }}>Corporate news – <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://www.linkedin.com/company/lootmogul">
+                          <li style={{ fontSize: "18px", color: "#fff" }}>Corporate news – <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://www.linkedin.com/company/lootmogul">
                             https://www.linkedin.com/company/lootmogul
                           </Anchor></li>
-                          <li style={{ fontSize: "18px", color: "#fff", marginBottom: "15px" }}>Community – <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://www.instagram.com/lootmogul">
+                          <li style={{ fontSize: "18px", color: "#fff" }}>Community – <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://www.instagram.com/lootmogul">
                             https://www.instagram.com/lootmogul
                           </Anchor></li>
-                          <li style={{ fontSize: "18px", color: "#fff", marginBottom: "15px" }}>Press Releases – <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://metaverse.lootmogul.com/press-releases">
+                          <li style={{ fontSize: "18px", color: "#fff" }}>Press Releases – <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://metaverse.lootmogul.com/press-releases">
                             https://metaverse.lootmogul.com/press-releases
                           </Anchor></li>
                         </ul>

@@ -50,12 +50,13 @@ const AuctionDetails = ({ auction, recentViewProducts }) => {
 
   const extraCrumb = useBreadCrumbData(
     auction?.data?.collectible?.data?.collection?.data?.name,
-    auction?.data?.collectible?.data?.collection?.data?.slug
+    auction?.data?.collectible?.data?.collection?.data?.slug,
+    auction?.data?.collectible.data?.name
   );
 
   return (
     <Wrapper>
-      <SEO pageTitle="Product Details" />
+      <SEO pageTitle={auction?.data?.collectible?.data?.name} slug={"collectible/" + auction?.data?.collectible?.data?.slug + "/auction/" + auction?.data?.id} />
       <Header />
       <main id="main-content">
         <Breadcrumb pageTitle="Product Details" currentPage="Product Details" extraCrumb={extraCrumb} />
@@ -91,6 +92,13 @@ export async function getServerSideProps({ params }) {
         collection: { populate: ["paymentTokens"] }
       }
     });
+    if (params.slug !== collectible.data.slug) {
+      return {
+        redirect: {
+          destination: "/404"
+        }
+      };
+    }
     auction.data.collectible = collectible;
     // console.log(collectible);
 

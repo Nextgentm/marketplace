@@ -145,8 +145,8 @@ nav ol {
     list-style-image: none;
 }
 
-li > ul,
-li > ol {
+li>ul,
+li>ol {
     margin: 0;
 }
 
@@ -231,6 +231,7 @@ input[type="search"] {
     appearance: textfield;
     padding-right: 2px;
     width: 270px;
+
     @media #{$laptop-device} {
         width: 250px;
     }
@@ -352,4 +353,8 @@ blockquote small {
 blockquote strong,
 blockquote b {
     font-weight: 700;
+}
+
+canvas[data-testid] {
+    z-index: 999;
 }

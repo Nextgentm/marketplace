@@ -22,7 +22,7 @@
     "menu": [
       {
         "id": 1,
-        "text": "All NFT's",
+        "text": "All Digital Collectibles",
         "path": "/collectibles"
       },
       {
@@ -42,7 +42,7 @@
     "menu": [
       {
         "id": 1,
-        "text": "What is Metaverse?",
+        "text": "What is Digital Twin?",
         "path": "https://metaverse.lootmogul.com/what-is-metaverse/"
       },
       {
@@ -141,5 +141,5 @@
       }
     ]
   },
-  "copyright_text": "© 2023 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States"
+  "copyright_text": "© 2024 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States"
 }

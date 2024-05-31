@@ -1,8 +1,8 @@
 import Head from "next/head";
 import PropTypes from "prop-types";
 
-const SEO = ({ pageTitle }) => {
-  const title = `${pageTitle} || LootMogul - NFT Marketplace`;
+const SEO = ({ pageTitle, slug }) => {
+  const title = `${pageTitle} || LootMogul - Digital Collectibles Marketplace`;
   return (
     <Head>
       <title>{title}</title>
@@ -11,6 +11,7 @@ const SEO = ({ pageTitle }) => {
       <meta name="robots" content="index, follow" />
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
       <link rel="icon" href="/favicon.ico" />
+      <link rel="canonical" href={"https://marketplace.lootmogul.com/" + slug} />
     </Head>
   );
 };

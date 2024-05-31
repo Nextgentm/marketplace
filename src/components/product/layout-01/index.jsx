@@ -51,8 +51,8 @@ const Product = ({
 
   const CollectiblesEvent = async (event) => {
 
-    console.log(title);
-    clevertap.event.push("Marketplace Collectibles", {
+    console.log("Click Collectibles");
+    /*clevertap.event.push("Marketplace Collectibles", {
       "Button Name": event,
       "Collection Name": collectionName,
       "NFT Name": title,
@@ -61,7 +61,7 @@ const Product = ({
       "Email ID": userData?.email,
       "Mobile No": userData?.username,
       "First name": userData?.fullName,
-    });
+    });*/
   };
 
 

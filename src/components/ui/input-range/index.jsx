@@ -32,7 +32,7 @@ const InputRange = ({ values, onChange, hideButton }) => {
           </div>
           {/* {hideButton === false && (
             <div className="price--filter">
-              <Button size="small" path="#!">
+              <Button size="small" path="javascript:void(0);">
                 Filter
               </Button>
             </div>
