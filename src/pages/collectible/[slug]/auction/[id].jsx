@@ -50,7 +50,8 @@ const AuctionDetails = ({ auction, recentViewProducts }) => {
 
   const extraCrumb = useBreadCrumbData(
     auction?.data?.collectible?.data?.collection?.data?.name,
-    auction?.data?.collectible?.data?.collection?.data?.slug
+    auction?.data?.collectible?.data?.collection?.data?.slug,
+    auction?.data?.collectible.data?.name
   );
 
   return (
