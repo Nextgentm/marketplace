@@ -28,13 +28,13 @@ const ShareDropdown = ({ slug }) => {
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="share-btn-setting" align="end">
-          {slug &&
+          {/*slug &&
             <Anchor target="_self" path={"edit-collectible/" + slug}>
               <button type="button" className="btn-setting-text share-text">
                 Edit
               </button>
             </Anchor>
-          }
+          */}
           <button type="button" className="btn-setting-text share-text" onClick={handleShareModal}>
             Share
           </button>
