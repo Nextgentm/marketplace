@@ -19,11 +19,11 @@ const CollectionOptionDropdown = ({ slug }) => {
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="share-btn-setting" align="end">
-          <Anchor target="_self" path={"edit-collection/" + slug}>
+          {/* <Anchor target="_self" path={"edit-collection/" + slug}>
             <button type="button" className="btn-setting-text share-text">
               Edit
             </button>
-          </Anchor>
+          </Anchor> */}
           {/* <button type="button" className="btn-setting-text report-text">
             Report
           </button> */}
