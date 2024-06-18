@@ -9,6 +9,7 @@ import SoldOutWidget from "@widgets/sold-out-widget";
 import FooterLinkWidget from "@widgets/footer-link-widget";
 import SocialWidget from "@widgets/social-widget";
 import { ItemType } from "@utils/types";
+import Anchor from "@ui/anchor";
 
 // Demo data
 import footerData from "../../../data/general/footer-01.json";
@@ -57,8 +58,11 @@ const Footer = ({ space, className, data }) => (
         <div className="row gx-5">
           <div className="col-lg-3 col-md-6 col-sm-6 col-12">
             <div className="widget-content-wrapper">
-              <LogoWidget data={footerData["logo-widget"]} />
               <NewsletterWidget data={footerData["newsletter-widget"]} />
+              <LogoWidget data={footerData["logo-widget"]} />
+              <Anchor className="logo-dark" path="https://w.tracxn.com/awards/emerging-awards/pc-console-gaming" target="_blank">
+                <Image className="pt--20 pb--40" src={footerData["traCXN-logo"]["logo"][0].src} alt={footerData["traCXN-logo"]["logo"][0]?.alt || "nft-logo"} width={300} height={80} priority />
+              </Anchor>
             </div>
           </div>
 
