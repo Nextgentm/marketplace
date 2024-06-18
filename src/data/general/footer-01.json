@@ -141,5 +141,14 @@
       }
     ]
   },
+  "traCXN-logo": {
+    "title": "",
+    "logo": [
+      {
+        "src": "/images/Award-min.jpg",
+        "alt": "bitpay-logo"
+      }
+    ]
+  },
   "copyright_text": "© 2024 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States"
 }
