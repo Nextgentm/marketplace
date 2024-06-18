@@ -61,7 +61,7 @@ const Footer = ({ space, className, data }) => (
               <NewsletterWidget data={footerData["newsletter-widget"]} />
               <LogoWidget data={footerData["logo-widget"]} />
               <Anchor className="logo-dark" path="https://w.tracxn.com/awards/emerging-awards/pc-console-gaming" target="_blank">
-                <Image className="pt--20 pb--40" src={footerData["traCXN-logo"]["logo"][0].src} alt={footerData["traCXN-logo"]["logo"][0]?.alt || "nft-logo"} width={350} height={80} priority />
+                <Image className="pt--20 pb--40" src={footerData["traCXN-logo"]["logo"][0].src} alt={footerData["traCXN-logo"]["logo"][0]?.alt || "nft-logo"} width={300} height={80} priority />
               </Anchor>
             </div>
           </div>
