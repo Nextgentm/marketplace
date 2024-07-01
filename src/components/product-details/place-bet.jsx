@@ -54,12 +54,20 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
+  const checkGasFee = async () => {
+    const res = await axios({
+      method: "get",
+      url: `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/calulate-gas-fees?auctionId=${auction.data.id}`
+    });
+    console.log(res);
+  }
+
   //moonpay integration
   const payUsingMoonpay = async (quantity) => {
     // show the moonpay integration part
     try {
-
       if (userData) {
+        checkGasFee();
         const moonpaySdk = window.MoonPayWebSdk.init({
           flow: "nft",
           environment: process.env.NEXT_PUBLIC_SENTRY_ENV == "production" ? "production" : "sandbox",
@@ -474,14 +482,14 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         <span>{isOwner && "You are the owner of this auction"}</span>
 
         {/* temporary disable moonpay */}
-        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && primarySale && router.query.testing == "moonpay" &&
-          <Button
-            color={btnColor || "primary-alta"}
-            className="mt--30"
-            onClick={() => auction.data.quantity > 1 ? handleBidModalForMoonpay() : payUsingMoonpay()}
-            disabled={isOwner || (auction_date && new Date() > new Date(auction_date)) || isMoonPayDownTime.result}>
-            {isMoonPayDownTime.result ? "MoonPay is down. Try after " + new Date(isMoonPayDownTime.endTime).toLocaleString() + "." : "Pay using MoonPay"}
-          </Button>
+        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && primarySale &&  
+        <Button
+          color={btnColor || "primary-alta"}
+          className="mt--30"
+          onClick={() => auction.data.quantity > 1 ? handleBidModalForMoonpay() : payUsingMoonpay()}
+          disabled={isOwner || (auction_date && new Date() > new Date(auction_date)) || isMoonPayDownTime.result}>
+          {isMoonPayDownTime.result ? "MoonPay is down. Try after " + new Date(isMoonPayDownTime.endTime).toLocaleString() + "." : "Pay using MoonPay"}
+        </Button>
         }
 
         <Button
