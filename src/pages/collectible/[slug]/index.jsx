@@ -148,7 +148,7 @@ export async function getServerSideProps({ params }) {
   } catch (er) {
     return {
       redirect: {
-        destination: "/404"
+        destination: "/collectibles"
       }
     };
   }

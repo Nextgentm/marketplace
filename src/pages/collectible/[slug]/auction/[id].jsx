@@ -95,7 +95,7 @@ export async function getServerSideProps({ params }) {
     if (params.slug !== collectible.data.slug) {
       return {
         redirect: {
-          destination: "/404"
+          destination: "/collectible/" + params.slug
         }
       };
     }
@@ -143,7 +143,7 @@ export async function getServerSideProps({ params }) {
   } catch (er) {
     return {
       redirect: {
-        destination: "/404"
+        destination: "/collectible/" + params.slug
       }
     };
   }
