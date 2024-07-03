@@ -14,6 +14,7 @@ import { ApolloProvider } from "@apollo/client";
 import { loadNProgress } from "@utils/nprogress";
 import client from "@utils/apollo-client";
 //import Snowfall from "react-snowfall"
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const MyApp = ({ Component, pageProps }) => {
   const router = useRouter();
@@ -74,7 +75,8 @@ const MyApp = ({ Component, pageProps }) => {
     <ApolloProvider client={client}>
       <AppDataContext>
         <ThemeProvider defaultTheme="dark">
-          {/* 
+          <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID} >
+            {/* 
           <Snowfall
             // The color of the snowflake, can be any valid CSS color.
             color="#dee4fd"
@@ -85,7 +87,8 @@ const MyApp = ({ Component, pageProps }) => {
             radius={[0.5, 3]}
           />
            */}
-          <Component {...pageProps} />
+            <Component {...pageProps} />
+          </GoogleOAuthProvider>
         </ThemeProvider>
       </AppDataContext>
     </ApolloProvider>

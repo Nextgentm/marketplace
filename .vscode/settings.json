@@ -20,7 +20,7 @@
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "eslint.validate": ["react", "html", "javascript", "typescript"],
   "files.associations": {
