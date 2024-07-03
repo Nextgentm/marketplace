@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import Image from "next/image";
-import { useGoogleLogin } from "react-google-login";
+// import { useGoogleLogin } from "react-google-login";
+import { useGoogleLogin } from "@react-oauth/google";
 import strapi from "@utils/strapi";
 import { toast } from "react-toastify";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
@@ -11,38 +12,48 @@ import { setCookie } from "@utils/cookies";
 const SocialAuth = ({ className, title }) => {
   const router = useRouter();
 
-  const { signIn, signOut, isSignedIn } = useGoogleLogin({
-    clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+  // const { signIn, signOut, isSignedIn } = useGoogleLogin({
+  //   clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
 
-    onSuccess: (data) => {
-      callAuthService("google", data.accessToken);
-    }
+  //   onSuccess: (data) => {
+  //     callAuthService("google", data.accessToken);
+  //   }
+  // });
+
+  const signIn = useGoogleLogin({
+    flow: "implicit",
+    onSuccess: (data) => callAuthService("google", data.access_token),
+    // onError: () => setLoggingIn(false) ,
   });
+
+  const loginWidGoogle = () => {
+    signIn()
+  }
+
   const callAuthService = async (provider, token) => {
     try {
       const loginResponse = await strapi.authenticateProvider(provider, token);
       setCookie("token", loginResponse.jwt);
       localStorage.setItem("user", JSON.stringify(loginResponse.user));
       toast.success(`${router.pathname == "/sign-up" ? "Registration" : "Logged In"} Successfully`);
-      if (provider == "google" && isSignedIn) {
+      /* if (provider == "google" && isSignedIn) {
         signOut();
-      }
+      } */
       setTimeout(() => {
         router.push("/");
       }, 500);
     } catch ({ error }) {
       toast.error("Invalid login information");
-      signOut();
-
-
+      // signOut();
       return;
     }
   };
+
   return (
     <div className={clsx("social-share-media form-wrapper-one", className)}>
       <h6>{title}</h6>
       {/* <p>Lorem ipsum dolor sit, amet sectetur adipisicing elit.cumque.</p> */}
-      <button type="button" className="another-login login-facebook" onClick={signIn}>
+      <button type="button" className="another-login login-facebook" onClick={loginWidGoogle}>
         <span className="small-image">
           <Image src="/images/icons/google.png" alt="google login" width={26} height={27} />
         </span>
