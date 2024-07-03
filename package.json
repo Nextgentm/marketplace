@@ -22,6 +22,7 @@
     "@openzeppelin/contracts": "^4.8.2",
     "@openzeppelin/contracts-upgradeable": "^4.8.3",
     "@openzeppelin/test-helpers": "^0.5.16",
+    "@react-oauth/google": "^0.12.1",
     "@truffle/hdwallet-provider": "^2.1.8",
     "apollo-boost": "^0.4.9",
     "apollo-upload-client": "^17.0.0",
