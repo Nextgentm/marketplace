@@ -9,7 +9,7 @@ import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props
 import { useRouter } from "next/router";
 import { setCookie } from "@utils/cookies";
 
-const SocialAuth = ({ className, title }) => {
+const SocialAuth = ({ className, title, loading, setLoading }) => {
   const router = useRouter();
 
   // const { signIn, signOut, isSignedIn } = useGoogleLogin({
@@ -23,7 +23,7 @@ const SocialAuth = ({ className, title }) => {
   const signIn = useGoogleLogin({
     flow: "implicit",
     onSuccess: (data) => callAuthService("google", data.access_token),
-    // onError: () => setLoggingIn(false) ,
+    onError: () => setLoading(false),
   });
 
   const loginWidGoogle = () => {
@@ -32,18 +32,20 @@ const SocialAuth = ({ className, title }) => {
 
   const callAuthService = async (provider, token) => {
     try {
+      if (loading) return
+      setLoading(true)
       const loginResponse = await strapi.authenticateProvider(provider, token);
       setCookie("token", loginResponse.jwt);
       localStorage.setItem("user", JSON.stringify(loginResponse.user));
-      toast.success(`${router.pathname == "/sign-up" ? "Registration" : "Logged In"} Successfully`);
+      toast.success(`${router.pathname == "/sign-up" ? "Registration" : "Log in"} Successfull`);
       /* if (provider == "google" && isSignedIn) {
         signOut();
       } */
-      setTimeout(() => {
-        router.push("/");
-      }, 500);
+      // setLoading(false)
+      router.push("/");
     } catch ({ error }) {
       toast.error("Invalid login information");
+      setLoading(false)
       // signOut();
       return;
     }
