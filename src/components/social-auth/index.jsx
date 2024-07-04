@@ -46,6 +46,7 @@ const SocialAuth = ({ className, title, loading, setLoading }) => {
     } catch ({ error }) {
       toast.error("Invalid login information");
       setLoading(false)
+
       // signOut();
       return;
     }
