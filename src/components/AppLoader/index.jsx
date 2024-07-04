@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
-import Image from 'next/image';
-import styles from './Loader.module.css';
+import React, { useMemo } from "react";
+import Image from "next/image";
+import styles from "./Loader.module.css";
 
 const AppLoader = () => {
   const memoizedImage = useMemo(() => (

@@ -88,7 +88,7 @@ const MyApp = ({ Component, pageProps }) => {
           />
            */}
             <Component {...pageProps} />
-            <img style={{ display: 'none' }} src="/assets/loader/loader.200.120kb.gif" width={200} height={200} alt="Loader..." />
+            <img style={{ display: "none" }} src="/assets/loader/loader.200.120kb.gif" width={200} height={200} alt="Loader..." />
           </GoogleOAuthProvider>
         </ThemeProvider>
       </AppDataContext>
