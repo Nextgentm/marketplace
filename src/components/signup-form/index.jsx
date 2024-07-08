@@ -8,7 +8,7 @@ import strapi from "@utils/strapi";
 import { setCookie } from "@utils/cookies";
 import { toast } from "react-toastify";
 
-const SignupForm = ({ className }) => {
+const SignupForm = ({ className, loading, setLoading }) => {
   const router = useRouter();
   const {
     register,
@@ -21,8 +21,10 @@ const SignupForm = ({ className }) => {
   const onSubmit = async (data, e) => {
     e.preventDefault();
     // eslint-disable-next-line no-console
+    if (loading) return
     if (data.identifier && data.password) {
       try {
+        setLoading(true)
         let loginResponse = await strapi.register({
           username: data.username,
           identifier: data.identifier,
@@ -35,7 +37,7 @@ const SignupForm = ({ className }) => {
         router.push("/");
       } catch ({ error }) {
         toast.error(error.message);
-
+        setLoading(false)
         return;
       }
 
