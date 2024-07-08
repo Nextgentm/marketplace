@@ -54,12 +54,21 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
+  const checkGasFee = async () => {
+    const res = await axios({
+      method: "get",
+      url: `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/calulate-gas-fees?auctionId=${auction.data.id}`
+    });
+    console.log(res);
+  }
+
   //moonpay integration
   const payUsingMoonpay = async (quantity) => {
     // show the moonpay integration part
     try {
 
       if (userData) {
+        checkGasFee();
         const moonpaySdk = window.MoonPayWebSdk.init({
           flow: "nft",
           environment: process.env.NEXT_PUBLIC_SENTRY_ENV == "production" ? "production" : "sandbox",
@@ -474,7 +483,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         <span>{isOwner && "You are the owner of this auction"}</span>
 
         {/* temporary disable moonpay */}
-        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && primarySale && router.query.testing == "moonpay" &&
+        {auction?.data?.status == "Live" && auction.data.sellType == "FixedPrice" && primarySale &&
           <Button
             color={btnColor || "primary-alta"}
             className="mt--30"
