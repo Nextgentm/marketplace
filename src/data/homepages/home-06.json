@@ -17,11 +17,11 @@
           ],
           "image": {
             "src": "/images/bg/nft_homepage_banner-min.png",
-            "video": "https://lootmogul.s3.us-west-2.amazonaws.com/NFT+Marketplace+video+banner.mp4"
+            "video": "https://cdn.lootmogul.com/wp-content/uploads/2024/07/09041151/NFTMarketplacevideobanner.mp4"
           },
           "mobile": {
             "src": "/images/bg/nft_homepage_banner-min.png",
-            "video": "https://lootmogul.s3.us-west-2.amazonaws.com/NFT+Marketplace+video+banner.mp4"
+            "video": "https://cdn.lootmogul.com/wp-content/uploads/2024/07/09041151/NFTMarketplacevideobanner.mp4"
           }
         }
       ]
