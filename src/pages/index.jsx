@@ -35,7 +35,11 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, a
 
   return (
     <Wrapper>
-      <SEO pageTitle="Digital Collectibles Marketplace" />
+      <SEO
+        pageTitle="Digital Collectibles | Sports Collectibles | Digital Trading Cards | Meta Avatars | Blockchain Technology | Web3 Gaming | NFT Marketplace"
+        description="Explore LootMogul Digital Collectible Marketplace for exclusive Sports Collectibles. Trade Digital Trading Cards and meta avatars with real-life rewards in the form of NFTs using advanced blockchain technology"
+        keywords="NFT marketplace,digital collectibles,sports trading cards,meta avatars,blockchain technology,Web3 gaming,digital goods,real-life rewards,sports enthusiasts"
+      />
       <Header />
       <main id="main-content">
         <HeroArea data={content["hero-section"]} />
