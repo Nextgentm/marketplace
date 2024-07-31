@@ -25,7 +25,10 @@ Collection.getInitialProps = async () => {
       $or: [{
         collectibles: {
           auction: {
-            status: "Live"
+            status: "Live",
+            endTimeStamp: {
+              $gt: new Date()
+            },
           }
         }
       }, {
@@ -39,6 +42,9 @@ Collection.getInitialProps = async () => {
         filters: {
           auction: {
             status: "Live",
+            endTimeStamp: {
+              $gt: new Date()
+            },
             id: { $notNull: true }
           }
         },
@@ -47,6 +53,9 @@ Collection.getInitialProps = async () => {
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               id: { $notNull: true }
             }
           }

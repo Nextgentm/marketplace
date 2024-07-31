@@ -101,6 +101,9 @@ Home.getInitialProps = async () => {
       status: {
         $eq: "Live"
       },
+      endTimeStamp: {
+        $gt: new Date()
+      },
       sellType: {
         $eq: "Bidding"
       }
@@ -196,7 +199,10 @@ Home.getInitialProps = async () => {
     filters: {
       collectibles: {
         auction: {
-          status: "Live"
+          status: "Live",
+          endTimeStamp: {
+            $gt: new Date()
+          },
         }
       },
       id: {
@@ -212,7 +218,10 @@ Home.getInitialProps = async () => {
     filters: {
       status: {
         $eq: "Live"
-      }
+      },
+      endTimeStamp: {
+        $gt: new Date()
+      },
     },
     populate: {
       collectible: {
@@ -251,7 +260,10 @@ Home.getInitialProps = async () => {
         auction: {
           status: {
             $eq: "Live"
-          }
+          },
+          endTimeStamp: {
+            $gt: new Date()
+          },
         }
       }
     },
@@ -262,6 +274,9 @@ Home.getInitialProps = async () => {
         filters: {
           auction: {
             status: "Live",
+            endTimeStamp: {
+              $gt: new Date()
+            },
             id: { $notNull: true }
           }
         },
@@ -270,6 +285,9 @@ Home.getInitialProps = async () => {
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               id: { $notNull: true }
             }
           }

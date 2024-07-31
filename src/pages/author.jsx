@@ -96,7 +96,10 @@ const Author = () => {
           {
             status: {
               $eq: "Live"
-            }
+            },
+            endTimeStamp: {
+              $gt: new Date()
+            },
           },
           {
             walletAddress: {
@@ -154,8 +157,8 @@ const Author = () => {
           }]
         }]
       },
-    // let response = await strapi.find("collectible/get-owned-collectible/" + walletData.account, {
-    //   filters: {},
+      // let response = await strapi.find("collectible/get-owned-collectible/" + walletData.account, {
+      //   filters: {},
       populate: "*",
       pagination: {
         page,

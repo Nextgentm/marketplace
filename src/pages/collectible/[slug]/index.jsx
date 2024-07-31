@@ -112,6 +112,9 @@ export async function getServerSideProps({ params }) {
         status: {
           $eq: "Live"
         },
+        endTimeStamp: {
+          $gt: new Date()
+        },
         collectible: {
           id: {
             $ne: product.id
