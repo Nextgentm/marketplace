@@ -32,6 +32,9 @@ const ExploreProductArea = ({ className, space, data }) => {
         status: {
           $eq: "Live"
         },
+        endTimeStamp: {
+          $gt: new Date()
+        },
         collectible: {
           collection: {
             name: {

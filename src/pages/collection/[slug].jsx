@@ -86,7 +86,10 @@ export async function getStaticProps({ params }) {
   const getCollectiblecheckData = await getCollectible({
     filters: {
       auction: {
-        status: "Live"
+        status: "Live",
+        endTimeStamp: {
+          $gt: new Date()
+        },
       },
       collection: {
         id: {
@@ -110,6 +113,9 @@ export async function getStaticProps({ params }) {
         fields: "*",
         filters: {
           status: "Live",
+          endTimeStamp: {
+            $gt: new Date()
+          },
           // id: { $notNull: true }
         }
       },

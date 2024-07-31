@@ -23,7 +23,10 @@ const TopCollectionArea = ({ className, id, space, data }) => {
           auction: {
             status: {
               $eq: "Live"
-            }
+            },
+            endTimeStamp: {
+              $gt: new Date()
+            },
           }
         }
       },
@@ -34,6 +37,9 @@ const TopCollectionArea = ({ className, id, space, data }) => {
           filters: {
             auction: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               id: { $notNull: true }
             }
           },
@@ -42,6 +48,9 @@ const TopCollectionArea = ({ className, id, space, data }) => {
               fields: "*",
               filters: {
                 status: "Live",
+                endTimeStamp: {
+                  $gt: new Date()
+                },
                 id: { $notNull: true }
               }
             }

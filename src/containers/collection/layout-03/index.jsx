@@ -63,7 +63,10 @@ const CollectionArea = ({ className, space, id, data }) => {
           collectibles: {
             auction: {
               status: "Live"
-            }
+            },
+            endTimeStamp: {
+              $gt: new Date()
+            },
           }
         }, {
           isOpenseaCollection: true
@@ -76,6 +79,9 @@ const CollectionArea = ({ className, space, id, data }) => {
           filters: {
             auction: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               id: { $notNull: true }
             }
           },
@@ -84,6 +90,9 @@ const CollectionArea = ({ className, space, id, data }) => {
               fields: "*",
               filters: {
                 status: "Live",
+                endTimeStamp: {
+                  $gt: new Date()
+                },
                 id: { $notNull: true }
               }
             }
