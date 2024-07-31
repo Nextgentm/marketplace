@@ -73,7 +73,10 @@ const ExploreProductArea = ({
       auction: {
         status: {
           $eq: "Live"
-        }
+        },
+        endTimeStamp: {
+          $gt: new Date()
+        },
       },
       collection: {
         id: {
@@ -212,6 +215,9 @@ const ExploreProductArea = ({
           status: {
             $eq: "Live"
           },
+          endTimeStamp: {
+            $gt: new Date()
+          },
           sellType: {
             $eq: "FixedPrice"
           }
@@ -235,6 +241,9 @@ const ExploreProductArea = ({
               fields: "*",
               filters: {
                 status: "Live",
+                endTimeStamp: {
+                  $gt: new Date()
+                },
                 id: { $notNull: true }
               }
             },
@@ -284,6 +293,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               // id: { $notNull: true }
             }
           },
@@ -309,7 +321,10 @@ const ExploreProductArea = ({
 
     let filters = {
       auction: {
-        status: "Live"
+        status: "Live",
+        endTimeStamp: {
+          $gt: new Date()
+        },
       },
       collection: {
         id: {
@@ -396,6 +411,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               // id: { $notNull: true }
             }
           },
@@ -428,6 +446,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               // id: { $notNull: true }
             }
           },
@@ -460,6 +481,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               // id: { $notNull: true }
             }
           },
@@ -492,6 +516,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               // id: { $notNull: true }
             }
           },
@@ -526,6 +553,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               // id: { $notNull: true }
             }
           },
@@ -557,6 +587,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               id: { $notNull: true }
             }
           },
@@ -634,6 +667,9 @@ const ExploreProductArea = ({
         status: {
           $eq: "Live"
         },
+        endTimeStamp: {
+          $gt: new Date()
+        },
         sellType: {
           $eq: "FixedPrice"
         }
@@ -656,6 +692,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               id: { $notNull: true }
             }
           },
@@ -673,6 +712,9 @@ const ExploreProductArea = ({
       filters.auction = {
         status: {
           $eq: "Live"
+        },
+        endTimeStamp: {
+          $gt: new Date()
         },
         sellType: {
           $eq: "Bidding"
@@ -696,6 +738,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               id: { $notNull: true }
             }
           },
@@ -720,7 +765,10 @@ const ExploreProductArea = ({
       auction: {
         status: {
           $eq: "Live"
-        }
+        },
+        endTimeStamp: {
+          $gt: new Date()
+        },
       },
       collection: {
         id: {
@@ -796,6 +844,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               // id: { $notNull: true }
             }
           },
@@ -820,7 +871,10 @@ const ExploreProductArea = ({
       auction: {
         status: {
           $eq: "Live"
-        }
+        },
+        endTimeStamp: {
+          $gt: new Date()
+        },
       },
       collection: {
         id: {
@@ -853,6 +907,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               id: { $notNull: true }
             }
           },
@@ -927,6 +984,9 @@ const ExploreProductArea = ({
             fields: "*",
             filters: {
               status: "Live",
+              endTimeStamp: {
+                $gt: new Date()
+              },
               id: { $notNull: true }
             }
           },
