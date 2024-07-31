@@ -110,6 +110,9 @@ export async function getServerSideProps({ params }) {
         status: {
           $eq: "Live"
         },
+        endTimeStamp: {
+          $gt: new Date()
+        },
         collectible: {
           collection: {
             id: auction.data?.collectible?.data?.collection?.data?.id

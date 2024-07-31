@@ -93,7 +93,7 @@ const SignupForm = ({ className, loading, setLoading }) => {
         </div>
         <div className="mb-5">
           <label htmlFor="password" className="form-label">
-            Re Password
+            Re-enter Password
           </label>
           <input
             type="password"
