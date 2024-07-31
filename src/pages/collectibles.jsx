@@ -54,7 +54,10 @@ Collectibles.getInitialProps = async (ctx) => {
     filters: {
       collectibles: {
         auction: {
-          status: "Live"
+          status: "Live",
+          endTimeStamp: {
+            $gt: new Date()
+          },
         }
       }
     },
@@ -70,7 +73,10 @@ Collectibles.getInitialProps = async (ctx) => {
     const getdataAll = await getCollectible({
       filters: {
         auction: {
-          status: "Live"
+          status: "Live",
+          endTimeStamp: {
+            $gt: new Date()
+          },
         },
         collection: collection.id
       },
@@ -89,7 +95,10 @@ Collectibles.getInitialProps = async (ctx) => {
     filters: {
       $or: [{
         auction: {
-          status: "Live"
+          status: "Live",
+          endTimeStamp: {
+            $gt: new Date()
+          },
         }
       }, {
         isOpenseaCollectible: true
@@ -112,6 +121,9 @@ Collectibles.getInitialProps = async (ctx) => {
         fields: "*",
         filters: {
           status: "Live",
+          endTimeStamp: {
+            $gt: new Date()
+          },
           id: { $notNull: true }
         }
       },
