@@ -9,8 +9,8 @@ import { networksList, walletsList } from "@utils/wallet";
 const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
 
     const [selectTermsAndConditions, setSelectTermsAndConditions] = useState(false);
-    const [selectNetwork, setSelectNetwork] = useState(false);
-    const [selectWallet, setSelectWallet] = useState(false);
+    const [selectNetwork, setSelectNetwork] = useState(true);
+    const [selectWallet, setSelectWallet] = useState(true);
 
     return (
         <Modal className="rn-popup-modal connect-wallets-wrapper placebid-modal-wrapper" show={show} onHide={handleModal} centered>
@@ -32,7 +32,8 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                     name="term-condition"
                                     value="true"
                                     id="term-condition"
-                                    onClick={() => setSelectTermsAndConditions(true)}
+                                    onClick={() => setSelectTermsAndConditions(!selectTermsAndConditions)}
+                                    checked={selectTermsAndConditions}
                                     required
                                 />
                                 <label htmlFor="term-condition" className="term">
@@ -51,6 +52,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                                     value={list.name}
                                                     id={"id" + index}
                                                     onClick={() => setSelectNetwork(true)}
+                                                    defaultChecked={index == 0}
                                                 />
                                                 <label htmlFor={"id" + index}>
                                                     <img src={list.image} alt="Image" />
@@ -74,6 +76,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                                     value={list.name}
                                                     id={"walletid-" + index}
                                                     onClick={() => setSelectWallet(true)}
+                                                    defaultChecked={index == 0}
                                                 />
                                                 <label htmlFor={"walletid-" + index}>
                                                     <img src={list.image} alt="Image" />
