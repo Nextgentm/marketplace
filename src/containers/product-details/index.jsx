@@ -693,7 +693,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
                   {product.symbol}
                 </span>
               </span>
-              <h6 className="title-name" style={{ fontFamily: "inherit", fontSize: "17px !important" }}>
+              <h6 className="title-name" style={{ fontFamily: "inherit" }}>
                 <span>{descriptionShowMore ? product.description : `${product.description.substring(0, 110)}`}</span>
                 {product.description.length > 110 && <a href="#" onClick={() => descriptionShowMore ? setDescriptionShowMore(false) : setDescriptionShowMore(true)}>{descriptionShowMore ? <><br />show less</> : <>...show more</>}</a>}
               </h6>
