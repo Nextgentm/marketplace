@@ -135,8 +135,9 @@ const UserDropdown = () => {
   };
 
   const getProvider = async () => {
-    if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);//new ethers.providers.Web3Provider(window.ethereum, "any")
+    if (window.ethereum && window.ethereum.isMetaMask) {
+      const metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+      const provider = new ethers.providers.Web3Provider(metamaskProvider);//new ethers.providers.Web3Provider(window.ethereum, "any")
       return provider;
     }
     return null;
