@@ -33,7 +33,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                     value="true"
                                     id="term-condition"
                                     onClick={() => setSelectTermsAndConditions(!selectTermsAndConditions)}
-                                    // defaultChecked={true}
+                                    checked={selectTermsAndConditions}
                                     required
                                 />
                                 <label htmlFor="term-condition" className="term">
