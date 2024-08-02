@@ -1,8 +1,8 @@
 export const networksList = [
-  {
-    name: "Ethereum",
-    image: "/images/connect/ethereum.png"
-  },
+  // {
+  //   name: "Ethereum",
+  //   image: "/images/connect/ethereum.png"
+  // },
   {
     name: "Binance",
     image: "/images/connect/binance.png"
@@ -10,15 +10,15 @@ export const networksList = [
   {
     name: "Polygon",
     image: "/images/connect/polygon.png"
-  },
-  {
-    name: "Avalanche",
-    image: "/images/connect/avalanche.png"
-  },
-  {
-    name: "Arbitrum",
-    image: "/images/connect/arbitrum.webp"
   }
+  // {
+  //   name: "Avalanche",
+  //   image: "/images/connect/avalanche.png"
+  // },
+  // {
+  //   name: "Arbitrum",
+  //   image: "/images/connect/arbitrum.webp"
+  // }
 ];
 
 export const walletsList = [
