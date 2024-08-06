@@ -176,6 +176,8 @@ Home.getInitialProps = async () => {
     }
   }
   let newestItems = await strapi.find("auctions", newestItemsFilter);
+  newestItems.data.sort((a, b) => newestItemsIds.indexOf(a.id) - newestItemsIds.indexOf(b.id));
+  // console.log(newestItems);
   // const newestItems = await client.query({
   //   query: ALL_COLLECTIBLE_LISTDATA_QUERY,
   //   variables: {
