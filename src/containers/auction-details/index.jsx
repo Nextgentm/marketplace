@@ -25,6 +25,7 @@ import strapi from "@utils/strapi";
 import TimeAuctionModal from "@components/modals/time-auction";
 import DirectSalesModal from "@components/modals/direct-sales";
 import ConfirmModal from "@components/modals/confirm-modal";
+import { Messages } from "@utils/constants";
 
 // Demo Image
 

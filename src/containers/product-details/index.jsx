@@ -27,6 +27,7 @@ import strapi from "@utils/strapi";
 import ConfirmModal from "@components/modals/confirm-modal";
 import StakingTabContent from "@components/product-details/staking-tab/staking-tab-content";
 import AuctionsTabContent from "@components/product-details/bid-tab/auctions-tab-content";
+import { Messages } from "@utils/constants";
 
 // Demo Image
 

@@ -19,6 +19,7 @@ import { getERC721Contract, getERC1155Contract, addressIsAdmin } from "src/lib/B
 import { useMutation } from "@apollo/client";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
+import { Messages } from "@utils/constants";
 
 const CreateNewArea = ({ className, space, collectible }) => {
   const [showProductModal, setShowProductModal] = useState(false);

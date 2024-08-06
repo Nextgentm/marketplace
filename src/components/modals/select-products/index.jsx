@@ -10,6 +10,7 @@ import { Spinner } from "react-bootstrap";
 import { getERC1155Contract, getERC721Contract, getStakingNFTContract, switchNetwork } from "src/lib/BlokchainHelperFunctions";
 import { toast } from "react-toastify";
 import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { Messages } from "@utils/constants";
 
 const SelectProducts = ({ show, handleModal, refreshPageData,
     loading, setLoading }) => {
