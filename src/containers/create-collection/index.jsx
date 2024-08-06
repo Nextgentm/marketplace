@@ -14,6 +14,7 @@ import Multiselect from "multiselect-react-dropdown";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, BINANCE_NETWORK_CHAIN_ID } from "src/lib/constants";
 import { getERC721FactoryContract, getERC1155FactoryContract, addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import strapi from "@utils/strapi";
+import { Messages } from "@utils/constants";
 
 const categoryOptionsList = [
   {
@@ -100,7 +101,10 @@ const CreateCollectionArea = ({ collection }) => {
   const [paymentTokensData, setPaymentTokensData] = useState(null);
   const [selectedPaymentTokens, setSelectedPaymentTokens] = useState([]);
   // Get Wallet data
-  const { walletData, setWalletData } = useContext(AppData);
+  const { walletData,
+    changeNetworkByNetworkType,
+    checkAndConnectWallet
+  } = useContext(AppData);
   // Get url param
   const router = useRouter();
 
@@ -182,8 +186,8 @@ const CreateCollectionArea = ({ collection }) => {
   const updateCollection = async (data, e) => {
     try {
       if (!walletData.isConnected) {
-        toast.error("Please connect wallet first");
-        return;
+        let res = await checkAndConnectWallet(blockchainNetwork);
+        if (!res) return;
       }
       const validationValue = await addressIsAdmin(walletData);
       if (validationValue) {
@@ -447,24 +451,15 @@ const CreateCollectionArea = ({ collection }) => {
     // console.log(data, e);
     /** if Wallet not connected */
     if (!walletData.isConnected) {
-      toast.error("Please connect wallet first");
+      let res = await checkAndConnectWallet(blockchainNetwork);
+      if (!res) return;
+    }
+    // chnage network
+    let networkChanged = await changeNetworkByNetworkType(blockchainNetwork);
+    if (!networkChanged) {
+      // ethereum testnet
+      toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
-    } // chnage network
-    if (blockchainNetwork === "Ethereum") {
-      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
-        // ethereum testnet
-        return;
-      }
-    } else if (blockchainNetwork === "Polygon") {
-      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
-    } else if (blockchainNetwork === "Binance") {
-      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
     }
 
     /** Show Error if form not submited correctly */
