@@ -38,7 +38,7 @@ const Header = ({ className }) => {
     if (walletData.isConnected) {
       addressIsAdmin(walletData).then((validationValue) => {
         setIsAdminWallet(validationValue);
-      }).catch((error) => { console.log("Error while factory call " + error) });
+      }).catch((error) => { console.log("Error while Checking User " + error) });
     } else {
       setIsAdminWallet(false);
     }
