@@ -14,7 +14,10 @@ import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CH
 const SelectProducts = ({ show, handleModal, refreshPageData,
     loading, setLoading }) => {
     const { userData: authorData } = useContext(AppData);
-    const { walletData, setWalletData } = useContext(AppData);
+    const { walletData,
+        changeNetworkByNetworkType,
+        checkAndConnectWallet
+    } = useContext(AppData);
     const [loadingSpinner, setLoadingSpinner] = useState(false);
 
     // all own collectibles
@@ -71,28 +74,15 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
         try {
             let product = selectedItem;
             if (!walletData.isConnected) {
-                toast.error("Please connect wallet first");
-                setLoading(false);
+                let res = await checkAndConnectWallet(product.collection.networkType);
+                if (!res) return;
+            }
+            // chnage network
+            let networkChanged = await changeNetworkByNetworkType(product.collection.networkType);
+            if (!networkChanged) {
+                // ethereum testnet
+                toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
                 return;
-            } // chnage network
-            if (product.collection.networkType === "Ethereum") {
-                if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
-                    // ethereum testnet
-                    setLoading(false);
-                    return;
-                }
-            } else if (product.collection.networkType === "Polygon") {
-                if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
-                    // polygon testnet
-                    setLoading(false);
-                    return;
-                }
-            } else if (product.collection.networkType === "Binance") {
-                if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
-                    // polygon testnet
-                    setLoading(false);
-                    return;
-                }
             }
 
             let index = null;

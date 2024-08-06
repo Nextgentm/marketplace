@@ -18,33 +18,45 @@ import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateColle
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import { useMutation } from "@apollo/client";
 import strapi from "@utils/strapi";
+import { Messages } from "@utils/constants";
 
 const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
   ssr: false
 });
 
 const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData, isOwner, btnColor, className, primarySale }) => {
-  const { walletData, setWalletData, userData } = useContext(AppData);
+  const {
+    walletData,
+    changeNetworkByNetworkType,
+    checkAndConnectWallet,
+    userData
+  } = useContext(AppData);
   const [isMoonPayDownTimeData, setMoonPayDownTimeData] = useState([]);
   const [isMoonPayDownTime, setMoonPayDownTime] = useState({ result: false, endTime: null });
   const [isMoonPayMethod, setMoonPayMethod] = useState(false);
+  const [showBidModal, setShowBidModal] = useState(false);
+
   const handleBidModalForMoonpay = () => {
     if (!userData) {
-      toast.error("Please login first");
+      toast.error(Messages.PLEASE_LOGIN);
       return;
     }
     setMoonPayMethod((prev) => !prev);
     setShowBidModal((prev) => !prev);
   };
-  const [showBidModal, setShowBidModal] = useState(false);
-  const handleBidModal = () => {
-    if (!userData) {
-      toast.error("Please login first");
-      return;
-    }
-    if (!walletData.isConnected) {
-      toast.error("Please connect wallet first");
-      return;
+
+  const handleBidModal = async () => {
+    if (!showBidModal) {
+      if (!userData) {
+        toast.error(Messages.PLEASE_LOGIN);
+        return;
+      }
+      console.log(walletData);
+      let res = await checkAndConnectWallet(product.collection.data.networkType);
+      if (!res) {
+        return;
+      }
+      console.log(walletData);
     }
     setShowBidModal((prev) => !prev);
   };
@@ -95,12 +107,12 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         moonpaySdk.updateSignature(decodeURIComponent(signature));
         moonpaySdk.show();
       } else {
-        toast.error("Please login first");
+        toast.error(Messages.PLEASE_LOGIN);
         return;
       }
     } catch (error) {
       console.log("Error: " + error);
-      toast.error("Error while moonpay integration");
+      toast.error(Messages.MOONPAY_INTEGRATION_ERROR);
     }
   }
 
@@ -205,7 +217,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         TokenContractAddress = auction.data.paymentToken?.data?.binanceAddress;
       }
       if (!TokenContractAddress) {
-        toast.error("Token address not found for current network!");
+        toast.error(Messages.TOKEN_ADDRESS_NOT_FOUND);
         return;
       }
       const tokenContract = await getTokenContract(walletData, TokenContractAddress);
@@ -223,7 +235,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       // console.log(price, decimals, convertedPrice, quantity, requireAllowanceAmount);
       const userBalance = await tokenContract.balanceOf(walletData.account);
       if (parseInt(requireAllowanceAmount) > parseInt(userBalance._hex, 16)) {
-        toast.error("Amount is greater than your current balance");
+        toast.error(Messages.WALLET_INSUFFICIEN_BALANCE);
         return;
       }
       const transaction = await tokenContract.increaseAllowance(walletData.contractData.TransferProxy.address, requireAllowanceAmount);
@@ -355,10 +367,10 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         if (extractedErrorMessage) {
           toast.error(`Transaction failed: ${extractedErrorMessage}`);
         } else {
-          toast.error("Error while purchasing NFT!");
+          toast.error(Messages.NFT_PURCHASE_ERROR);
         }
       } else {
-        toast.error("Error while purchasing NFT!");
+        toast.error(Messages.NFT_PURCHASE_ERROR);
         console.log(error);
       }
     }
@@ -367,46 +379,39 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!userData) {
-      toast.error("Please login first");
+      toast.error(Messages.PLEASE_LOGIN);
       return;
     }
+    console.log(walletData);
     if (!walletData.isConnected) {
-      toast.error("Please connect wallet first");
-      return;
-    } // chnage network
-    if (product.collection.data.networkType === "Ethereum") {
-      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
-        // ethereum testnet
-        return;
-      }
-    } else if (product.collection.data.networkType === "Polygon") {
-      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
-    } else if (product.collection.data.networkType === "Binance") {
-      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
+      let res = await checkAndConnectWallet(product.collection.data.networkType);
+      if (!res) return;
     }
+    // chnage network
+    let networkChanged = await changeNetworkByNetworkType(product.collection.data.networkType);
+    if (!networkChanged) {
+      // ethereum testnet
+      toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
+      return;
+    }
+
     if (auction.data.sellType == "Bidding") {
       const price = event.target.price?.value;
       const quantity = auction.data.quantity;
 
-      StoreData(price, quantity);
+      await StoreData(price, quantity);
     } else {
       const price = auction.data.bidPrice;
       const quantity = event.target.quantity?.value ? event.target.quantity?.value : auction.data.quantity;
 
-      StoreData(price, quantity);
+      await StoreData(price, quantity);
     }
   };
 
   const handleSubmitForMoonpay = async (event) => {
     event.preventDefault();
     if (!userData) {
-      toast.error("Please login first");
+      toast.error(Messages.PLEASE_LOGIN);
       return;
     }
     const quantity = event.target.quantity?.value ? event.target.quantity?.value : auction.data.quantity;

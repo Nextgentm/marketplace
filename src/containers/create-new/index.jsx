@@ -27,7 +27,10 @@ const CreateNewArea = ({ className, space, collectible }) => {
   const [previewData, setPreviewData] = useState({});
   const [dataCollection, setDataCollection] = useState(null);
 
-  const { walletData, setWalletData } = useContext(AppData);
+  const { walletData,
+    changeNetworkByNetworkType,
+    checkAndConnectWallet
+  } = useContext(AppData);
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   const router = useRouter();
@@ -252,29 +255,20 @@ const CreateNewArea = ({ className, space, collectible }) => {
     const isPreviewBtn = submitBtn.dataset?.btn;
     setHasImageError(!selectedImage);
 
-    if (!walletData.isConnected) {
-      toast.error("Please connect wallet first");
-      return;
-    } // chnage network
     if (!selectedCollection) {
       toast.error("Select collection");
       return;
     }
-    if (selectedCollection?.networkType === "Ethereum") {
-      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
-        // ethereum testnet
-        return;
-      }
-    } else if (selectedCollection?.networkType === "Polygon") {
-      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
-    } else if (selectedCollection?.networkType === "Binance") {
-      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
+    if (!walletData.isConnected) {
+      let res = await checkAndConnectWallet(selectedCollection?.networkType);
+      if (!res) return;
+    }
+    // chnage network
+    let networkChanged = await changeNetworkByNetworkType(selectedCollection?.networkType);
+    if (!networkChanged) {
+      // ethereum testnet
+      toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
+      return;
     }
     if (isPreviewBtn && selectedImage) {
       setPreviewData({ ...data, image: selectedImage });
@@ -505,13 +499,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
 
   useEffect(() => {
     if (selectedCollection) {
-      if (selectedCollection.networkType === "Ethereum") {
-        switchNetwork(ETHEREUM_NETWORK_CHAIN_ID); // ethereum testnet
-      } else if (selectedCollection.networkType === "Polygon") {
-        switchNetwork(POLYGON_NETWORK_CHAIN_ID); // polygon testnet
-      } else if (selectedCollection.networkType === "Binance") {
-        switchNetwork(BINANCE_NETWORK_CHAIN_ID); // polygon testnet
-      }
+      changeNetworkByNetworkType(selectedCollection?.networkType);
     }
   }, [selectedCollection]);
 
@@ -526,8 +514,8 @@ const CreateNewArea = ({ className, space, collectible }) => {
   const updateCollectible = async (data, e) => {
     try {
       if (!walletData.isConnected) {
-        toast.error("Please connect wallet first");
-        return;
+        let res = await checkAndConnectWallet(selectedCollection.networkType);
+        if (!res) return;
       }
       const validationValue = await addressIsAdmin(walletData);
       const isAuctionLive = collectible?.auction?.data.every(({ status }) => status === "Live");
