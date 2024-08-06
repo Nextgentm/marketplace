@@ -168,19 +168,14 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   }, [updatedCollectible]);
 
   async function completeAuction(quantity) {
-    updateCollectible({
-      variables: {
-        "data": {
-          putOnSale: !(quantity == 0),
-          owner: walletData.account
-        },
-        "updateCollectibleId": product.id
-      }
-    });
-
     const res = await strapi.update("auctions", auction.data.id, {
       status: quantity == 0 ? "Completed" : "Live",
       remainingQuantity: quantity
+    });
+
+    const data = await strapi.update("collectibles", product.id, {
+      putOnSale: !(quantity == 0),
+      owner: walletData.account
     });
   }
 
@@ -323,18 +318,15 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         if (receipt) {
           isAccepted = true;
           await completeAuction(auction.data.remainingQuantity - qty);
-          await createOwnerHistory({
-            variables: {
-              data: {
-                auction: auction.data.id,
-                collectible: product.id,
-                event: "FixedPrice",
-                fromWalletAddress: seller,
-                quantity: qty,
-                toWalletAddress: buyer,
-                transactionHash: transactionHash
-              }
-            }
+          // create owner history
+          const res = await strapi.create("Owner-histories", {
+            auction: auction.data.id,
+            collectible: product.id,
+            event: "FixedPrice",
+            fromWalletAddress: seller,
+            quantity: qty,
+            toWalletAddress: buyer,
+            transactionHash: transactionHash
           });
         }
       }
