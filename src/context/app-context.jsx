@@ -187,10 +187,10 @@ const AppDataContext = ({ children }) => {
     if (window.ethereum && window.ethereum.isMetaMask) {
       if (window.ethereum.providers) {
         const metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-        const provider = new ethers.providers.Web3Provider(metamaskProvider, "any");//new ethers.providers.Web3Provider(window.ethereum, "any")
+        const provider = new ethers.providers.Web3Provider(metamaskProvider);// only use in local give error on live //new ethers.providers.Web3Provider(window.ethereum, "any")
         return provider;
       } else {
-        const provider = new ethers.providers.Web3Provider(window.ethereum, "any");//new ethers.providers.Web3Provider(window.ethereum, "any")
+        const provider = new ethers.providers.Web3Provider(window.ethereum);// only use in local give error on live //new ethers.providers.Web3Provider(window.ethereum, "any")
         return provider;
       }
     }
