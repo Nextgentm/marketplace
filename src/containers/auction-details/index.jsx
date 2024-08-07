@@ -25,12 +25,16 @@ import strapi from "@utils/strapi";
 import TimeAuctionModal from "@components/modals/time-auction";
 import DirectSalesModal from "@components/modals/direct-sales";
 import ConfirmModal from "@components/modals/confirm-modal";
+import { Messages } from "@utils/constants";
 
 // Demo Image
 
 const AuctionDetailsArea = ({ space, className, auctionData }) => {
 
-  const { walletData, setWalletData } = useContext(AppData);
+  const { walletData,
+    changeNetworkByNetworkType,
+    checkAndConnectWallet
+  } = useContext(AppData);
 
   const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
@@ -40,17 +44,29 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
   const [erc1155MyBalance, setERC1155MyBalance] = useState(0);
 
   const [showDirectSalesModal, setShowDirectSalesModal] = useState(false);
-  const handleDirectSaleModal = () => {
+  const handleDirectSaleModal = async () => {
+    if (!showDirectSalesModal) {
+      let res = await checkAndConnectWallet(auction?.data?.collectible.data.collection.data.networkType);
+      if (!res) return;
+    }
     setShowDirectSalesModal((prev) => !prev);
   };
 
   const [showTimeAuctionModal, setShowTimeAuctionModal] = useState(false);
-  const handleTimeAuctionModal = () => {
+  const handleTimeAuctionModal = async () => {
+    if (!showTimeAuctionModal) {
+      let res = await checkAndConnectWallet(auction?.data?.collectible.data.collection.data.networkType);
+      if (!res) return;
+    }
     setShowTimeAuctionModal((prev) => !prev);
   };
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const handleConfirmModal = () => {
+  const handleConfirmModal = async () => {
+    if (!showConfirmModal) {
+      let res = await checkAndConnectWallet(auction?.data?.collectible.data.collection.data.networkType);
+      if (!res) return;
+    }
     setShowConfirmModal((prev) => !prev);
   };
 
@@ -306,24 +322,15 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
     event.preventDefault();
     // console.log(event);
     if (!walletData.isConnected) {
-      toast.error("Please connect wallet first");
+      let res = await checkAndConnectWallet(auction?.data?.collectible.data.collection.data.networkType);
+      if (!res) return;
+    }
+    // chnage network
+    let networkChanged = await changeNetworkByNetworkType(auction?.data?.collectible.data.collection.data.networkType);
+    if (!networkChanged) {
+      // ethereum testnet
+      toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
-    } // chnage network
-    if (auction?.data?.collectible.data.collection.data.networkType === "Ethereum") {
-      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
-        // ethereum testnet
-        return;
-      }
-    } else if (auction?.data?.collectible.data.collection.data.networkType === "Polygon") {
-      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
-    } else if (auction?.data?.collectible.data.collection.data.networkType === "Binance") {
-      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
     }
 
     const data = {
@@ -372,10 +379,10 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
                   <div className="rn-bid-details">
                     <div className="row">
                       <div className="col-md-6">
-                        <Button onClick={() => auction.data.sellType == "FixedPrice" ? handleDirectSaleModal(true) : handleTimeAuctionModal(true)}>Edit Auction</Button>
+                        <Button onClick={() => auction.data.sellType == "FixedPrice" ? handleDirectSaleModal() : handleTimeAuctionModal()}>Edit Auction</Button>
                       </div>
                       <div className="col-md-6">
-                        <Button onClick={() => setShowConfirmModal(true)}>Cancel Auction</Button>
+                        <Button onClick={() => handleConfirmModal()}>Cancel Auction</Button>
                       </div>
                     </div>
                   </div>

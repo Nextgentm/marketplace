@@ -27,6 +27,7 @@ import strapi from "@utils/strapi";
 import ConfirmModal from "@components/modals/confirm-modal";
 import StakingTabContent from "@components/product-details/staking-tab/staking-tab-content";
 import AuctionsTabContent from "@components/product-details/bid-tab/auctions-tab-content";
+import { Messages } from "@utils/constants";
 
 // Demo Image
 
@@ -34,7 +35,10 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
   const [showAuctionInputModel, setShowAuctionInputModel] = useState(false);
   const [sellType, setSellType] = useState("nav-direct-sale");
 
-  const { walletData, setWalletData } = useContext(AppData);
+  const { walletData,
+    changeNetworkByNetworkType,
+    checkAndConnectWallet
+  } = useContext(AppData);
 
   const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
   const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
@@ -318,24 +322,15 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     // console.log(event);
     // console.log(product);
     if (!walletData.isConnected) {
-      toast.error("Please connect wallet first");
+      let res = await checkAndConnectWallet(product.collection.data.networkType);
+      if (!res) return;
+    }
+    // chnage network
+    let networkChanged = await changeNetworkByNetworkType(product.collection.data.networkType);
+    if (!networkChanged) {
+      // ethereum testnet
+      toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
-    } // chnage network
-    if (product.collection.data.networkType === "Ethereum") {
-      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
-        // ethereum testnet
-        return;
-      }
-    } else if (product.collection.data.networkType === "Polygon") {
-      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
-    } else if (product.collection.data.networkType === "Binance") {
-      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
     }
 
     let _sellType;
@@ -363,24 +358,15 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     // console.log(event);
     // console.log(product);
     if (!walletData.isConnected) {
-      toast.error("Please connect wallet first");
+      let res = await checkAndConnectWallet(product.collection.data.networkType);
+      if (!res) return;
+    }
+    // chnage network
+    let networkChanged = await changeNetworkByNetworkType(product.collection.data.networkType);
+    if (!networkChanged) {
+      // ethereum testnet
+      toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
-    } // chnage network
-    if (product.collection.data.networkType === "Ethereum") {
-      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
-        // ethereum testnet
-        return;
-      }
-    } else if (product.collection.data.networkType === "Polygon") {
-      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
-    } else if (product.collection.data.networkType === "Binance") {
-      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
     }
     // transfer NFT to other user
     const receiver = event.target.receiver.value;
@@ -462,24 +448,15 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     // console.log(event);
     // console.log(product);
     if (!walletData.isConnected) {
-      toast.error("Please connect wallet first");
+      let res = await checkAndConnectWallet(product.collection.data.networkType);
+      if (!res) return;
+    }
+    // chnage network
+    let networkChanged = await changeNetworkByNetworkType(product.collection.data.networkType);
+    if (!networkChanged) {
+      // ethereum testnet
+      toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
-    } // chnage network
-    if (product.collection.data.networkType === "Ethereum") {
-      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
-        // ethereum testnet
-        return;
-      }
-    } else if (product.collection.data.networkType === "Polygon") {
-      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
-    } else if (product.collection.data.networkType === "Binance") {
-      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
     }
     // NFT quantity to burn
     const quantity = event.target.quantity?.value ? event.target.quantity?.value : 1;
@@ -559,24 +536,15 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     // console.log(event);
     // console.log(product);
     if (!walletData.isConnected) {
-      toast.error("Please connect wallet first");
+      let res = await checkAndConnectWallet(product.collection.data.networkType);
+      if (!res) return;
+    }
+    // chnage network
+    let networkChanged = await changeNetworkByNetworkType(product.collection.data.networkType);
+    if (!networkChanged) {
+      // ethereum testnet
+      toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
-    } // chnage network
-    if (product.collection.data.networkType === "Ethereum") {
-      if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
-        // ethereum testnet
-        return;
-      }
-    } else if (product.collection.data.networkType === "Polygon") {
-      if (!await switchNetwork(POLYGON_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
-    } else if (product.collection.data.networkType === "Binance") {
-      if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
-        // polygon testnet
-        return;
-      }
     }
     // NFT quantity to burn
     const quantity = event.target.quantity?.value ? event.target.quantity?.value : 1;
