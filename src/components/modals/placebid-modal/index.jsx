@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 
 
-const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, currency, handleSubmit }) => {
+const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, currency, handleSubmit, sellType }) => {
 
   return (
     <Modal className="rn-popup-modal placebid-modal-wrapper" show={show} onHide={handleModal} centered>
@@ -18,22 +18,23 @@ const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, curre
         </button>
       )}
       <Modal.Header>
-        <h3 className="modal-title">{supply > 1 ? "Direct Buy" : "Place a bid"}</h3>
+        <h3 className="modal-title">{sellType !== "Bidding" ? "Direct Buy" : "Place a bid"}</h3>
       </Modal.Header>
       <Modal.Body>
         <p>You are about to purchase this product</p>
         <div className="placebid-form-box">
           <form onSubmit={handleSubmit}>
-            <h5 className="title">{supply > 1 ? "Checkout" : "Your bid"}</h5>
+            <h5 className="title">{sellType !== "Bidding" ? "Checkout" : "Your bid"}</h5>
             <div className="bid-content">
               <div className="bid-content-top">
-                {supply > 1 ? (
+                {sellType !== "Bidding" ? (
                   <div className="row">
                     <label htmlFor="quantity">Quantity</label>
                     <input
                       type="number"
                       id="quantity"
                       min="1"
+                      defaultValue={1}
                       placeholder="e.g. 10"
                       max={maxQuantity}
                     />
@@ -68,7 +69,7 @@ const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, curre
             </div>
             <div className="bit-continue-button">
               <Button size="medium" type="submit" fullwidth>
-                {supply > 1 ? "Buy Now" : "Place a bid"}
+                {sellType !== "Bidding" ? "Buy Now" : "Place a bid"}
               </Button>
               <Button color="primary-alta" size="medium" className="mt--10" onClick={handleModal}>
                 Cancel
