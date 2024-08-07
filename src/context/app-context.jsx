@@ -187,9 +187,15 @@ const AppDataContext = ({ children }) => {
 
   const getProvider = async () => {
     if (window.ethereum && window.ethereum.isMetaMask) {
-      if (window.ethereum.providers) {
-        const metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-        const provider = new ethers.providers.Web3Provider(metamaskProvider);// only use in local give error on live //new ethers.providers.Web3Provider(window.ethereum, "any")
+      if (window.ethereum.providers?.length) {
+        let provider;
+        window.ethereum.providers.forEach(async (p) => {
+          if (p.isMetaMask) provider = p;
+        });
+        if (!provider) {
+          const metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+          provider = new ethers.providers.Web3Provider(metamaskProvider);// only use in local give error on live //new ethers.providers.Web3Provider(window.ethereum, "any")
+        }
         return provider;
       } else {
         const provider = new ethers.providers.Web3Provider(window.ethereum);// only use in local give error on live //new ethers.providers.Web3Provider(window.ethereum, "any")
@@ -353,6 +359,7 @@ const AppDataContext = ({ children }) => {
         return false;
       }
       const provider = await getProvider();
+      // if (!provider) {toast.error("Error while connecting wallet"); return;}
       const accounts = await provider.send("eth_requestAccounts", []);
       if (currentNetwork) {
         if (!await switchNetwork(currentNetwork)) {
