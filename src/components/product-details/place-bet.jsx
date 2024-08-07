@@ -19,6 +19,7 @@ import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHis
 import { useMutation } from "@apollo/client";
 import strapi from "@utils/strapi";
 import { Messages } from "@utils/constants";
+import LoginModel from "@components/modals/login-model";
 
 const Countdown = dynamic(() => import("@ui/countdown/layout-02"), {
   ssr: false
@@ -29,34 +30,53 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
     walletData,
     changeNetworkByNetworkType,
     checkAndConnectWallet,
+    loadUserData,
     userData
   } = useContext(AppData);
+
+  const [loginModal, setLoginModal] = useState(false);
   const [isMoonPayDownTimeData, setMoonPayDownTimeData] = useState([]);
   const [isMoonPayDownTime, setMoonPayDownTime] = useState({ result: false, endTime: null });
   const [isMoonPayMethod, setMoonPayMethod] = useState(false);
   const [showBidModal, setShowBidModal] = useState(false);
+  const [callbackFunction, setCallbackFunction] = useState(null);
+
+  useEffect(() => {
+    if (userData) {
+      setLoginModal(false);
+      if (callbackFunction == "handleBidModal") {
+        setCallbackFunction(null);
+        handleBidModal();
+      } else if (callbackFunction == "handleBidModalForMoonpay") {
+        setCallbackFunction(null);
+        handleBidModalForMoonpay();
+      }
+    }
+  }, [userData]);
 
   const handleBidModalForMoonpay = () => {
     if (!userData) {
-      toast.error(Messages.PLEASE_LOGIN);
+      setCallbackFunction("handleBidModalForMoonpay");
+      setLoginModal(true);
+      // toast.error(Messages.PLEASE_LOGIN);
       return;
     }
     setMoonPayMethod((prev) => !prev);
-    setShowBidModal((prev) => !prev);
+    // setShowBidModal((prev) => !prev);
   };
 
   const handleBidModal = async () => {
     if (!showBidModal) {
       if (!userData) {
-        toast.error(Messages.PLEASE_LOGIN);
+        setCallbackFunction("handleBidModal");
+        setLoginModal(true);
+        // toast.error(Messages.PLEASE_LOGIN);
         return;
       }
-      console.log(walletData);
       let res = await checkAndConnectWallet(product.collection.data.networkType);
       if (!res) {
         return;
       }
-      console.log(walletData);
     }
     setShowBidModal((prev) => !prev);
   };
@@ -71,7 +91,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       method: "get",
       url: `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/calulate-gas-fees?auctionId=${auction.data.id}`
     });
-    console.log(res);
+    // console.log(res);
   }
 
   //moonpay integration
@@ -184,7 +204,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       const tradeContract = await getTradeContract(walletData);
 
       const orderSellerHash = await tradeContract.getOrderBuyerHash(order);
-      console.log(orderSellerHash);
+      // console.log(orderSellerHash);
       return orderSellerHash;
     } catch (error) {
       console.log(error);
@@ -268,7 +288,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         "0x"
       ]);
       const buyerOrderSignature = await signMessage(walletData.provider, walletData.account, bidHash);
-      console.log(buyerOrderSignature);
+      // console.log(buyerOrderSignature);
       if (!buyerOrderSignature) {
         return;
       }
@@ -278,23 +298,23 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
 
         // Pull the deployed contract instance
         const tradeContract = await getTradeContract(walletData);
-        console.log([
-          seller,
-          buyer,
-          erc20Address,
-          nftAddress,
-          nftType,
-          unitPrice,
-          nftOrderQuantity,
-          skipRoyalty,
-          startTimestamp,
-          endTimeStamp,
-          tokenId,
-          amount,
-          qty,
-          sellerOrderSignature,
-          buyerOrderSignature
-        ]);
+        // console.log([
+        //   seller,
+        //   buyer,
+        //   erc20Address,
+        //   nftAddress,
+        //   nftType,
+        //   unitPrice,
+        //   nftOrderQuantity,
+        //   skipRoyalty,
+        //   startTimestamp,
+        //   endTimeStamp,
+        //   tokenId,
+        //   amount,
+        //   qty,
+        //   sellerOrderSignature,
+        //   buyerOrderSignature
+        // ]);
         const transaction = await tradeContract.buyAsset([
           seller,
           buyer,
@@ -340,7 +360,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         signature: buyerOrderSignature,
         isAccepted
       });
-      console.log(res);
+      // console.log(res);
       await refreshPageData();
       setShowBidModal(false);
       if (auction.data.sellType === "FixedPrice") {
@@ -350,7 +370,9 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       }
       // router.reload();
     } catch (error) {
-      if (error.message.includes("execution reverted:")) {
+      if (error.code == 4001) {
+        toast.error(error.message);
+      } else if (error.message.includes("execution reverted:")) {
         // Extract the error message
         const startIndex = error.message.indexOf("execution reverted:");
         const endIndex = error.message.indexOf('",', startIndex);
@@ -360,6 +382,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         } else {
           toast.error(Messages.NFT_PURCHASE_ERROR);
         }
+      } else if (error.message.includes("user rejected transaction")) {
+        toast.error(`User rejected the transaction`);
       } else {
         toast.error(Messages.NFT_PURCHASE_ERROR);
         console.log(error);
@@ -370,7 +394,9 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!userData) {
-      toast.error(Messages.PLEASE_LOGIN);
+      setLoginModal(true);
+      // setCallbackMethod(() => () => handleBidModal(event));
+      // toast.error(Messages.PLEASE_LOGIN);
       return;
     }
     // console.log(walletData);
@@ -492,23 +518,20 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         <Button
           color={btnColor || "primary-alta"}
           className="mt--30"
-          onClick={
-            auction.data.sellType == "Bidding"
-              ? handleBidModal
-              : auction.data.quantity > 1
-                ? handleBidModal
-                : handleSubmit
-          }
+          onClick={handleBidModal}
           disabled={isOwner || (auction_date && new Date() > new Date(auction_date))}
         >
           {auction.data.sellType == "Bidding" ? "Place a Bid" : "Buy Now"}
         </Button>
       </div>
       <PlaceBidModal show={showBidModal} handleModal={handleBidModal} bidPrice={auction.data.bidPrice} supply={product.supply} maxQuantity={auction.data.remainingQuantity} handleSubmit={handleSubmit} auction={auction}
-        currency={highest_bid?.priceCurrency} />
+        currency={highest_bid?.priceCurrency} sellType={auction.data.sellType} />
       {/* for moonpay */}
       <PlaceBidModal show={isMoonPayMethod} handleModal={handleBidModalForMoonpay} bidPrice={auction.data.bidPrice} supply={product.supply} maxQuantity={auction.data.remainingQuantity} handleSubmit={handleSubmitForMoonpay} auction={auction}
-        currency={highest_bid?.priceCurrency} />
+        currency={highest_bid?.priceCurrency} sellType={auction.data.sellType} />
+      {loginModal &&
+        <LoginModel show={loginModal} handleModal={() => setLoginModal(!loginModal)} />
+      }
     </>
   );
 };

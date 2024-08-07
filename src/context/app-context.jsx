@@ -10,6 +10,8 @@ import { currenyOfCurrentNetwork, getNetworkNameByChainId, getChainIdByNetworkNa
 import SwitchNetwork from "@components/modals/switch-network";
 import { getContractsData } from "src/lib/contractData";
 import { Messages } from "@utils/constants";
+import strapi from "@utils/strapi";
+import { setCookie } from "@utils/cookies";
 
 export const AppData = createContext(null);
 
@@ -30,8 +32,8 @@ const AppDataContext = ({ children }) => {
   const [showConnectWalletModel, setShowConnectWalletModel] = useState(false);
   const [showChangeNetworkModel, setShowChangeNetworkModel] = useState(false);
   const [ethBalance, setEthBalance] = useState("");
-  const [redirectionUrl, setRedirectionUrl] = useState(null);
-  const [callbackMethod, setCallbackMethod] = useState(null);
+  // const [redirectionUrl, setRedirectionUrl] = useState(null);
+  // const [callbackMethod, setCallbackMethod] = useState(null);
   const [isAuthenticatedCryptoWallet, setIsAuthenticatedCryptoWallet] = useState(false);
 
   // For acount change event handle using useRef
@@ -424,8 +426,10 @@ const AppDataContext = ({ children }) => {
       setWalletData,
       loadUserData,
       userData,
-      redirectionUrl,
-      setRedirectionUrl,
+      // redirectionUrl,
+      // setRedirectionUrl,
+      // callbackMethod,
+      // setCallbackMethod,
       showConnectWalletModel,
       setShowConnectWalletModel,
       showChangeNetworkModel,
