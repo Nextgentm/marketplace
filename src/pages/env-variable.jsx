@@ -29,17 +29,17 @@ const Home = () => (
             <tr>
               <td>ETHEREUM_NETWORK_CHAIN_ID</td>
               <td>{ETHEREUM_NETWORK_CHAIN_ID}</td>
-              <td>{NETWORKS_CHAINS[ETHEREUM_NETWORK_CHAIN_ID].chainName}</td>
+              <td>{NETWORKS_CHAINS[ETHEREUM_NETWORK_CHAIN_ID]?.chainName}</td>
             </tr>
             <tr>
               <td>POLYGON_NETWORK_CHAIN_ID</td>
               <td>{POLYGON_NETWORK_CHAIN_ID}</td>
-              <td>{NETWORKS_CHAINS[POLYGON_NETWORK_CHAIN_ID].chainName}</td>
+              <td>{NETWORKS_CHAINS[POLYGON_NETWORK_CHAIN_ID]?.chainName}</td>
             </tr>
             <tr>
               <td>BINANCE_NETWORK_CHAIN_ID</td>
               <td>{BINANCE_NETWORK_CHAIN_ID}</td>
-              <td>{NETWORKS_CHAINS[BINANCE_NETWORK_CHAIN_ID].chainName}</td>
+              <td>{NETWORKS_CHAINS[BINANCE_NETWORK_CHAIN_ID]?.chainName}</td>
             </tr>
 
             <tr>
@@ -87,7 +87,7 @@ const Home = () => (
             </tr>
 
             <tr>
-              <td colSpan={3}><br /></td>
+              <td colSpan={3}><br />Contracts is on gorli, so this contracts is not Sepolia Test Netwok</td>
             </tr>
             <tr>
               <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS</td>
