@@ -20,7 +20,7 @@ export const NETWORKS = {
 };
 // chain id to rpc url
 export const NETWORKS_CHAINS = {
-  "0x5": {
+  "0xaa36a7": {
     chainId: "0xaa36a7",
     chainName: "Sepolia Test Netwok",
     nativeCurrency: { name: "SepoliaETH", symbol: "SepoliaETH", decimals: 18 },
