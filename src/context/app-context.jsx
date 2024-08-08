@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { createContext, useState, useMemo, useEffect, useRef } from "react";
 import { doLogOut, userSessionData } from "src/lib/user";
 import { ethers } from "ethers";
-import { POLYGON_NETWORK_CHAIN_ID, NETWORKS, ETHEREUM_NETWORK_CHAIN_ID, BINANCE_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { POLYGON_NETWORK_CHAIN_ID, NETWORKS, ETHEREUM_NETWORK_CHAIN_ID, BINANCE_NETWORK_CHAIN_ID, NETWORKS_CHAINS } from "src/lib/constants";
 import { toast } from "react-toastify";
 import { currenyOfCurrentNetwork, getNetworkNameByChainId, getChainIdByNetworkName, isValidNetwork, switchNetwork } from "src/lib/BlokchainHelperFunctions";
 import SwitchNetwork from "@components/modals/switch-network";
@@ -148,7 +148,14 @@ const AppDataContext = ({ children }) => {
       //   onDisconnectWallet();
       // };
 
-      window?.ethereum?.on("accountsChanged", handleAccountsChanged);
+      let provider = window?.ethereum;
+      if (window.ethereum.providers?.length) {
+        window.ethereum.providers.forEach(async (p) => {
+          if (p.isMetaMask) provider = p;
+        });
+      }
+      // const provider2 = new ethers.providers.Web3Provider(provider);
+      provider?.on("accountsChanged", handleAccountsChanged);
       // window?.ethereum?.on("chainChanged", handleChainChanged);
       // window.ethereum.on("disconnect", handleDisconnect);
       // check if previously connected
@@ -192,11 +199,11 @@ const AppDataContext = ({ children }) => {
         window.ethereum.providers.forEach(async (p) => {
           if (p.isMetaMask) provider = p;
         });
-        if (!provider) {
-          const metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-          provider = new ethers.providers.Web3Provider(metamaskProvider);// only use in local give error on live //new ethers.providers.Web3Provider(window.ethereum, "any")
-        }
-        return provider;
+        // if (!provider) {
+        // const metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        const provider2 = new ethers.providers.Web3Provider(provider);// only use in local give error on live //new ethers.providers.Web3Provider(window.ethereum, "any")
+        // }
+        return provider2;
       } else {
         const provider = new ethers.providers.Web3Provider(window.ethereum);// only use in local give error on live //new ethers.providers.Web3Provider(window.ethereum, "any")
         return provider;
@@ -266,13 +273,19 @@ const AppDataContext = ({ children }) => {
 
   const switchNetwork = async (chainId) => {
     try {
-      if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
+      let provider = window?.ethereum;
+      if (window.ethereum.providers?.length) {
+        window.ethereum.providers.forEach(async (p) => {
+          if (p.isMetaMask) provider = p;
+        });
+      }
+      if (parseInt(provider.networkVersion, 2) === parseInt(chainId, 2)) {
         console.log(`Network is already with chain id ${chainId}`);
         await directConnect();
         return true;
       }
       try {
-        const res = await window.ethereum.request({
+        const res = await provider.request({
           method: "wallet_switchEthereumChain",
           params: [{ chainId }]
         });
@@ -285,7 +298,7 @@ const AppDataContext = ({ children }) => {
         }
         if (switchError.code === 4902) {
           try {
-            await window.ethereum.request({
+            await provider.request({
               method: "wallet_addEthereumChain",
               params: [NETWORKS_CHAINS[chainId]]
             });
@@ -359,8 +372,11 @@ const AppDataContext = ({ children }) => {
         return false;
       }
       const provider = await getProvider();
-      // if (!provider) {toast.error("Error while connecting wallet"); return;}
+      // console.log("provider", provider);
+      if (!provider) { toast.error("Error while connecting wallet"); return; }
+      // console.log("calling account");
       const accounts = await provider.send("eth_requestAccounts", []);
+      // console.log("called account", account);
       if (currentNetwork) {
         if (!await switchNetwork(currentNetwork)) {
           // polygon testnet
