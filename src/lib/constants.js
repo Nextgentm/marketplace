@@ -5,7 +5,7 @@ export const HOME_OG_IMAGE_URL =
 
 export const DEFAULT_NETWORK = "Binance"; // testnet chain Id's
 
-export const ETHEREUM_NETWORK_CHAIN_ID = "0x5"; // testnet chain Id's
+export const ETHEREUM_NETWORK_CHAIN_ID = "0xaa36a7"; // testnet chain Id's
 export const POLYGON_NETWORK_CHAIN_ID = "0x13881"; // testnet chain Id's
 export const BINANCE_NETWORK_CHAIN_ID = "0x61"; // testnet chain Id's
 // export const ETHEREUM_NETWORK_CHAIN_ID = "0x1"; // mainnet chain Id's
@@ -21,11 +21,11 @@ export const NETWORKS = {
 // chain id to rpc url
 export const NETWORKS_CHAINS = {
   "0x5": {
-    chainId: "0x5",
-    chainName: "Goerli test network",
-    nativeCurrency: { name: "GoerliETH", symbol: "GoerliETH", decimals: 18 },
-    rpcUrls: ["https://goerli.infura.io/v3/"],
-    blockExplorerUrls: ["https://goerli.etherscan.io"]
+    chainId: "0xaa36a7",
+    chainName: "Sepolia Test Netwok",
+    nativeCurrency: { name: "SepoliaETH", symbol: "SepoliaETH", decimals: 18 },
+    rpcUrls: ["https://sepolia.infura.io/v3/"],
+    blockExplorerUrls: ["https://sepolia.etherscan.io/"]
   },
   "0x13881": {
     chainId: "0x13881",
