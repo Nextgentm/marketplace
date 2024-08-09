@@ -299,13 +299,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         signature: sellerOrderSignature
       });
       // console.log(res);
-      await updateCollectible({
-        variables: {
-          "data": {
-            "putOnSale": true
-          },
-          "updateCollectibleId": product.id
-        }
+      const data = await strapi.update("collectibles", product.id, {
+        putOnSale: true
       });
       toast.success("Auction created successfully");
       setShowAuctionInputModel(false);
@@ -407,13 +402,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           console.log(receipt);
           transactionHash = receipt.transactionHash;
         }
-        await updateCollectible({
-          variables: {
-            "data": {
-              "owner": receiver.toLowerCase()
-            },
-            "updateCollectibleId": product.id
-          }
+        const data = await strapi.update("collectibles", product.id, {
+          "owner": receiver.toLowerCase()
         });
         await createOwnerHistory({
           variables: {
@@ -493,14 +483,9 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           console.log(receipt);
           transactionHash = receipt.transactionHash;
         }
-        await updateCollectible({
-          variables: {
-            "data": {
-              "owner": "",
-              "supply": product.supply - quantity,
-            },
-            "updateCollectibleId": product.id
-          }
+        const data = await strapi.update("collectibles", product.id, {
+          "owner": "",
+          "supply": product.supply - quantity,
         });
         await createOwnerHistory({
           variables: {

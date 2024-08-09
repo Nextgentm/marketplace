@@ -26,20 +26,6 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                 <form onSubmit={handleSubmit}>
                     <div className="connect-wallets">
                         <div className="row align-items-center mb--00">
-                            <div className="col-md-12">
-                                <input
-                                    type="checkbox"
-                                    name="term-condition"
-                                    value="true"
-                                    id="term-condition"
-                                    onClick={() => setSelectTermsAndConditions(!selectTermsAndConditions)}
-                                    checked={selectTermsAndConditions}
-                                    required
-                                />
-                                <label htmlFor="term-condition" className="term">
-                                    I read and accept the <><Link href="#">Term of Service</Link> and <Link href="#">Privacy Policy</Link></>
-                                </label>
-                            </div>
                             <div className="switch-network-form-box choose-network">
                                 <h5 className="mb--0 mt--20">Choose Network</h5>
                                 <div className="row align-items-center mb--0">
@@ -65,7 +51,7 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                 </div>
                             </div>
                             <div className="switch-network-form-box choose-wallet">
-                                <h5 className="mb--0 mt--20">Choose Wallet</h5>
+                                <h5 className="m-0 mt-0">Choose Wallet</h5>
                                 <div className="row align-items-center mb--20 mt--20">
                                     {walletsList.map((list, index) => <>
                                         <div className="col-lg-3 col-6" key={index}>
@@ -87,6 +73,20 @@ const ConnectWallets = ({ show, handleModal, handleSubmit }) => {
                                     </>
                                     )}
                                 </div>
+                            </div>
+                            <div className="col-md-12 mb-4">
+                                <input
+                                    type="checkbox"
+                                    name="term-condition"
+                                    value="true"
+                                    id="term-condition"
+                                    onClick={() => setSelectTermsAndConditions(!selectTermsAndConditions)}
+                                    checked={selectTermsAndConditions}
+                                    required
+                                />
+                                <label htmlFor="term-condition" className="term">
+                                    I read and accept the <><Link href="#">Term of Service</Link> and <Link href="#">Privacy Policy</Link></>
+                                </label>
                             </div>
                             <div className="">
                                 <Button type="submit" disabled={!(selectTermsAndConditions && selectNetwork && selectWallet)}>Connect</Button>
