@@ -300,13 +300,8 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
         status: "Completed",
       });
       // console.log(res);
-      await updateCollectible({
-        variables: {
-          "data": {
-            putOnSale: false
-          },
-          "updateCollectibleId": auction?.data?.collectible.data.id
-        }
+      const data = await strapi.update("collectibles", auction?.data?.collectible.data.id, {
+        putOnSale: false
       });
       toast.success("Auction closed successfully");
       setShowConfirmModal(false);
