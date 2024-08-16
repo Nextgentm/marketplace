@@ -35,13 +35,32 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## Compile and Deploy on Smartcontract
 
-```bash
+```
 truffle compile
+```
 
+This command will compile all smartcontracts we have. For first time it will compile all, after that it will only those which had some modification.
+Parameters:
+--all
+e.g. `truffle compile --all`
+Compile all contracts instead of only the contracts changed since last compile.
+
+```
 truffle migrate
+```
 
-truffle migrate --reset
+This command will deploy all the smartcontracts on the blockchain network which is mention in truffle-config file. after firsttime if this command only deploy smartcontracts which has added or modified.
 
+This command has parameters:
+--network NETWORK_NAME
+e.g. `truffle migrate --network goerli`
+The network name that we are passsing should have in truffle config file. default network is `development`.
+
+--reset
+e.g. `truffle migrate --reset`
+Run all migrations from the beginning, instead of running from the last completed migration.
+
+```
 truffle console
 ```
 
@@ -61,7 +80,7 @@ truffle console
 - OwnCollection1155Beacon = 0xF23dBd4BBaC0d641C67dc8A00B8db455d9A0f0b5
 //----------------------------------------------------------------//
 #Testnet Networks
-#Polygon Network
+#Polygon mumbai Network (closed)
 - NFTMarketplace Logic = 0x029a5e38c811FD8264B4bd5e518DA54429D888ff
 - OwnCollection721Beacon = 0xe861560231D308faD14ffBd2dFBf783eA60D3df8
 - LootmogulUser1155Token Logic = 0x2b96589204fF6F89dB24dB90bb05eFe30291643e
@@ -71,11 +90,24 @@ truffle console
 - OwnCollection721Beacon = 0x99d73B59B4DA39e8380AA590d53C808780002152
 - LootmogulUser1155Token Logic = 0xcE30e36B7a93f4552035f4baf4245578Fe7E03E1
 - OwnCollection1155Beacon = 0x62f173b38b171c94A20d5ec8C627492220CDA109
-#Ethereum (Gorli) Network
+#Ethereum Gorli Network  (closed)
 - NFTMarketplace Logic = 0xc032A7358df83dDad4fC8731DaCA0800326D6939
 - OwnCollection721Beacon = 0x6e63c0EFC1FfB803670696419Ba40817Fd0612D6
 - LootmogulUser1155Token Logic = 0xBe24e32933FD9acA93d4D5271931f342c4A883d3
 - OwnCollection1155Beacon = 0x12E7B5983Cf7b7D93DC49668cDF37fb178A9F19E
+
+# Polygon Amoy Testnet
+- ERC721Instance = 0xa07673d995898940731495F387dBa53CDBA9c136
+- ERC721Instance Beacon = 0x37Bfe99Af5085a4241c3005068CFB0f5b94fC86b
+- ERC721Instance Proxy = 0x7690c434500cED8E9742461910ac9949e620af7A
+- ERC1155Instance = 0x8189cC9E9304A5f31748DA42d92e603864601C2C
+- ERC1155Instance Beacon = 0x182b57A07ed42067A24D220958A2561e54E0003E
+- ERC1155Instance Proxy = 0x3728E40Ef83b166de4549A443EF005b97ee49758
+
+- Transfer Proxy = 0xB4451D1F30009128EAa5eCEE8529a4C49EF9BC30
+- Trade = 0x0ED4C96208e4BEB9079844C5cdB3F341a2BF6eB4
+
+- Token address = 0x6dee57AFe5862fBB3fE206035fdD9c892E5389cA
 ```
 
 # ntest-nextjs

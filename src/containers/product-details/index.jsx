@@ -343,7 +343,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       currency: event.target.paymentToken?.options[event.target?.paymentToken?.selectedIndex]?.text ? event.target.paymentToken.options[event.target.paymentToken.selectedIndex].text : event.target.currency.value,
       quantity: event.target.quantity?.value ? event.target.quantity?.value : 1
     };
-    // console.log(data);
+    console.log(data);
     StoreData(data);
   };
 
