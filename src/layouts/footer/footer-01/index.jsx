@@ -103,12 +103,12 @@ const Footer = ({ space, className, data }) => (
           <div className="col-lg-3">
             <img
               className="w-100 h-auto w-small"
-              src="https://lootmogulstg.wpengine.com/wp-content/uploads/2023/09/Logo-1.png"
+              src="https://cdn.lootmogul.com/wp-content/uploads/2022/07/14014003/Cricket_South_Africa.webp"
               alt=""
             />
             <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
               Official Metaverse and Gaming Partner:<br />
-              Cricket South Africa and SA20 team - Durban Super Giants
+              Cricket South Africa
             </p>
           </div>
 
