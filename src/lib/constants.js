@@ -6,7 +6,7 @@ export const HOME_OG_IMAGE_URL =
 export const DEFAULT_NETWORK = "Binance"; // testnet chain Id's
 
 export const ETHEREUM_NETWORK_CHAIN_ID = "0xaa36a7"; // testnet chain Id's
-export const POLYGON_NETWORK_CHAIN_ID = "0x13881"; // testnet chain Id's
+export const POLYGON_NETWORK_CHAIN_ID = "0x13882"; // testnet chain Id's
 export const BINANCE_NETWORK_CHAIN_ID = "0x61"; // testnet chain Id's
 // export const ETHEREUM_NETWORK_CHAIN_ID = "0x1"; // mainnet chain Id's
 // export const POLYGON_NETWORK_CHAIN_ID = "0x89"; // mainnet chain Id's
@@ -27,8 +27,8 @@ export const NETWORKS_CHAINS = {
     rpcUrls: ["https://sepolia.infura.io/v3/"],
     blockExplorerUrls: ["https://sepolia.etherscan.io/"]
   },
-  "0x13881": {
-    chainId: "0x13881",
+  "0x13882": {
+    chainId: "0x13882",
     chainName: "Mumbai",
     nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
     rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],

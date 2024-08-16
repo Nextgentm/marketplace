@@ -9,14 +9,17 @@ module.exports = {
       network_id: "*"
     },
     maticmumbai: {
+      //Polygon Amoy Testnet
       provider: function () {
         return new HDWalletProvider(
           "4b9ce9b1e6ed3e484528d61298366dbfe2e82970eb1b09f5dd6dba93a4efe8b1",
-          "https://matic.getblock.io/f535d390-29d6-438a-95cc-dd87c9120e76/testnet/"
+          "wss://polygon-amoy.infura.io/ws/v3/13148311eb224166807b08a7e944f71d"
         );
       },
-      network_id: 80001,
+      network_id: 80002,
       gas: 5500000,
+      gasPrice: 30000000000, // Set gas price if needed
+      // gasLimit: 5500000, // Set gas Limit if needed
       confirmations: 2, // # of confs to wait between deployments. (default: 0)
       networkCheckTimeout: 1000000, //  This is the timeout config. set it to 1000 seconds
       timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
@@ -26,10 +29,11 @@ module.exports = {
       provider: () =>
         new HDWalletProvider(
           "4b9ce9b1e6ed3e484528d61298366dbfe2e82970eb1b09f5dd6dba93a4efe8b1",
-          `https://goerli.infura.io/v3/13148311eb224166807b08a7e944f71d`
+          `wss://sepolia.infura.io/ws/v3/13148311eb224166807b08a7e944f71d`
         ),
       network_id: 5,
       gas: 5500000,
+      gasPrice: 30000000000, // Set gas price if needed
       confirmations: 2, // # of confs to wait between deployments. (default: 0)
       networkCheckTimeout: 1000000, //  This is the timeout config. set it to 1000 seconds
       timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
@@ -49,7 +53,7 @@ module.exports = {
       settings: {
         optimizer: {
           enabled: true,
-          runs: 200
+          runs: 1000
         }
       }
     }
