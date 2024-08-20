@@ -40,6 +40,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const [isMoonPayMethod, setMoonPayMethod] = useState(false);
   const [showBidModal, setShowBidModal] = useState(false);
   const [callbackFunction, setCallbackFunction] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
+  const [isCountingDown, setIsCountingDown] = useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -54,6 +56,16 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
     }
   }, [userData]);
 
+  useEffect(() => {
+    if (isCountingDown && timeLeft > 0) {
+      const intervalId = setInterval(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [isCountingDown, timeLeft]);
+
   const handleBidModalForMoonpay = () => {
     if (!userData) {
       setCallbackFunction("handleBidModalForMoonpay");
@@ -63,6 +75,11 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
     }
     setMoonPayMethod((prev) => !prev);
     // setShowBidModal((prev) => !prev);
+  };
+
+  const handleCloseModal = () => {
+    setIsCountingDown(false);
+    setTimeLeft(600); // Reset the countdown
   };
 
   const handleBidModal = async () => {
@@ -79,6 +96,9 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       }
     }
     setShowBidModal((prev) => !prev);
+    if (isCountingDown) {
+      handleCloseModal();
+    }
   };
 
   const router = useRouter();
@@ -212,7 +232,28 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
     }
   }
 
+  async function createTransactionRecord(userData, productId, quantity) {
+    try {
+      const responseData = await strapi.create("collectibles-transaction-statuses", {
+        note: "",
+        status: "initiated",
+        failedType: "none",
+        user: userData.id,
+        collectible: productId,
+        quantity: quantity ? quantity : 1,
+        timeStamp: new Date(),
+        transactionHash: "",
+      });
+      return responseData;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async function StoreData(price, quantity) {
+    //initialize transaction history
+    let responseData = await createTransactionRecord(userData, product.id, quantity)
+
     try {
       let contractAddress;
       if (product.collection.data.collectionType === "Single") {
@@ -232,6 +273,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       }
       if (!TokenContractAddress) {
         toast.error(Messages.TOKEN_ADDRESS_NOT_FOUND);
+        handleCloseModal();
         return;
       }
       const tokenContract = await getTokenContract(walletData, TokenContractAddress);
@@ -250,6 +292,12 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       const userBalance = await tokenContract.balanceOf(walletData.account);
       if (parseInt(requireAllowanceAmount) > parseInt(userBalance._hex, 16)) {
         toast.error(Messages.WALLET_INSUFFICIEN_BALANCE);
+        if (responseData) await updateTransaction(responseData.data.id, {
+          status: "failed",
+          failedType: "user",
+          note: Messages.WALLET_INSUFFICIEN_BALANCE
+        })
+        handleCloseModal();
         return;
       }
       const transaction = await tokenContract.increaseAllowance(walletData.contractData.TransferProxy.address, requireAllowanceAmount);
@@ -348,6 +396,12 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
             toWalletAddress: buyer,
             transactionHash: transactionHash
           });
+          // update auction to complete
+          if (responseData) await updateTransaction(responseData.data.id, {
+            status: "completed",
+            transactionHash: transactionHash,
+            successRecord: res.data.id
+          })
         }
       }
 
@@ -370,6 +424,9 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       }
       // router.reload();
     } catch (error) {
+      // start countdown of 1o minutes
+      // if (timeLeft > 0) setIsCountingDown(false);
+      if (timeLeft > 0) handleCloseModal();
       if (error.code == 4001) {
         toast.error(error.message);
       } else if (error.message.includes("execution reverted:")) {
@@ -388,9 +445,18 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         toast.error(Messages.NFT_PURCHASE_ERROR);
         console.log(error);
       }
+      // update auction to complete
+      if (responseData) await updateTransaction(responseData.data.id, {
+        status: "failed",
+        failedType: "user",
+        note: error.message || ""
+      })
     }
   }
 
+  async function updateTransaction(query, updateDate) {
+    return await strapi.update("collectibles-transaction-statuses", query, updateDate);
+  }
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!userData) {
@@ -411,6 +477,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
     }
+    // start countdown of 1o minutes
+    setIsCountingDown(true);
 
     if (auction.data.sellType == "Bidding") {
       const price = event.target.price?.value;
@@ -525,7 +593,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         </Button>
       </div>
       <PlaceBidModal show={showBidModal} handleModal={handleBidModal} bidPrice={auction.data.bidPrice} supply={product.supply} maxQuantity={auction.data.remainingQuantity} handleSubmit={handleSubmit} auction={auction}
-        currency={highest_bid?.priceCurrency} sellType={auction.data.sellType} />
+        currency={highest_bid?.priceCurrency} sellType={auction.data.sellType} timeLeft={timeLeft} />
       {/* for moonpay */}
       <PlaceBidModal show={isMoonPayMethod} handleModal={handleBidModalForMoonpay} bidPrice={auction.data.bidPrice} supply={product.supply} maxQuantity={auction.data.remainingQuantity} handleSubmit={handleSubmitForMoonpay} auction={auction}
         currency={highest_bid?.priceCurrency} sellType={auction.data.sellType} />

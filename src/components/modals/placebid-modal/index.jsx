@@ -8,7 +8,12 @@ import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 
 
-const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, currency, handleSubmit, sellType }) => {
+const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, currency, handleSubmit, sellType, timeLeft }) => {
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+  };
 
   return (
     <Modal className="rn-popup-modal placebid-modal-wrapper" show={show} onHide={handleModal} centered>
@@ -19,6 +24,7 @@ const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, curre
       )}
       <Modal.Header>
         <h3 className="modal-title">{sellType !== "Bidding" ? "Direct Buy" : "Place a bid"}</h3>
+        {timeLeft && (<h3 style={{ marginLeft: "auto" }} className="modal-title">Time Left: {formatTime(timeLeft)}</h3>)}
       </Modal.Header>
       <Modal.Body>
         <p>You are about to purchase this product</p>
