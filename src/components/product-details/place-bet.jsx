@@ -42,6 +42,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   const [callbackFunction, setCallbackFunction] = useState(null);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
   const [isCountingDown, setIsCountingDown] = useState(false);
+  const [isHandleSubmit, setHandleSubmit] = useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -74,12 +75,16 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       return;
     }
     setMoonPayMethod((prev) => !prev);
+    if (isCountingDown) {
+      handleCloseModal();
+    }
     // setShowBidModal((prev) => !prev);
   };
 
   const handleCloseModal = () => {
     setIsCountingDown(false);
     setTimeLeft(600); // Reset the countdown
+    setHandleSubmit(false);
   };
 
   const handleBidModal = async () => {
@@ -117,6 +122,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
   //moonpay integration
   const payUsingMoonpay = async (quantity) => {
     // show the moonpay integration part
+    // show the moonpay integration part
+    let responseData = await createTransactionRecord(userData, product.id, quantity, "moonpay");
     try {
       if (userData) {
         checkGasFee();
@@ -131,8 +138,33 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
             listingId: auction.data.id.toString(),
             redirectURL: window.location.href,
             quantity: quantity ? quantity : 1
+          },
+          handlers: {
+            async onSuccess(transaction) {
+              handleCloseModal();
+              setHandleSubmit(false);
+              console.log("Payment successful:", transaction);
+              if (responseData) await updateTransaction(responseData.data.id, {
+                successAt: new Date(),
+                status: "Completed",
+                transactionHash: transaction ? transaction?.transactionId : ""
+              })
+              // You can add more logging or actions here
+            },
+            onCloseOverlay: async (data) => {
+              if (responseData) await updateTransaction(responseData.data.id, {
+                status: "failed",
+                failedType: "user",
+                failedAt: new Date(),
+                note: ""
+              })
+              handleCloseModal();
+              setHandleSubmit(false);
+              console.log("Overlay closed by the user.", data);
+            }
           }
         });
+
         const urlForSignature = moonpaySdk.generateUrlForSigning();
         // console.log(urlForSignature);
         // sign it with API secret and return the signature.
@@ -145,6 +177,12 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         // Once you have the signature, you can update the SDK with it
         moonpaySdk.updateSignature(decodeURIComponent(signature));
         moonpaySdk.show();
+
+        // add settime because first close overlay and afterstart countdown of 1o minutes
+        setTimeout(() => {
+          setHandleSubmit(true);
+          setIsCountingDown(true);
+        }, 500);
       } else {
         toast.error(Messages.PLEASE_LOGIN);
         return;
@@ -152,6 +190,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
     } catch (error) {
       console.log("Error: " + error);
       toast.error(Messages.MOONPAY_INTEGRATION_ERROR);
+      handleCloseModal();
+      setHandleSubmit(false);
     }
   }
 
@@ -232,7 +272,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
     }
   }
 
-  async function createTransactionRecord(userData, productId, quantity) {
+  async function createTransactionRecord(userData, productId, quantity, orderType) {
     try {
       const responseData = await strapi.create("collectibles-transaction-statuses", {
         note: "",
@@ -243,6 +283,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         quantity: quantity ? quantity : 1,
         timeStamp: new Date(),
         transactionHash: "",
+        orderType
       });
       return responseData;
     } catch (error) {
@@ -252,7 +293,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
 
   async function StoreData(price, quantity) {
     //initialize transaction history
-    let responseData = await createTransactionRecord(userData, product.id, quantity)
+    let responseData = await createTransactionRecord(userData, product.id, quantity, "normal")
 
     try {
       let contractAddress;
@@ -295,6 +336,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         if (responseData) await updateTransaction(responseData.data.id, {
           status: "failed",
           failedType: "user",
+          failedAt: new Date(),
           note: Messages.WALLET_INSUFFICIEN_BALANCE
         })
         handleCloseModal();
@@ -400,7 +442,8 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
           if (responseData) await updateTransaction(responseData.data.id, {
             status: "completed",
             transactionHash: transactionHash,
-            successRecord: res.data.id
+            successRecord: res.data.id,
+            successAt: new Date(),
           })
         }
       }
@@ -449,6 +492,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       if (responseData) await updateTransaction(responseData.data.id, {
         status: "failed",
         failedType: "user",
+        failedAt: new Date(),
         note: error.message || ""
       })
     }
@@ -500,7 +544,6 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       return;
     }
     const quantity = event.target.quantity?.value ? event.target.quantity?.value : auction.data.quantity;
-
     payUsingMoonpay(quantity);
   };
 
@@ -596,7 +639,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
         currency={highest_bid?.priceCurrency} sellType={auction.data.sellType} timeLeft={timeLeft} />
       {/* for moonpay */}
       <PlaceBidModal show={isMoonPayMethod} handleModal={handleBidModalForMoonpay} bidPrice={auction.data.bidPrice} supply={product.supply} maxQuantity={auction.data.remainingQuantity} handleSubmit={handleSubmitForMoonpay} auction={auction}
-        currency={highest_bid?.priceCurrency} sellType={auction.data.sellType} />
+        currency={highest_bid?.priceCurrency} sellType={auction.data.sellType} timeLeft={timeLeft} isHandleSubmit={isHandleSubmit} />
       {loginModal &&
         <LoginModel show={loginModal} handleModal={() => setLoginModal(!loginModal)} />
       }
