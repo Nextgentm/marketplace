@@ -545,8 +545,6 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
     }
     const quantity = event.target.quantity?.value ? event.target.quantity?.value : auction.data.quantity;
 
-    // start countdown of 1o minutes
-    setIsCountingDown(true);
     payUsingMoonpay(quantity);
   };
 
