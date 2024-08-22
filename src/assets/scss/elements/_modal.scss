@@ -37,12 +37,12 @@ body.modal-open {
     Share Modal Wrapper  
 ----------------------------------*/
 .modal-backdrop {
-    background-color: #000;
+    background-color: transparent;
 }
 
 .modal-backdrop.show {
     background-color: #000;
-    opacity: 0.75;
+    opacity: 0.6;
 }
 
 .rn-popup-modal {
@@ -312,4 +312,8 @@ span.rs-picker-toggle-value {color: #fff !important;}
     height: 30px;
     padding: 0 10px;
     width: 30px;
+}
+
+.moonpay-widget__overlay-container{
+    background-color: transparent !important;
 }
