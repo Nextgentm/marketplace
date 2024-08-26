@@ -299,7 +299,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         signature: sellerOrderSignature
       });
       // console.log(res);
-      const data = await strapi.update("collectibles", product.id, {
+      const data1 = await strapi.update("collectibles", product.id, {
         putOnSale: true
       });
       toast.success("Auction created successfully");
