@@ -1,22 +1,29 @@
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import ShareDropdown from "../share-dropdown";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import strapi from "@utils/strapi";
+import LoginModel from "@components/modals/login-model";
 
 const ProductTitle = ({ className, title, likeCount: initialLikeCount, userId, collectibleId }) => {
 
   const [likeCount, setLikeCount] = useState(initialLikeCount);
-  const [isLiked, setIsLiked] = useState(true);
-
+  const [loginModal, setLoginModal] = useState(false);
+  useEffect(() => {
+    if (userId) {
+      setLoginModal(false);
+    }
+  }, [userId]);
   const handleLikeClick = async () => {
     try {
+
       if (!userId || !collectibleId) {
         /**
          * show popup
          */
-        toast.error("Please login.");
+        // toast.error("Please login.");
+        setLoginModal(true);
         return;
       }
 
@@ -45,6 +52,10 @@ const ProductTitle = ({ className, title, likeCount: initialLikeCount, userId, c
             <ShareDropdown />
           </div>
         </div>
+        {
+          loginModal &&
+          <LoginModel show={loginModal} handleModal={() => setLoginModal(!loginModal)} />
+        }
       </div>
     </>
   )
