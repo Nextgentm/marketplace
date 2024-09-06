@@ -27,6 +27,26 @@ const LoginModel = ({ show, handleModal }) => {
         // onError: () => setLoggingIn(false) ,
     });
 
+    const getUserCollectibleLike = async (userId) => {
+        try {
+            let response = await strapi.find("collectible-user-likes", {
+                filters: {
+                    user: userId,
+                },
+                populate: {
+                    user: {
+                        fields: ["id"],
+                    },
+                    collectible: {
+                        fields: ["id"],
+                    },
+                }
+            });
+            return response;
+        } catch (error) {
+            return [{ data: [] }];
+        }
+    }
     const loginWidGoogle = () => {
         signIn()
     }
@@ -35,6 +55,8 @@ const LoginModel = ({ show, handleModal }) => {
         try {
             const loginResponse = await strapi.authenticateProvider(provider, token);
             setCookie("token", loginResponse.jwt);
+            let likes = await getUserCollectibleLike(loginResponse.user?.id);
+            if (loginResponse.user) loginResponse.user.liked_nft = likes
             localStorage.setItem("user", JSON.stringify(loginResponse.user));
             toast.success(`${selectedOption == "/sign-up" ? "Registration" : "Logged In"} Successfully`);
             /* if (provider == "google" && isSignedIn) {
@@ -69,6 +91,8 @@ const LoginModel = ({ show, handleModal }) => {
                 const cookiesDate = new Date();
                 cookiesDate.setTime(cookiesDate.getTime() + (120 * 60 * 1000));
                 setCookie("token", loginResponse.jwt, { expires: cookiesDate });
+                let likes = await getUserCollectibleLike(loginResponse.user?.id);
+                if (loginResponse.user) loginResponse.user.liked_nft = likes
                 localStorage.setItem("user", JSON.stringify(loginResponse.user));
                 toast.success("Logged In Successfully");
                 await loadUserData();
