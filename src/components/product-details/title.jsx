@@ -44,8 +44,6 @@ const ProductTitle = ({ className, title, likeCount: initialLikeCount, userId, c
           collectibleId
         }
       });
-      console.log(" userData is :::: ",userData.liked_nft);
-      
       if (response && userData && userData.liked_nft?.data) {
         let value = userData.liked_nft.data.findIndex((item) => item.collectible.data.id === collectibleId)
         if (value != -1) {

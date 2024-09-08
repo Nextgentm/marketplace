@@ -41,8 +41,6 @@ const SocialAuth = ({ className, title, loading, setLoading }) => {
           },
         }
       });
-      console.log("response ",response);
-
       return response;
     } catch (error) {
       return { data: [] };

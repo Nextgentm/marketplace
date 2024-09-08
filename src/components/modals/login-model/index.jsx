@@ -42,8 +42,6 @@ const LoginModel = ({ show, handleModal }) => {
                     },
                 }
             });
-            console.log("response ",response);
-            
             return response;
         } catch (error) {
             return { data: [] };
