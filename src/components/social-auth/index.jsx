@@ -26,6 +26,27 @@ const SocialAuth = ({ className, title, loading, setLoading }) => {
     onError: () => setLoading(false),
   });
 
+  const getUserCollectibleLike = async (userId) => {
+    try {
+      let response = await strapi.find("collectible-user-likes", {
+        filters: {
+          user: userId,
+        },
+        populate: {
+          user: {
+            fields: ["id"],
+          },
+          collectible: {
+            fields: ["id"],
+          },
+        }
+      });
+      return response;
+    } catch (error) {
+      return { data: [] };
+    }
+  }
+
   const loginWidGoogle = () => {
     signIn()
   }
@@ -36,6 +57,8 @@ const SocialAuth = ({ className, title, loading, setLoading }) => {
       setLoading(true)
       const loginResponse = await strapi.authenticateProvider(provider, token);
       setCookie("token", loginResponse.jwt);
+      let likes = await getUserCollectibleLike(loginResponse.user?.id);
+      if (loginResponse.user) loginResponse.user.liked_nft = likes
       localStorage.setItem("user", JSON.stringify(loginResponse.user));
       toast.success(`${router.pathname == "/sign-up" ? "Registration" : "Log in"} Successfull`);
       /* if (provider == "google" && isSignedIn) {

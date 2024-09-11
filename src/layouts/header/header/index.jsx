@@ -24,7 +24,7 @@ import { addressIsAdmin, getChainIdByNetworkName, switchNetwork } from "src/lib/
 import { DEFAULT_NETWORK } from "src/lib/constants";
 import { networksList } from "@utils/wallet";
 
-const Header = ({ className }) => {
+const Header = ({ className, setAdmin }) => {
   const sticky = useSticky();
   const { offcanvas, offcanvasHandler } = useOffcanvas();
   const { search, searchHandler } = useFlyoutSearch();
@@ -38,8 +38,10 @@ const Header = ({ className }) => {
     if (walletData.isConnected) {
       addressIsAdmin(walletData).then((validationValue) => {
         setIsAdminWallet(validationValue);
+        if (setAdmin) setAdmin(validationValue);
       }).catch((error) => { console.log("Error while Checking User " + error) });
     } else {
+      if (setAdmin) setAdmin(false);
       setIsAdminWallet(false);
     }
   }, [walletData]);

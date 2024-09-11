@@ -33,7 +33,8 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
 
   const { walletData,
     changeNetworkByNetworkType,
-    checkAndConnectWallet
+    checkAndConnectWallet,
+    userData
   } = useContext(AppData);
 
   const [updateCollectible, { data: updatedCollectible }] = useMutation(UPDATE_COLLECTIBLE);
@@ -353,7 +354,7 @@ const AuctionDetailsArea = ({ space, className, auctionData }) => {
           </div>
           <div className="col-lg-5 col-md-12 col-sm-12 mt_md--50 mt_sm--60">
             <div className="rn-pd-content-area">
-              <ProductTitle title={auction?.data?.collectible.data?.name || "Untitled NFT"} likeCount={auction?.data?.collectible.data?.size} />
+              <ProductTitle title={auction?.data?.collectible.data?.name || "Untitled NFT"} likeCount={auction?.data?.collectible.data?.totalLikes || 0} userId={userData?.id} collectibleId={auction?.data?.collectible.data?.id} />
               <span className="bid">
                 Price{" "}
                 <span className="price">

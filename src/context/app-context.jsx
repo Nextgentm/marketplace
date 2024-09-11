@@ -101,6 +101,11 @@ const AppDataContext = ({ children }) => {
     } else if (!isAuthenticated) setUserData();
   };
 
+  const setUserLikeData = async (user) => {
+    localStorage.setItem("user", JSON.stringify(user));
+    setUserData(user);
+  }
+
   const setUserDataLocal = (user) => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -448,6 +453,7 @@ const AppDataContext = ({ children }) => {
       walletData,
       setWalletData,
       loadUserData,
+      setUserLikeData,
       userData,
       // redirectionUrl,
       // setRedirectionUrl,
