@@ -7,8 +7,25 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
 
+// Styling for the timer overlay
+const timerOverlayStyle = {
+  position: "fixed",
+  top: "10%",
+  right: "10%",
+  zIndex: 1000, // Higher than the MoonPay overlay
+  backgroundColor: "rgba(0, 0, 0, 0.75)",
+  color: "white",
+  padding: "10px 20px",
+  borderRadius: "5px",
+  fontSize: "18px",
+};
 
-const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, currency, handleSubmit, sellType }) => {
+const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, currency, handleSubmit, sellType, timeLeft, isHandleSubmit }) => {
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+  };
 
   return (
     <Modal className="rn-popup-modal placebid-modal-wrapper" show={show} onHide={handleModal} centered>
@@ -19,7 +36,9 @@ const PlaceBidModal = ({ show, handleModal, bidPrice, maxQuantity, supply, curre
       )}
       <Modal.Header>
         <h3 className="modal-title">{sellType !== "Bidding" ? "Direct Buy" : "Place a bid"}</h3>
-      </Modal.Header>
+        {isHandleSubmit && timeLeft ? (<h3 style={{ marginLeft: "auto", ...timerOverlayStyle }} className="modal-title">Time Left: {formatTime(timeLeft)}</h3>) :
+          timeLeft && (<h3 style={{ marginLeft: "auto" }} className="modal-title">Time Left: {formatTime(timeLeft)}</h3>)
+        }</Modal.Header>
       <Modal.Body>
         <p>You are about to purchase this product</p>
         <div className="placebid-form-box">
