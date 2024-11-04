@@ -107,8 +107,7 @@ const Footer = ({ space, className, data }) => (
               alt=""
             />
             <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
-              Official Metaverse and Gaming Partner:<br />
-              Cricket South Africa
+              Official Gaming Partner: Cricket South Africa
             </p>
           </div>
 
@@ -149,7 +148,7 @@ const Footer = ({ space, className, data }) => (
         <div className="row">
           <div className="col-12">
             <p style={{ color: "#fff" }} className="pb-0 px-4 variant-footerText font-weight-400 font-size-10 text-center">
-              © 2024 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States
+              © {(new Date()).getFullYear()} LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States
               {/* <br />Office Address : C/105 Varsha Swapna Gawan Pada, Mulund East, Mumbai - 400081 */}
             </p>
           </div>
