@@ -2,7 +2,8 @@
   {
     "id": 1,
     "text": "Home",
-    "path": "https://metaverse.lootmogul.com/"
+    "path": "https://metaverse.lootmogul.com/",
+    "target": "_self"
   },
   {
     "id": 2,
@@ -24,7 +25,8 @@
         "text": "Digital Collectibles",
         "path": "/collectibles"
       }
-    ]
+    ],
+    "target": "_self"
   },
   {
     "id": 4,
@@ -41,7 +43,8 @@
         "text": "Collection",
         "path": "/upload-variants-collection"
       }
-    ]
+    ],
+    "target": "_self"
   },
   {
     "id": 7,
