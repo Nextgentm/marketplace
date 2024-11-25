@@ -18,7 +18,7 @@ const MainMenu = ({ menu, isAdmin }) => {
             key={nav.id}
             className={clsx(!!nav.submenu && "has-droupdown has-menu-child-item", !!nav.megamenu && "with-megamenu", isActiveLink(nav.path, "") && "isActiveLink")}
           >
-            <Anchor className="its_new" path={nav.path} target={nav.id == 1 ? "_self" : "_blank"}>
+            <Anchor className="its_new" path={nav.path} target={nav.target}>
               {nav.text}
             </Anchor>
             {nav?.submenu && <SubMenu menu={nav.submenu} />}
