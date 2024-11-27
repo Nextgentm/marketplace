@@ -103,7 +103,7 @@ const Footer = ({ space, className, data }) => (
           <div className="col-lg-3">
             <img
               className="w-100 h-auto w-small"
-              src={`${process.env.WP_UPLOAD_DIR}/2022/07/14014003/Cricket_South_Africa.webp`}
+              src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2022/07/14014003/Cricket_South_Africa.webp`}
               alt=""
             />
             <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
@@ -114,7 +114,7 @@ const Footer = ({ space, className, data }) => (
           <div className="col-lg-4">
             <img
               className="w-100 h-auto w-small"
-              src={`${process.env.WP_UPLOAD_DIR}/2024/03/11013049/Wide-Logo-1-1.png`}
+              src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/03/11013049/Wide-Logo-1-1.png`}
               alt=""
               style={{ padding: "5px" }}
             />
@@ -125,7 +125,7 @@ const Footer = ({ space, className, data }) => (
           <div className="col-lg-5">
             <img
               className="w-100 h-auto w-small"
-              src={`${process.env.WP_UPLOAD_DIR}/2024/03/11013050/NFLPA-Logo-1.png`}
+              src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/03/11013050/NFLPA-Logo-1.png`}
               alt=""
               style={{ padding: "10px" }}
             />

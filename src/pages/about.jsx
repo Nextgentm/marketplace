@@ -39,36 +39,36 @@ const About = ({ posts }) => {
                         <p style={{ color: "#fff", marginBottom: "15px" }}> Welcome to LootMogul, where innovation meets the sports world. We are a cutting-edge AI-powered sports technology platform that revolutionizes the way real-world products and assets are transformed into dynamic digital counterparts. Utilizing the latest advancements in AI and blockchain technology, we are redefining fan engagement and optimizing experiences for all stakeholders in the sports industry.
                         </p>
                         <div className="boxStyle">
-                          <img src={`${process.env.WP_UPLOAD_DIR}/2024/07/17021423/Transforming-the-Sports-Experience-pink-1.png`} alt="icon" />
+                          <img src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/07/17021423/Transforming-the-Sports-Experience-pink-1.png`} alt="icon" />
                           <p style={{ color: "#fff", marginBottom: "15px" }} ><b style={{ color: "#e90a63;" }}>Transforming the Sports Experience: </b>At LootMogul, we’re not just reimagining the sports world, we’re rebuilding it. Our platform, designed for sports influencers and agencies who bring their loyal fans and brand partners, leverages advanced AI to identify trends, design content gaps, and engage fans with real-time offers and e-commerce merchandise. This ecosystem is a dynamic playground for all sports stakeholders.
                           </p>
                         </div>
                         <div className="boxStyle">
-                          <img src={`${process.env.WP_UPLOAD_DIR}/2024/07/17021421/Innovative-Fan-Engagement-pink.png`} alt="icon" />
+                          <img src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/07/17021421/Innovative-Fan-Engagement-pink.png`} alt="icon" />
                           <p style={{ color: "#fff", marginBottom: "15px" }}>
                             <b style={{ color: "#e90a63;" }}>Innovative Fan Engagement: </b>We’ve introduced groundbreaking touchpoints to revolutionize fan experiences both in and out of sports venues. From creating snackable videos, faceless content, and automated highlights to offering avatars, trivia, polls, quizzes, and virtual meet-and-greets with athletes, LootMogul sets new standards for fan engagement. Our S.M.A.R.T. arenas and innovative fan engagement strategies transform traditional stadiums into hubs of interaction.
                           </p>
                         </div>
                         <div className="boxStyle">
-                          <img src={`${process.env.WP_UPLOAD_DIR}/2024/07/17021418/Driving-the-Digital-Sports-Economy-pink.png`} alt="icon" />
+                          <img src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/07/17021418/Driving-the-Digital-Sports-Economy-pink.png`} alt="icon" />
                           <p style={{ color: "#fff", marginBottom: "15px" }}>
                             <b style={{ color: "#e90a63;" }}>Driving the Digital Sports Economy: </b>Our Monetization-First strategy for brands and athletes, coupled with a user-friendly approach to blockchain and AI, offers a sustainable revenue model while enhancing engagement. High ROI for brands and agencies through engaging, personalized fan experiences, influencer marketing, and revenue share incentives with athletes, teams, and leagues makes LootMogul the ultimate destination for sports stakeholders.
                           </p>
                         </div>
                         <div className="boxStyle">
-                          <img src={`${process.env.WP_UPLOAD_DIR}/2024/07/17021417/A-New-Era-for-Sports-Merchandise-white-pink.png`} alt="icon" />
+                          <img src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/07/17021417/A-New-Era-for-Sports-Merchandise-white-pink.png`} alt="icon" />
                           <p style={{ color: "#fff", marginBottom: "15px" }}>
                             <b style={{ color: "#e90a63;" }}>A New Era for Sports Merchandise: </b>Our mission extends to digitizing every aspect of the sports world, from stadiums and players to sports bars and memorabilia. This dual-world approach opens new monetization and engagement avenues for brands, teams, and stadium owners, enabling fans to experience and shop in both digital and physical realms.
                           </p>
                         </div>
                         <div className="boxStyle">
-                          <img src={`${process.env.WP_UPLOAD_DIR}/2024/07/17021415/Empowering-the-Community-with-MogulX.ai-pink.png`} alt="icon" />
+                          <img src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/07/17021415/Empowering-the-Community-with-MogulX.ai-pink.png`} alt="icon" />
                           <p style={{ color: "#fff", marginBottom: "15px" }}>
                             <b style={{ color: "#e90a63;" }}>Empowering the Community with AI advancements:</b> Our platform revolutionizes marketing with AI-driven interactive imagery, personalized avatars, and custom merchandise. We elevate brand engagement through cutting-edge video campaigns, creating a vibrant and collaborative ecosystem for innovation.
                           </p>
                         </div>
                         <div className="boxStyle">
-                          <img src={`${process.env.WP_UPLOAD_DIR}/2024/07/17021412/Our-Growth-and-Industry-Recognition-pink.png`} alt="icon" />
+                          <img src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/07/17021412/Our-Growth-and-Industry-Recognition-pink.png`} alt="icon" />
                           <p style={{ color: "#fff", marginBottom: "15px" }}>
                             <b style={{ color: "#e90a63;" }}>Our Growth and Industry Recognition: </b>Since our inception in 2020, LootMogul has rapidly expanded, attracting 367 professional athletes and numerous sports teams, achieving over 2 million monthly visits, and facilitating more than 1 million games played. Our groundbreaking work has not only placed us among the top unicorns in AI, Gaming and Web3 but has also earned us accolades and recognition from prestigious sports associations such as NBA and NFL Player Associations, reinforcing our position as a leader in the sports gaming and marketing technology.
                           </p>

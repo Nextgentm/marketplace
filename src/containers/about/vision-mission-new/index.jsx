@@ -26,7 +26,7 @@ const AboutVisionMission = ({ space, className, data }) => (
             <div className="row g-5 vision-mision-grid">
                 <div className="col-12 col-lg-6">
                     <div className="boxStyle">
-                        <img src={`${process.env.WP_UPLOAD_DIR}/2024/07/31045020/Glyph.png`} alt="icon" />
+                        <img src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/07/31045020/Glyph.png`} alt="icon" />
                         <div>
                             <h2 style={{ color: "#fff", marginLeft: "15px" }} className="vision-mission">BRANDS</h2>
                             <p style={{ color: "#fff", marginBottom: "15px", marginLeft: "15px" }} > Brands engage with athletes and fans through a unique blend of AI with marketing, gaming, and e-commerce capabilities on our platform, providing a holistic approach to fan engagement and monetization.
@@ -36,7 +36,7 @@ const AboutVisionMission = ({ space, className, data }) => (
                 </div>
                 <div className="col-12 col-lg-6">
                     <div className="boxStyle">
-                        <img src={`${process.env.WP_UPLOAD_DIR}/2024/07/31045018/Group-8874.png`} alt="icon" />
+                        <img src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/07/31045018/Group-8874.png`} alt="icon" />
                         <div>
                             <h2 style={{ color: "#fff", marginLeft: "15px" }} className="vision-mission">TEAMS</h2>
                             <p style={{ color: "#fff", marginBottom: "15px", marginLeft: "15px" }} > Teams and leagues require innovative ways to connect with fans, leveraging our platform to create dynamic and engaging experiences, enhance loyalty programs, and boost fan participation through exclusive content.</p>
@@ -46,7 +46,7 @@ const AboutVisionMission = ({ space, className, data }) => (
                 </div>
                 <div className="col-12 col-lg-6">
                     <div className="boxStyle">
-                        <img src={`${process.env.WP_UPLOAD_DIR}/2024/07/31045022/Group-8872.png`} alt="icon" />
+                        <img src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/07/31045022/Group-8872.png`} alt="icon" />
                         <div>
                             <h2 style={{ color: "#fff", marginLeft: "15px" }} className="vision-mission">ATHLETES</h2>
                             <p style={{ color: "#fff", marginBottom: "15px", marginLeft: "15px" }} > Athletes engage with brands & fans using personalized and interactive experiences delivered by advanced AI technology, ensuring meaningful and impactful connections. </p>
@@ -55,7 +55,7 @@ const AboutVisionMission = ({ space, className, data }) => (
                 </div>
                 <div className="col-12 col-lg-6">
                     <div className="boxStyle">
-                        <img src={`${process.env.WP_UPLOAD_DIR}/2024/07/31045016/Group-8867.png`} alt="icon" />
+                        <img src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/07/31045016/Group-8867.png`} alt="icon" />
                         <div>
                             <h2 style={{ color: "#fff", marginLeft: "15px" }} className="vision-mission">SPORTS FANS</h2>
                             <p style={{ color: "#fff", marginBottom: "15px", marginLeft: "15px" }} > Sports fans generate content, own, and monetize with athletes and brands using advanced AI games and personalized merchandise interactions, fostering a dynamic and engaged sports community.
