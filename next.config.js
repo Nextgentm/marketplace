@@ -9,7 +9,7 @@ const defaultConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: false
   },
-staticPageGenerationTimeout: 700,
+  staticPageGenerationTimeout: 700,
   reactStrictMode: false,
   sassOptions: {
     includePaths: [path.join(__dirname, "./src/assets/scss")]
@@ -24,7 +24,7 @@ staticPageGenerationTimeout: 700,
     return config;
   },
   images: {
-    domains: ["media-content.lootmogul.com"]
+    domains: ["media-content.lootmogul.com", "storage.googleapis.com"]
   },
   compiler: {
     styledComponents: {

@@ -1699,7 +1699,7 @@
 
 .slider-style-6 {
     .slide {
-        min-height: 75vh;
+        min-height: 90vh;
     }
 }
 
@@ -1716,8 +1716,14 @@
     height: 100%;
     width: 100%;
     inset: 0px;
-    object-fit: cover;
+    object-fit: contain;
     color: transparent
+}
+
+@media only screen and (min-width: 1440px) {
+    .slider-style-6 .slide .banner-read-thumb-lg {
+        margin-left: 8%;
+    }
 }
 
 @media only screen and (max-width: 767px) {
