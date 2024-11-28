@@ -17,11 +17,11 @@
           ],
           "image": {
             "src": "/images/bg/nft_homepage_banner-min.png",
-            "video": "https://cdn.lootmogul.com/wp-content/uploads/2024/07/09041151/NFTMarketplacevideobanner.mp4"
+            "video": "https://ai.lootmogul.com/wp-content/uploads/2024/07/NFTMarketplacevideobanner.mp4"
           },
           "mobile": {
             "src": "/images/bg/nft_homepage_banner-min.png",
-            "video": "https://cdn.lootmogul.com/wp-content/uploads/2024/07/09041151/NFTMarketplacevideobanner.mp4"
+            "video": "https://ai.lootmogul.com/wp-content/uploads/2024/07/NFTMarketplacevideobanner.mp4"
           }
         }
       ]
@@ -41,12 +41,12 @@
             }
           ],
           "image": {
-            "src": "https://cdn.lootmogul.com/wp-content/uploads/2024/11/25033435/Marketplace_banner_Poster-1.webp",
-            "video": "https://cdn.lootmogul.com/wp-content/uploads/2024/11/22031406/Marketplace_banner_1.mp4"
+            "src": "/images/slider/hero.webp",
+            "video": "https://ai.lootmogul.com/wp-content/uploads/2024/11/final-render_3_desktop.mp4"
           },
           "mobile": {
-            "src": "https://cdn.lootmogul.com/wp-content/uploads/2024/11/25033433/poster_mobile.webp",
-            "video": "https://cdn.lootmogul.com/wp-content/uploads/2024/11/25033305/Marketplace_banner_mobile.mp4"
+            "src": "/images/slider/hero_mobile.webp",
+            "video": "https://ai.lootmogul.com/wp-content/uploads/2024/11/Mobile-marketplace-banner_1.mp4"
           }
         }
       ]
