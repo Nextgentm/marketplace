@@ -24,7 +24,7 @@ const defaultConfig = {
     return config;
   },
   images: {
-    domains: ["media-content.lootmogul.com", "storage.googleapis.com"]
+    domains: ["media-content.lootmogul.com", "storage.googleapis.com", "g-media-content.lootmogul.com"]
   },
   compiler: {
     styledComponents: {
