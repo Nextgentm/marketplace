@@ -79,9 +79,9 @@ const HeroArea = ({ data }) => (
           {data.banners.map((banner) => (
             <SliderItem key={banner.id}>
               <div className="slide">
-                <video style={{ "width": "100%" }} autoPlay muted loop controlsList="nofullscreen nodownload noremoteplayback noplaybackrate foobar" poster={banner.image.src}>
+                <video style={{ "width": "100%" }} autoPlay muted loop controlsList="nofullscreen nodownload noremoteplayback noplaybackrate foobar" poster={banner.mobile.src}>
                   <source
-                    src={banner.image.video}
+                    src={banner.mobile.video}
                     type="video/mp4"
                   />
                 </video>
