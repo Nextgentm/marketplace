@@ -1747,4 +1747,33 @@
         margin-left: 0;
         padding-left: 10px;
     }
+
+    .slider-style-6 .slide .banner-read-thumb-lg {
+        h4 {
+            font-size: 36px !important;
+            line-height: 30px;
+        }
+
+        .button-group {
+            margin-bottom: 20px !important;
+
+            a {
+                padding: 15px 15px;
+            }
+        }
+    }
+
+    .slider-style-6 .slide video {
+        position: initial;
+        object-fit: cover;
+    }
+
+    .slick-slide {
+        float: none !important;
+    }
+
+    .slider-style-6 .slide {
+        display: inline !important;
+        align-items: initial !important;
+    }
 }
