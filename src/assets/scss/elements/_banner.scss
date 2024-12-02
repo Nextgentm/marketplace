@@ -1749,20 +1749,34 @@
 
     .slider-style-6 .slide .banner-read-thumb-lg {
         h4 {
-            font-size: 26px !important;
-            line-height: 23px;
+            font-size: 36px !important;
+            line-height: 30px;
         }
 
         .button-group {
-            margin-bottom: 70px !important;
+            margin-bottom: 20px !important;
 
             a {
-                padding: 5px 10px;
+                padding: 15px 15px;
             }
         }
     }
 
     .slider-style-6 .slide video {
+        position: initial;
         object-fit: cover;
+    }
+
+    .slick-slide {
+        float: none !important;
+    }
+
+    .slider-style-6 .slide {
+        display: inline !important;
+        align-items: initial !important;
+    }
+
+    .mobile-slider .slick-list {
+        height: 550px !important;
     }
 }
