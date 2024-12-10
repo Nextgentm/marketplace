@@ -100,17 +100,26 @@ const Footer = ({ space, className, data }) => (
     <div className="copy-right-one ptb--20 bg-color--1" style={{ backgroundColor: "#0f092d" }}>
       <div className="container" style={{ width: "80%", margin: "auto" }}>
         <div className="row">
-          <div className="col-lg-3">
+          <div className="col-lg-2 col-6">
             <img
               className="w-100 h-auto w-small"
               src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2022/07/14014003/Cricket_South_Africa.webp`}
               alt=""
             />
-            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
-              Official Gaming Partner: Cricket South Africa
+            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-center">
+              Official Gaming Partner:<br /> Cricket South Africa
             </p>
           </div>
-
+          <div className="col-lg-2 col-6">
+            <img
+              className="w-100 h-auto w-small p-2"
+              src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/12/09065747/Bkfc_logo.png`}
+              alt=""
+            />
+            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-center">
+              Official Partner
+            </p>
+          </div>
           <div className="col-lg-4">
             <img
               className="w-100 h-auto w-small"
@@ -122,7 +131,7 @@ const Footer = ({ space, className, data }) => (
               LootMogul venture is accelerated (1 of 5 ventures) by National Basketball Player Association in collaboration with Andreessen Horowitz (a16z)’s Cultural Leadership Fund and Patricof Co
             </p>
           </div>
-          <div className="col-lg-5">
+          <div className="col-lg-4">
             <img
               className="w-100 h-auto w-small"
               src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/03/11013050/NFLPA-Logo-1.png`}
