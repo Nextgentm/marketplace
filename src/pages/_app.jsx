@@ -13,7 +13,7 @@ import AppDataContext from "src/context/app-context";
 import { ApolloProvider } from "@apollo/client";
 import { loadNProgress } from "@utils/nprogress";
 import client from "@utils/apollo-client";
-import Snowfall from "react-snowfall"
+/*import Snowfall from "react-snowfall"*/
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const MyApp = ({ Component, pageProps }) => {
