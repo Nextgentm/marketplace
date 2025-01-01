@@ -76,7 +76,7 @@ const MyApp = ({ Component, pageProps }) => {
       <AppDataContext>
         <ThemeProvider defaultTheme="dark">
           <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID} >
-            <Snowfall
+            {/*<Snowfall
               // The color of the snowflake, can be any valid CSS color.
               color="#dee4fd"
               speed={[1.2, 1.3]}
@@ -84,7 +84,7 @@ const MyApp = ({ Component, pageProps }) => {
               // Controls the number of snowflakes that are created (defaults to 150).
               snowflakeCount={300}
               radius={[0.5, 3]}
-            />
+            />*/}
             <Component {...pageProps} />
             <img style={{ display: "none" }} src="/assets/loader/loader.200.120kb.gif" width={200} height={200} alt="Loader..." />
           </GoogleOAuthProvider>
