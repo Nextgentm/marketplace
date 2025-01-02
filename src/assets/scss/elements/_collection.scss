@@ -9,14 +9,17 @@
 .nice-selector-transparent {
     .nice-select {
         background: transparent;
+
         @media #{$md-layout} {
             position: relative;
             top: -6px;
         }
+
         @media #{$sm-layout} {
             position: relative;
             top: -8px;
         }
+
         span {
             font-size: 32px;
             font-weight: 600;
@@ -26,12 +29,14 @@
                 font-size: 24px;
             }
         }
+
         .list {
             @media #{$sm-layout} {
                 left: auto;
                 right: 0;
             }
         }
+
         &::after {
             border-bottom-color: var(--color-primary);
             border-right-color: var(--color-primary);
@@ -53,21 +58,26 @@
     .top-seller-wrapper {
         display: flex;
         align-items: center;
+
         @media #{$small-mobile} {
             flex-direction: column;
             text-align: center;
         }
+
         .thumbnail {
             max-width: 60px;
+
             @media #{$small-mobile} {
                 margin-bottom: 5px;
             }
+
             a {
                 display: block;
                 border-radius: 50%;
                 line-height: 0.7;
                 overflow: hidden;
                 border: 3px solid var(--color-border) !important;
+
                 img {
                     transition: 0.3s;
                     border-radius: 100%;
@@ -76,6 +86,7 @@
                 }
             }
         }
+
         .top-seller-content {
             margin-left: 12px;
 
@@ -89,20 +100,25 @@
                     font-size: 20px;
                     font-weight: 500;
                     transition: var(--transition);
+
                     @media #{$small-mobile} {
                         font-size: 16px;
                         margin-top: 10px;
                     }
+
                     &:hover {
                         color: var(--color-primary);
                     }
                 }
             }
+
             span {
                 font-size: 14px;
+
                 &.count-number {
                     display: block;
                 }
+
                 a {
                     margin-left: 7px;
                     text-transform: capitalize;
@@ -128,9 +144,11 @@
         padding: 18px;
         background: var(--background-color-1);
         border-radius: 5px;
+
         .collection-big-thumbnail {
             overflow: hidden;
             border-radius: 5px;
+
             img {
                 border-radius: 5px;
                 object-fit: cover;
@@ -140,19 +158,22 @@
                 aspect-ratio: 3/2;
             }
         }
+
         .collection-small-thumbnail {
             display: flex;
             justify-content: space-between;
             margin-left: -4px;
             margin-left: -4px;
             margin-top: 4px;
-            & > div {
+
+            &>div {
                 display: inline-block;
                 width: 33.33%;
                 padding: 4px;
                 line-height: 1;
                 margin-bottom: -4px;
             }
+
             img {
                 border-radius: 10px;
             }
@@ -168,12 +189,13 @@
             border-radius: 50%;
             border: 5px solid var(--color-primary-alta);
             transition: var(--transition);
-            aspect-ratio:1/1;
+            aspect-ratio: 1/1;
 
-        
-            img{
-            aspect-ratio:1/1
+
+            img {
+                aspect-ratio: 1/1
             }
+
             @media #{$md-layout} {
                 max-width: 60px;
                 height: 60px;
@@ -196,6 +218,7 @@
             @media #{$small-mobile} {
                 top: 53%;
             }
+
             img {
                 border-radius: 50% !important;
             }
@@ -211,6 +234,7 @@
                 margin: 0;
                 font-weight: 400;
                 transition: var(--transition);
+                font-size: 34px !important;
 
                 &:hover {
                     color: var(--color-primary);
@@ -245,9 +269,11 @@
 
 .creator-list-wrapper {
     counter-reset: rn-list-counter;
+
     .creator-single {
         counter-increment: rn-list-counter;
         position: relative;
+
         &::before {
             content: counter(rn-list-counter);
             font-weight: 700;
@@ -267,9 +293,11 @@
 
 .top-seller-list-wrapper {
     counter-reset: rn-list-counter;
+
     .top-seller-list {
         counter-increment: rn-list-counter;
         position: relative;
+
         &::before {
             content: counter(rn-list-counter);
             font-weight: 700;
@@ -284,11 +312,13 @@
             top: 50%;
             transform: translateY(-50%);
             transition: 0.4s;
+
             @media #{$small-mobile} {
                 font-size: 40px;
                 right: 0;
             }
         }
+
         &:hover {
             &::before {
                 font-size: 45px;
@@ -297,6 +327,6 @@
     }
 }
 
-.collection-options{
+.collection-options {
     text-align: right;
 }
