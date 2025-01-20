@@ -41,16 +41,6 @@
     "title": "Quick Links",
     "menu": [
       {
-        "id": 1,
-        "text": "What is Digital Twin?",
-        "path": "https://ai.lootmogul.com/what-is-digitaltwin//"
-      },
-      {
-        "id": 2,
-        "text": "What are Digital Collectibles?",
-        "path": "https://ai.lootmogul.com/what-is-collectible/"
-      },
-      {
         "id": 3,
         "text": "Contact Us",
         "path": "/contact"
