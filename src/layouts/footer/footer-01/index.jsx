@@ -98,48 +98,29 @@ const Footer = ({ space, className, data }) => (
     </div>
     {/* Footer text */}
     <div className="copy-right-one ptb--20 bg-color--1" style={{ backgroundColor: "#0f092d" }}>
-      <div className="container" style={{ width: "80%", margin: "auto" }}>
-        <div className="row">
-          <div className="col-lg-2 col-6">
+      <div className="container" style={{ width: "80%", margin: "auto", display: "flex", justifyContent: "center" }}>
+          <div className="row w-100 text-center">
+              <div className="col-lg-6 d-flex flex-column align-items-center">
             <img
               className="w-100 h-auto w-small"
-              src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2022/07/14014003/Cricket_South_Africa.webp`}
+            src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/03/11013049/Wide-Logo-1-1.png`}
               alt=""
+              style={{ padding: "5px", maxWidth: "300px" }}
             />
-            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-center">
-              Official Gaming Partner:<br /> Cricket South Africa
-            </p>
-          </div>
-          <div className="col-lg-2 col-6">
-            <img
-              className="w-100 h-auto w-small p-2"
-              src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/12/09065747/Bkfc_logo.png`}
-              alt=""
-            />
-            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-center">
-              Official Partner
-            </p>
-          </div>
-          <div className="col-lg-4">
-            <img
-              className="w-100 h-auto w-small"
-              src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/03/11013049/Wide-Logo-1-1.png`}
-              alt=""
-              style={{ padding: "5px" }}
-            />
-            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
+            <p style={{ color: "#fff" }} className="variant-footerText font-weight-400 font-size-12 text-center">
               LootMogul venture is accelerated (1 of 5 ventures) by National Basketball Player Association in collaboration with Andreessen Horowitz (a16z)’s Cultural Leadership Fund and Patricof Co
             </p>
           </div>
-          <div className="col-lg-4">
+
+          <div className="col-lg-6 d-flex flex-column align-items-center">
             <img
               className="w-100 h-auto w-small"
               src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/03/11013050/NFLPA-Logo-1.png`}
               alt=""
-              style={{ padding: "10px" }}
+              style={{ padding: "10px", maxWidth: "300px" }}
             />
-            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
-              LootMogul is competitively selected (1 of 6 ventures) by National Football League Player Association (NFLPA)  to participate in their 2023 NFLPA Pitch Day Competition during the 2023 NFL Superbowl LVII Week.
+            <p style={{ color: "#fff" }} className="variant-footerText font-weight-400 font-size-12 text-center">
+              LootMogul is competitively selected (1 of 6 ventures) by National Football League Player Association (NFLPA) to participate in their 2023 NFLPA Pitch Day Competition during the 2023 NFL Superbowl LVII Week.
             </p>
           </div>
         </div>
