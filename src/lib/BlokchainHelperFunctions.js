@@ -1,9 +1,10 @@
 import {
   ETHEREUM_NETWORK_CHAIN_ID,
   POLYGON_NETWORK_CHAIN_ID,
+  BINANCE_NETWORK_CHAIN_ID,
+  SOMNIA_NETWORK_CHAIN_ID,
   NETWORKS,
   NETWORKS_CHAINS,
-  BINANCE_NETWORK_CHAIN_ID
 } from "./constants";
 
 const ADMIN_ROLE = "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775";
@@ -279,6 +280,19 @@ export function isValidNetwork(chainId) {
   return false;
 }
 
+export const getNetworkSymbol = (currentNetwork) => {
+  if (ETHEREUM_NETWORK_CHAIN_ID == currentNetwork) {
+    return "ETH";
+  } else if (POLYGON_NETWORK_CHAIN_ID == currentNetwork) {
+    return "MATIC";
+  } else if (BINANCE_NETWORK_CHAIN_ID == currentNetwork) {
+    return "BNB";
+  } else if (SOMNIA_NETWORK_CHAIN_ID == currentNetwork) {
+    return "STT";
+  }
+  return "ETH";
+};
+
 export function currenyOfCurrentNetwork(currentNetwork) {
   if (ETHEREUM_NETWORK_CHAIN_ID == currentNetwork) {
     return "ETH";
@@ -286,6 +300,8 @@ export function currenyOfCurrentNetwork(currentNetwork) {
     return "MATIC";
   } else if (BINANCE_NETWORK_CHAIN_ID == currentNetwork) {
     return "BNB";
+  } else if (SOMNIA_NETWORK_CHAIN_ID == currentNetwork) {
+    return "STT";
   }
   return "";
 }

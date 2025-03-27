@@ -11,7 +11,7 @@ import axios from "axios";
 import { AppData } from "src/context/app-context";
 import { useRouter } from "next/router";
 import Multiselect from "multiselect-react-dropdown";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, BINANCE_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, BINANCE_NETWORK_CHAIN_ID, SOMNIA_NETWORK_CHAIN_ID } from "src/lib/constants";
 import { getERC721FactoryContract, getERC1155FactoryContract, addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import strapi from "@utils/strapi";
 import { Messages } from "@utils/constants";
@@ -67,6 +67,10 @@ const blockchainNetworkOptionsList = [
   {
     value: "Binance",
     text: "Binance"
+  },
+  {
+    value: "Somnia",
+    text: "Somnia"
   },
 ];
 
@@ -157,6 +161,8 @@ const CreateCollectionArea = ({ collection }) => {
         switchNetwork(POLYGON_NETWORK_CHAIN_ID); // polygon testnet
       } else if (blockchainNetwork === "Binance") {
         switchNetwork(BINANCE_NETWORK_CHAIN_ID); // binance testnet
+      } else if (blockchainNetwork === "Somnia") {
+        switchNetwork(SOMNIA_NETWORK_CHAIN_ID); // somnia testnet
       }
     }
   }, [blockchainNetwork]);

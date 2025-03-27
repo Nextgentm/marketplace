@@ -89,6 +89,8 @@ contract StakingNFT is
 
     __AccessControl_init();
     __UUPSUpgradeable_init();
+    __Pausable_init();
+    __ReentrancyGuard_init();
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 

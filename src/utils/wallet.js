@@ -8,6 +8,10 @@ export const networksList = [
     image: "/images/connect/polygon.png"
   },
   {
+    name: "Somnia",
+    image: "/images/connect/somnia.png"
+  },
+  {
     name: "Binance",
     image: "/images/connect/binance.png"
   }
