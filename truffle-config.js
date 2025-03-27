@@ -11,17 +11,18 @@ module.exports = {
     somnia: {
       provider: function () {
         return new HDWalletProvider(
-          process.env.MNEMONIC || "4b9ce9b1e6ed3e484528d61298366dbfe2e82970eb1b09f5dd6dba93a4efe8b1",
+          "325bfb57021e35ebf5a806c6c4c854dad4bed356a6ab93b1cef3069ee35374d6",
           "https://dream-rpc.somnia.network/"
         );
       },
       network_id: 50312,
-      gas: 5500000,
-      gasPrice: 30000000000,
-      confirmations: 2,
-      networkCheckTimeout: 1000000,
-      timeoutBlocks: 200,
-      skipDryRun: true
+      gas: 40000,
+      gasPrice: 30000000000, // 30 Gwei
+      confirmations: 1,
+      networkCheckTimeout: 10000,
+      timeoutBlocks: 50,
+      skipDryRun: true,
+      websockets: true
     },
     maticmumbai: {
       //Polygon Amoy Testnet
