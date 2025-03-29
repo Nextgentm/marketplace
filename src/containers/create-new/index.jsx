@@ -133,13 +133,16 @@ const CreateNewArea = ({ className, space, collectible }) => {
       const { price, royality } = data;
       const supply = data?.supply ? Number(data?.supply) : 1;
 
-      const { tokenID, transactionHash } = await MintNFT(contractAddress, metadataURL, price, royality, supply);
-      if (!tokenID || !transactionHash) {
-        return;
-      }
-
+      // rutvik comment for testing somnia
+      
+      // const { tokenID, transactionHash } = await MintNFT(contractAddress, metadataURL, price, royality, supply);
+      // if (!tokenID || !transactionHash) {
+      //   return;
+      // }
+      let tokenID = ""
+      let transactionHash = ""
       const nft_url_4 = JSON.parse(nftImagePath);
-      const res = await strapi.create("collectibles", {
+      console.log({
         name: data.name ? data.name : null,
         image: nft_url_4 || "ImagePath",
         imageID: nftImageId || 0,
@@ -161,7 +164,31 @@ const CreateNewArea = ({ className, space, collectible }) => {
         instantSalePrice: data.instantsaleprice,
         unlockPurchased: data.unlockpurchased,
         slug: data.name ? data.name.toLowerCase().split(" ").join("-") : null,
-        collection: selectedCollection.id
+        collection: 1
+      })
+      const res = await strapi.create("som-collectibles", {
+        name: data.name ? data.name : null,
+        image: nft_url_4 || "ImagePath",
+        imageID: nftImageId || 0,
+        description: data.discription ? data.discription : null,
+        price: data.price ? Number(data.price) : null,
+        size: 1,
+        symbol: "wETH",
+        nftID: tokenID.toString(),
+        external_url: data?.external_url,
+        properties: formValues || null,
+        royalty: data.royality ? Number(data.royality) : null,
+        supply,
+        imageHash: "String",
+        metadataHash: "String",
+        creator: walletData.account,
+        owner: walletData.account,
+        collectionContractAddress: data.collectionContractAddress ? data.collectionContractAddress : null,
+        putOnSale: false,
+        instantSalePrice: data.instantsaleprice,
+        unlockPurchased: data.unlockpurchased,
+        slug: data.name ? data.name.toLowerCase().split(" ").join("-") : null,
+        collection: 1 
       });
       console.log(res);
       const collectiblesId = res.data.id;
@@ -256,21 +283,24 @@ const CreateNewArea = ({ className, space, collectible }) => {
     const isPreviewBtn = submitBtn.dataset?.btn;
     setHasImageError(!selectedImage);
 
-    if (!selectedCollection) {
-      toast.error("Select collection");
-      return;
-    }
-    if (!walletData.isConnected) {
-      let res = await checkAndConnectWallet(selectedCollection?.networkType);
-      if (!res) return;
-    }
-    // chnage network
-    let networkChanged = await changeNetworkByNetworkType(selectedCollection?.networkType);
-    if (!networkChanged) {
-      // ethereum testnet
-      toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
-      return;
-    }
+    /**
+     * rutvik comment for som
+     */
+    // if (!selectedCollection) {
+    //   toast.error("Select collection");
+    //   return;
+    // }
+    // if (!walletData.isConnected) {
+    //   let res = await checkAndConnectWallet(selectedCollection?.networkType);
+    //   if (!res) return;
+    // }
+    // // chnage network
+    // let networkChanged = await changeNetworkByNetworkType(selectedCollection?.networkType);
+    // if (!networkChanged) {
+    //   // ethereum testnet
+    //   toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
+    //   return;
+    // }
     if (isPreviewBtn && selectedImage) {
       setPreviewData({ ...data, image: selectedImage });
       setShowProductModal(true);
@@ -444,7 +474,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
       });
       setFormValues(allCollectibleProperties);
     } else {
-      strapi.find("collections", collectionType ? filter : null)
+      strapi.find("som-collections", collectionType ? filter : null)
         .then((response) => {
           let paramCollection = null;
           const results = [];

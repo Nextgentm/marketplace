@@ -29,7 +29,7 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, a
         }
       }
     };
-    let response = await strapi.find("collections", null);
+    let response = await strapi.find("som-collections", null);
     console.log(response);
   };
 

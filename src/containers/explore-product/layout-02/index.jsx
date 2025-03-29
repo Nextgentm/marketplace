@@ -79,9 +79,9 @@ const ExploreProductArea = ({ className, space, data }) => {
                 <motion.div key={index} className={clsx("grid-item")} layout>
                   <Product
                     isAuction={true}
-                    title={prod.collectible.data.name}
-                    slug={"collectible/" + prod.collectible.data.slug + "/auction/" + prod.id}
-                    supply={prod.collectible.data.supply}
+                    title={prod.collectible?.data?.name}
+                    slug={"collectible/" + prod.collectible?.data?.slug + "/auction/" + prod.id}
+                    supply={prod?.collectible?.data?.supply}
                     price={prod.bidPrice}
                     symbol={prod.priceCurrency}
                     image={prod.collectible.data?.image?.data ? prod.collectible.data?.image?.data?.url : prod.collectible.data?.image_url}

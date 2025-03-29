@@ -408,7 +408,7 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       }
 
       // create bidding
-      const res = await strapi.create("biddings", {
+      const res = await strapi.create("som-biddings", {
         bidPrice: price,
         bidderAddress: walletData.account,
         timeStamp: new Date(),

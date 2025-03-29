@@ -46,7 +46,7 @@ export async function getStaticPaths() {
     let page = 1, pageCount = 1, pageSize = 25;
     do {
       // console.log(page, pageCount, pageSize);
-      const resData = await strapi.find("collections", {
+      const resData = await strapi.find("som-collections", {
         fields: ["id", "slug"],
         pagination: {
           page: page,

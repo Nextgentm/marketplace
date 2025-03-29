@@ -224,7 +224,7 @@ const CreateCollectionArea = ({ collection }) => {
           updatedCollectionObj.featuredID = Number(featureImageId);
         }
         // console.log(updatedCollectionObj);
-        const resp = await strapi.update("collections", collection?.id, updatedCollectionObj);
+        const resp = await strapi.update("som-collections", collection?.id, updatedCollectionObj);
         console.log(resp);
         toast("Collection updated successfully");
       } else {
@@ -331,12 +331,24 @@ const CreateCollectionArea = ({ collection }) => {
       const featureImagePathObject = JSON.parse(featureImagePath);
 
       /* deploy smartcontract call */
-      const deployedContractAddress = await blockchainCall(data.title, data.symbol, data.url);
-      if (!deployedContractAddress) {
-        return;
-      }
-      const deployed721ContractAddress = deployedContractAddress[0];
-      const deployed1155ContractAddress = deployedContractAddress[1];
+      /**
+       * rutvik cooment for somnia
+       */
+      // const deployedContractAddress = await blockchainCall(data.title, data.symbol, data.url);
+      // if (!deployedContractAddress) {
+      //   return;
+      // }
+
+      /**
+       * rutvik cooment for somnia
+       */
+      // const deployed721ContractAddress = deployedContractAddress[0];
+      // const deployed1155ContractAddress = deployedContractAddress[1];
+
+      const deployed721ContractAddress = "";
+      const deployed1155ContractAddress = "";
+
+
       // console.log(
       //     deployed721ContractAddress,
       //     deployed1155ContractAddress
@@ -346,7 +358,7 @@ const CreateCollectionArea = ({ collection }) => {
       // console.log(selectedPaymentTokens);
 
       const slug = data.title ? data.title.toLowerCase().split(" ").join("-") : null;
-      const resp = await strapi.create("collections", {
+      const resp = await strapi.create("som-collections", {
         name: data.title ? data.title : null,
         logo: logoImagePathObject || "Null",
         logoID: Number(logoImageId),
@@ -456,24 +468,29 @@ const CreateCollectionArea = ({ collection }) => {
     console.log(isPreviewBtn);
     // console.log(data, e);
     /** if Wallet not connected */
-    if (!walletData.isConnected) {
-      let res = await checkAndConnectWallet(blockchainNetwork);
-      if (!res) return;
-    }
+
+    /**
+     * rutvik wallet comment
+     */
+
+    // if (!walletData.isConnected) {
+    //   let res = await checkAndConnectWallet(blockchainNetwork);
+    //   if (!res) return;
+    // }
     // chnage network
-    let networkChanged = await changeNetworkByNetworkType(blockchainNetwork);
-    if (!networkChanged) {
-      // ethereum testnet
-      toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
-      return;
-    }
+    // let networkChanged = await changeNetworkByNetworkType(blockchainNetwork);
+    // if (!networkChanged) {
+    //   // ethereum testnet
+    //   toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
+    //   return;
+    // }
 
     /** Show Error if form not submited correctly */
-    setHasCatError(!category);
-    setHasBlockchainNetworkError(!blockchainNetwork);
-    if (!blockchainNetwork || !category) {
-      return;
-    }
+    // setHasCatError(!category);
+    // setHasBlockchainNetworkError(!blockchainNetwork);
+    // if (!blockchainNetwork || !category) {
+    //   return;
+    // }
     /** code for fetching submited button value */
     // console.log(e.nativeEvent.submitter.name);
     if (isPreviewBtn) {

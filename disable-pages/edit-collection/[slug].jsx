@@ -26,7 +26,7 @@ export async function getStaticPaths() {
         let page = 1, pageCount = 1, pageSize = 25;
         do {
             // console.log(page, pageCount, pageSize);
-            const resData = await strapi.find("collections", {
+            const resData = await strapi.find("som-collections", {
                 fields: ["id", "slug"],
                 pagination: {
                     page: page,
@@ -54,7 +54,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
 
-    let collection = await strapi.find("collections", {
+    let collection = await strapi.find("som-collections", {
         filters: {
             slug: {
                 $eq: params.slug
