@@ -12,17 +12,15 @@ module.exports = {
       provider: function () {
         return new HDWalletProvider(
           "325bfb57021e35ebf5a806c6c4c854dad4bed356a6ab93b1cef3069ee35374d6",
-          "https://dream-rpc.somnia.network/"
+          "https://rpc.ankr.com/somnia_testnet/4944aadf64955e934d28b7cc94862e884aa31a677eeb19fb056087b60370c80c"
         );
       },
       network_id: 50312,
-      gas: 40000,
+      gas: 8000000, // Increase gas limit
       gasPrice: 30000000000, // 30 Gwei
-      confirmations: 1,
-      networkCheckTimeout: 10000,
-      timeoutBlocks: 50,
+      confirmations: 2,
+      timeoutBlocks: 200,
       skipDryRun: true,
-      websockets: true
     },
     maticmumbai: {
       //Polygon Amoy Testnet
@@ -32,14 +30,12 @@ module.exports = {
           "wss://polygon-amoy.infura.io/ws/v3/13148311eb224166807b08a7e944f71d"
         );
       },
-      network_id: 80002,
-      gas: 5500000,
-      gasPrice: 30000000000, // Set gas price if needed
-      // gasLimit: 5500000, // Set gas Limit if needed
-      confirmations: 2, // # of confs to wait between deployments. (default: 0)
-      networkCheckTimeout: 1000000, //  This is the timeout config. set it to 1000 seconds
-      timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
-      skipDryRun: true // Skip dry run before migrations? (default: false for public nets )
+      gas: 8000000, // Increase gas limit
+      gasPrice: 30000000000, // 30 Gwei
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true,
+
     },
     goerli: {
       provider: () =>

@@ -30598,10 +30598,16 @@
       "links": {},
       "address": "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
       "transactionHash": "0x9f6f91df4c058012d016960faf506de83a4636f947e5ef1357b941cd4933acff"
+    },
+    "50312": {
+      "events": {},
+      "links": {},
+      "address": "0x60fe5D28F1E633F94d8fC210f3FfD1ab62C1204F",
+      "transactionHash": "0x8b28bd7b2a369226c2316f30b846ae8dfc0b34e156ba77132d731b30f5f09d94"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-03-26T10:27:43.295Z",
+  "updatedAt": "2025-03-28T18:14:56.930Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
