@@ -209,7 +209,8 @@ const CreateCollectionArea = ({ collection }) => {
           slug,
           paymentTokens: selectedPaymentTokensList,
           payoutWalletAddress: data.wallet ? data.wallet : collection?.payoutWalletAddress,
-          explicitAndSensitiveContent: data.themeSwitch
+          explicitAndSensitiveContent: data.themeSwitch,
+          blockchain: 'somnia'
         }
         if (logoImagePath) {
           updatedCollectionObj.logo = JSON.parse(logoImagePath);
@@ -369,8 +370,8 @@ const CreateCollectionArea = ({ collection }) => {
         ownerAddress: walletData.account,
         collectionType: router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1), // convert "single" to "Single"
         payoutWalletAddress: data.wallet ? data.wallet : null,
-        explicitAndSensitiveContent: data.themeSwitch
-
+        explicitAndSensitiveContent: data.themeSwitch,
+        blockchain: 'somnia'
       });
       console.log(resp);
       notify();
