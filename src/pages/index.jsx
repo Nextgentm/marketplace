@@ -107,6 +107,7 @@ Home.getInitialProps = async () => {
         endTimeStamp: {
           $gt: new Date()
         },
+        blockchain: { $eq: NETWORK_NAMES.NETWORK },
         sellType: {
           $eq: "Bidding"
         }
@@ -152,6 +153,7 @@ Home.getInitialProps = async () => {
         status: {
           $eq: "Live"
         },
+        blockchain: { $eq: NETWORK_NAMES.NETWORK },
         id: {
           $in: newestItemsIds
         }
@@ -209,6 +211,7 @@ Home.getInitialProps = async () => {
         endTimeStamp: {
           $gt: new Date()
         },
+        blockchain: { $eq: NETWORK_NAMES.NETWORK },
       },
       populate: {
         collectible: {

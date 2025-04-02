@@ -106,7 +106,10 @@ const Author = () => {
             walletAddress: {
               $eq: walletData.account
             }
-          }
+          },
+          {
+            blockchain: { $eq: NETWORK_NAMES.NETWORK }
+          },
         ]
       },
       populate: {
@@ -131,7 +134,7 @@ const Author = () => {
     console.log(`${process.env.BlOCKCHAIN}`,"six filters")
     let response = await strapi.find("collectibles", {
       filters: {
-        bloc  kchain: { $eq: NETWORK_NAMES.NETWORK }, // added blockchain filter
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // added blockchain filter
         $or: [{
           $and: [{
             owner: {

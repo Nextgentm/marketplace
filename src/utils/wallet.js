@@ -6,15 +6,15 @@ export const networksList = [
   {
     name: "Somnia",
     image: "/images/connect/somnia.png"
-  },
-  {
-    name: "Polygon",
-    image: "/images/connect/polygon.png"
-  },
-  {
-    name: "Binance",
-    image: "/images/connect/binance.png"
   }
+  // {
+  //   name: "Polygon",
+  //   image: "/images/connect/polygon.png"
+  // },
+  // {
+  //   name: "Binance",
+  //   image: "/images/connect/binance.png"
+  // }
   // {
   //   name: "Avalanche",
   //   image: "/images/connect/avalanche.png"
