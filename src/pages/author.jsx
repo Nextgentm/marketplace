@@ -16,6 +16,7 @@ import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/g
 import { useLazyQuery } from "@apollo/client";
 import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import strapi from "@utils/strapi";
+import { NETWORK_NAMES } from "@utils/constants";
 // import productData from "../data/products.json";
 
 export async function getStaticProps() {
@@ -127,8 +128,10 @@ const Author = () => {
   };
 
   const getOwnedDatapaginationRecord = async (page) => {
+    console.log(`${process.env.BlOCKCHAIN}`,"six filters")
     let response = await strapi.find("collectibles", {
       filters: {
+        bloc  kchain: { $eq: NETWORK_NAMES.NETWORK }, // added blockchain filter
         $or: [{
           $and: [{
             owner: {
@@ -171,8 +174,10 @@ const Author = () => {
   };
 
   const getCreatedDatapaginationRecord = async (page) => {
+    console.log(`${process.env.BlOCKCHAIN}`,"fifth filters")
     let creatorResponse = await strapi.find("collectibles", {
       filters: {
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // added blockchain filter
         creator: {
           $eq: walletData.account
         }

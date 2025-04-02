@@ -16,7 +16,7 @@ export const addSomniaNetwork = async () => {
 
     await window.ethereum.request({
       method: "wallet_addEthereumChain",
-      params: [NETWORKS.SOMNIA],
+      params: [NETWORKS.SOMNIA]
     });
   } catch (error) {
     console.error("Error adding Somnia network:", error);
@@ -32,7 +32,7 @@ export const switchToSomniaNetwork = async () => {
 
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId: NETWORKS.SOMNIA.chainId }],
+      params: [{ chainId: NETWORKS.SOMNIA.chainId }]
     });
   } catch (error) {
     if (error.code === 4902) {

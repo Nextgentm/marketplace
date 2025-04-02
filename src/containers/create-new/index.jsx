@@ -19,7 +19,7 @@ import { getERC721Contract, getERC1155Contract, addressIsAdmin } from "src/lib/B
 import { useMutation } from "@apollo/client";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
-import { Messages } from "@utils/constants";
+import { Messages, NETWORK_NAMES } from "@utils/constants";
 
 const CreateNewArea = ({ className, space, collectible }) => {
   const [showProductModal, setShowProductModal] = useState(false);
@@ -162,7 +162,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
         unlockPurchased: data.unlockpurchased,
         slug: data.name ? data.name.toLowerCase().split(" ").join("-") : null,
         collection: selectedCollection.id,
-        blockchain: "somnia"
+        blockchain: NETWORK_NAMES.NETWORK || "",
       });
       console.log(res);
       const collectiblesId = res.data.id;
@@ -426,9 +426,10 @@ const CreateNewArea = ({ className, space, collectible }) => {
     const collectionType = router.query.type
       ? router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1)
       : null;
-
+      console.log(`${process.env.BlOCKCHAIN}`,"seven filters")
     const filter = {
       filters: {
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // Added blockchain filter
         collectionType: {
           $eq: collectionType
         }
@@ -531,7 +532,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
           external_url: data?.external_url ? data?.external_url : collectible?.external_url,
           properties: formValues || collectible?.collectibleProperties?.data,
           slug: slug,
-          blockchain: "somnia"
+          blockchain: NETWORK_NAMES.NETWORK|| "",
         }
         if (nftImagePath) {
           updatedCollectibleObj.image = JSON.parse(nftImagePath);
