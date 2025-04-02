@@ -16,6 +16,12 @@ const ADMIN_ROLE = "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693
 //_______________________________________________//
 export async function getERC721FactoryContract(network) {
   try {
+    console.log("Getting ERC721 factory contract for network:", network);
+    if (!network) {
+      console.error("Network parameter is undefined or null");
+      return null;
+    }
+
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contractData = getContractsData(network);
@@ -25,11 +31,17 @@ export async function getERC721FactoryContract(network) {
       return null;
     }
 
+    if (!contractData.Factory721Contract.address) {
+      console.error("Factory721Contract address not found for network:", network);
+      return null;
+    }
+
     const factoryContract721Factory = new ethers.Contract(
       contractData.Factory721Contract.address,
       contractData.Factory721Contract.abi,
       signer
     );
+    console.log("ERC721 factory contract initialized successfully");
     return factoryContract721Factory;
   } catch (error) {
     console.error("Error getting ERC721 factory contract:", error);
@@ -39,6 +51,12 @@ export async function getERC721FactoryContract(network) {
 
 export async function getERC1155FactoryContract(network) {
   try {
+    console.log("Getting ERC1155 factory contract for network:", network);
+    if (!network) {
+      console.error("Network parameter is undefined or null");
+      return null;
+    }
+
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contractData = getContractsData(network);
@@ -48,11 +66,17 @@ export async function getERC1155FactoryContract(network) {
       return null;
     }
 
+    if (!contractData.Factory1155Contract.address) {
+      console.error("Factory1155Contract address not found for network:", network);
+      return null;
+    }
+
     const factoryContract1155 = new ethers.Contract(
       contractData.Factory1155Contract.address,
       contractData.Factory1155Contract.abi,
       signer
     );
+    console.log("ERC1155 factory contract initialized successfully");
     return factoryContract1155;
   } catch (error) {
     console.error("Error getting ERC1155 factory contract:", error);

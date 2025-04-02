@@ -68,3 +68,31 @@ export const getChainIdByNetworkName = (networkName) => {
       return null;
   }
 };
+
+// Helper function to get network name from chain ID
+export const getNetworkNameByChainId = (chainId) => {
+  console.log("Getting network name for chain ID:", chainId);
+  if (!chainId) {
+    console.log("Chain ID is undefined or null");
+    return null;
+  }
+
+  // Convert chainId to lowercase and remove '0x' prefix if present
+  const chainIdLower = chainId.toLowerCase().replace('0x', '');
+  console.log("Looking up network name for chain ID:", chainIdLower);
+
+  // Compare with chain IDs without '0x' prefix
+  switch (chainIdLower) {
+    case ETHEREUM_NETWORK_CHAIN_ID.toLowerCase().replace('0x', ''):
+      return "Ethereum";
+    case POLYGON_NETWORK_CHAIN_ID.toLowerCase().replace('0x', ''):
+      return "Polygon";
+    case BINANCE_NETWORK_CHAIN_ID.toLowerCase().replace('0x', ''):
+      return "Binance";
+    case SOMNIA_NETWORK_CHAIN_ID.toLowerCase().replace('0x', ''):
+      return "Somnia";
+    default:
+      console.log("No matching network name found for chain ID:", chainId);
+      return null;
+  }
+};

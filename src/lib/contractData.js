@@ -10,36 +10,54 @@ import StakingNFTContractArtifacts from "../abis/StakingNFT.json";
 export function getContractsData(network) {
   try {
     console.log("Getting contract data for network:", network);
+    if (!network) {
+      console.error("Network parameter is undefined or null");
+      return null;
+    }
+
     let contractData = {};
 
     // Get contract addresses based on network
-    if (network === "Ethereum") {
-      contractData.Factory721Contract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS };
-      contractData.Factory1155Contract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS };
-      contractData.TradeContract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS };
-      contractData.TransferProxy = { "address": process.env.NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS };
-      contractData.StakingContract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_STAKING_CONTRACT_ADDRESS };
-    } else if (network === "Somnia") {
-      contractData.Factory721Contract = { "address": process.env.NEXT_PUBLIC_SOMNIA_FACTORY721_CONTRACT_ADDRESS };
-      contractData.Factory1155Contract = { "address": process.env.NEXT_PUBLIC_SOMNIA_FACTORY1155_CONTRACT_ADDRESS };
-      contractData.TradeContract = { "address": process.env.NEXT_PUBLIC_SOMNIA_TRADE_CONTRACT_ADDRESS };
-      contractData.TransferProxy = { "address": process.env.NEXT_PUBLIC_SOMNIA_TRANSFER_PROXY_CONTRACT_ADDRESS };
-      contractData.StakingContract = { "address": process.env.NEXT_PUBLIC_SOMNIA_STAKING_CONTRACT_ADDRESS };
-    } else if (network === "Polygon") {
-      contractData.Factory721Contract = { "address": process.env.NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS };
-      contractData.Factory1155Contract = { "address": process.env.NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS };
-      contractData.TradeContract = { "address": process.env.NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS };
-      contractData.TransferProxy = { "address": process.env.NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS };
-      contractData.StakingContract = { "address": process.env.NEXT_PUBLIC_POLYGON_STAKING_CONTRACT_ADDRESS };
-    } else if (network === "Binance") {
-      contractData.Factory721Contract = { "address": process.env.NEXT_PUBLIC_BINANCE_FACTORY721_CONTRACT_ADDRESS };
-      contractData.Factory1155Contract = { "address": process.env.NEXT_PUBLIC_BINANCE_FACTORY1155_CONTRACT_ADDRESS };
-      contractData.TradeContract = { "address": process.env.NEXT_PUBLIC_BINANCE_TRADE_CONTRACT_ADDRESS };
-      contractData.TransferProxy = { "address": process.env.NEXT_PUBLIC_BINANCE_TRANSFER_PROXY_CONTRACT_ADDRESS };
-      contractData.StakingContract = { "address": process.env.NEXT_PUBLIC_BINANCE_STAKING_CONTRACT_ADDRESS };
-    } else {
-      console.error("Unsupported network:", network);
-      return null;
+    switch (network) {
+      case "Ethereum":
+        contractData = {
+          Factory721Contract: { "address": process.env.NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS },
+          Factory1155Contract: { "address": process.env.NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS },
+          TradeContract: { "address": process.env.NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS },
+          TransferProxy: { "address": process.env.NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS },
+          StakingContract: { "address": process.env.NEXT_PUBLIC_ETHEREUM_STAKING_CONTRACT_ADDRESS }
+        };
+        break;
+      case "Somnia":
+        contractData = {
+          Factory721Contract: { "address": process.env.NEXT_PUBLIC_SOMNIA_FACTORY721_CONTRACT_ADDRESS },
+          Factory1155Contract: { "address": process.env.NEXT_PUBLIC_SOMNIA_FACTORY1155_CONTRACT_ADDRESS },
+          TradeContract: { "address": process.env.NEXT_PUBLIC_SOMNIA_TRADE_CONTRACT_ADDRESS },
+          TransferProxy: { "address": process.env.NEXT_PUBLIC_SOMNIA_TRANSFER_PROXY_CONTRACT_ADDRESS },
+          StakingContract: { "address": process.env.NEXT_PUBLIC_SOMNIA_STAKING_CONTRACT_ADDRESS }
+        };
+        break;
+      case "Polygon":
+        contractData = {
+          Factory721Contract: { "address": process.env.NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS },
+          Factory1155Contract: { "address": process.env.NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS },
+          TradeContract: { "address": process.env.NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS },
+          TransferProxy: { "address": process.env.NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS },
+          StakingContract: { "address": process.env.NEXT_PUBLIC_POLYGON_STAKING_CONTRACT_ADDRESS }
+        };
+        break;
+      case "Binance":
+        contractData = {
+          Factory721Contract: { "address": process.env.NEXT_PUBLIC_BINANCE_FACTORY721_CONTRACT_ADDRESS },
+          Factory1155Contract: { "address": process.env.NEXT_PUBLIC_BINANCE_FACTORY1155_CONTRACT_ADDRESS },
+          TradeContract: { "address": process.env.NEXT_PUBLIC_BINANCE_TRADE_CONTRACT_ADDRESS },
+          TransferProxy: { "address": process.env.NEXT_PUBLIC_BINANCE_TRANSFER_PROXY_CONTRACT_ADDRESS },
+          StakingContract: { "address": process.env.NEXT_PUBLIC_BINANCE_STAKING_CONTRACT_ADDRESS }
+        };
+        break;
+      default:
+        console.error("Unsupported network:", network);
+        return null;
     }
 
     // Validate contract addresses
