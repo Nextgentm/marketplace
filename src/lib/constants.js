@@ -43,18 +43,28 @@ export const NETWORKS = {
   }
 };
 
-// Helper function to get chainId from network name
-export const getChainIdFromNetworkName = (networkName) => {
-  switch (networkName) {
-    case "Ethereum":
+// Helper function to get chain ID from network name
+export const getChainIdByNetworkName = (networkName) => {
+  console.log("inside getChainIdByNetworkName networkName = ", networkName);
+  if (!networkName) {
+    console.log("Network name is undefined or null");
+    return null;
+  }
+  
+  const networkNameLower = networkName.toLowerCase();
+  console.log("Looking up chain ID for network:", networkNameLower);
+  
+  switch (networkNameLower) {
+    case "ethereum":
       return ETHEREUM_NETWORK_CHAIN_ID;
-    case "Polygon":
+    case "polygon":
       return POLYGON_NETWORK_CHAIN_ID;
-    case "Binance":
+    case "binance":
       return BINANCE_NETWORK_CHAIN_ID;
-    case "Somnia":
+    case "somnia":
       return SOMNIA_NETWORK_CHAIN_ID;
     default:
+      console.log("No matching chain ID found for network:", networkName);
       return null;
   }
 };
