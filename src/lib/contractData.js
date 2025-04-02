@@ -9,27 +9,27 @@ import StakingNFTContractArtifacts from "../abis/StakingNFT.json";
 
 export function getContractsData(network) {
   let contractData = {};
+
   if (network == "Ethereum") {
-    //address
     contractData.Factory721Contract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS };
     contractData.Factory1155Contract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS };
     contractData.TradeContract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS };
     contractData.TransferProxy = { "address": process.env.NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS };
     contractData.StakingContract = { "address": process.env.NEXT_PUBLIC_ETHEREUM_STAKING_CONTRACT_ADDRESS };
-  } else if (network == "Polygon") {
-    contractData.Factory721Contract = { "address": process.env.NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS };
-    contractData.Factory1155Contract = { "address": process.env.NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS };
-    contractData.TradeContract = { "address": process.env.NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS };
-    contractData.TransferProxy = { "address": process.env.NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS };
-    contractData.StakingContract = { "address": process.env.NEXT_PUBLIC_POLYGON_STAKING_CONTRACT_ADDRESS };
   } else if (network == "Somnia") {
     contractData.Factory721Contract = { "address": process.env.NEXT_PUBLIC_SOMNIA_FACTORY721_CONTRACT_ADDRESS };
     contractData.Factory1155Contract = { "address": process.env.NEXT_PUBLIC_SOMNIA_FACTORY1155_CONTRACT_ADDRESS };
     contractData.TradeContract = { "address": process.env.NEXT_PUBLIC_SOMNIA_TRADE_CONTRACT_ADDRESS };
     contractData.TransferProxy = { "address": process.env.NEXT_PUBLIC_SOMNIA_TRANSFER_PROXY_CONTRACT_ADDRESS };
     contractData.StakingContract = { "address": process.env.NEXT_PUBLIC_SOMNIA_STAKING_CONTRACT_ADDRESS };
+  } else if (network == "Polygon") {
+    // Commented for Somnia
+    contractData.Factory721Contract = { "address": process.env.NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS };
+    contractData.Factory1155Contract = { "address": process.env.NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS };
+    contractData.TradeContract = { "address": process.env.NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS };
+    contractData.TransferProxy = { "address": process.env.NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS };
+    contractData.StakingContract = { "address": process.env.NEXT_PUBLIC_POLYGON_STAKING_CONTRACT_ADDRESS };
   } else if (network == "Binance") {
-    //address
     contractData.Factory721Contract = { "address": process.env.NEXT_PUBLIC_BINANCE_FACTORY721_CONTRACT_ADDRESS };
     contractData.Factory1155Contract = { "address": process.env.NEXT_PUBLIC_BINANCE_FACTORY1155_CONTRACT_ADDRESS };
     contractData.TradeContract = { "address": process.env.NEXT_PUBLIC_BINANCE_TRADE_CONTRACT_ADDRESS };

@@ -162,7 +162,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
         unlockPurchased: data.unlockpurchased,
         slug: data.name ? data.name.toLowerCase().split(" ").join("-") : null,
         collection: selectedCollection.id,
-        blockchain: 'somnia'
+        blockchain: "somnia"
       });
       console.log(res);
       const collectiblesId = res.data.id;
@@ -531,7 +531,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
           external_url: data?.external_url ? data?.external_url : collectible?.external_url,
           properties: formValues || collectible?.collectibleProperties?.data,
           slug: slug,
-          blockchain: 'somnia'
+          blockchain: "somnia"
         }
         if (nftImagePath) {
           updatedCollectibleObj.image = JSON.parse(nftImagePath);
@@ -708,7 +708,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
                         <textarea
                           id="discription"
                           rows="3"
-                          placeholder="e. g. "After purchasing the product you can get item...""
+                          placeholder="e. g. `After purchasing the product you can get item...`"
                           {...register("discription", {
                             required: "Discription is required"
                           })}

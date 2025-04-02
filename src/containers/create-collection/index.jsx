@@ -157,12 +157,12 @@ const CreateCollectionArea = ({ collection }) => {
     if (walletData.isConnected) {
       if (blockchainNetwork === "Ethereum") {
         switchNetwork(ETHEREUM_NETWORK_CHAIN_ID); // ethereum testnet
+      } else if (blockchainNetwork === "Somnia") {
+        switchNetwork(SOMNIA_NETWORK_CHAIN_ID); // somnia testnet
       } else if (blockchainNetwork === "Polygon") {
         switchNetwork(POLYGON_NETWORK_CHAIN_ID); // polygon testnet
       } else if (blockchainNetwork === "Binance") {
         switchNetwork(BINANCE_NETWORK_CHAIN_ID); // binance testnet
-      } else if (blockchainNetwork === "Somnia") {
-        switchNetwork(SOMNIA_NETWORK_CHAIN_ID); // somnia testnet
       }
     }
   }, [blockchainNetwork]);
@@ -210,8 +210,8 @@ const CreateCollectionArea = ({ collection }) => {
           paymentTokens: selectedPaymentTokensList,
           payoutWalletAddress: data.wallet ? data.wallet : collection?.payoutWalletAddress,
           explicitAndSensitiveContent: data.themeSwitch,
-          blockchain: 'somnia'
-        }
+          blockchain: "somnia",
+        };
         if (logoImagePath) {
           updatedCollectionObj.logo = JSON.parse(logoImagePath);
           updatedCollectionObj.logoID = Number(logoImageId);
@@ -371,7 +371,7 @@ const CreateCollectionArea = ({ collection }) => {
         collectionType: router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1), // convert "single" to "Single"
         payoutWalletAddress: data.wallet ? data.wallet : null,
         explicitAndSensitiveContent: data.themeSwitch,
-        blockchain: 'somnia'
+        blockchain: "somnia",
       });
       console.log(resp);
       notify();

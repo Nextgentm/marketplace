@@ -1,4 +1,4 @@
-import { NETWORKS } from '../config/networks';
+import { NETWORKS } from "../config/networks";
 
 export function walletAddressShortForm(value) {
   return value.substr(0, 5) + "...." + value.substr(-4);
@@ -11,15 +11,15 @@ export function transactionHashShortForm(value) {
 export const addSomniaNetwork = async () => {
   try {
     if (!window.ethereum) {
-      throw new Error('MetaMask is not installed');
+      throw new Error("MetaMask is not installed");
     }
 
     await window.ethereum.request({
-      method: 'wallet_addEthereumChain',
-      params: [NETWORKS.SOMNIA],
+      method: "wallet_addEthereumChain",
+      params: [NETWORKS.SOMNIA]
     });
   } catch (error) {
-    console.error('Error adding Somnia network:', error);
+    console.error("Error adding Somnia network:", error);
     throw error;
   }
 };
@@ -27,12 +27,12 @@ export const addSomniaNetwork = async () => {
 export const switchToSomniaNetwork = async () => {
   try {
     if (!window.ethereum) {
-      throw new Error('MetaMask is not installed');
+      throw new Error("MetaMask is not installed");
     }
 
     await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: NETWORKS.SOMNIA.chainId }],
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: NETWORKS.SOMNIA.chainId }]
     });
   } catch (error) {
     if (error.code === 4902) {
@@ -42,3 +42,9 @@ export const switchToSomniaNetwork = async () => {
     }
   }
 };
+
+const NETWORK_NAME = "Somnia";
+const NETWORK_SYMBOL = "STT";
+const NETWORK_DECIMALS = 18;
+const NETWORK_RPC_URL = "https://dream-rpc.somnia.network/";
+const NETWORK_EXPLORER_URL = "https://shannon-explorer.somnia.network/";

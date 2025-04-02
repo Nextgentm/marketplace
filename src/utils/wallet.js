@@ -4,12 +4,12 @@ export const networksList = [
   //   image: "/images/connect/ethereum.png"
   // },
   {
-    name: "Polygon",
-    image: "/images/connect/polygon.png"
-  },
-  {
     name: "Somnia",
     image: "/images/connect/somnia.png"
+  },
+  {
+    name: "Polygon",
+    image: "/images/connect/polygon.png"
   },
   {
     name: "Binance",

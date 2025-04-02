@@ -12,7 +12,9 @@
         "allowTemplateLiterals": true,
         "avoidEscape": true
       }
-    ]
+    ],
+    "react-hooks/exhaustive-deps": "off",
+    "import/no-anonymous-default-export": "off"
   },
   "settings": {
     "next": {

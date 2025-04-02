@@ -16,3 +16,5 @@ export const NETWORK_NAMES = {
   SOMNIA: "Somnia Testnet",
   NETWORK: "somnia"
 };
+
+const DEFAULT_NETWORK = "Somnia";
