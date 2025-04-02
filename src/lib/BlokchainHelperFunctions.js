@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import {
   ETHEREUM_NETWORK_CHAIN_ID,
   POLYGON_NETWORK_CHAIN_ID,
@@ -6,6 +7,7 @@ import {
   NETWORKS,
   NETWORKS_CHAINS,
 } from "./constants";
+import { getContractsData } from "./contractData";
 
 const ADMIN_ROLE = "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775";
 

@@ -22,6 +22,7 @@ import {
 import { getERC721FactoryContract, getERC1155FactoryContract, addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import strapi from "@utils/strapi";
 import { Messages, NETWORK_NAMES } from "@utils/constants";
+import { ethers } from "ethers";
 
 const categoryOptionsList = [
   {
@@ -118,6 +119,9 @@ const CreateCollectionArea = ({ collection }) => {
   } = useContext(AppData);
   // Get url param
   const router = useRouter();
+  const collectionType = router.query.type === "single" ? "Single" : 
+                        router.query.type === "multiple" ? "Multiple" : 
+                        router.query.type === "hybrid" ? "Hybrid" : "Single";
 
   const categoryHandler = (item) => {
     setCategory(item.value);
@@ -400,7 +404,7 @@ const CreateCollectionArea = ({ collection }) => {
       console.log("Starting StoreData with network:", blockchainNetwork);
       
       // Get the appropriate factory contract based on collection type
-      const factoryContract = collectionType === "single" 
+      const factoryContract = collectionType === "Single" 
         ? await getERC721FactoryContract(blockchainNetwork)
         : await getERC1155FactoryContract(blockchainNetwork);
 
@@ -419,24 +423,26 @@ const CreateCollectionArea = ({ collection }) => {
 
       // Create collection parameters
       const collectionParams = {
-        name: data.name,
+        name: data.title,
         symbol: data.symbol,
         baseURI: data.baseURI || "",
         maxSupply: data.maxSupply || 0,
         royalty: data.royalty || 0,
-        owner: account
+        owner: account,
+        paymentTokens: selectedPaymentTokens.map(token => token.value)
       };
 
       console.log("Collection parameters:", collectionParams);
 
+      // Generate a random salt for deployment
+      const salt = ethers.utils.randomBytes(32);
+
       // Deploy the collection
       const deployTx = await factoryContract.deploy(
+        salt,  // Add salt parameter
         collectionParams.name,
         collectionParams.symbol,
-        collectionParams.baseURI,
-        collectionParams.maxSupply,
-        collectionParams.royalty,
-        collectionParams.owner
+        collectionParams.baseURI
       );
 
       console.log("Deploy transaction sent:", deployTx.hash);
@@ -456,7 +462,7 @@ const CreateCollectionArea = ({ collection }) => {
       // Create collection data for Strapi
       const collectionData = {
         data: {
-          name: data.name,
+          name: data.title,
           symbol: data.symbol,
           description: data.description,
           logoImg: data.logoImg[0],
