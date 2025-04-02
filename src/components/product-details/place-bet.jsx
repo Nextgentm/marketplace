@@ -266,7 +266,9 @@ const PlaceBet = ({ highest_bid, auction_date, product, auction, refreshPageData
       // Pull the deployed contract instance
       let TokenContractAddress;
       //Select token contract address according to current network
-      if (walletData.network == "Polygon") {
+      if (walletData.network == "Somnia") {
+        TokenContractAddress = auction.data.paymentToken?.data?.somniaAddress;
+      } else if (walletData.network == "Polygon") {
         TokenContractAddress = auction.data.paymentToken?.data?.polygonAddress;
       } else if (walletData.network == "Ethereum") {
         TokenContractAddress = auction.data.paymentToken?.data?.ethAddress;

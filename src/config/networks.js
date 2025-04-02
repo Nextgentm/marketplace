@@ -1,16 +1,16 @@
 export const NETWORKS = {
     SOMNIA: {
-        chainId: '0xC4B0', // 50312 in hex
-        chainName: 'Somnia Testnet',
+        chainId: "0xC4B0", // 50312 in hex
+        chainName: "Somnia Testnet",
         nativeCurrency: {
-            name: 'STT',
-            symbol: 'STT',
+            name: "STT",
+            symbol: "STT",
             decimals: 18
         },
-        rpcUrls: ['https://dream-rpc.somnia.network/'],
+        rpcUrls: ["https://dream-rpc.somnia.network/"],
         blockExplorerUrls: [
-            'https://shannon-explorer.somnia.network/',
-            'https://somnia-testnet.socialscan.io/'
+            "https://shannon-explorer.somnia.network/",
+            "https://somnia-testnet.socialscan.io/"
         ]
     }
 };

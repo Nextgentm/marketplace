@@ -1,9 +1,11 @@
 import strapi from "@utils/strapi";
 
+const COLLECTION_API = "collections";
+
 export const getCollection = async (filters = null) => {
   const defaultFilters = {
     filters: {
-      blockchain: 'somnia'
+      blockchain: "somnia"
     }
   };
   
@@ -15,16 +17,16 @@ export const getCollection = async (filters = null) => {
     }
   } : defaultFilters;
   
-  return await strapi.find("collections", finalFilters);
+  return await strapi.find(COLLECTION_API, finalFilters);
 };
 
 export const getCollectible = async (filters = null) => {
   const defaultFilters = {
     filters: {
-      blockchain: 'somnia'
+      blockchain: "somnia"
     }
   };
-  
+
   // Merge any additional filters with the default blockchain filter
   const finalFilters = filters ? {
     filters: {
