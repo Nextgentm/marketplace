@@ -27,7 +27,7 @@ import strapi from "@utils/strapi";
 import ConfirmModal from "@components/modals/confirm-modal";
 import StakingTabContent from "@components/product-details/staking-tab/staking-tab-content";
 import AuctionsTabContent from "@components/product-details/bid-tab/auctions-tab-content";
-import { Messages } from "@utils/constants";
+import { Messages, NETWORK_NAMES } from "@utils/constants";
 
 // Demo Image
 
@@ -296,7 +296,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         paymentToken: data.paymentToken,
         quantity: data.quantity ? data.quantity : 1,
         remainingQuantity: data.quantity ? data.quantity : 1,
-        signature: sellerOrderSignature
+        signature: sellerOrderSignature,
+        blockchain: NETWORK_NAMES.NETWORK || "",
       });
       // console.log(res);
       const data = await strapi.update("collectibles", product.id, {

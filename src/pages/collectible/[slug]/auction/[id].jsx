@@ -16,6 +16,7 @@ import {
 import client from "@utils/apollo-client";
 import strapi from "@utils/strapi";
 import { useBreadCrumbData } from "@hooks";
+import { NETWORK_NAMES } from "@utils/constants";
 
 const AuctionDetails = ({ auction, recentViewProducts }) => {
   //   const [extraCrumb, setExtraCrumb] = useState([]);
@@ -113,6 +114,7 @@ export async function getServerSideProps({ params }) {
         endTimeStamp: {
           $gt: new Date()
         },
+        blockchain: { $eq: NETWORK_NAMES.NETWORK },
         collectible: {
           collection: {
             id: auction.data?.collectible?.data?.collection?.data?.id
