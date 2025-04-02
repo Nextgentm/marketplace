@@ -402,44 +402,34 @@ const CreateCollectionArea = ({ collection }) => {
   const StoreData = async (data) => {
     try {
       console.log("Starting StoreData with network:", blockchainNetwork);
-      
-      // Get the appropriate factory contract based on collection type
       const factoryContract = collectionType === "Single" 
         ? await getERC721FactoryContract(blockchainNetwork)
         : await getERC1155FactoryContract(blockchainNetwork);
 
       if (!factoryContract) {
-        console.error("Failed to get factory contract for network:", blockchainNetwork);
-        toast.error("Failed to initialize contract. Please try again.");
-        return;
+        throw new Error("Failed to initialize factory contract");
       }
 
       console.log("Factory contract initialized:", factoryContract.address);
+      console.log("Current account:", walletData.account);
 
-      // Get the current account
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      const account = accounts[0];
-      console.log("Current account:", account);
+      // Generate a random salt for deployment
+      const salt = ethers.utils.randomBytes(32);
 
-      // Create collection parameters
       const collectionParams = {
         name: data.title,
         symbol: data.symbol,
         baseURI: data.baseURI || "",
         maxSupply: data.maxSupply || 0,
         royalty: data.royalty || 0,
-        owner: account,
-        paymentTokens: selectedPaymentTokens.map(token => token.value)
+        paymentTokens: data.paymentTokens || []
       };
 
       console.log("Collection parameters:", collectionParams);
 
-      // Generate a random salt for deployment
-      const salt = ethers.utils.randomBytes(32);
-
       // Deploy the collection
       const deployTx = await factoryContract.deploy(
-        salt,  // Add salt parameter
+        salt,
         collectionParams.name,
         collectionParams.symbol,
         collectionParams.baseURI
@@ -451,48 +441,46 @@ const CreateCollectionArea = ({ collection }) => {
       const receipt = await deployTx.wait();
       console.log("Transaction confirmed:", receipt.transactionHash);
 
-      // Get the deployed contract address
-      const collectionAddress = receipt.events.find(e => e.event === "CollectionCreated")?.args?.collection;
-      if (!collectionAddress) {
-        throw new Error("Collection address not found in transaction receipt");
+      // Get the collection address from the Deployed event
+      const deployedEvent = receipt.events.find(event => event.event === "Deployed");
+      if (!deployedEvent) {
+        throw new Error("Deployed event not found in transaction receipt");
       }
 
-      console.log("Collection deployed at:", collectionAddress);
+      const collectionAddress = deployedEvent.args.contractAddress;
+      console.log("Collection deployed at address:", collectionAddress);
 
       // Create collection data for Strapi
       const collectionData = {
         data: {
-          name: data.title,
-          symbol: data.symbol,
+          title: data.title,
           description: data.description,
-          logoImg: data.logoImg[0],
-          bannerImg: data.bannerImg[0],
-          blockchain: blockchainNetwork,
+          symbol: data.symbol,
+          baseURI: data.baseURI,
+          maxSupply: data.maxSupply,
+          royalty: data.royalty,
+          paymentTokens: data.paymentTokens,
           contractAddress: collectionAddress,
-          owner: account,
+          network: blockchainNetwork,
           type: collectionType,
-          maxSupply: data.maxSupply || 0,
-          royalty: data.royalty || 0,
-          baseURI: data.baseURI || "",
-          isVerified: false,
-          isActive: true
+          owner: walletData.account,
+          status: "active"
         }
       };
-
-      console.log("Creating collection in Strapi:", collectionData);
 
       // Create collection in Strapi
       const response = await strapi.create("collections", collectionData);
       console.log("Collection created in Strapi:", response);
 
-      // Show success message
-      toast.success("Collection created successfully!");
-      
-      // Redirect to collection page
-      router.push(`/collection/${response.data.id}`);
+      if (response.data) {
+        toast.success("Collection created successfully!");
+        router.push("/my-collections");
+      } else {
+        throw new Error("Failed to create collection in Strapi");
+      }
     } catch (error) {
       console.error("Error in StoreData:", error);
-      toast.error(error.message || "Failed to create collection. Please try again.");
+      toast.error(error.message || "Failed to create collection");
     }
   };
 
