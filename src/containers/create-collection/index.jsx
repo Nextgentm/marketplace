@@ -11,7 +11,14 @@ import axios from "axios";
 import { AppData } from "src/context/app-context";
 import { useRouter } from "next/router";
 import Multiselect from "multiselect-react-dropdown";
-import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, BINANCE_NETWORK_CHAIN_ID, SOMNIA_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { 
+  ETHEREUM_NETWORK_CHAIN_ID, 
+  POLYGON_NETWORK_CHAIN_ID, 
+  BINANCE_NETWORK_CHAIN_ID, 
+  SOMNIA_NETWORK_CHAIN_ID,
+  NETWORKS,
+  getChainIdFromNetworkName
+} from "src/lib/constants";
 import { getERC721FactoryContract, getERC1155FactoryContract, addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import strapi from "@utils/strapi";
 import { Messages, NETWORK_NAMES } from "@utils/constants";
@@ -135,37 +142,97 @@ const CreateCollectionArea = ({ collection }) => {
   watch(["logoImg", "featImg", "bannerImg"]);
 
   async function switchNetwork(chainId) {
-    if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
-      console.log(`Network is already with chain id ${chainId}`);
-      return true;
-    }
     try {
-      const res = await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId }]
-      });
-      // console.log(res);
-      return true;
-    } catch (switchError) {
-      // console.log(switchError);
-      toast.error("Failed to change the network.");
+      // Convert current network version to hex for comparison
+      const currentChainId = window.ethereum.networkVersion ? 
+        `0x${parseInt(window.ethereum.networkVersion).toString(16)}`.toLowerCase() : 
+        (await window.ethereum.request({ method: 'eth_chainId' })).toLowerCase();
+      
+      const targetChainId = chainId.toLowerCase();
+      
+      // Check if we're already on the correct network
+      if (currentChainId === targetChainId) {
+        console.log(`Already on network with chain id ${chainId}`);
+        return true;
+      }
+
+      // Try to switch network
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: targetChainId }]
+        });
+        console.log(`Successfully switched to network ${chainId}`);
+        return true;
+      } catch (switchError) {
+        console.log("Switch error:", switchError);
+        
+        // If network is not added to MetaMask
+        if (switchError.code === 4902) {
+          try {
+            // Add the network to MetaMask
+            const networkConfig = NETWORKS[chainId];
+            if (!networkConfig) {
+              console.error("Network configuration not found for chain ID:", chainId);
+              toast.error("Invalid network configuration");
+              return false;
+            }
+            
+            console.log("Adding network config:", networkConfig);
+            
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [{
+                chainId: networkConfig.chainId,
+                chainName: networkConfig.chainName,
+                nativeCurrency: networkConfig.nativeCurrency,
+                rpcUrls: networkConfig.rpcUrls,
+                blockExplorerUrls: networkConfig.blockExplorerUrls
+              }]
+            });
+            
+            // Network is added, no need to switch again as MetaMask does it automatically
+            return true;
+          } catch (addError) {
+            console.error("Error adding network:", addError);
+            toast.error("Failed to add network to MetaMask");
+            return false;
+          }
+        }
+        
+        // If user rejected the request
+        if (switchError.code === 4001) {
+          toast.error("User rejected network switch");
+          return false;
+        }
+        
+        toast.error("Failed to switch network");
+        return false;
+      }
+    } catch (error) {
+      console.error("Network switch error:", error);
+      toast.error("Failed to switch network");
+      return false;
     }
-    return false;
   }
 
   useEffect(() => {
-    if (walletData.isConnected) {
-      if (blockchainNetwork === "Ethereum") {
-        switchNetwork(ETHEREUM_NETWORK_CHAIN_ID); // ethereum testnet
-      } else if (blockchainNetwork === "Somnia") {
-        switchNetwork(SOMNIA_NETWORK_CHAIN_ID); // somnia testnet
-      } else if (blockchainNetwork === "Polygon") {
-        switchNetwork(POLYGON_NETWORK_CHAIN_ID); // polygon testnet
-      } else if (blockchainNetwork === "Binance") {
-        switchNetwork(BINANCE_NETWORK_CHAIN_ID); // binance testnet
-      }
+    if (walletData.isConnected && blockchainNetwork) {
+      const switchToNetwork = async () => {
+        const chainId = getChainIdFromNetworkName(blockchainNetwork);
+        if (!chainId) {
+          console.error("Invalid network name:", blockchainNetwork);
+          setHasBlockchainNetworkError(true);
+          return;
+        }
+        
+        const success = await switchNetwork(chainId);
+        setHasBlockchainNetworkError(!success);
+      };
+
+      switchToNetwork();
     }
-  }, [blockchainNetwork]);
+  }, [blockchainNetwork, walletData.isConnected]);
 
   useEffect(() => {
     strapi.find("payment-tokens").then((response) => {

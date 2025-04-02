@@ -220,38 +220,49 @@ export async function getStakingRewardTokenDecimal(walletData) {
 //_______________________________________________//
 export async function switchNetwork(chainId) {
   try {
+    // Check if we're already on the correct network
     if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
       console.log(`Network is already with chain id ${chainId}`);
       return true;
     }
+
+    // Try to switch network
     try {
-      const res = await window.ethereum.request({
+      await window.ethereum.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId }]
       });
-      // console.log(res);
+      console.log(`Successfully switched to network ${chainId}`);
       return true;
     } catch (switchError) {
-      if (switchError.code === 4001) {
-        console.log("Network change request closed");
-      }
+      console.log("Switch error:", switchError);
+      
+      // If network is not added to MetaMask
       if (switchError.code === 4902) {
         try {
+          // Add the network to MetaMask
           await window.ethereum.request({
             method: "wallet_addEthereumChain",
-            params: [NETWORKS_CHAINS[chainId]]
+            params: [NETWORKS[chainId]]
           });
+          console.log(`Successfully added network ${chainId}`);
+          return true;
         } catch (addError) {
-          console.error(addError);
+          console.error("Error adding network:", addError);
+          throw new Error("Failed to add network to MetaMask");
         }
       }
-      console.log(switchError);
-      // toast.error("Failed to change the network.");
+      
+      // If user rejected the request
+      if (switchError.code === 4001) {
+        throw new Error("User rejected network switch");
+      }
+      
+      throw switchError;
     }
-    return false;
   } catch (error) {
-    console.log(error);
-    return false;
+    console.error("Network switch error:", error);
+    throw error;
   }
 }
 
@@ -378,3 +389,4 @@ export function convertEthertoWei(ethers, value) {
 export function convertWeitoEther(ethers, weiValue) {
   return ethers.utils.formatEther(weiValue);
 }
+
