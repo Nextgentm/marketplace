@@ -13,5 +13,6 @@ export const Messages = {
 };
 
 export const NETWORK_NAMES = {
-  SOMNIA: 'Somnia Testnet'
+  SOMNIA: "Somnia Testnet",
+  NETWORK: "somnia"
 };
