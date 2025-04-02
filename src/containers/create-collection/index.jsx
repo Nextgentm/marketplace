@@ -14,7 +14,7 @@ import Multiselect from "multiselect-react-dropdown";
 import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, BINANCE_NETWORK_CHAIN_ID, SOMNIA_NETWORK_CHAIN_ID } from "src/lib/constants";
 import { getERC721FactoryContract, getERC1155FactoryContract, addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import strapi from "@utils/strapi";
-import { Messages } from "@utils/constants";
+import { Messages, NETWORK_NAMES } from "@utils/constants";
 
 const categoryOptionsList = [
   {
@@ -210,8 +210,8 @@ const CreateCollectionArea = ({ collection }) => {
           paymentTokens: selectedPaymentTokensList,
           payoutWalletAddress: data.wallet ? data.wallet : collection?.payoutWalletAddress,
           explicitAndSensitiveContent: data.themeSwitch,
-          blockchain: "somnia",
-        };
+          blockchain: NETWORK_NAMES.NETWORK || "",
+        }
         if (logoImagePath) {
           updatedCollectionObj.logo = JSON.parse(logoImagePath);
           updatedCollectionObj.logoID = Number(logoImageId);
@@ -371,7 +371,7 @@ const CreateCollectionArea = ({ collection }) => {
         collectionType: router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1), // convert "single" to "Single"
         payoutWalletAddress: data.wallet ? data.wallet : null,
         explicitAndSensitiveContent: data.themeSwitch,
-        blockchain: "somnia",
+        blockchain: NETWORK_NAMES.NETWORK || "",
       });
       console.log(resp);
       notify();

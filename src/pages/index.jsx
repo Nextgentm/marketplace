@@ -18,12 +18,14 @@ import LiveExploreArea from "@containers/live-explore/layout-01";
 import strapi from "@utils/strapi";
 import ServiceArea from "@containers/services/layout-01";
 import { getCollection, getCollectible } from "src/services/collections/collection";
+import { NETWORK_NAMES } from "@utils/constants";
 
 const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, allCollections }) => {
   const content = normalizedData(homepageData?.content || []);
   const submit = async () => {
     const filter = {
       filters: {
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // Added blockchain filter
         collectionType: {
           $eq: "Multiple"
         }
@@ -120,10 +122,30 @@ Home.getInitialProps = async () => {
       sort: { startTimestamp: "desc" }
     }
     let liveAuctionData = await strapi.find("auctions", filter);
+  // console.log(liveAuctionData);
+  // const liveAuctionData = await client.query({
+  //   query: ALL_COLLECTIBLE_LISTDATA_QUERY,
+  //   variables: {
+  //     filter: {
+  //       auction: {
+  //         status: {
+  //           eq: "Live"
+  //         },
+  //         sellType: {
+  //           eq: "Bidding"
+  //         }
+  //       }
+  //     },
+  //     sort: "auction.startTimestamp:desc"
+  //   },
+  //   fetchPolicy: "network-only"
+  // });
 
     let newestItemsData = await strapi.find("collectible/newestItems");
+    // console.log(newestItemsData);
     let newestItemsIds = [];
     newestItemsIds.push(...newestItemsData.map(emp => emp.id));
+    // console.log(newestItemsIds);
 
     let newestItemsFilter = {
       filters: {
@@ -179,7 +201,6 @@ Home.getInitialProps = async () => {
         limit: 25,
       }
     });
-
     let dataCollectiblesFilter = {
       filters: {
         status: {

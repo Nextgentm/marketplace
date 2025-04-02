@@ -12,6 +12,7 @@ import axios from "axios";
 import client from "@utils/apollo-client";
 import { getCollectible, getCollection } from "src/services/collections/collection";
 import strapi from "@utils/strapi";
+import { NETWORK_NAMES } from "@utils/constants";
 // import productData from "../data/products.json";
 
 const CollectionDetail = ({ collection, collectibles }) => {
@@ -45,22 +46,25 @@ export async function getStaticPaths() {
     let productData = [];
     let page = 1, pageCount = 1, pageSize = 25;
     do {
+      console.log(`${process.env.BlOCKCHAIN}`,"third filters")
+      // console.log(page, pageCount, pageSize);
       const resData = await strapi.find("collections", {
         fields: ["id", "slug"],
+        filters: {
+            blockchain: { $eq: NETWORK_NAMES.NETWORK } // Added blockchain filter
+        },
         pagination: {
-          page,
-          pageSize
+          page: page,
+          pageSize: pageSize
         }
       });
       productData = [...productData, ...resData.data];
       pageCount = resData.meta.pagination.pageCount;
       page++;
     } while (page <= pageCount);
-
     const paths = productData.map((collection) => ({
       params: { slug: collection.slug }
     }));
-
     return {
       paths,
       fallback: "blocking" // Enable fallback for new collections
