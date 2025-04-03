@@ -450,10 +450,10 @@ const CreateCollectionArea = ({ collection }) => {
       const collectionAddress = deployedEvent.args.contractAddress;
       console.log("Collection deployed at address:", collectionAddress);
 
+      const slug = data.title ? data.title.toLowerCase().split(" ").join("-") : null;
       // Create collection data for Strapi
       const collectionData = {
-        data: {
-          title: data.title,
+          name: data.title ? data.title : null,
           description: data.description,
           symbol: data.symbol,
           baseURI: data.baseURI,
@@ -461,11 +461,13 @@ const CreateCollectionArea = ({ collection }) => {
           royalty: data.royalty,
           paymentTokens: data.paymentTokens,
           contractAddress: collectionAddress,
-          network: blockchainNetwork,
-          type: collectionType,
-          owner: walletData.account,
-          status: "active"
-        }
+          networkType: blockchainNetwork,
+          collectionType: collectionType,
+          slug,
+          category,
+          ownerAddress: walletData.account,
+          status: "active",
+          blockchain: NETWORK_NAMES.NETWORK || "",
       };
 
       // Create collection in Strapi
