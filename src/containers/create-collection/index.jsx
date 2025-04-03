@@ -17,11 +17,12 @@ import {
   BINANCE_NETWORK_CHAIN_ID, 
   SOMNIA_NETWORK_CHAIN_ID,
   NETWORKS,
-  getChainIdFromNetworkName
+  getChainIdByNetworkName
 } from "src/lib/constants";
 import { getERC721FactoryContract, getERC1155FactoryContract, addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import strapi from "@utils/strapi";
 import { Messages, NETWORK_NAMES } from "@utils/constants";
+import { ethers } from "ethers";
 
 const categoryOptionsList = [
   {
@@ -118,6 +119,9 @@ const CreateCollectionArea = ({ collection }) => {
   } = useContext(AppData);
   // Get url param
   const router = useRouter();
+  const collectionType = router.query.type === "single" ? "Single" : 
+                        router.query.type === "multiple" ? "Multiple" : 
+                        router.query.type === "hybrid" ? "Hybrid" : "Single";
 
   const categoryHandler = (item) => {
     setCategory(item.value);
@@ -143,12 +147,16 @@ const CreateCollectionArea = ({ collection }) => {
 
   async function switchNetwork(chainId) {
     try {
+      console.log("Attempting to switch to network with chain ID:", chainId);
+      
       // Convert current network version to hex for comparison
       const currentChainId = window.ethereum.networkVersion ? 
         `0x${parseInt(window.ethereum.networkVersion).toString(16)}`.toLowerCase() : 
         (await window.ethereum.request({ method: 'eth_chainId' })).toLowerCase();
       
       const targetChainId = chainId.toLowerCase();
+      console.log("Current chain ID:", currentChainId);
+      console.log("Target chain ID:", targetChainId);
       
       // Check if we're already on the correct network
       if (currentChainId === targetChainId) {
@@ -219,7 +227,7 @@ const CreateCollectionArea = ({ collection }) => {
   useEffect(() => {
     if (walletData.isConnected && blockchainNetwork) {
       const switchToNetwork = async () => {
-        const chainId = getChainIdFromNetworkName(blockchainNetwork);
+        const chainId = getChainIdByNetworkName(blockchainNetwork);
         if (!chainId) {
           console.error("Invalid network name:", blockchainNetwork);
           setHasBlockchainNetworkError(true);
@@ -391,147 +399,118 @@ const CreateCollectionArea = ({ collection }) => {
     }
   }
 
-  async function StoreData(data) {
-    // console.log(data);
+  const StoreData = async (data) => {
     try {
-      const logoImagePathObject = JSON.parse(logoImagePath);
-      const coverImagePathObject = JSON.parse(coverImagePath);
-      const featureImagePathObject = JSON.parse(featureImagePath);
+      console.log("Starting StoreData with network:", blockchainNetwork);
+      const factoryContract = collectionType === "Single" 
+        ? await getERC721FactoryContract(blockchainNetwork)
+        : await getERC1155FactoryContract(blockchainNetwork);
 
-      /* deploy smartcontract call */
-      const deployedContractAddress = await blockchainCall(data.title, data.symbol, data.url);
-      if (!deployedContractAddress) {
-        return;
+      if (!factoryContract) {
+        throw new Error("Failed to initialize factory contract");
       }
-      const deployed721ContractAddress = deployedContractAddress[0];
-      const deployed1155ContractAddress = deployedContractAddress[1];
-      // console.log(
-      //     deployed721ContractAddress,
-      //     deployed1155ContractAddress
-      // );
 
-      const selectedPaymentTokensList = Array.from(selectedPaymentTokens).map(({ value }) => value);
-      // console.log(selectedPaymentTokens);
+      console.log("Factory contract initialized:", factoryContract.address);
+      console.log("Current account:", walletData.account);
 
-      const slug = data.title ? data.title.toLowerCase().split(" ").join("-") : null;
-      const resp = await strapi.create("collections", {
-        name: data.title ? data.title : null,
-        logo: logoImagePathObject || "Null",
-        logoID: Number(logoImageId),
-        cover: coverImagePathObject || "Null",
-        coverID: Number(coverImageId),
-        featured: featureImagePathObject || "Null",
-        featuredID: Number(featureImageId),
+      // Generate a random salt for deployment
+      const salt = ethers.utils.randomBytes(32);
+
+      const collectionParams = {
+        name: data.title,
         symbol: data.symbol,
-        url: data.url ? data.url : null,
-        description: data.description ? data.description : null,
-        category,
-        slug,
-        // creatorEarning: data.earning
-        //     ? Number(data.earning)
-        //     : null,
-        networkType: blockchainNetwork,
-        paymentTokens: selectedPaymentTokensList,
-        contractAddress: deployed721ContractAddress, // may be null
-        contractAddress1155: deployed1155ContractAddress, // may be null
-        ownerAddress: walletData.account,
-        collectionType: router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1), // convert "single" to "Single"
-        payoutWalletAddress: data.wallet ? data.wallet : null,
-        explicitAndSensitiveContent: data.themeSwitch,
-        blockchain: NETWORK_NAMES.NETWORK || "",
-      });
-      console.log(resp);
-      notify();
-      reset();
-      if (router.query.type === "single") {
-        router.push(`/create?type=single&collection=${slug}`);
+        baseURI: data.baseURI || "",
+        maxSupply: data.maxSupply || 0,
+        royalty: data.royalty || 0,
+        paymentTokens: data.paymentTokens || []
+      };
+
+      console.log("Collection parameters:", collectionParams);
+
+      // Deploy the collection
+      const deployTx = await factoryContract.deploy(
+        salt,
+        collectionParams.name,
+        collectionParams.symbol,
+        collectionParams.baseURI
+      );
+
+      console.log("Deploy transaction sent:", deployTx.hash);
+
+      // Wait for transaction confirmation
+      const receipt = await deployTx.wait();
+      console.log("Transaction confirmed:", receipt.transactionHash);
+
+      // Get the collection address from the Deployed event
+      const deployedEvent = receipt.events.find(event => event.event === "Deployed");
+      if (!deployedEvent) {
+        throw new Error("Deployed event not found in transaction receipt");
       }
-      if (router.query.type === "multiple") {
-        router.push(`/create?type=multiple&collection=${slug}`);
-      }
-      if (router.query.type === "hybrid") {
-        router.push(`/upload-variants?collection=${slug}`);
+
+      const collectionAddress = deployedEvent.args.contractAddress;
+      console.log("Collection deployed at address:", collectionAddress);
+
+      // Create collection data for Strapi
+      const collectionData = {
+        data: {
+          title: data.title,
+          description: data.description,
+          symbol: data.symbol,
+          baseURI: data.baseURI,
+          maxSupply: data.maxSupply,
+          royalty: data.royalty,
+          paymentTokens: data.paymentTokens,
+          contractAddress: collectionAddress,
+          network: blockchainNetwork,
+          type: collectionType,
+          owner: walletData.account,
+          status: "active"
+        }
+      };
+
+      // Create collection in Strapi
+      const response = await strapi.create("collections", collectionData);
+      console.log("Collection created in Strapi:", response);
+
+      if (response.data) {
+        toast.success("Collection created successfully!");
+        router.push("/my-collections");
+      } else {
+        throw new Error("Failed to create collection in Strapi");
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Error while saving data");
+      console.error("Error in StoreData:", error);
+      toast.error(error.message || "Failed to create collection");
     }
-  }
-
-  async function blockchainCall(name, symbol, tokenURIPrefix) {
-    const signer = walletData.provider.getSigner();
-
-    try {
-      // deployed contract instance
-      console.log(router.query.type); // type of NFT collection
-      const salt = walletData.ethers.utils.formatBytes32String(walletData.account.slice(-31));
-      console.log(salt);
-      if (router.query.type === "single") {
-        // Pull the deployed contract instance
-        const contract721 = await getERC721FactoryContract(walletData);
-        const transaction = await contract721.deploy(salt, name, symbol, tokenURIPrefix);
-        const receipt = await transaction.wait();
-        // console.log(receipt);
-        const correctEvent = receipt.events.find((event) => event.event === "Deployed");
-        console.log("contractAddress", correctEvent.args.contractAddress);
-        const erc721ContractAddr = correctEvent.args.contractAddress;
-        return [erc721ContractAddr, null];
-      }
-      if (router.query.type === "multiple") {
-        // Pull the deployed contract instance
-        const contract1155 = await getERC1155FactoryContract(walletData);
-        const transaction = await contract1155.deploy(salt, name, symbol, tokenURIPrefix);
-        const receipt = await transaction.wait();
-        // console.log(receipt);
-        const correctEvent = receipt.events.find((event) => event.event === "Deployed");
-        console.log("contractAddress", correctEvent.args.contractAddress);
-        const erc1155ContractAddr = correctEvent.args.contractAddress;
-        return [null, erc1155ContractAddr];
-      }
-      if (router.query.type === "hybrid") {
-        // Pull the deployed contract instance
-        const contract721 = await getERC721FactoryContract(walletData);
-        const transaction1 = await contract721.deploy(salt, name, symbol, tokenURIPrefix);
-        const receipt1 = await transaction1.wait();
-        // console.log(receipt);
-        const correctEvent1 = receipt1.events.find((event) => event.event === "Deployed");
-        console.log("contractAddress", correctEvent1.args.contractAddress);
-        const erc721ContractAddr = correctEvent1.args.contractAddress;
-
-        // Pull the deployed contract instance
-        const contract1155 = await getERC1155FactoryContract(walletData);
-        const transaction2 = await contract1155.deploy(salt, name, symbol, tokenURIPrefix);
-        const receipt2 = await transaction2.wait();
-        // console.log(receipt);
-        const correctEvent2 = receipt2.events.find((event) => event.event === "Deployed");
-        console.log("contractAddress", correctEvent2.args.contractAddress);
-        const erc1155ContractAddr = correctEvent2.args.contractAddress;
-        return [erc721ContractAddr, erc1155ContractAddr];
-      }
-      toast.error("Please select proper collection type");
-      return null;
-    } catch (error) {
-      console.log(error);
-      toast.error("Error while deploying contract");
-      return null;
-    }
-  }
+  };
 
   const onSubmit = async (data, e) => {
     const { target } = e;
     const submitBtn = target.localName === "span" ? target.parentElement : target;
     const isPreviewBtn = submitBtn.dataset?.btn;
-    console.log(isPreviewBtn);
-    // console.log(data, e);
+    
     /** if Wallet not connected */
     if (!walletData.isConnected) {
       let res = await checkAndConnectWallet(blockchainNetwork);
       if (!res) return;
     }
-    // chnage network
-    let networkChanged = await changeNetworkByNetworkType(blockchainNetwork);
+    
+    console.log("blockchainNetwork = ", blockchainNetwork);
+    
+    // Get chain ID for the selected network
+    const chainId = getChainIdByNetworkName(blockchainNetwork);
+    console.log("chainId = ", chainId);
+    
+    if (!chainId) {
+      toast.error("Invalid network selected");
+      return;
+    }
+
+    // Switch network
+    const networkChanged = await switchNetwork(chainId);
+    console.log("networkChanged = ", networkChanged);
+    
     if (!networkChanged) {
-      // ethereum testnet
       toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
     }
@@ -542,8 +521,8 @@ const CreateCollectionArea = ({ collection }) => {
     if (!blockchainNetwork || !category) {
       return;
     }
+    
     /** code for fetching submited button value */
-    // console.log(e.nativeEvent.submitter.name);
     if (isPreviewBtn) {
       setPreviewData({ ...data, image: data.logoImg[0] });
       setShowPreviewModal(true);

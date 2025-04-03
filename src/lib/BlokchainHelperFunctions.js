@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import {
   ETHEREUM_NETWORK_CHAIN_ID,
   POLYGON_NETWORK_CHAIN_ID,
@@ -6,48 +7,81 @@ import {
   NETWORKS,
   NETWORKS_CHAINS,
 } from "./constants";
+import { getContractsData } from "./contractData";
 
 const ADMIN_ROLE = "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775";
 
 //_______________________________________________//
 // Get Contracts object
 //_______________________________________________//
-export async function getERC721FactoryContract(walletData) {
-  // Pull the deployed contract instance
-  if (walletData.contractData) {
-    const signer = walletData.provider.getSigner();
+export async function getERC721FactoryContract(network) {
+  try {
+    console.log("Getting ERC721 factory contract for network:", network);
+    if (!network) {
+      console.error("Network parameter is undefined or null");
+      return null;
+    }
 
-    const factoryContract721Factory = new walletData.ethers.Contract(
-      walletData.contractData.Factory721Contract.address,
-      walletData.contractData.Factory721Contract.abi,
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contractData = getContractsData(network);
+
+    if (!contractData?.Factory721Contract) {
+      console.error("Factory721Contract data not found for network:", network);
+      return null;
+    }
+
+    if (!contractData.Factory721Contract.address) {
+      console.error("Factory721Contract address not found for network:", network);
+      return null;
+    }
+
+    const factoryContract721Factory = new ethers.Contract(
+      contractData.Factory721Contract.address,
+      contractData.Factory721Contract.abi,
       signer
     );
+    console.log("ERC721 factory contract initialized successfully");
     return factoryContract721Factory;
-    // } else if(walletData.network){ // incase if contractData is not loaded
-    //   const contractData = getContractsData(walletData.network);
-    //   const signer = walletData.provider.getSigner();
-    //   const factoryContract721Factory = new walletData.ethers.Contract(
-    //     contractData.Factory721Contract.address,
-    //     contractData.Factory721Contract.abi,
-    //     signer
-    //   );
-    //   return factoryContract721Factory;
+  } catch (error) {
+    console.error("Error getting ERC721 factory contract:", error);
+    return null;
   }
-  return null;
 }
 
-export async function getERC1155FactoryContract(walletData) {
-  // Pull the deployed contract instance
-  if (walletData.contractData) {
-    const signer = walletData.provider.getSigner();
-    const factoryContract1155 = new walletData.ethers.Contract(
-      walletData.contractData.Factory1155Contract.address,
-      walletData.contractData.Factory1155Contract.abi,
+export async function getERC1155FactoryContract(network) {
+  try {
+    console.log("Getting ERC1155 factory contract for network:", network);
+    if (!network) {
+      console.error("Network parameter is undefined or null");
+      return null;
+    }
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contractData = getContractsData(network);
+
+    if (!contractData?.Factory1155Contract) {
+      console.error("Factory1155Contract data not found for network:", network);
+      return null;
+    }
+
+    if (!contractData.Factory1155Contract.address) {
+      console.error("Factory1155Contract address not found for network:", network);
+      return null;
+    }
+
+    const factoryContract1155 = new ethers.Contract(
+      contractData.Factory1155Contract.address,
+      contractData.Factory1155Contract.abi,
       signer
     );
+    console.log("ERC1155 factory contract initialized successfully");
     return factoryContract1155;
+  } catch (error) {
+    console.error("Error getting ERC1155 factory contract:", error);
+    return null;
   }
-  return null;
 }
 
 export async function getERC721Contract(walletData, contractAddress) {
@@ -281,6 +315,7 @@ export function getNetworkNameByChainId(chainId) {
 }
 
 export function getChainIdByNetworkName(networkName) {
+  console.log("inside getChainIdByNetworkName networkName = ",networkName);
   return NETWORKS[networkName];
 }
 

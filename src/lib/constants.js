@@ -43,18 +43,56 @@ export const NETWORKS = {
   }
 };
 
-// Helper function to get chainId from network name
-export const getChainIdFromNetworkName = (networkName) => {
-  switch (networkName) {
-    case "Ethereum":
+// Helper function to get chain ID from network name
+export const getChainIdByNetworkName = (networkName) => {
+  console.log("inside getChainIdByNetworkName networkName = ", networkName);
+  if (!networkName) {
+    console.log("Network name is undefined or null");
+    return null;
+  }
+  
+  const networkNameLower = networkName.toLowerCase();
+  console.log("Looking up chain ID for network:", networkNameLower);
+  
+  switch (networkNameLower) {
+    case "ethereum":
       return ETHEREUM_NETWORK_CHAIN_ID;
-    case "Polygon":
+    case "polygon":
       return POLYGON_NETWORK_CHAIN_ID;
-    case "Binance":
+    case "binance":
       return BINANCE_NETWORK_CHAIN_ID;
-    case "Somnia":
+    case "somnia":
       return SOMNIA_NETWORK_CHAIN_ID;
     default:
+      console.log("No matching chain ID found for network:", networkName);
+      return null;
+  }
+};
+
+// Helper function to get network name from chain ID
+export const getNetworkNameByChainId = (chainId) => {
+  console.log("Getting network name for chain ID:", chainId);
+  if (!chainId) {
+    console.log("Chain ID is undefined or null");
+    return null;
+  }
+
+  // Convert chainId to lowercase and remove '0x' prefix if present
+  const chainIdLower = chainId.toLowerCase().replace('0x', '');
+  console.log("Looking up network name for chain ID:", chainIdLower);
+
+  // Compare with chain IDs without '0x' prefix
+  switch (chainIdLower) {
+    case ETHEREUM_NETWORK_CHAIN_ID.toLowerCase().replace('0x', ''):
+      return "Ethereum";
+    case POLYGON_NETWORK_CHAIN_ID.toLowerCase().replace('0x', ''):
+      return "Polygon";
+    case BINANCE_NETWORK_CHAIN_ID.toLowerCase().replace('0x', ''):
+      return "Binance";
+    case SOMNIA_NETWORK_CHAIN_ID.toLowerCase().replace('0x', ''):
+      return "Somnia";
+    default:
+      console.log("No matching network name found for chain ID:", chainId);
       return null;
   }
 };

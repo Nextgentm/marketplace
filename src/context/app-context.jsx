@@ -221,12 +221,29 @@ const AppDataContext = ({ children }) => {
       const { chainId } = await provider.getNetwork();
       let _chainId = "0x" + chainId.toString(16);
       const _currentNetwork = getNetworkNameByChainId(_chainId);
+      
+      if (!_currentNetwork) {
+        console.error("Unsupported network with chain ID:", _chainId);
+        toast.error("Unsupported network. Please switch to a supported network.");
+        return false;
+      }
+
       const signer = provider.getSigner();
       const accounts = await provider.send("eth_requestAccounts", []);
       const balance = await provider.getBalance(accounts[0]);
       const getEthBalance = ethers.utils.formatEther(balance);
       const allContractData = getContractsData(_currentNetwork);
-      // console.log(signer);
+
+      if (!allContractData) {
+        console.error("No contract data found for network:", _currentNetwork);
+        toast.error("Failed to load contract data for the selected network.");
+        return false;
+      }
+
+      console.log("Connected to network:", _currentNetwork);
+      console.log("Chain ID:", _chainId);
+      console.log("Contract data loaded successfully");
+
       setWalletData({
         provider,
         account: accounts[0],
@@ -237,15 +254,17 @@ const AppDataContext = ({ children }) => {
         chainId: _chainId,
         contractData: allContractData
       });
-      // console.log(walletData);
+
       setEthBalance(getEthBalance);
-      setIsAuthenticatedCryptoWallet(walletData.isConnected);
+      setIsAuthenticatedCryptoWallet(true);
       setShowConnectWalletModel(false);
       localStorage.setItem("isWalletConnected", true);
-      // }
+      return true;
     } catch (err) {
-      console.log(err);
+      console.error("Error connecting wallet:", err);
       localStorage.setItem("isWalletConnected", false);
+      toast.error("Failed to connect wallet. Please try again.");
+      return false;
     }
   };
 
