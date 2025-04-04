@@ -449,6 +449,7 @@ const CreateCollectionArea = ({ collection }) => {
 
       const collectionAddress = deployedEvent.args.contractAddress;
       console.log("Collection deployed at address:", collectionAddress);
+      const selectedPaymentTokensList = Array.from(selectedPaymentTokens).map(({ value }) => value);
 
       const slug = data.title ? data.title.toLowerCase().split(" ").join("-") : null;
       // Create collection data for Strapi
@@ -459,9 +460,10 @@ const CreateCollectionArea = ({ collection }) => {
           baseURI: data.baseURI,
           maxSupply: data.maxSupply,
           royalty: data.royalty,
-          paymentTokens: data.paymentTokens,
+          paymentTokens: selectedPaymentTokensList,
+          // paymentTokens: data.paymentTokens,
           contractAddress: collectionAddress,
-          networkType: blockchainNetwork,
+          networkType: blockchainNetwork || "Somnia",
           collectionType: collectionType,
           slug,
           category,
@@ -471,6 +473,7 @@ const CreateCollectionArea = ({ collection }) => {
       };
 
       // Create collection in Strapi
+      console.log("collectionData ", collectionData)
       const response = await strapi.create("collections", collectionData);
       console.log("Collection created in Strapi:", response);
 
