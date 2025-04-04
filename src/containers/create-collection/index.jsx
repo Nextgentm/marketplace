@@ -11,10 +11,10 @@ import axios from "axios";
 import { AppData } from "src/context/app-context";
 import { useRouter } from "next/router";
 import Multiselect from "multiselect-react-dropdown";
-import { 
-  ETHEREUM_NETWORK_CHAIN_ID, 
-  POLYGON_NETWORK_CHAIN_ID, 
-  BINANCE_NETWORK_CHAIN_ID, 
+import {
+  ETHEREUM_NETWORK_CHAIN_ID,
+  POLYGON_NETWORK_CHAIN_ID,
+  BINANCE_NETWORK_CHAIN_ID,
   SOMNIA_NETWORK_CHAIN_ID,
   NETWORKS,
   getChainIdByNetworkName
@@ -119,9 +119,9 @@ const CreateCollectionArea = ({ collection }) => {
   } = useContext(AppData);
   // Get url param
   const router = useRouter();
-  const collectionType = router.query.type === "single" ? "Single" : 
-                        router.query.type === "multiple" ? "Multiple" : 
-                        router.query.type === "hybrid" ? "Hybrid" : "Single";
+  const collectionType = router.query.type === "single" ? "Single" :
+    router.query.type === "multiple" ? "Multiple" :
+      router.query.type === "hybrid" ? "Hybrid" : "Single";
 
   const categoryHandler = (item) => {
     setCategory(item.value);
@@ -150,16 +150,16 @@ const CreateCollectionArea = ({ collection }) => {
   async function switchNetwork(chainId) {
     try {
       console.log("Attempting to switch to network with chain ID:", chainId);
-      
+
       // Convert current network version to hex for comparison
-      const currentChainId = window.ethereum.networkVersion ? 
-        `0x${parseInt(window.ethereum.networkVersion).toString(16)}`.toLowerCase() : 
+      const currentChainId = window.ethereum.networkVersion ?
+        `0x${parseInt(window.ethereum.networkVersion).toString(16)}`.toLowerCase() :
         (await window.ethereum.request({ method: 'eth_chainId' })).toLowerCase();
-      
+
       const targetChainId = chainId.toLowerCase();
       console.log("Current chain ID:", currentChainId);
       console.log("Target chain ID:", targetChainId);
-      
+
       // Check if we're already on the correct network
       if (currentChainId === targetChainId) {
         console.log(`Already on network with chain id ${chainId}`);
@@ -176,7 +176,7 @@ const CreateCollectionArea = ({ collection }) => {
         return true;
       } catch (switchError) {
         console.log("Switch error:", switchError);
-        
+
         // If network is not added to MetaMask
         if (switchError.code === 4902) {
           try {
@@ -187,9 +187,9 @@ const CreateCollectionArea = ({ collection }) => {
               toast.error("Invalid network configuration");
               return false;
             }
-            
+
             console.log("Adding network config:", networkConfig);
-            
+
             await window.ethereum.request({
               method: "wallet_addEthereumChain",
               params: [{
@@ -200,7 +200,7 @@ const CreateCollectionArea = ({ collection }) => {
                 blockExplorerUrls: networkConfig.blockExplorerUrls
               }]
             });
-            
+
             // Network is added, no need to switch again as MetaMask does it automatically
             return true;
           } catch (addError) {
@@ -209,13 +209,13 @@ const CreateCollectionArea = ({ collection }) => {
             return false;
           }
         }
-        
+
         // If user rejected the request
         if (switchError.code === 4001) {
           toast.error("User rejected network switch");
           return false;
         }
-        
+
         toast.error("Failed to switch network");
         return false;
       }
@@ -235,7 +235,7 @@ const CreateCollectionArea = ({ collection }) => {
           setHasBlockchainNetworkError(true);
           return;
         }
-        
+
         const success = await switchNetwork(chainId);
         setHasBlockchainNetworkError(!success);
       };
@@ -404,7 +404,7 @@ const CreateCollectionArea = ({ collection }) => {
   const StoreData = async (data) => {
     try {
       console.log("Starting StoreData with network:", blockchainNetwork);
-      const factoryContract = collectionType === "Single" 
+      const factoryContract = collectionType === "Single"
         ? await getERC721FactoryContract(blockchainNetwork)
         : await getERC1155FactoryContract(blockchainNetwork);
 
@@ -456,22 +456,22 @@ const CreateCollectionArea = ({ collection }) => {
       const slug = data.title ? data.title.toLowerCase().split(" ").join("-") : null;
       // Create collection data for Strapi
       const collectionData = {
-          name: data.title ? data.title : null,
-          description: data.description,
-          symbol: data.symbol,
-          baseURI: data.baseURI,
-          maxSupply: data.maxSupply,
-          royalty: data.royalty,
-          paymentTokens: selectedPaymentTokensList,
-          // paymentTokens: data.paymentTokens,
-          contractAddress: collectionAddress,
-          networkType: blockchainNetwork.toLowerCase() || "Somnia",
-          collectionType: collectionType,
-          slug,
-          category,
-          ownerAddress: walletData.account,
-          status: "active",
-          blockchain: NETWORK_NAMES.NETWORK || "",
+        name: data.title ? data.title : null,
+        description: data.description,
+        symbol: data.symbol,
+        baseURI: data.baseURI,
+        maxSupply: data.maxSupply,
+        royalty: data.royalty,
+        paymentTokens: selectedPaymentTokensList,
+        // paymentTokens: data.paymentTokens,
+        contractAddress: collectionAddress,
+        networkType: blockchainNetwork || "Somnia",
+        collectionType: collectionType,
+        slug,
+        category,
+        ownerAddress: walletData.account,
+        status: "active",
+        blockchain: NETWORK_NAMES.NETWORK || "",
       };
       console.log("Collection data:", collectionData);
       // Create collection in Strapi
@@ -495,13 +495,13 @@ const CreateCollectionArea = ({ collection }) => {
     const { target } = e;
     const submitBtn = target.localName === "span" ? target.parentElement : target;
     const isPreviewBtn = submitBtn.dataset?.btn;
-    
+
     /** if Wallet not connected */
     if (!walletData.isConnected) {
       let res = await checkAndConnectWallet(blockchainNetwork);
       if (!res) return;
     }
-    
+
     // Validate blockchain network
     if (!blockchainNetwork) {
       toast.error("Please select a blockchain network");
@@ -510,11 +510,11 @@ const CreateCollectionArea = ({ collection }) => {
     }
 
     console.log("Selected blockchain network:", blockchainNetwork);
-    
+
     // Get chain ID for the selected network
     const chainId = getChainIdByNetworkName(blockchainNetwork);
     console.log("Chain ID for network:", chainId);
-    
+
     if (!chainId) {
       toast.error("Invalid network selected");
       setHasBlockchainNetworkError(true);
@@ -524,7 +524,7 @@ const CreateCollectionArea = ({ collection }) => {
     // Switch network
     const networkChanged = await switchNetwork(chainId);
     console.log("Network switch result:", networkChanged);
-    
+
     if (!networkChanged) {
       toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
@@ -536,7 +536,7 @@ const CreateCollectionArea = ({ collection }) => {
       toast.error("Please select a category");
       return;
     }
-    
+
     /** code for fetching submitted button value */
     if (isPreviewBtn) {
       setPreviewData({ ...data, image: data.logoImg[0] });
@@ -546,16 +546,16 @@ const CreateCollectionArea = ({ collection }) => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const { chainId: currentChainId } = await provider.getNetwork();
       const currentChainIdHex = "0x" + currentChainId.toString(16);
-      
+
       console.log("Current chain ID:", currentChainIdHex);
       console.log("Target chain ID:", chainId);
-      
+
       // Compare chain IDs
       if (currentChainIdHex.toLowerCase() !== chainId.toLowerCase()) {
         toast.error(`Please ensure you're connected to ${blockchainNetwork} network`);
         return;
       }
-      
+
       StoreData(data);
     }
   };
