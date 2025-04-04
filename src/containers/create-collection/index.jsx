@@ -403,6 +403,10 @@ const CreateCollectionArea = ({ collection }) => {
 
   const StoreData = async (data) => {
     try {
+      const logoImagePathObject = JSON.parse(logoImagePath);
+      const coverImagePathObject = JSON.parse(coverImagePath);
+      const featureImagePathObject = JSON.parse(featureImagePath);
+
       console.log("Starting StoreData with network:", blockchainNetwork);
       const factoryContract = collectionType === "Single"
         ? await getERC721FactoryContract(blockchainNetwork)
@@ -458,6 +462,11 @@ const CreateCollectionArea = ({ collection }) => {
       const collectionData = {
         name: data.title ? data.title : null,
         description: data.description,
+        logo: logoImagePathObject || "Null",
+        logoID: Number(logoImageId),
+        cover: coverImagePathObject || "Null",
+        coverID: Number(coverImageId),
+        featured: featureImagePathObject || "Null",        
         symbol: data.symbol,
         baseURI: data.baseURI,
         maxSupply: data.maxSupply,
