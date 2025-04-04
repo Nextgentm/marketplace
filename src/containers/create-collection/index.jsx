@@ -127,7 +127,9 @@ const CreateCollectionArea = ({ collection }) => {
     setCategory(item.value);
   };
   const blockchainNetworkHandler = (item) => {
+    console.log("Selected network:", item.value);
     setBlockchainNetwork(item.value);
+    setHasBlockchainNetworkError(false);
   };
 
   const notify = () => toast("Your collection has submitted");
@@ -463,7 +465,7 @@ const CreateCollectionArea = ({ collection }) => {
           paymentTokens: selectedPaymentTokensList,
           // paymentTokens: data.paymentTokens,
           contractAddress: collectionAddress,
-          networkType: blockchainNetwork || "Somnia",
+          networkType: blockchainNetwork.toLowerCase() || "Somnia",
           collectionType: collectionType,
           slug,
           category,
@@ -471,7 +473,7 @@ const CreateCollectionArea = ({ collection }) => {
           status: "active",
           blockchain: NETWORK_NAMES.NETWORK || "",
       };
-
+      console.log("Collection data:", collectionData);
       // Create collection in Strapi
       console.log("collectionData ", collectionData)
       const response = await strapi.create("collections", collectionData);
@@ -500,39 +502,60 @@ const CreateCollectionArea = ({ collection }) => {
       if (!res) return;
     }
     
-    console.log("blockchainNetwork = ", blockchainNetwork);
+    // Validate blockchain network
+    if (!blockchainNetwork) {
+      toast.error("Please select a blockchain network");
+      setHasBlockchainNetworkError(true);
+      return;
+    }
+
+    console.log("Selected blockchain network:", blockchainNetwork);
     
     // Get chain ID for the selected network
     const chainId = getChainIdByNetworkName(blockchainNetwork);
-    console.log("chainId = ", chainId);
+    console.log("Chain ID for network:", chainId);
     
     if (!chainId) {
       toast.error("Invalid network selected");
+      setHasBlockchainNetworkError(true);
       return;
     }
 
     // Switch network
     const networkChanged = await switchNetwork(chainId);
-    console.log("networkChanged = ", networkChanged);
+    console.log("Network switch result:", networkChanged);
     
     if (!networkChanged) {
       toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
     }
 
-    /** Show Error if form not submited correctly */
+    /** Show Error if form not submitted correctly */
     setHasCatError(!category);
-    setHasBlockchainNetworkError(!blockchainNetwork);
-    if (!blockchainNetwork || !category) {
+    if (!category) {
+      toast.error("Please select a category");
       return;
     }
     
-    /** code for fetching submited button value */
+    /** code for fetching submitted button value */
     if (isPreviewBtn) {
       setPreviewData({ ...data, image: data.logoImg[0] });
       setShowPreviewModal(true);
-    }
-    if (!isPreviewBtn) {
+    } else {
+      // Get current chain ID from wallet
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const { chainId: currentChainId } = await provider.getNetwork();
+      const currentChainIdHex = "0x" + currentChainId.toString(16);
+      
+      console.log("Current chain ID:", currentChainIdHex);
+      console.log("Target chain ID:", chainId);
+      
+      // Compare chain IDs
+      if (currentChainIdHex.toLowerCase() !== chainId.toLowerCase()) {
+        toast.error(`Please ensure you're connected to ${blockchainNetwork} network`);
+        return;
+      }
+      
       StoreData(data);
     }
   };
