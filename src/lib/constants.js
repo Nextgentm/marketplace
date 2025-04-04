@@ -50,10 +50,10 @@ export const getChainIdByNetworkName = (networkName) => {
     console.log("Network name is undefined or null");
     return null;
   }
-  
+
   const networkNameLower = networkName.toLowerCase();
   console.log("Looking up chain ID for network:", networkNameLower);
-  
+
   switch (networkNameLower) {
     case "ethereum":
       return ETHEREUM_NETWORK_CHAIN_ID;

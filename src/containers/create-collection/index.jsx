@@ -466,7 +466,7 @@ const CreateCollectionArea = ({ collection }) => {
         logoID: Number(logoImageId),
         cover: coverImagePathObject || "Null",
         coverID: Number(coverImageId),
-        featured: featureImagePathObject || "Null",        
+        featured: featureImagePathObject || "Null",
         symbol: data.symbol,
         baseURI: data.baseURI,
         maxSupply: data.maxSupply,
@@ -480,7 +480,7 @@ const CreateCollectionArea = ({ collection }) => {
         category,
         ownerAddress: walletData.account,
         status: "active",
-        blockchain: NETWORK_NAMES.NETWORK || "",
+        blockchain: blockchainNetwork.toLocaleLowerCase() || "",
       };
       console.log("Collection data:", collectionData);
       // Create collection in Strapi
@@ -490,7 +490,7 @@ const CreateCollectionArea = ({ collection }) => {
 
       if (response.data) {
         toast.success("Collection created successfully!");
-        router.push("/my-collections");
+        router.push("/collections");
       } else {
         throw new Error("Failed to create collection in Strapi");
       }

@@ -270,7 +270,7 @@ export async function switchNetwork(chainId) {
       return true;
     } catch (switchError) {
       console.log("Switch error:", switchError);
-      
+
       // If network is not added to MetaMask
       if (switchError.code === 4902) {
         try {
@@ -286,12 +286,12 @@ export async function switchNetwork(chainId) {
           throw new Error("Failed to add network to MetaMask");
         }
       }
-      
+
       // If user rejected the request
       if (switchError.code === 4001) {
         throw new Error("User rejected network switch");
       }
-      
+
       throw switchError;
     }
   } catch (error) {
@@ -315,8 +315,28 @@ export function getNetworkNameByChainId(chainId) {
 }
 
 export function getChainIdByNetworkName(networkName) {
-  console.log("inside getChainIdByNetworkName networkName = ",networkName);
-  return NETWORKS[networkName];
+  console.log("inside getChainIdByNetworkName networkName = ", networkName);
+  if (!networkName) {
+    console.log("Network name is undefined or null");
+    return null;
+  }
+
+  const networkNameLower = networkName.toLowerCase();
+  console.log("Looking up chain ID for network:", networkNameLower);
+
+  switch (networkNameLower) {
+    case "ethereum":
+      return ETHEREUM_NETWORK_CHAIN_ID;
+    case "polygon":
+      return POLYGON_NETWORK_CHAIN_ID;
+    case "binance":
+      return BINANCE_NETWORK_CHAIN_ID;
+    case "somnia":
+      return SOMNIA_NETWORK_CHAIN_ID;
+    default:
+      console.log("No matching chain ID found for network:", networkName);
+      return null;
+  }
 }
 
 export function isValidNetwork(chainId) {

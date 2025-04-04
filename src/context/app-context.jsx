@@ -220,29 +220,34 @@ const AppDataContext = ({ children }) => {
       const provider = await getProvider();
       const { chainId } = await provider.getNetwork();
       let _chainId = "0x" + chainId.toString(16);
+      console.log("Current chain ID:", _chainId);
       const _currentNetwork = getNetworkNameByChainId(_chainId);
-      
+      console.log("Current network name:", _currentNetwork);
+
+      // Check if the network is supported without early return
       if (!_currentNetwork) {
-        console.error("Unsupported network with chain ID:", _chainId);
-        toast.error("Unsupported network. Please switch to a supported network.");
-        return false;
+        console.log("Network name not found for chain ID:", _chainId);
+        // We'll still proceed to avoid breaking network switching
       }
 
       const signer = provider.getSigner();
       const accounts = await provider.send("eth_requestAccounts", []);
       const balance = await provider.getBalance(accounts[0]);
       const getEthBalance = ethers.utils.formatEther(balance);
-      const allContractData = getContractsData(_currentNetwork);
+
+      // Get contract data for the current network
+      const networkToUse = _currentNetwork || "Somnia"; // Default to Somnia if not found
+      console.log("Using network for contract data:", networkToUse);
+      const allContractData = getContractsData(networkToUse);
 
       if (!allContractData) {
-        console.error("No contract data found for network:", _currentNetwork);
-        toast.error("Failed to load contract data for the selected network.");
-        return false;
+        console.log("No contract data available for network:", networkToUse);
+        // Don't break the connection just because contract data is missing
       }
 
-      console.log("Connected to network:", _currentNetwork);
+      console.log("Connected to network:", networkToUse);
       console.log("Chain ID:", _chainId);
-      console.log("Contract data loaded successfully");
+      console.log("Contract data loaded:", !!allContractData);
 
       setWalletData({
         provider,
@@ -250,7 +255,7 @@ const AppDataContext = ({ children }) => {
         balance: getEthBalance,
         ethers,
         isConnected: true,
-        network: _currentNetwork,
+        network: networkToUse,
         chainId: _chainId,
         contractData: allContractData
       });
@@ -336,10 +341,16 @@ const AppDataContext = ({ children }) => {
   }
 
   const changeNetworkByNetworkType = async (networkType) => {
+    console.log("changeNetworkByNetworkType called with:", networkType);
     const chainId = getChainIdByNetworkName(networkType);
+    console.log("getChainIdByNetworkName returned chainId:", chainId);
     if (chainId) {
-      return await switchNetwork(chainId);
+      console.log("Attempting to switch network with chainId:", chainId);
+      const result = await switchNetwork(chainId);
+      console.log("switchNetwork result:", result);
+      return result;
     }
+    console.log("Failed to get chainId for networkType:", networkType);
     return null;
   }
 

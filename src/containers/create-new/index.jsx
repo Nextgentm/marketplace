@@ -14,7 +14,14 @@ import NiceSelect from "@ui/nice-select";
 import Modal from "react-bootstrap/Modal";
 import { useRouter } from "next/router";
 import { AppData } from "src/context/app-context";
-import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import {
+  BINANCE_NETWORK_CHAIN_ID,
+  ETHEREUM_NETWORK_CHAIN_ID,
+  POLYGON_NETWORK_CHAIN_ID,
+  SOMNIA_NETWORK_CHAIN_ID,
+  NETWORKS,
+  getChainIdByNetworkName
+} from "src/lib/constants";
 import { getERC721Contract, getERC1155Contract, addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
@@ -27,6 +34,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
   const [hasImageError, setHasImageError] = useState(false);
   const [previewData, setPreviewData] = useState({});
   const [dataCollection, setDataCollection] = useState(null);
+  const [blockchainNetwork, setBlockchainNetwork] = useState("Somnia");
 
   const { walletData,
     changeNetworkByNetworkType,
@@ -63,7 +71,13 @@ const CreateNewArea = ({ className, space, collectible }) => {
   const isAddPropertyModalHandler = () => setIsAddPropertyModalOpen((prev) => !prev);
 
   const selectedCollectionHandler = (item) => {
+    console.log("Selected collection:", item.value);
     setSelectedCollection(item.value);
+
+    // Check for blockchain field first, then fall back to networkType
+    const networkToUse = item.value.blockchain || item.value.networkType || "Somnia";
+    console.log("Setting blockchain network to:", networkToUse);
+    blockchainNetworkHandler(networkToUse);
   };
 
   useEffect(() => {
@@ -123,18 +137,29 @@ const CreateNewArea = ({ className, space, collectible }) => {
 
   async function StoreData(data) {
     try {
+      console.log("StoreData started");
       let contractAddress;
       if (router.query.type === "single") {
         contractAddress = selectedCollection.contractAddress;
       } else if (router.query.type === "multiple") {
         contractAddress = selectedCollection.contractAddress1155;
       }
+      console.log("Selected collection:", selectedCollection);
+      console.log("Resolved contract address:", contractAddress);
+
+      if (!contractAddress) {
+        console.error("No contract address found in the selected collection");
+        toast.error("The selected collection doesn't have a valid contract address. Please select another collection.");
+        return;
+      }
+
       const metadataURL = data?.external_url ? data?.external_url : "";
       const { price, royality } = data;
       const supply = data?.supply ? Number(data?.supply) : 1;
 
       const { tokenID, transactionHash } = await MintNFT(contractAddress, metadataURL, price, royality, supply);
       if (!tokenID || !transactionHash) {
+        console.log("MintNFT failed to return valid tokenID or transactionHash");
         return;
       }
 
@@ -162,7 +187,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
         unlockPurchased: data.unlockpurchased,
         slug: data.name ? data.name.toLowerCase().split(" ").join("-") : null,
         collection: selectedCollection.id,
-        blockchain: NETWORK_NAMES.NETWORK || "",
+        blockchain: blockchainNetwork || "",
       });
       console.log(res);
       const collectiblesId = res.data.id;
@@ -199,9 +224,23 @@ const CreateNewArea = ({ className, space, collectible }) => {
   }
 
   async function MintNFT(contractAddress, metadataURL, price, royalty, supply) {
-    const signer = walletData.provider.getSigner();
-
     try {
+      console.log("MintNFT starting with contractAddress:", contractAddress);
+
+      if (!contractAddress) {
+        console.error("Contract address is null or undefined");
+        toast.error("Collection contract address is missing. Please select a valid collection.");
+        return { tokenID: null, transactionHash: null };
+      }
+
+      if (!walletData.provider) {
+        console.error("Wallet provider is not available");
+        toast.error("Wallet connection issue. Please reconnect your wallet.");
+        return { tokenID: null, transactionHash: null };
+      }
+
+      const signer = walletData.provider.getSigner();
+
       // deployed contract instance
       // console.log(router.query.type); // type of NFT collection
       // const contractAddress =
@@ -211,9 +250,25 @@ const CreateNewArea = ({ className, space, collectible }) => {
       // const royalty = 20;
       // const supply = 100;
       console.log(contractAddress, metadataURL, price, royalty, supply);
+
       if (router.query.type === "single") {
+        // Check if we have contract data loaded
+        if (!walletData.contractData || !walletData.contractData.ERC721Contract) {
+          console.error("ERC721 contract data not available");
+          toast.error("Contract data not available. Please try again.");
+          return { tokenID: null, transactionHash: null };
+        }
+
         // Pull the deployed contract instance
         const contract721 = await getERC721Contract(walletData, contractAddress);
+
+        if (!contract721) {
+          console.error("Failed to initialize ERC721 contract");
+          toast.error("Contract initialization failed. Please try again.");
+          return { tokenID: null, transactionHash: null };
+        }
+
+        console.log("ERC721 contract initialized:", contract721.address);
         const options = {
           value: walletData.ethers.utils.parseEther("0.01")
         };
@@ -231,8 +286,23 @@ const CreateNewArea = ({ className, space, collectible }) => {
         return { tokenID, transactionHash };
       }
       if (router.query.type === "multiple") {
+        // Check if we have contract data loaded
+        if (!walletData.contractData || !walletData.contractData.ERC1155Contract) {
+          console.error("ERC1155 contract data not available");
+          toast.error("Contract data not available. Please try again.");
+          return { tokenID: null, transactionHash: null };
+        }
+
         // Pull the deployed contract instance
         const contract1155 = await getERC1155Contract(walletData, contractAddress);
+
+        if (!contract1155) {
+          console.error("Failed to initialize ERC1155 contract");
+          toast.error("Contract initialization failed. Please try again.");
+          return { tokenID: null, transactionHash: null };
+        }
+
+        console.log("ERC1155 contract initialized:", contract1155.address);
         const transaction = await contract1155.mint(metadataURL, (royalty * 10), supply);
         const receipt = await transaction.wait();
         // console.log(receipt);
@@ -246,37 +316,67 @@ const CreateNewArea = ({ className, space, collectible }) => {
       return { tokenID: null, transactionHash: null };
     } catch (error) {
       console.log(error);
-      toast.error("Error while creating NFT");
+      toast.error(`Error while creating NFT: ${error.message || 'Unknown error'}`);
       return { tokenID: null, transactionHash: null };
     }
   }
 
   const onSubmit = async (data, e) => {
+    console.log("onSubmit started");
     const { target } = e;
     const submitBtn = target.localName === "span" ? target.parentElement : target;
     const isPreviewBtn = submitBtn.dataset?.btn;
     setHasImageError(!selectedImage);
+    console.log("HasImageError set", !selectedImage);
 
     if (!selectedCollection) {
+      console.log("No collection selected");
       toast.error("Select collection");
       return;
     }
+    console.log("Selected collection:", selectedCollection);
+    console.log("Current blockchain network:", blockchainNetwork);
+
     if (!walletData.isConnected) {
-      let res = await checkAndConnectWallet(selectedCollection?.networkType);
+      console.log("Wallet not connected, attempting to connect");
+      let res = await checkAndConnectWallet(blockchainNetwork);
+      console.log("Wallet connection result:", res);
       if (!res) return;
     }
-    // chnage network
-    let networkChanged = await changeNetworkByNetworkType(selectedCollection?.networkType);
+
+    // change network
+    console.log("Attempting to change network to:", blockchainNetwork);
+    let networkChanged = await changeNetworkByNetworkType(blockchainNetwork);
+    console.log("Network change result:", networkChanged);
+
     if (!networkChanged) {
       // ethereum testnet
+      console.log("Network change failed");
       toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
     }
+
+    console.log("Network change successful");
+
+    // Ensure we have the latest wallet data after network change
+    console.log("Wallet data after network change:", walletData);
+    if (!walletData.contractData) {
+      console.log("No contract data available, forcing connection");
+      await directConnect();
+      console.log("Wallet data after forced reconnection:", walletData);
+      if (!walletData.contractData) {
+        toast.error("Failed to load contract data. Please try again.");
+        return;
+      }
+    }
+
     if (isPreviewBtn && selectedImage) {
+      console.log("Preview button clicked, showing preview modal");
       setPreviewData({ ...data, image: selectedImage });
       setShowProductModal(true);
     }
     if (!isPreviewBtn) {
+      console.log("Submit button clicked, calling StoreData");
       StoreData(data);
     }
   };
@@ -426,7 +526,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
     const collectionType = router.query.type
       ? router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1)
       : null;
-      console.log(`${process.env.BlOCKCHAIN}`,"seven filters")
+    console.log(`${process.env.BlOCKCHAIN}`, "seven filters")
     const filter = {
       filters: {
         blockchain: { $eq: NETWORK_NAMES.NETWORK }, // Added blockchain filter
@@ -445,6 +545,11 @@ const CreateNewArea = ({ className, space, collectible }) => {
         allCollectibleProperties.push({ properties_name: ele.name, properties_type: ele.type });
       });
       setFormValues(allCollectibleProperties);
+
+      // Set blockchain network from collectible
+      if (collectible?.blockchain) {
+        blockchainNetworkHandler(collectible.blockchain);
+      }
     } else {
       strapi.find("collections", collectionType ? filter : null)
         .then((response) => {
@@ -456,25 +561,37 @@ const CreateNewArea = ({ className, space, collectible }) => {
                 paramCollection = ele;
                 paramCollection.index = i;
                 results.push({
-                  value: ele,
+                  value: {
+                    ...ele,
+                    networkType: ele.networkType || "Somnia",
+                    blockchain: ele.blockchain || ele.networkType || "Somnia"
+                  },
                   text: ele.name
                 });
               }
-              // console.log(ele.slug);
             });
           } else {
             response.data.map((ele, i) => {
               results.push({
-                value: ele,
+                value: {
+                  ...ele,
+                  networkType: ele.networkType || "Somnia",
+                  blockchain: ele.blockchain || ele.networkType || "Somnia"
+                },
                 text: ele.name
               });
-              // console.log(ele.slug);
             });
           }
           setDataCollection(results);
           // console.log(paramCollection);
           if (paramCollection) {
+            console.log("Setting selected collection:", paramCollection);
             setSelectedCollection(paramCollection);
+
+            // Set blockchain network from the param collection
+            const networkToUse = paramCollection.blockchain || paramCollection.networkType || "Somnia";
+            console.log("Setting initial blockchain network to:", networkToUse);
+            blockchainNetworkHandler(networkToUse);
           }
         });
     }
@@ -482,29 +599,112 @@ const CreateNewArea = ({ className, space, collectible }) => {
   // console.log(dataCollection);
 
   async function switchNetwork(chainId) {
-    if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
-      console.log(`Network is already with chain id ${chainId}`);
-      return true;
-    }
     try {
-      const res = await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId }]
-      });
-      // console.log(res);
-      return true;
-    } catch (switchError) {
-      // console.log(switchError);
-      toast.error("Failed to change the network.");
+      console.log("switchNetwork called with chainId:", chainId);
+
+      // Convert current network version to hex for comparison
+      const currentChainId = window.ethereum.networkVersion ?
+        `0x${parseInt(window.ethereum.networkVersion).toString(16)}`.toLowerCase() :
+        (await window.ethereum.request({ method: 'eth_chainId' })).toLowerCase();
+
+      const targetChainId = chainId.toLowerCase();
+      console.log("Current chain ID:", currentChainId);
+      console.log("Target chain ID:", targetChainId);
+
+      // Check if we're already on the correct network
+      if (currentChainId === targetChainId) {
+        console.log(`Already on network with chain id ${chainId}`);
+        return true;
+      }
+
+      // Try to switch network
+      try {
+        console.log("Requesting network switch to chainId:", targetChainId);
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: targetChainId }]
+        });
+        console.log(`Successfully switched to network ${chainId}`);
+        return true;
+      } catch (switchError) {
+        console.log("Switch error:", switchError);
+
+        // If network is not added to MetaMask
+        if (switchError.code === 4902) {
+          try {
+            // Add the network to MetaMask
+            const networkConfig = NETWORKS[chainId];
+            if (!networkConfig) {
+              console.error("Network configuration not found for chain ID:", chainId);
+              toast.error("Invalid network configuration");
+              return false;
+            }
+
+            console.log("Adding network config:", networkConfig);
+
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [{
+                chainId: networkConfig.chainId,
+                chainName: networkConfig.chainName,
+                nativeCurrency: networkConfig.nativeCurrency,
+                rpcUrls: networkConfig.rpcUrls,
+                blockExplorerUrls: networkConfig.blockExplorerUrls
+              }]
+            });
+
+            // Network is added, no need to switch again as MetaMask does it automatically
+            return true;
+          } catch (addError) {
+            console.error("Error adding network:", addError);
+            toast.error("Failed to add network to MetaMask");
+            return false;
+          }
+        }
+
+        // If user rejected the request
+        if (switchError.code === 4001) {
+          toast.error("User rejected network switch");
+          return false;
+        }
+
+        toast.error("Failed to switch network");
+        return false;
+      }
+    } catch (error) {
+      console.error("Network switch error:", error);
+      toast.error("Failed to switch network");
+      return false;
     }
-    return false;
   }
 
   useEffect(() => {
     if (selectedCollection) {
-      changeNetworkByNetworkType(selectedCollection?.networkType);
+      // Update blockchain network when collection changes
+      blockchainNetworkHandler(selectedCollection.blockchain || "Somnia");
     }
   }, [selectedCollection]);
+
+  // Replace the useEffect that calls changeNetworkByNetworkType
+  useEffect(() => {
+    if (walletData.isConnected && blockchainNetwork) {
+      const switchToNetwork = async () => {
+        console.log("switchToNetwork called with blockchain:", blockchainNetwork);
+        const chainId = getChainIdByNetworkName(blockchainNetwork);
+        console.log("Resolved chainId:", chainId);
+
+        if (!chainId) {
+          console.error("Invalid network name:", blockchainNetwork);
+          return;
+        }
+
+        const result = await switchNetwork(chainId);
+        console.log("switchNetwork result:", result);
+      };
+
+      switchToNetwork();
+    }
+  }, [blockchainNetwork, walletData.isConnected]);
 
   const reloadCollectibleData = async () => {
     let res = await strapi.findOne("collectibles", collectible?.id, {
@@ -532,7 +732,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
           external_url: data?.external_url ? data?.external_url : collectible?.external_url,
           properties: formValues || collectible?.collectibleProperties?.data,
           slug: slug,
-          blockchain: NETWORK_NAMES.NETWORK|| "",
+          blockchain: blockchainNetwork || "",
         }
         if (nftImagePath) {
           updatedCollectibleObj.image = JSON.parse(nftImagePath);
@@ -584,6 +784,12 @@ const CreateNewArea = ({ className, space, collectible }) => {
       console.log(error);
     }
   }
+
+  // Add blockchainNetworkHandler function
+  const blockchainNetworkHandler = (networkName) => {
+    console.log("Selected network:", networkName);
+    setBlockchainNetwork(networkName);
+  };
 
   return (
     <>
