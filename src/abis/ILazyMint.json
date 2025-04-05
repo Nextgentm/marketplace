@@ -89,7 +89,7 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier:UNLICENSED\npragma solidity 0.8.14;\n\nimport \"@openzeppelin/contracts/interfaces/IERC20.sol\";\nimport \"@openzeppelin/contracts/interfaces/IERC721.sol\";\nimport \"@openzeppelin/contracts/interfaces/IERC1155.sol\";\n\ninterface ILazyMint {\n    function mintAndTransfer(\n        address from,\n        address to,\n        string memory _tokenURI,\n        uint96 _royaltyFee\n    ) external returns(uint256 _tokenId);\n    \n    function mintAndTransfer(\n        address from,\n        address to,\n        string memory _tokenURI,\n        uint96 _royaltyFee,\n        uint256 supply,\n        uint256 qty\n    ) external returns(uint256 _tokenId);\n}",
-  "sourcePath": "/Users/mujtabasiddiqui/Desktop/Mujtaba/lootmogul/marketplace/src/contracts/interface/ILazyMint.sol",
+  "sourcePath": "/Users/mujtabasiddiqui/Desktop/Mujtaba/lootmogul/final-code/marketplace/src/contracts/interface/ILazyMint.sol",
   "ast": {
     "absolutePath": "project:/src/contracts/interface/ILazyMint.sol",
     "exportedSymbols": {
@@ -574,7 +574,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-03-26T10:27:41.588Z",
+  "updatedAt": "2025-04-05T17:16:36.198Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

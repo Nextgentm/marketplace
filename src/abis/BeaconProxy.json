@@ -4770,7 +4770,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-03-26T10:27:41.548Z",
+  "updatedAt": "2025-04-05T17:16:36.135Z",
   "devdoc": {
     "details": "This contract implements a proxy that gets the implementation address for each call from an {UpgradeableBeacon}. The beacon address is stored in storage slot `uint256(keccak256('eip1967.proxy.beacon')) - 1`, so that it doesn't conflict with the storage layout of the implementation behind the proxy. _Available since v3.4._",
     "kind": "dev",
