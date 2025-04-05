@@ -121,7 +121,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           filters: {
             collectible: product.id,
             walletAddress: walletData.account,
-            isClaimed: false
+            isClaimed: false,
+            blockchain: { $eq: NETWORK_NAMES.NETWORK } // Added blockchain filter
           }
         });
         // console.log(_stakingData);
@@ -597,6 +598,7 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           restakingCount: 0,
           rewardType: "Crypto",
           isClaimed: false,
+          blockchain: NETWORK_NAMES.NETWORK , // Added blockchain filter
           index: index
         });
         // console.log(res);

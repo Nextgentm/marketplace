@@ -490,7 +490,7 @@ const CreateCollectionArea = ({ collection }) => {
 
       if (response.data) {
         toast.success("Collection created successfully!");
-        router.push("/collections");
+        router.push("/collection");
       } else {
         throw new Error("Failed to create collection in Strapi");
       }

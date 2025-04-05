@@ -200,7 +200,8 @@ const Author = () => {
     let stakingResponse = await strapi.find("collectible-stakings", {
       filters: {
         walletAddress: walletData.account,
-        isClaimed: false
+        isClaimed: false,
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // Added blockchain filter
       },
       populate: {
         collectible: {
