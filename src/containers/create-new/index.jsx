@@ -24,7 +24,8 @@ import {
 } from "src/lib/constants";
 import { getERC721Contract, getERC1155Contract, addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import { useMutation } from "@apollo/client";
-import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
+// Comment out the import to avoid 401 authentication error
+// import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
 import { Messages, NETWORK_NAMES } from "@utils/constants";
 
@@ -40,7 +41,8 @@ const CreateNewArea = ({ className, space, collectible }) => {
     changeNetworkByNetworkType,
     checkAndConnectWallet
   } = useContext(AppData);
-  const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
+  // Comment out the useMutation hook to avoid 401 authentication error
+  // const [createOwnerHistory, { data: createdOwnerHistory }] = useMutation(CREATE_OWNER_HISTORY);
 
   const router = useRouter();
 
@@ -201,6 +203,9 @@ const CreateNewArea = ({ className, space, collectible }) => {
           });
         }
       }
+
+      // Comment out GraphQL mutation to avoid 401 authentication error
+      /* 
       createOwnerHistory({
         variables: {
           data: {
@@ -213,6 +218,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
           }
         }
       });
+      */
 
       notify();
       reset();
