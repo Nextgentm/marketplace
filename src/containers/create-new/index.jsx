@@ -1,3 +1,4 @@
+/* eslint quotes: "off" */
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable @next/next/no-img-element */
 import { useState, useEffect, useContext } from "react";
