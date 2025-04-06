@@ -44,6 +44,9 @@ export const NETWORKS = {
   }
 };
 
+// Export NETWORKS_CHAINS as an alias for NETWORKS
+export const NETWORKS_CHAINS = NETWORKS;
+
 // Helper function to get chain ID from network name
 export const getChainIdByNetworkName = (networkName) => {
   console.log("inside getChainIdByNetworkName networkName = ", networkName);
