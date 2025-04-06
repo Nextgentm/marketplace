@@ -36,10 +36,13 @@ const Header = ({ className }) => {
 
   useEffect(() => {
     if (walletData.isConnected) {
+      console.log("Checking admin status for wallet:", walletData.account);
       addressIsAdmin(walletData).then((validationValue) => {
+        console.log("Admin check result:", validationValue);
         setIsAdminWallet(validationValue);
       }).catch((error) => { console.log("Error while Checking User " + error) });
     } else {
+      console.log("Wallet not connected, setting isAdminWallet to false");
       setIsAdminWallet(false);
     }
   }, [walletData]);
