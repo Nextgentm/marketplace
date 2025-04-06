@@ -41,16 +41,6 @@
     "title": "Quick Links",
     "menu": [
       {
-        "id": 1,
-        "text": "What is Digital Twin?",
-        "path": "https://metaverse.lootmogul.com/what-is-metaverse/"
-      },
-      {
-        "id": 2,
-        "text": "What are Digital Collectibles?",
-        "path": "https://metaverse.lootmogul.com/what-is-nft/"
-      },
-      {
         "id": 3,
         "text": "Contact Us",
         "path": "/contact"
@@ -58,12 +48,12 @@
       {
         "id": 4,
         "text": "Press Releases",
-        "path": "https://lootmogulstg.wpengine.com/press-releases/"
+        "path": "https://ai.lootmogul.com/press-releases/"
       },
       {
         "id": 5,
         "text": "FAQs",
-        "path": "https://metaverse.lootmogul.com/faq/"
+        "path": "https://ai.lootmogul.com/faq/"
       },
       {
         "id": 6,

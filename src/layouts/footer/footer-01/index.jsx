@@ -61,7 +61,7 @@ const Footer = ({ space, className, data }) => (
               <NewsletterWidget data={footerData["newsletter-widget"]} />
               <LogoWidget data={footerData["logo-widget"]} />
               <Anchor className="logo-dark" path="https://w.tracxn.com/awards/emerging-awards/pc-console-gaming" target="_blank">
-                <Image className="pt--20 pb--40" src={footerData["traCXN-logo"]["logo"][0].src} alt={footerData["traCXN-logo"]["logo"][0]?.alt || "nft-logo"} width={350} height={80} priority />
+                <Image className="pt--20 pb--40" src={footerData["traCXN-logo"]["logo"][0].src} alt={footerData["traCXN-logo"]["logo"][0]?.alt || "nft-logo"} width={300} height={80} priority />
               </Anchor>
             </div>
           </div>
@@ -98,40 +98,29 @@ const Footer = ({ space, className, data }) => (
     </div>
     {/* Footer text */}
     <div className="copy-right-one ptb--20 bg-color--1" style={{ backgroundColor: "#0f092d" }}>
-      <div className="container" style={{ width: "80%", margin: "auto" }}>
-        <div className="row">
-          <div className="col-lg-3">
+      <div className="container" style={{ width: "80%", margin: "auto", display: "flex", justifyContent: "center" }}>
+          <div className="row w-100 text-center">
+              <div className="col-lg-6 d-flex flex-column align-items-center">
             <img
               className="w-100 h-auto w-small"
-              src="https://cdn.lootmogul.com/wp-content/uploads/2022/07/14014003/Cricket_South_Africa.webp"
+            src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/03/11013049/Wide-Logo-1-1.png`}
               alt=""
+              style={{ padding: "5px", maxWidth: "300px" }}
             />
-            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
-              Official Metaverse and Gaming Partner:<br />
-              Cricket South Africa
-            </p>
-          </div>
-
-          <div className="col-lg-4">
-            <img
-              className="w-100 h-auto w-small"
-              src="https://lootmogulstg.wpengine.com/wp-content/uploads/2023/09/Wide-Logo-1.png"
-              alt=""
-              style={{ padding: "5px" }}
-            />
-            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
+            <p style={{ color: "#fff" }} className="variant-footerText font-weight-400 font-size-12 text-center">
               LootMogul venture is accelerated (1 of 5 ventures) by National Basketball Player Association in collaboration with Andreessen Horowitz (a16z)’s Cultural Leadership Fund and Patricof Co
             </p>
           </div>
-          <div className="col-lg-5">
+
+          <div className="col-lg-6 d-flex flex-column align-items-center">
             <img
               className="w-100 h-auto w-small"
-              src="https://lootmogulstg.wpengine.com/wp-content/uploads/2023/09/NFLPA-Logo.png"
+              src={`${process.env.NEXT_PUBLIC_WP_UPLOAD_DIR}/2024/03/11013050/NFLPA-Logo-1.png`}
               alt=""
-              style={{ padding: "10px" }}
+              style={{ padding: "10px", maxWidth: "300px" }}
             />
-            <p style={{ color: "#fff" }} className="pr-lg-4 variant-footerText font-weight-400 font-size-12 text-left">
-              LootMogul is competitively selected (1 of 6 ventures) by National Football League Player Association (NFLPA)  to participate in their 2023 NFLPA Pitch Day Competition during the 2023 NFL Superbowl LVII Week.
+            <p style={{ color: "#fff" }} className="variant-footerText font-weight-400 font-size-12 text-center">
+              LootMogul is competitively selected (1 of 6 ventures) by National Football League Player Association (NFLPA) to participate in their 2023 NFLPA Pitch Day Competition during the 2023 NFL Superbowl LVII Week.
             </p>
           </div>
         </div>
@@ -149,7 +138,7 @@ const Footer = ({ space, className, data }) => (
         <div className="row">
           <div className="col-12">
             <p style={{ color: "#fff" }} className="pb-0 px-4 variant-footerText font-weight-400 font-size-10 text-center">
-              © 2024 LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States
+              © {(new Date()).getFullYear()} LootMogul. All Rights Reserved. NextGenTM, Inc. 831 N Tatnall Street Suite M #275 Wilmington, DE 19801 United States
               {/* <br />Office Address : C/105 Varsha Swapna Gawan Pada, Mulund East, Mumbai - 400081 */}
             </p>
           </div>
