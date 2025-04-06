@@ -10,6 +10,7 @@ import strapi from "@utils/strapi";
 import StakingArea from "@containers/staking-area";
 import Breadcrumb from "@components/breadcrumb";
 import { convertWeitoEther, getStakingNFTContract, getTokenContract, secondsToHumanReadableString } from "src/lib/BlokchainHelperFunctions";
+import { NETWORK_NAMES } from "@utils/constants";
 
 export async function getStaticProps() {
   return { props: { className: "template-color-1" } };
@@ -97,6 +98,7 @@ const StakeCollectible = () => {
       filters: {
         walletAddress: walletData.account,
         isClaimed: false,
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // Added blockchain filter
         stakingEndTime: {
           $gte: new Date()
         }
@@ -122,6 +124,7 @@ const StakeCollectible = () => {
       filters: {
         walletAddress: walletData.account,
         isClaimed: false,
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // Added blockchain filter
         stakingEndTime: {
           $lt: new Date()
         }
