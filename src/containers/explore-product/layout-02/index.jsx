@@ -9,6 +9,7 @@ import { flatDeep } from "@utils/methods";
 import { SectionTitleType, ProductType } from "@utils/types";
 import strapi from "@utils/strapi";
 import Anchor from "@ui/anchor";
+import { NETWORK_NAMES } from "@utils/constants";
 
 const ExploreProductArea = ({ className, space, data }) => {
   const filters = [...new Set(flatDeep(data?.allCollections.map((item) => item.name) || []))];
@@ -35,6 +36,7 @@ const ExploreProductArea = ({ className, space, data }) => {
         endTimeStamp: {
           $gt: new Date()
         },
+        blockchain: { $eq: NETWORK_NAMES.NETWORK },
         collectible: {
           collection: {
             name: {

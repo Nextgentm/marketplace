@@ -15,7 +15,7 @@ import { UPDATE_COLLECTIBLE } from "src/graphql/mutation/collectible/updateColle
 import { UPDATE_BIDDING } from "src/graphql/mutation/bidding.js/updateBidding";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
-import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
+import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, SOMNIA_NETWORK_CHAIN_ID } from "src/lib/constants";
 
 const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction, id, refreshPageData, buyerOrderSignature }) => {
   const { walletData, setWalletData } = useContext(AppData);
@@ -55,10 +55,15 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
 
   async function acceptBid() {
     try {
-      // chnage network
+      // change network
       if (product.collection.data.networkType === "Ethereum") {
         if (!await switchNetwork(ETHEREUM_NETWORK_CHAIN_ID)) {
           // ethereum testnet
+          return;
+        }
+      } else if (product.collection.data.networkType === "Somnia") {
+        if (!await switchNetwork(SOMNIA_NETWORK_CHAIN_ID)) {
+          // somnia testnet
           return;
         }
       } else if (product.collection.data.networkType === "Polygon") {
@@ -68,7 +73,7 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
         }
       } else if (product.collection.data.networkType === "Binance") {
         if (!await switchNetwork(BINANCE_NETWORK_CHAIN_ID)) {
-          // polygon testnet
+          // binance testnet
           return;
         }
       }
@@ -77,7 +82,9 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, product, auction,
       const buyer = name;
       let erc20Address;
       //Select token contract address according to current network
-      if (walletData.network == "Polygon") {
+      if (walletData.network == "Somnia") {
+        erc20Address = auction.data.paymentToken?.data?.somniaAddress;
+      } else if (walletData.network == "Polygon") {
         erc20Address = auction.data.paymentToken?.data?.polygonAddress;
       } else if (walletData.network == "Ethereum") {
         erc20Address = auction.data.paymentToken?.data?.ethAddress;

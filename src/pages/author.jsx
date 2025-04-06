@@ -16,6 +16,7 @@ import { ALL_COLLECTIBLE_LISTDATA_QUERY } from "src/graphql/query/collectibles/g
 import { useLazyQuery } from "@apollo/client";
 import { addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import strapi from "@utils/strapi";
+import { NETWORK_NAMES } from "@utils/constants";
 // import productData from "../data/products.json";
 
 export async function getStaticProps() {
@@ -105,7 +106,10 @@ const Author = () => {
             walletAddress: {
               $eq: walletData.account
             }
-          }
+          },
+          {
+            blockchain: { $eq: NETWORK_NAMES.NETWORK }
+          },
         ]
       },
       populate: {
@@ -127,38 +131,25 @@ const Author = () => {
   };
 
   const getOwnedDatapaginationRecord = async (page) => {
+    console.log(`${process.env.BlOCKCHAIN}`, "six filters")
     let response = await strapi.find("collectibles", {
       filters: {
-        $or: [{
-          $and: [{
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // added blockchain filter
+        $or: [
+          {
             owner: {
               $eq: walletData.account
-            },
-          }, {
-            collection: {
-              collectionType: {
-                $eq: "Single"
-              }
-            },
-          }]
-        }, {
-          $and: [{
+            }
+          },
+          {
             owner_histories: {
               toWalletAddress: {
                 $eq: walletData.account
               }
-            },
-          }, {
-            collection: {
-              collectionType: {
-                $ne: "Single"
-              }
-            },
-          }]
-        }]
+            }
+          }
+        ]
       },
-      // let response = await strapi.find("collectible/get-owned-collectible/" + walletData.account, {
-      //   filters: {},
       populate: "*",
       pagination: {
         page,
@@ -171,8 +162,10 @@ const Author = () => {
   };
 
   const getCreatedDatapaginationRecord = async (page) => {
+    console.log(`${process.env.BlOCKCHAIN}`, "fifth filters")
     let creatorResponse = await strapi.find("collectibles", {
       filters: {
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // added blockchain filter
         creator: {
           $eq: walletData.account
         }

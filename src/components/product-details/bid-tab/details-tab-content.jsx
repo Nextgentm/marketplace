@@ -11,6 +11,8 @@ const getContractAddress = (product) => {
     url = "https://etherscan.io/address/" + contractAddress;
   } else if (product.collection.data.networkType == "Binance") {
     url = "https://bscscan.com/address/" + contractAddress;
+  } else if (product.collection.data.networkType == "Somnia") {
+    url = "https://shannon-explorer.somnia.network/address/" + contractAddress;
   }
   return url;
 }
@@ -64,17 +66,11 @@ const DetailsTabContent = ({ owner, properties, tags, supply, erc1155MyBalance, 
         </div>
       )
     }
-  </div >
+  </div>
 );
 
 DetailsTabContent.propTypes = {
   owner: PropTypes.string,
-  // owner: PropTypes.shape({
-  //   name: PropTypes.string,
-  //   total_sale: PropTypes.number,
-  //   slug: PropTypes.string,
-  //   image: ImageType
-  // }),
   properties: PropTypes.arrayOf(
     PropTypes.shape({
       id: IDType,

@@ -5,6 +5,7 @@ import Footer from "@layout/footer/footer-01";
 import {
   ETHEREUM_NETWORK_CHAIN_ID,
   POLYGON_NETWORK_CHAIN_ID,
+  SOMNIA_NETWORK_CHAIN_ID,
   DEFAULT_NETWORK,
   NETWORKS_CHAINS,
   BINANCE_NETWORK_CHAIN_ID
@@ -32,9 +33,9 @@ const Home = () => (
               <td>{NETWORKS_CHAINS[ETHEREUM_NETWORK_CHAIN_ID]?.chainName}</td>
             </tr>
             <tr>
-              <td>POLYGON_NETWORK_CHAIN_ID</td>
-              <td>{POLYGON_NETWORK_CHAIN_ID}</td>
-              <td>{NETWORKS_CHAINS[POLYGON_NETWORK_CHAIN_ID]?.chainName}</td>
+              <td>SOMNIA_NETWORK_CHAIN_ID</td>
+              <td>{SOMNIA_NETWORK_CHAIN_ID}</td>
+              <td>{NETWORKS_CHAINS[SOMNIA_NETWORK_CHAIN_ID]?.chainName}</td>
             </tr>
             <tr>
               <td>BINANCE_NETWORK_CHAIN_ID</td>
@@ -110,8 +111,24 @@ const Home = () => (
               <td colSpan={3}><br /></td>
             </tr>
             <tr>
-              <td colSpan={2}>NEXT_PUBLIC_SENTRY_ENV</td>
-              <td>{process.env.NEXT_PUBLIC_SENTRY_ENV}</td>
+              <td colSpan={2}>NEXT_PUBLIC_SOMNIA_FACTORY721_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_SOMNIA_FACTORY721_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_SOMNIA_FACTORY1155_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_SOMNIA_FACTORY1155_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_SOMNIA_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_SOMNIA_TRANSFER_PROXY_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_SOMNIA_TRADE_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_SOMNIA_TRADE_CONTRACT_ADDRESS}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>NEXT_PUBLIC_SOMNIA_STAKING_CONTRACT_ADDRESS</td>
+              <td>{process.env.NEXT_PUBLIC_SOMNIA_STAKING_CONTRACT_ADDRESS}</td>
             </tr>
           </tbody>
         </table>

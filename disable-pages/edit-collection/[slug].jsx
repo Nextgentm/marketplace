@@ -5,6 +5,7 @@ import Footer from "@layout/footer/footer-01";
 import Breadcrumb from "@components/breadcrumb";
 import CreateCollectionArea from "@containers/create-collection";
 import strapi from "@utils/strapi";
+import { NETWORK_NAMES } from "@utils/constants";
 
 const EditCollection = ({ collection }) => (
     <Wrapper>
@@ -28,6 +29,9 @@ export async function getStaticPaths() {
             // console.log(page, pageCount, pageSize);
             const resData = await strapi.find("collections", {
                 fields: ["id", "slug"],
+                filters: {
+                    blockchain: { $eq: NETWORK_NAMES.NETWORK } // Added blockchain filter
+                },
                 pagination: {
                     page: page,
                     pageSize: pageSize
@@ -56,6 +60,7 @@ export async function getStaticProps({ params }) {
 
     let collection = await strapi.find("collections", {
         filters: {
+            blockchain: NETWORK_NAMES.NETWORK, // Added blockchain filter
             slug: {
                 $eq: params.slug
             },

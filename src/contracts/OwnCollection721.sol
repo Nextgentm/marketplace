@@ -13,7 +13,6 @@ import "./common/ERC2981.sol";
 
 contract NFTMarketplace is
   Initializable,
-  ERC721Upgradeable,
   ERC721URIStorageUpgradeable,
   ERC721BurnableUpgradeable,
   ERC2981
@@ -72,14 +71,11 @@ contract NFTMarketplace is
     owner = payable(newOwner);
   }
 
-  // The following functions are overrides required by Solidity.
   function _burn(uint256 tokenId) internal override(ERC721Upgradeable, ERC721URIStorageUpgradeable) {
     super._burn(tokenId);
   }
 
-  function tokenURI(
-    uint256 tokenId
-  ) public view override(ERC721Upgradeable, ERC721URIStorageUpgradeable) returns (string memory) {
+  function tokenURI(uint256 tokenId) public view override(ERC721Upgradeable, ERC721URIStorageUpgradeable) returns (string memory) {
     return super.tokenURI(tokenId);
   }
 
@@ -246,9 +242,7 @@ contract NFTMarketplace is
   /**
    * @dev See {IERC165-supportsInterface}.
    */
-  function supportsInterface(
-    bytes4 interfaceId
-  ) public view virtual override(ERC2981, ERC721Upgradeable) returns (bool) {
+  function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, ERC721URIStorageUpgradeable, ERC2981) returns (bool) {
     return super.supportsInterface(interfaceId);
   }
 }

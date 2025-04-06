@@ -12,6 +12,7 @@ import axios from "axios";
 import client from "@utils/apollo-client";
 import { getCollectible, getCollection } from "src/services/collections/collection";
 import strapi from "@utils/strapi";
+import { NETWORK_NAMES } from "@utils/constants";
 // import productData from "../data/products.json";
 
 const CollectionDetail = ({ collection, collectibles }) => {
@@ -45,100 +46,109 @@ export async function getStaticPaths() {
     let productData = [];
     let page = 1, pageCount = 1, pageSize = 25;
     do {
+      console.log(`${process.env.BlOCKCHAIN}`,"third filters")
       // console.log(page, pageCount, pageSize);
       const resData = await strapi.find("collections", {
         fields: ["id", "slug"],
+        filters: {
+            blockchain: { $eq: NETWORK_NAMES.NETWORK } // Added blockchain filter
+        },
         pagination: {
           page: page,
           pageSize: pageSize
         }
       });
-      productData = productData.concat(resData.data);
-      page++;
+      productData = [...productData, ...resData.data];
       pageCount = resData.meta.pagination.pageCount;
+      page++;
     } while (page <= pageCount);
-    // console.log(productData);
+    const paths = productData.map((collection) => ({
+      params: { slug: collection.slug }
+    }));
     return {
-      paths: productData.map(({ slug }) => ({
-        params: {
-          slug
-        }
-      })),
-      fallback: false
+      paths,
+      fallback: "blocking" // Enable fallback for new collections
     };
-  } catch (er) {
-    return { paths: [], fallback: false } // <- ADDED RETURN STMNT
+  } catch (error) {
+    console.error("Error in getStaticPaths:", error);
+    return {
+      paths: [],
+      fallback: "blocking" // Enable fallback even if there's an error
+    };
   }
 }
 
 export async function getStaticProps({ params }) {
-  // collection
-  const getCollections = await getCollection({
-    filters: {
-      slug: {
-        $eq: params.slug
-      }
-    },
-  });
-  // console.log(getCollections);
-  const collection = getCollections.data[0];
-  // console.log(collection);
-  const getCollectiblecheckData = await getCollectible({
-    filters: {
-      auction: {
-        status: "Live",
-        endTimeStamp: {
-          $gt: new Date()
-        },
-      },
-      collection: {
-        id: {
-          $eq: collection.id
-        }
-      }
-    },
-    populate: {
-      collection: {
-        fields: "*",
-        populate: {
-          cover: {
-            fields: "*"
-          },
-          logo: {
-            fields: "*"
-          }
+  try {
+    // collection
+    const getCollections = await getCollection({
+      filters: {
+        slug: {
+          $eq: params.slug
         }
       },
-      auction: {
-        fields: "*",
-        filters: {
+    });
+
+    // If no collection found, return 404
+    if (!getCollections.data || getCollections.data.length === 0) {
+      return {
+        notFound: true
+      };
+    }
+
+    const collection = getCollections.data[0];
+    
+    const getCollectiblecheckData = await getCollectible({
+      filters: {
+        auction: {
           status: "Live",
           endTimeStamp: {
             $gt: new Date()
           },
-          // id: { $notNull: true }
+        },
+        collection: {
+          id: {
+            $eq: collection.id
+          }
         }
       },
-      image: {
-        fields: "*"
+      populate: {
+        collection: {
+          fields: "*",
+          populate: {
+            cover: {
+              fields: "*"
+            },
+            logo: {
+              fields: "*"
+            }
+          }
+        },
+        auction: {
+          fields: "*",
+          filters: {
+            status: "Live",
+            endTimeStamp: {
+              $gt: new Date()
+            }
+          }
+        }
       }
-    },
-    sort: ["priority:asc"],
-    pagination: {
-      page: 1,
-      pageCount: 1,
-      pageSize: 9
-    }
-  });
-  // console.log(getCollectiblecheckData.data);
+    });
 
-  return {
-    props: {
-      className: "template-color-1",
-      collection: collection,
-      collectibles: getCollectiblecheckData
-    } // will be passed to the page component as props
-  };
+    return {
+      props: {
+        collection,
+        collectibles: getCollectiblecheckData
+      },
+      revalidate: 60 // Revalidate every 60 seconds
+    };
+  } catch (error) {
+    console.error("Error in getStaticProps:", error);
+    return {
+      notFound: true
+    };
+  }
 }
 
 export default CollectionDetail;

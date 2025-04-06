@@ -20,10 +20,9 @@ const ExploreProductArea = ({
   space,
   data: { section_title, categoriesolds, placeBid, collectionPage, paginationdata, collectionData }
 }) => {
-
   const [loading, setLoading] = useState(false);
   const [loadMore, setLoadMore] = useState(false);
-  const [collectionsData, setCollectionsData] = useState();
+  const [collectionsData, setCollectionsData] = useState(collectionData?.data || []);
   const router = useRouter();
   const routerQuery = router?.query?.collection;
   const [onChangeValue, setOnChangeValue] = useState();
@@ -31,11 +30,31 @@ const ExploreProductArea = ({
   const [checkedCollection, setCheckedCollection] = useState([]);
   const [dataAll, setDataAll] = useState([]);
   const [selectedFilterNetworks, setSelectedFilterNetworks] = useState([]);
+  const [onchangecheckData, setonchangecheckData] = useState(categoriesolds || {});
 
-  const [onchangecheckData, setonchangecheckData] = useState(categoriesolds);
+  const PAGE_SIZE = 9;
 
-  const PAGE_SIZE = 9; //set for index page manually collectibles.jsx
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageCount: Math.ceil((paginationdata?.total || 0) / PAGE_SIZE),
+    pageSize: PAGE_SIZE,
+    total: paginationdata?.total || 0
+  });
 
+  // Initialize with server-side data
+  useEffect(() => {
+    if (collectionData?.data) {
+      setCollectionsData(collectionData.data);
+    }
+    if (paginationdata) {
+      setPagination({
+        page: 1,
+        pageCount: Math.ceil(paginationdata.total / PAGE_SIZE),
+        pageSize: PAGE_SIZE,
+        total: paginationdata.total
+      });
+    }
+  }, [collectionData, paginationdata]);
 
   const setCollectionData = (data, page = 1, loadmoreData) => {
     if (loadmoreData && collectionsData) {
@@ -88,13 +107,6 @@ const ExploreProductArea = ({
   //   }
   //   fetchData();
   // }, []);
-
-  const [pagination, setPagination] = useState({
-    page: 1,
-    pageCount: 1,
-    pageSize: 0,
-    total: 0
-  });
 
   const fetchData = async () => {
     try {
@@ -1311,15 +1323,15 @@ ExploreProductArea.propTypes = {
   space: PropTypes.oneOf([1, 2]),
   data: PropTypes.shape({
     section_title: SectionTitleType,
-    // products: PropTypes.arrayOf(
-    //   PropTypes.shape({
-    //     __typename: PropTypes.string,
-    //     attributes: ProductType
-    //   })
-    // ).isRequired,
+    categoriesolds: PropTypes.object,
     placeBid: PropTypes.bool,
-    collectionPage: PropTypes.bool
-    // collectionData: PropTypes.arrayOf(ProductType)
+    collectionPage: PropTypes.bool,
+    paginationdata: PropTypes.shape({
+      total: PropTypes.number
+    }),
+    collectionData: PropTypes.shape({
+      data: PropTypes.array
+    })
   })
 };
 

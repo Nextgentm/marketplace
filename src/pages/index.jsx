@@ -18,12 +18,14 @@ import LiveExploreArea from "@containers/live-explore/layout-01";
 import strapi from "@utils/strapi";
 import ServiceArea from "@containers/services/layout-01";
 import { getCollection, getCollectible } from "src/services/collections/collection";
+import { NETWORK_NAMES } from "@utils/constants";
 
 const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, allCollections }) => {
   const content = normalizedData(homepageData?.content || []);
   const submit = async () => {
     const filter = {
       filters: {
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // Added blockchain filter
         collectionType: {
           $eq: "Multiple"
         }
@@ -96,29 +98,31 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, a
 };
 
 Home.getInitialProps = async () => {
-  const filter = {
-    filters: {
-      status: {
-        $eq: "Live"
+  try {
+    const filter = {
+      filters: {
+        status: {
+          $eq: "Live"
+        },
+        endTimeStamp: {
+          $gt: new Date()
+        },
+        blockchain: { $eq: NETWORK_NAMES.NETWORK },
+        sellType: {
+          $eq: "Bidding"
+        }
       },
-      endTimeStamp: {
-        $gt: new Date()
+      populate: {
+        collectible: {
+          populate: ["image", "collection"]
+        },
+        biddings: {
+          fields: ["id"]
+        },
       },
-      sellType: {
-        $eq: "Bidding"
-      }
-    },
-    populate: {
-      collectible: {
-        populate: ["image", "collection"]
-      },
-      biddings: {
-        fields: ["id"]
-      },
-    },
-    sort: { startTimestamp: "desc" }
-  }
-  let liveAuctionData = await strapi.find("auctions", filter);
+      sort: { startTimestamp: "desc" }
+    }
+    let liveAuctionData = await strapi.find("auctions", filter);
   // console.log(liveAuctionData);
   // const liveAuctionData = await client.query({
   //   query: ALL_COLLECTIBLE_LISTDATA_QUERY,
@@ -138,222 +142,166 @@ Home.getInitialProps = async () => {
   //   fetchPolicy: "network-only"
   // });
 
-  let newestItemsData = await strapi.find("collectible/newestItems");
-  // console.log(newestItemsData);
-  let newestItemsIds = [];
-  newestItemsIds.push(...newestItemsData.map(emp => emp.id));
-  // console.log(newestItemsIds);
+    let newestItemsData = await strapi.find("collectible/newestItems");
+    // console.log(newestItemsData);
+    let newestItemsIds = [];
+    newestItemsIds.push(...newestItemsData.map(emp => emp.id));
+    // console.log(newestItemsIds);
 
-  let newestItemsFilter = {
-    filters: {
-      status: {
-        $eq: "Live"
-      },
-      id: {
-        $in: newestItemsIds
-      }
-    },
-    populate: {
-      collectible: {
-        populate: ["image", "collection"]
-      },
-      biddings: {
-        fields: ["id"]
-      }
-    },
-    pagination: {
-      limit: 10
-    },
-    sort: {
-      collectible: {
-        createdAt: "desc"
-      }
-    }
-  }
-  if (process.env.NEXT_PUBLIC_SENTRY_ENV == "production") {
-    newestItemsFilter.filters.walletAddress = {
-      $eq: "0x69ca7ed1e033b42c28d5e3a7b802bd74f63e752a"
-    }
-  }
-  let newestItems = await strapi.find("auctions", newestItemsFilter);
-  newestItems.data.sort((a, b) => newestItemsIds.indexOf(a.id) - newestItemsIds.indexOf(b.id));
-  // console.log(newestItems);
-  // const newestItems = await client.query({
-  //   query: ALL_COLLECTIBLE_LISTDATA_QUERY,
-  //   variables: {
-  //     filter: {
-  //       auction: {
-  //         status: {
-  //           eq: "Live"
-  //         },
-  //       }
-  //     },
-  //     pagination: {
-  //       pageSize: 10
-  //     },
-  //     sort: "auction.startTimestamp:desc"
-  //   },
-  //   fetchPolicy: "network-only"
-  // });
-
-  const allCollections = await getCollection({
-    fields: ["name", "id"],
-    filters: {
-      collectibles: {
-        auction: {
-          status: "Live",
-          endTimeStamp: {
-            $gt: new Date()
-          },
+    let newestItemsFilter = {
+      filters: {
+        status: {
+          $eq: "Live"
+        },
+        blockchain: { $eq: NETWORK_NAMES.NETWORK },
+        id: {
+          $in: newestItemsIds
         }
       },
-      id: {
-        $ne: 14
-      }
-    },
-    sort: ["priority:asc"],
-    pagination: {
-      limit: 25,
-    }
-  });
-  let dataCollectiblesFilter = {
-    filters: {
-      status: {
-        $eq: "Live"
+      populate: {
+        collectible: {
+          populate: ["image", "collection"]
+        },
+        biddings: {
+          fields: ["id"]
+        }
       },
-      endTimeStamp: {
-        $gt: new Date()
+      pagination: {
+        limit: 10
       },
-    },
-    populate: {
-      collectible: {
-        populate: ["image", "collection"]
-      },
-      biddings: {
-        fields: ["id"]
-      }
-    },
-    sort: { collectible: { priority: "asc" }, startTimestamp: "desc" }
-  }
-  if (process.env.NEXT_PUBLIC_SENTRY_ENV == "production") {
-    dataCollectiblesFilter.filters.walletAddress = {
-      $eq: "0x69ca7ed1e033b42c28d5e3a7b802bd74f63e752a"
-    }
-  }
-  let dataCollectibles = await strapi.find("auctions", dataCollectiblesFilter);
-  // const dataCollectibles = await client.query({
-  //   query: ALL_COLLECTIBLE_LISTDATA_QUERY,
-  //   variables: {
-  //     filter: {
-  //       auction: {
-  //         status: {
-  //           eq: "Live"
-  //         },
-  //       }
-  //     },
-  //     sort: "auction.startTimestamp:desc"
-  //   },
-  //   fetchPolicy: "network-only"
-  // });
-
-  const dataCollection = await getCollection({
-    filters: {
-      collectibles: {
-        auction: {
-          status: {
-            $eq: "Live"
-          },
-          endTimeStamp: {
-            $gt: new Date()
-          },
+      sort: {
+        collectible: {
+          createdAt: "desc"
         }
       }
-    },
-    sort: ["priority:asc"],
-    populate: {
-      collectibles: {
-        fields: "*",
-        filters: {
+    }
+    if (process.env.NEXT_PUBLIC_SENTRY_ENV == "production") {
+      newestItemsFilter.filters.walletAddress = {
+        $eq: "0x69ca7ed1e033b42c28d5e3a7b802bd74f63e752a"
+      }
+    }
+    let newestItems = await strapi.find("auctions", newestItemsFilter);
+    newestItems.data.sort((a, b) => newestItemsIds.indexOf(a.id) - newestItemsIds.indexOf(b.id));
+
+    const allCollections = await getCollection({
+      fields: ["name", "id"],
+      filters: {
+        collectibles: {
           auction: {
             status: "Live",
             endTimeStamp: {
               $gt: new Date()
             },
-            id: { $notNull: true }
           }
         },
-        populate: {
+        id: {
+          $ne: 14
+        }
+      },
+      sort: ["priority:asc"],
+      pagination: {
+        limit: 25,
+      }
+    });
+    let dataCollectiblesFilter = {
+      filters: {
+        status: {
+          $eq: "Live"
+        },
+        endTimeStamp: {
+          $gt: new Date()
+        },
+        blockchain: { $eq: NETWORK_NAMES.NETWORK },
+      },
+      populate: {
+        collectible: {
+          populate: ["image", "collection"]
+        },
+        biddings: {
+          fields: ["id"]
+        }
+      },
+      sort: { collectible: { priority: "asc" }, startTimestamp: "desc" }
+    }
+    if (process.env.NEXT_PUBLIC_SENTRY_ENV == "production") {
+      dataCollectiblesFilter.filters.walletAddress = {
+        $eq: "0x69ca7ed1e033b42c28d5e3a7b802bd74f63e752a"
+      }
+    }
+    let dataCollectibles = await strapi.find("auctions", dataCollectiblesFilter);
+
+    const dataCollection = await getCollection({
+      filters: {
+        collectibles: {
           auction: {
-            fields: "*",
-            filters: {
+            status: {
+              $eq: "Live"
+            },
+            endTimeStamp: {
+              $gt: new Date()
+            },
+          }
+        }
+      },
+      sort: ["priority:asc"],
+      populate: {
+        collectibles: {
+          fields: "*",
+          filters: {
+            auction: {
               status: "Live",
               endTimeStamp: {
                 $gt: new Date()
               },
               id: { $notNull: true }
             }
+          },
+          populate: {
+            auction: {
+              fields: "*",
+              filters: {
+                status: "Live",
+                endTimeStamp: {
+                  $gt: new Date()
+                },
+                id: { $notNull: true }
+              }
+            }
           }
+        },
+        cover: {
+          fields: "*"
+        },
+        logo: {
+          fields: "*"
         }
       },
-      cover: {
-        fields: "*"
-      },
-      logo: {
-        fields: "*"
+      pagination: {
+        limit: 8,
+        start: 0,
+        withCount: true
       }
-    },
-    pagination: {
-      limit: 8,
-      start: 0,
-      withCount: true
-    }
-  });
+    });
 
-  // console.log("dataCollection654", dataCollection);
-
-  // const otherMarketplaceData = await getCollectible({
-  //   filters: {
-  //     isOpenseaCollectible: true
-  //   },
-  //   populate: {
-  //     collection: {
-  //       fields: "*",
-  //       populate: {
-  //         cover: {
-  //           fields: "*"
-  //         },
-  //         logo: {
-  //           fields: "*"
-  //         }
-  //       }
-  //     },
-  //     auction: {
-  //       fields: "*",
-  //       filters: {
-  //         status: "Live",
-  //         id: { $notNull: true }
-  //       }
-  //     },
-  //     image: {
-  //       fields: "*"
-  //     }
-  //   },
-  //   pagination: {
-  //     limit: 6,
-  //     start: 0,
-  //     withCount: true
-  //   }
-  // });
-
-  return {
-    className: "template-color-1",
-    liveAuctionData: liveAuctionData.data,
-    newestData: newestItems.data,
-    dataCollectibles: dataCollectibles.data,
-    dataCollection: dataCollection.data,
-    allCollections: allCollections.data,
-    // otherMarketplaceCollectibles: otherMarketplaceData.data,
-  };
+    return {
+      className: "template-color-1",
+      liveAuctionData: liveAuctionData?.data || [],
+      newestData: newestItems?.data || [],
+      dataCollectibles: dataCollectibles?.data || [],
+      dataCollection: dataCollection?.data || [],
+      allCollections: allCollections?.data || [],
+    };
+  } catch (error) {
+    console.error("Error in getInitialProps:", error);
+    return {
+      className: "template-color-1",
+      liveAuctionData: [],
+      newestData: [],
+      dataCollectibles: [],
+      dataCollection: [],
+      allCollections: [],
+    };
+  }
 };
 
 export default Home;

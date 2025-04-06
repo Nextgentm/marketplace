@@ -89,26 +89,35 @@ export const getLoginToken = async (ctx) => {
   }
 };
 export const userSessionData = async (ctx) => {
-  if (isServer()) {
-    if (ctx && ctx.req && ctx.req.headers && ctx.req.headers.cookie) {
-      const token = await getCookie("token", ctx.req.headers.cookie);
-      const isAuthenticated = token ? true : false;
-      const user = {};
+  try {
+    if (isServer()) {
+      if (ctx?.req?.headers?.cookie) {
+        const token = await getCookie("token", ctx.req.headers.cookie);
+        return {
+          isAuthenticated: !!token,
+          token: token || null,
+          user: {}
+        };
+      }
       return {
-        isAuthenticated,
-        token,
-        user
+        isAuthenticated: false,
+        token: null,
+        user: {}
+      };
+    } else {
+      const token = await getClientCookie("token");
+      return {
+        isAuthenticated: !!token,
+        token: token || null,
+        user: {}
       };
     }
-  } else {
-    const token = await getClientCookie("token");
-    console.log("token", token);
-    const isAuthenticated = token ? true : false;
-    const user = {};
-
+  } catch (error) {
+    console.error("Error in userSessionData:", error);
     return {
-      isAuthenticated,
-      token
+      isAuthenticated: false,
+      token: null,
+      user: {}
     };
   }
 };
