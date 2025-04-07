@@ -3,6 +3,9 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true"
 });
 console.log("*****gcp*****");
+console.log("*****somnia*****");
+console.log("*****somnia test*****");
+console.log("*****gcp*****");
 const defaultConfig = {
   eslint: {
     // Warning: This allows production builds to successfully complete even if
