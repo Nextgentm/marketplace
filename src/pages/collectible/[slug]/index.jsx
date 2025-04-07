@@ -12,6 +12,7 @@ import ProductArea from "@containers/product/layout-03";
 import { shuffleArray } from "@utils/methods";
 import strapi from "@utils/strapi";
 import { useBreadCrumbData } from "@hooks";
+import { NETWORK_NAMES } from "@utils/constants";
 
 const ProductDetails = ({ product, bids, recentViewProducts, relatedProducts }) => {
   //   const [extraCrumb, setExtraCrumb] = useState([]);
@@ -115,6 +116,7 @@ export async function getServerSideProps({ params }) {
         endTimeStamp: {
           $gt: new Date()
         },
+        blockchain: { $ne: NETWORK_NAMES.NETWORK },
         collectible: {
           id: {
             $ne: product.id

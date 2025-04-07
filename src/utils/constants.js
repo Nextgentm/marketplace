@@ -9,3 +9,7 @@ export const Messages = {
   TOKEN_ADDRESS_NOT_FOUND: "Token address not found for current network.",
   NFT_PURCHASE_ERROR: "Error while purchasing NFT."
 };
+
+export const NETWORK_NAMES = {
+  NETWORK: "somnia"
+};

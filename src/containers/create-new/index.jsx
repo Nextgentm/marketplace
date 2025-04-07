@@ -19,7 +19,7 @@ import { getERC721Contract, getERC1155Contract, addressIsAdmin } from "src/lib/B
 import { useMutation } from "@apollo/client";
 import { CREATE_OWNER_HISTORY } from "src/graphql/mutation/ownerHistory/ownerHistory";
 import strapi from "@utils/strapi";
-import { Messages } from "@utils/constants";
+import { Messages, NETWORK_NAMES } from "@utils/constants";
 
 const CreateNewArea = ({ className, space, collectible }) => {
   const [showProductModal, setShowProductModal] = useState(false);
@@ -161,7 +161,8 @@ const CreateNewArea = ({ className, space, collectible }) => {
         instantSalePrice: data.instantsaleprice,
         unlockPurchased: data.unlockpurchased,
         slug: data.name ? data.name.toLowerCase().split(" ").join("-") : null,
-        collection: selectedCollection.id
+        collection: selectedCollection.id,
+        blockchain: ""
       });
       console.log(res);
       const collectiblesId = res.data.id;
@@ -428,6 +429,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
 
     const filter = {
       filters: {
+        blockchain: { $ne: NETWORK_NAMES.NETWORK }, // Added blockchain filter
         collectionType: {
           $eq: collectionType
         }
@@ -530,6 +532,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
           external_url: data?.external_url ? data?.external_url : collectible?.external_url,
           properties: formValues || collectible?.collectibleProperties?.data,
           slug: slug,
+          blockchain: "",
         }
         if (nftImagePath) {
           updatedCollectibleObj.image = JSON.parse(nftImagePath);
