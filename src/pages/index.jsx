@@ -8,7 +8,9 @@ import NewestItmesArea from "@containers/product/layout-04";
 import OtherMarketplaceCollectibles from "@containers/product/layout-05";
 import ExploreProductArea from "@containers/explore-product/layout-02";
 import { normalizedData } from "@utils/methods";
-
+console.log("*****somnia*****");
+console.log("*****somnia*****");
+console.log("*****somnia*****");
 // Demo data
 import homepageData from "../data/homepages/home-06.json";
 import client from "@utils/apollo-client";
