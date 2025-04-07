@@ -147,7 +147,7 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
                 rewardType: "Crypto",
                 isClaimed: false,
                 index: index,
-                blockchain: { $ne: NETWORK_NAMES.NETWORK }, // Added blockchain filter
+                blockchain: "", // Added blockchain filter
             });
             console.log(res);
 
