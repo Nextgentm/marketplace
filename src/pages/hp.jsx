@@ -138,7 +138,7 @@ Home.getInitialProps = async () => {
   //   fetchPolicy: "network-only"
   // });
 
-  let newestItemsData = await strapi.find("collectible/newestItems");
+  let newestItemsData = await strapi.find("collectible/som-newestItems");
   // console.log(newestItemsData);
   let newestItemsIds = [];
   newestItemsIds.push(...newestItemsData.map(emp => emp.id));
