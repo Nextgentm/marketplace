@@ -1,3 +1,4 @@
+/* eslint quotes: "off" */
 export const EXAMPLE_PATH = "blog-starter";
 export const CMS_NAME = "Markdown";
 export const HOME_OG_IMAGE_URL =
@@ -42,6 +43,9 @@ export const NETWORKS = {
     blockExplorerUrls: ["https://shannon-explorer.somnia.network/"]
   }
 };
+
+// Export NETWORKS_CHAINS as an alias for NETWORKS
+export const NETWORKS_CHAINS = NETWORKS;
 
 // Helper function to get chain ID from network name
 export const getChainIdByNetworkName = (networkName) => {

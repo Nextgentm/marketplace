@@ -187,10 +187,12 @@ export async function getERC1155Balance(walletData, walletAddress, contractAddre
 
 export async function addressIsAdmin(walletData) {
   if (!walletData.isConnected && !walletData.account) return false;
-  const factoryContract721 = await getERC721FactoryContract(walletData);
-  // console.log(factoryContract721);
+  console.log("Checking admin status for network:", walletData.network);
+  const factoryContract721 = await getERC721FactoryContract(walletData.network);
+  console.log("Factory contract:", factoryContract721);
   if (factoryContract721) {
     const validationValue = await factoryContract721.hasRole(ADMIN_ROLE, walletData.account);
+    console.log("Admin role check result:", validationValue);
     return validationValue;
   }
   return false;

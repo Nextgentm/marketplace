@@ -153,7 +153,8 @@ export async function getServerSideProps({ params }) {
   } catch (er) {
     return {
       redirect: {
-        destination: "/collectibles"
+        destination: "/collectibles",
+        permanent: true,
       }
     };
   }

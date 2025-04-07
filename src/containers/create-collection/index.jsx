@@ -1,3 +1,4 @@
+/* eslint quotes: "off" */
 import { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -472,8 +473,8 @@ const CreateCollectionArea = ({ collection }) => {
         maxSupply: data.maxSupply,
         royalty: data.royalty,
         paymentTokens: selectedPaymentTokensList,
-        // paymentTokens: data.paymentTokens,
-        contractAddress: collectionAddress,
+        contractAddress: collectionType === 'Single' ? collectionAddress : null,
+        contractAddress1155: collectionType !== 'Single' ? collectionAddress : null,
         networkType: blockchainNetwork || "Somnia",
         collectionType: collectionType,
         slug,

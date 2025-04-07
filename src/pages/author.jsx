@@ -131,40 +131,25 @@ const Author = () => {
   };
 
   const getOwnedDatapaginationRecord = async (page) => {
-    console.log(`${process.env.BlOCKCHAIN}`,"six filters")
+    console.log(`${process.env.BlOCKCHAIN}`, "six filters")
     let response = await strapi.find("collectibles", {
       filters: {
         blockchain: { $eq: NETWORK_NAMES.NETWORK }, // added blockchain filter
-        $or: [{
-          $and: [{
+        $or: [
+          {
             owner: {
               $eq: walletData.account
-            },
-          }, {
-            collection: {
-              collectionType: {
-                $eq: "Single"
-              }
-            },
-          }]
-        }, {
-          $and: [{
+            }
+          },
+          {
             owner_histories: {
               toWalletAddress: {
                 $eq: walletData.account
               }
-            },
-          }, {
-            collection: {
-              collectionType: {
-                $ne: "Single"
-              }
-            },
-          }]
-        }]
+            }
+          }
+        ]
       },
-      // let response = await strapi.find("collectible/get-owned-collectible/" + walletData.account, {
-      //   filters: {},
       populate: "*",
       pagination: {
         page,
@@ -177,7 +162,7 @@ const Author = () => {
   };
 
   const getCreatedDatapaginationRecord = async (page) => {
-    console.log(`${process.env.BlOCKCHAIN}`,"fifth filters")
+    console.log(`${process.env.BlOCKCHAIN}`, "fifth filters")
     let creatorResponse = await strapi.find("collectibles", {
       filters: {
         blockchain: { $eq: NETWORK_NAMES.NETWORK }, // added blockchain filter
