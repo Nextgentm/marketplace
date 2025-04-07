@@ -10,7 +10,7 @@ import { Spinner } from "react-bootstrap";
 import { getERC1155Contract, getERC721Contract, getStakingNFTContract, switchNetwork } from "src/lib/BlokchainHelperFunctions";
 import { toast } from "react-toastify";
 import { BINANCE_NETWORK_CHAIN_ID, ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID } from "src/lib/constants";
-import { Messages } from "../../../utils/constants";
+import { Messages, NETWORK_NAMES } from "../../../utils/constants";
 
 const SelectProducts = ({ show, handleModal, refreshPageData,
     loading, setLoading }) => {
@@ -146,7 +146,8 @@ const SelectProducts = ({ show, handleModal, refreshPageData,
                 restakingCount: 0,
                 rewardType: "Crypto",
                 isClaimed: false,
-                index: index
+                index: index,
+                blockchain: { $ne: NETWORK_NAMES.NETWORK }, // Added blockchain filter
             });
             console.log(res);
 
