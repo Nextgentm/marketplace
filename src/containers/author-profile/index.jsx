@@ -33,14 +33,14 @@ const AuthorProfileArea = ({ className, productData, allCreatedProductsData, all
                   {isAdminWallet && <Nav.Link as="button" eventKey="nav-contact">
                     Created
                   </Nav.Link>}
-                  {process.env.NEXT_PUBLIC_SENTRY_ENV !== "production" &&
+                  {/* {process.env.NEXT_PUBLIC_SENTRY_ENV !== "production" &&
                     <Nav.Link
                       as="button"
                       eventKey="nav-liked"
                     >
                       Stake
                     </Nav.Link>
-                  }
+                  } */}
                 </Nav>
               </nav>
             </div>
