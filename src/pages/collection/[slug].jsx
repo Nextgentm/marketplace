@@ -12,6 +12,7 @@ import axios from "axios";
 import client from "@utils/apollo-client";
 import { getCollectible, getCollection } from "src/services/collections/collection";
 import strapi from "@utils/strapi";
+import { NETWORK_NAMES } from "@utils/constants";
 // import productData from "../data/products.json";
 
 const CollectionDetail = ({ collection, collectibles }) => {
@@ -48,6 +49,7 @@ export async function getStaticPaths() {
       // console.log(page, pageCount, pageSize);
       const resData = await strapi.find("collections", {
         fields: ["id", "slug"],
+        blockchain: { $ne: NETWORK_NAMES.NETWORK }, // Added blockchain filter
         pagination: {
           page: page,
           pageSize: pageSize

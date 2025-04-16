@@ -297,7 +297,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         paymentToken: data.paymentToken,
         quantity: data.quantity ? data.quantity : 1,
         remainingQuantity: data.quantity ? data.quantity : 1,
-        signature: sellerOrderSignature
+        signature: sellerOrderSignature,
+        blockchain: ""
       });
       // console.log(res);
       const data = await strapi.update("collectibles", product.id, {

@@ -161,7 +161,8 @@ const CreateNewArea = ({ className, space, collectible }) => {
         instantSalePrice: data.instantsaleprice,
         unlockPurchased: data.unlockpurchased,
         slug: data.name ? data.name.toLowerCase().split(" ").join("-") : null,
-        collection: selectedCollection.id
+        collection: selectedCollection.id,
+        blockchain: ""
       });
       console.log(res);
       const collectiblesId = res.data.id;
@@ -428,6 +429,7 @@ const CreateNewArea = ({ className, space, collectible }) => {
 
     const filter = {
       filters: {
+        blockchain: { $ne: NETWORK_NAMES.NETWORK }, // Added blockchain filter
         collectionType: {
           $eq: collectionType
         }

@@ -18,12 +18,14 @@ import LiveExploreArea from "@containers/live-explore/layout-01";
 import strapi from "@utils/strapi";
 import ServiceArea from "@containers/services/layout-01";
 import { getCollection, getCollectible } from "src/services/collections/collection";
+import { NETWORK_NAMES } from "@utils/constants";
 
 const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, allCollections }) => {
     const content = normalizedData(homepageData?.content || []);
     const submit = async () => {
         const filter = {
             filters: {
+                blockchain: { $ne: NETWORK_NAMES.NETWORK }, // Added blockchain filter
                 collectionType: {
                     $eq: "Multiple"
                 }
@@ -106,7 +108,9 @@ Home.getInitialProps = async () => {
             },
             sellType: {
                 $eq: "Bidding"
-            }
+            },
+            blockchain: { $ne: NETWORK_NAMES.NETWORK },
+
         },
         populate: {
             collectible: {
@@ -151,7 +155,8 @@ Home.getInitialProps = async () => {
             },
             id: {
                 $in: newestItemsIds
-            }
+            },
+            blockchain: { $ne: NETWORK_NAMES.NETWORK },
         },
         populate: {
             collectible: {
@@ -224,6 +229,7 @@ Home.getInitialProps = async () => {
             endTimeStamp: {
                 $gt: new Date()
             },
+            blockchain: { $ne: NETWORK_NAMES.NETWORK },
         },
         populate: {
             collectible: {
