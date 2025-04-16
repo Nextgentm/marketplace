@@ -354,7 +354,7 @@ const CreateCollectionArea = ({ collection }) => {
         description: data.description ? data.description : null,
         category,
         slug,
-        blockchain: "",
+        blockchain: NETWORK_NAMES.NETWORK || "",
         // creatorEarning: data.earning
         //     ? Number(data.earning)
         //     : null,

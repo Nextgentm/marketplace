@@ -49,7 +49,7 @@ export async function getStaticPaths() {
       // console.log(page, pageCount, pageSize);
       const resData = await strapi.find("collections", {
         fields: ["id", "slug"],
-        blockchain: { $ne: NETWORK_NAMES.NETWORK }, // Added blockchain filter
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // Added blockchain filter
         pagination: {
           page: page,
           pageSize: pageSize

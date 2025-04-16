@@ -36,7 +36,7 @@ const ExploreProductArea = ({ className, space, data }) => {
         endTimeStamp: {
           $gt: new Date()
         },
-        blockchain: { $ne: NETWORK_NAMES.NETWORK },
+        blockchain: { $eq: NETWORK_NAMES.NETWORK },
         collectible: {
           collection: {
             name: {

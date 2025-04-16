@@ -25,7 +25,7 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, a
     const submit = async () => {
         const filter = {
             filters: {
-                blockchain: { $ne: NETWORK_NAMES.NETWORK }, // Added blockchain filter
+                blockchain: { $eq: NETWORK_NAMES.NETWORK }, // Added blockchain filter
                 collectionType: {
                     $eq: "Multiple"
                 }
@@ -109,7 +109,7 @@ Home.getInitialProps = async () => {
             sellType: {
                 $eq: "Bidding"
             },
-            blockchain: { $ne: NETWORK_NAMES.NETWORK },
+            blockchain: { $eq: NETWORK_NAMES.NETWORK },
 
         },
         populate: {
@@ -156,7 +156,7 @@ Home.getInitialProps = async () => {
             id: {
                 $in: newestItemsIds
             },
-            blockchain: { $ne: NETWORK_NAMES.NETWORK },
+            blockchain: { $eq: NETWORK_NAMES.NETWORK },
         },
         populate: {
             collectible: {
@@ -229,7 +229,7 @@ Home.getInitialProps = async () => {
             endTimeStamp: {
                 $gt: new Date()
             },
-            blockchain: { $ne: NETWORK_NAMES.NETWORK },
+            blockchain: { $eq: NETWORK_NAMES.NETWORK },
         },
         populate: {
             collectible: {

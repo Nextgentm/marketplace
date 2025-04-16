@@ -4,7 +4,7 @@ import { NETWORK_NAMES } from "@utils/constants";
 export const getCollection = async (filters = null) => {
   const defaultFilters = {
     filters: {
-      blockchain: { $ne: NETWORK_NAMES.NETWORK } // "Not equal to" condition
+      blockchain: { $eq: NETWORK_NAMES.NETWORK } // "Not equal to" condition
     }
   };
   console.log(`${process.env.BlOCKCHAIN}`, "second filters");
@@ -29,7 +29,7 @@ export const getCollectible = async (filters = null) => {
   const defaultFilters = {
     filters: {
       // blockchain: NETWORK_NAMES.NETWORK
-      blockchain: { $ne: NETWORK_NAMES.NETWORK } // "Not equal to" condition
+      blockchain: { $eq: NETWORK_NAMES.NETWORK } // "Not equal to" condition
     }
   };
   console.log(`${process.env.BlOCKCHAIN}`, "first filters");

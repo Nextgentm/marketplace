@@ -109,7 +109,7 @@ export async function getServerSideProps({ params }) {
         id: {
           $ne: params.id
         },
-        blockchain: { $ne: NETWORK_NAMES.NETWORK },
+        blockchain: { $eq: NETWORK_NAMES.NETWORK },
         status: {
           $eq: "Live"
         },

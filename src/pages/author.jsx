@@ -108,7 +108,7 @@ const Author = () => {
             }
           },
           {
-            blockchain: { $ne: NETWORK_NAMES.NETWORK }
+            blockchain: { $eq: NETWORK_NAMES.NETWORK }
           },
         ]
       },
@@ -133,7 +133,7 @@ const Author = () => {
   const getOwnedDatapaginationRecord = async (page) => {
     let response = await strapi.find("collectibles", {
       filters: {
-        blockchain: { $ne: NETWORK_NAMES.NETWORK }, // Added blockchain filter
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // Added blockchain filter
         $or: [{
           $and: [{
             owner: {
@@ -178,7 +178,7 @@ const Author = () => {
   const getCreatedDatapaginationRecord = async (page) => {
     let creatorResponse = await strapi.find("collectibles", {
       filters: {
-        blockchain: { $ne: NETWORK_NAMES.NETWORK }, // added blockchain filter
+        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // added blockchain filter
         creator: {
           $eq: walletData.account
         }

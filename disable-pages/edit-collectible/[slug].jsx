@@ -30,7 +30,7 @@ export async function getStaticPaths() {
             const resData = await strapi.find("collectibles", {
                 fields: ["id", "slug"],
                 filters: {
-                    blockchain: { $ne: NETWORK_NAMES.NETWORK } // Added blockchain filter
+                    blockchain: { $eq: NETWORK_NAMES.NETWORK } // Added blockchain filter
                 },
                 pagination: {
                     page: page,
@@ -63,7 +63,7 @@ export async function getStaticProps({ params }) {
             slug: {
                 $eq: params.slug
             },
-            blockchain: { $ne: NETWORK_NAMES.NETWORK } // Added blockchain filter
+            blockchain: { $eq: NETWORK_NAMES.NETWORK } // Added blockchain filter
         },
         populate: "*",
     });

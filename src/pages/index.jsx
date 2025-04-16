@@ -99,7 +99,7 @@ const Home = ({ liveAuctionData, newestData, dataCollectibles, dataCollection, a
 Home.getInitialProps = async () => {
   const filter = {
     filters: {
-      blockchain: { $ne: NETWORK_NAMES.NETWORK },
+      blockchain: { $eq: NETWORK_NAMES.NETWORK },
       status: {
         $eq: "Live"
       },
@@ -148,7 +148,7 @@ Home.getInitialProps = async () => {
 
   let newestItemsFilter = {
     filters: {
-      blockchain: { $ne: NETWORK_NAMES.NETWORK },
+      blockchain: { $eq: NETWORK_NAMES.NETWORK },
       status: {
         $eq: "Live"
       },
@@ -221,7 +221,7 @@ Home.getInitialProps = async () => {
   });
   let dataCollectiblesFilter = {
     filters: {
-      blockchain: { $ne: NETWORK_NAMES.NETWORK },
+      blockchain: { $eq: NETWORK_NAMES.NETWORK },
       status: {
         $eq: "Live"
       },
