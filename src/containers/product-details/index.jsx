@@ -122,7 +122,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           filters: {
             collectible: product.id,
             walletAddress: walletData.account,
-            isClaimed: false
+            isClaimed: false,
+            blockchain: { $eq: NETWORK_NAMES.NETWORK } // Added blockchain filter
           }
         });
         // console.log(_stakingData);
@@ -212,6 +213,18 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
 
   async function getOrderSellerHash(data) {
     try {
+      console.log("Starting getOrderSellerHash with wallet data:", {
+        networkType: walletData.networkType,
+        network: walletData.network,
+        account: walletData.account
+      });
+
+      // Validate network type
+      if (!walletData.networkType) {
+        console.log("Network type missing in wallet data");
+        toast.error("Network type not found. Please reconnect your wallet.");
+        return null;
+      }
       let contractAddress, nftType;
       if (product.collection.data.collectionType === "Single") {
         contractAddress = product.collection.data.contractAddress;
@@ -220,25 +233,61 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         contractAddress = product.collection.data.contractAddress1155;
         nftType = 0;
       }
+      if (!contractAddress) {
+        console.log("Contract address missing for collection");
+        toast.error("Contract address not found for this collection");
+        return null;
+      }
       let paymentToken = product.collection?.data?.paymentTokens?.data.find(token => token.id == data.paymentToken);
-      // console.log(paymentToken);
+      console.log(paymentToken);
+      if (!paymentToken) {
+        console.log("Payment token not found for id:", data.paymentToken);
+        toast.error("Payment token not found");
+        return null;
+      }
       let TokenContractAddress;
-      //Select token contract address according to current network
-      if (walletData.network == "Polygon") {
-        TokenContractAddress = paymentToken?.polygonAddress;
-      } else if (walletData.network == "Ethereum") {
-        TokenContractAddress = paymentToken?.ethAddress;
-      } else if (walletData.network == "Binance") {
-        TokenContractAddress = paymentToken?.binanceAddress;
+      switch (walletData.networkType) {
+        case "Polygon":
+          TokenContractAddress = paymentToken.polygonAddress;
+          break;
+        case "Ethereum":
+          TokenContractAddress = paymentToken.ethAddress;
+          break;
+        case "Binance":
+          TokenContractAddress = paymentToken.binanceAddress;
+          break;
+        case "Somnia":
+          TokenContractAddress = paymentToken.somniaAddress;
+          break;
+        default:
+          console.log("Unsupported network type:", walletData.networkType);
+          toast.error(`Unsupported network type: ${walletData.networkType}`);
+          return null;
       }
+      console.log("Token contract address for network:", {
+        network: walletData.networkType,
+        address: TokenContractAddress
+      });
+
       if (!TokenContractAddress) {
-        toast.error("Token address not found for current network!");
-        return;
+        console.log("Token address not found for network:", walletData.networkType);
+        toast.error(`Token not supported on ${walletData.networkType} network`);
+        return null;
       }
+      // Get token contract and decimals
+      console.log("Getting token contract...");
       const tokenContract = await getTokenContract(walletData, TokenContractAddress);
+      if (!tokenContract) {
+        console.log("Failed to get token contract");
+        toast.error("Failed to get token contract");
+        return null;
+      }
+
+      // const tokenContract = await getTokenContract(walletData, TokenContractAddress);
       // const allowance = await tokenContract.allowance(walletData.account, walletData.contractData.TransferProxy.address);
       // const allowanceAmount = parseInt(allowance._hex, 16);
       const decimals = await tokenContract.decimals();
+      // console.log("Getting token decimals...");
       //convert price
       let convertedPrice;
       if (decimals == 18) {
@@ -246,8 +295,33 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       } else {
         convertedPrice = (data.price * (10 ** decimals));
       }
-      const tradeContract = await getTradeContract(walletData);
+      console.log("Price conversion:", {
+        original: data.price,
+        decimals,
+        converted: convertedPrice.toString()
+      });
 
+      // Get trade contract
+      console.log("Getting trade contract...");
+      const tradeContract = await getTradeContract(walletData);
+      if (!tradeContract) {
+        console.log("Trade contract not found");
+        toast.error("Failed to get trade contract");
+        return null;
+      }
+
+      // Get order hash
+      console.log("Getting order seller hash with params:", {
+        seller: walletData.account,
+        tokenContract: TokenContractAddress,
+        nftContract: contractAddress,
+        nftType,
+        price: convertedPrice.toString(),
+        quantity: data.quantity || 1,
+        startTime: data.startTimestamp,
+        endTime: data.endTimeStamp,
+        tokenId: product.nftID
+      });
       const orderSellerHash = await tradeContract.getOrderSellerHash([
         walletData.account, // seller
         walletData.account, // buyer (skip)
@@ -273,13 +347,14 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     }
   }
 
-  async function StoreData(data) {
+  async function StoreData(auctionData) {
     try {
       if (!(await approveNFT())) {
         return;
       }
-      const sellerHash = await getOrderSellerHash(data);
+      const sellerHash = await getOrderSellerHash(auctionData);
       const sellerOrderSignature = await signMessage(walletData.provider, walletData.account, sellerHash);
+      console.log("sellerOrderSignature is ", sellerOrderSignature)
       // console.log(sellerOrderSignature);
       if (!sellerOrderSignature) {
         return;
@@ -287,17 +362,17 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       // update auction to complete
       const res = await strapi.create("auctions", {
         walletAddress: walletData.account,
-        bidPrice: data.price,
-        priceCurrency: data.currency,
-        sellType: data.sellType,
+        bidPrice: auctionData.price,
+        priceCurrency: auctionData.currency,
+        sellType: auctionData.sellType,
         status: "Live",
-        startTimestamp: data.startTimestamp,
-        endTimeStamp: data.endTimeStamp,
+        startTimestamp: auctionData.startTimestamp,
+        endTimeStamp: auctionData.endTimeStamp,
         collectible: product.id,
-        paymentToken: data.paymentToken,
-        quantity: data.quantity ? data.quantity : 1,
-        remainingQuantity: data.quantity ? data.quantity : 1,
-        signature: sellerOrderSignature,
+        paymentToken: auctionData.paymentToken,
+        quantity: auctionData.quantity ? auctionData.quantity : 1,
+        remainingQuantity: auctionData.quantity ? auctionData.quantity : 1,
+        signature: "sellerOrderSignature",
         blockchain: NETWORK_NAMES.NETWORK || ""
       });
       // console.log(res);
@@ -320,16 +395,36 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
     // console.log(product);
     if (!walletData.isConnected) {
       let res = await checkAndConnectWallet(product.collection.data.networkType);
-      if (!res) return;
+      if (!res) {
+        toast.error("Please connect your wallet first");
+        return;
+      }
+    }
+    console.log("Collection network type:", product.collection.data.networkType);
+    // Validate network type exists
+    if (!product.collection.data.networkType) {
+      console.log("Network type missing in collection data");
+      toast.error("Network type not found for this collection");
+      return;
     }
     // chnage network
+    console.log("product.collection.data.networkType ", product.collection.data.networkType)
     let networkChanged = await changeNetworkByNetworkType(product.collection.data.networkType);
+    console.log("networkChanged ", networkChanged)
     if (!networkChanged) {
       // ethereum testnet
       toast.error(Messages.WALLET_NETWORK_CHNAGE_FAILED);
       return;
     }
+    // Ensure network type is set after network change
+    const networkType = product.collection.data.networkType;
+    walletData.networkType = networkType;
 
+    console.log("Current wallet network after change:", {
+      networkType: walletData.networkType,
+      network: walletData.network,
+      collectionNetworkType: networkType
+    });
     let _sellType;
     if (sellType == "nav-direct-sale") {
       _sellType = "FixedPrice";
@@ -345,8 +440,60 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
       currency: event.target.paymentToken?.options[event.target?.paymentToken?.selectedIndex]?.text ? event.target.paymentToken.options[event.target.paymentToken.selectedIndex].text : event.target.currency.value,
       quantity: event.target.quantity?.value ? event.target.quantity?.value : 1
     };
-    // console.log(data);
-    StoreData(data);
+        console.log("Form data:", data);
+    console.log("Available payment tokens:", product.collection?.data?.paymentTokens?.data);
+
+    // Validate payment token exists
+    const selectedToken = product.collection?.data?.paymentTokens?.data.find(token => token.id == data.paymentToken);
+    if (!selectedToken) {
+      console.log("Selected payment token not found:", data.paymentToken);
+      toast.error("Selected payment token not found");
+      return;
+    }
+
+    console.log("Selected token:", selectedToken);
+    console.log("Current network type:", networkType); // Use the local networkType variable
+
+    // Validate token address exists for network
+    let tokenAddress;
+    switch (networkType) { // Use the local networkType variable
+      case "Polygon":
+        tokenAddress = selectedToken.polygonAddress;
+        break;
+      case "Ethereum":
+        tokenAddress = selectedToken.ethAddress;
+        break;
+      case "Binance":
+        tokenAddress = selectedToken.binanceAddress;
+        break;
+      case "Somnia":
+        tokenAddress = selectedToken.somniaAddress;
+        break;
+      default:
+        console.log("Unsupported network type:", networkType);
+        toast.error(`Unsupported network type: ${networkType}`);
+        return;
+    }
+
+    console.log("Token address for network:", {
+      network: networkType,
+      address: tokenAddress,
+      selectedToken
+    });
+
+    if (!tokenAddress) {
+      console.log("Token address not found for network:", networkType);
+      toast.error(`Payment token not supported on ${networkType} network`);
+      return;
+    }
+
+    console.log("Proceeding with sale:", {
+      network: networkType,
+      tokenAddress,
+      ...data
+    });
+
+    await StoreData(data);
   };
 
   const handleSubmitTransfer = async (event) => {

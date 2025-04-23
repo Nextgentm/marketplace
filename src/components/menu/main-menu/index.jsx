@@ -12,40 +12,48 @@ const MainMenu = ({ menu, isAdmin }) => {
   };
   return (
     <ul className="mainmenu">
-      {menu.map((nav) =>
-        nav.id != 4 ? (
-          <li
-            key={nav.id}
-            className={clsx(!!nav.submenu && "has-droupdown has-menu-child-item", !!nav.megamenu && "with-megamenu", isActiveLink(nav.path, "") && "isActiveLink")}
+      {menu.map((nav) => (
+        <li
+          key={nav.id}
+          className={clsx(
+            !!nav.submenu && "has-droupdown has-menu-child-item",
+            !!nav.megamenu && "with-megamenu",
+            isActiveLink(nav.path, "") && "isActiveLink"
+          )}
+        >
+          <Anchor
+            className="its_new"
+            path={nav.path}
+            target={nav.id == 1 ? "_self" : "_blank"}
           >
-            <Anchor className="its_new" path={nav.path} target={nav.target}>
-              {nav.text}
-            </Anchor>
-            {nav?.submenu && <SubMenu menu={nav.submenu} />}
-            {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
-          </li>
-        ) : isAdmin ? (
-          <li
-            key={nav.id}
-            className={clsx(!!nav.submenu && "has-droupdown has-menu-child-item", !!nav.megamenu && "with-megamenu")}
-          >
-            <Anchor className="its_new" path={nav.path}>
-              {nav.text}
-            </Anchor>
-            {nav?.submenu && <SubMenu menu={nav.submenu} />}
-            {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
-          </li>
-        ) : (
-          <div key={nav.id}></div>
-        )
-      )}
+            {nav.text}
+          </Anchor>
+          {nav?.submenu && <SubMenu menu={nav.submenu} />}
+          {nav?.megamenu && <MegaMenu menu={nav.megamenu} />}
+        </li>
+      ))}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </ul>
   );
-
-}
+};
 
 MainMenu.propTypes = {
-  menu: PropTypes.arrayOf(PropTypes.shape({}))
+  menu: PropTypes.arrayOf(PropTypes.shape({})),
+  isAdmin: PropTypes.bool
 };
 
 export default MainMenu;

@@ -11,6 +11,8 @@ const getContractAddress = (product) => {
     url = "https://etherscan.io/address/" + contractAddress;
   } else if (product.collection.data.networkType == "Binance") {
     url = "https://bscscan.com/address/" + contractAddress;
+  }else if (product.collection.data.networkType == "Somnia") {
+    url = "https://shannon-explorer.somnia.network/address/" + contractAddress;
   }
   return url;
 }

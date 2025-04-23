@@ -49,24 +49,26 @@ export async function getStaticPaths() {
       // console.log(page, pageCount, pageSize);
       const resData = await strapi.find("collections", {
         fields: ["id", "slug"],
-        blockchain: { $eq: NETWORK_NAMES.NETWORK }, // Added blockchain filter
+        filters: {
+            blockchain: { $eq: NETWORK_NAMES.NETWORK } // Added blockchain filter
+        },
         pagination: {
           page: page,
           pageSize: pageSize
         }
       });
-      productData = productData.concat(resData.data);
-      page++;
+      // productData = productData.concat(resData.data);
+      productData = [...productData, ...resData.data];
       pageCount = resData.meta.pagination.pageCount;
+      page++;
     } while (page <= pageCount);
     // console.log(productData);
+    const paths = productData.map((collection) => ({
+      params: { slug: collection.slug }
+    }));
     return {
-      paths: productData.map(({ slug }) => ({
-        params: {
-          slug
-        }
-      })),
-      fallback: false
+      paths,
+      fallback: "blocking" // Enable fallback for new collections
     };
   } catch (er) {
     return { paths: [], fallback: false } // <- ADDED RETURN STMNT

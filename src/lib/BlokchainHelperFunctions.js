@@ -1,52 +1,87 @@
+import { ethers } from "ethers";
 import {
   ETHEREUM_NETWORK_CHAIN_ID,
   POLYGON_NETWORK_CHAIN_ID,
+  BINANCE_NETWORK_CHAIN_ID,
+  SOMNIA_NETWORK_CHAIN_ID,
   NETWORKS,
-  NETWORKS_CHAINS,
-  BINANCE_NETWORK_CHAIN_ID
+  NETWORKS_CHAINS
 } from "./constants";
+import { getContractsData } from "./contractData";
 
 const ADMIN_ROLE = "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775";
 
 //_______________________________________________//
 // Get Contracts object
 //_______________________________________________//
-export async function getERC721FactoryContract(walletData) {
-  // Pull the deployed contract instance
-  if (walletData.contractData) {
-    const signer = walletData.provider.getSigner();
+export async function getERC721FactoryContract(network) {
+  try {
+    console.log("Getting ERC721 factory contract for network:", network);
+    if (!network) {
+      console.error("Network parameter is undefined or null");
+      return null;
+    }
 
-    const factoryContract721Factory = new walletData.ethers.Contract(
-      walletData.contractData.Factory721Contract.address,
-      walletData.contractData.Factory721Contract.abi,
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contractData = getContractsData(network);
+
+    if (!contractData?.Factory721Contract) {
+      console.error("Factory721Contract data not found for network:", network);
+      return null;
+    }
+
+    if (!contractData.Factory721Contract.address) {
+      console.error("Factory721Contract address not found for network:", network);
+      return null;
+    }
+
+    const factoryContract721Factory = new ethers.Contract(
+      contractData.Factory721Contract.address,
+      contractData.Factory721Contract.abi,
       signer
     );
+    console.log("ERC721 factory contract initialized successfully");
     return factoryContract721Factory;
-    // } else if(walletData.network){ // incase if contractData is not loaded
-    //   const contractData = getContractsData(walletData.network);
-    //   const signer = walletData.provider.getSigner();
-    //   const factoryContract721Factory = new walletData.ethers.Contract(
-    //     contractData.Factory721Contract.address,
-    //     contractData.Factory721Contract.abi,
-    //     signer
-    //   );
-    //   return factoryContract721Factory;
+  } catch (error) {
+    console.error("Error getting ERC721 factory contract:", error);
+    return null;
   }
-  return null;
 }
 
-export async function getERC1155FactoryContract(walletData) {
-  // Pull the deployed contract instance
-  if (walletData.contractData) {
-    const signer = walletData.provider.getSigner();
-    const factoryContract1155 = new walletData.ethers.Contract(
-      walletData.contractData.Factory1155Contract.address,
-      walletData.contractData.Factory1155Contract.abi,
+export async function getERC1155FactoryContract(network) {
+  try {
+    console.log("Getting ERC1155 factory contract for network:", network);
+    if (!network) {
+      console.error("Network parameter is undefined or null");
+      return null;
+    }
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contractData = getContractsData(network);
+
+    if (!contractData?.Factory1155Contract) {
+      console.error("Factory1155Contract data not found for network:", network);
+      return null;
+    }
+
+    if (!contractData.Factory1155Contract.address) {
+      console.error("Factory1155Contract address not found for network:", network);
+      return null;
+    }
+
+    const factoryContract1155 = new ethers.Contract(
+      contractData.Factory1155Contract.address,
+      contractData.Factory1155Contract.abi,
       signer
     );
+    console.log("ERC1155 factory contract initialized successfully");
     return factoryContract1155;
+  } catch (error) {
+    console.error("Error getting ERC1155 factory contract:", error);
+    return null;
   }
-  return null;
 }
 
 export async function getERC721Contract(walletData, contractAddress) {
@@ -152,10 +187,12 @@ export async function getERC1155Balance(walletData, walletAddress, contractAddre
 
 export async function addressIsAdmin(walletData) {
   if (!walletData.isConnected && !walletData.account) return false;
-  const factoryContract721 = await getERC721FactoryContract(walletData);
-  // console.log(factoryContract721);
+  console.log("Checking admin status for network:", walletData.network);
+  const factoryContract721 = await getERC721FactoryContract(walletData.network);
+  console.log("Factory contract:", factoryContract721);
   if (factoryContract721) {
     const validationValue = await factoryContract721.hasRole(ADMIN_ROLE, walletData.account);
+    console.log("Admin role check result:", validationValue);
     return validationValue;
   }
   return false;
@@ -219,38 +256,49 @@ export async function getStakingRewardTokenDecimal(walletData) {
 //_______________________________________________//
 export async function switchNetwork(chainId) {
   try {
+    // Check if we're already on the correct network
     if (parseInt(window.ethereum.networkVersion, 2) === parseInt(chainId, 2)) {
       console.log(`Network is already with chain id ${chainId}`);
       return true;
     }
+
+    // Try to switch network
     try {
-      const res = await window.ethereum.request({
+      await window.ethereum.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId }]
       });
-      // console.log(res);
+      console.log(`Successfully switched to network ${chainId}`);
       return true;
     } catch (switchError) {
-      if (switchError.code === 4001) {
-        console.log("Network change request closed");
-      }
+      console.log("Switch error:", switchError);
+
+      // If network is not added to MetaMask
       if (switchError.code === 4902) {
         try {
+          // Add the network to MetaMask
           await window.ethereum.request({
             method: "wallet_addEthereumChain",
-            params: [NETWORKS_CHAINS[chainId]]
+            params: [NETWORKS[chainId]]
           });
+          console.log(`Successfully added network ${chainId}`);
+          return true;
         } catch (addError) {
-          console.error(addError);
+          console.error("Error adding network:", addError);
+          throw new Error("Failed to add network to MetaMask");
         }
       }
-      console.log(switchError);
-      // toast.error("Failed to change the network.");
+
+      // If user rejected the request
+      if (switchError.code === 4001) {
+        throw new Error("User rejected network switch");
+      }
+
+      throw switchError;
     }
-    return false;
   } catch (error) {
-    console.log(error);
-    return false;
+    console.error("Network switch error:", error);
+    throw error;
   }
 }
 
@@ -269,7 +317,28 @@ export function getNetworkNameByChainId(chainId) {
 }
 
 export function getChainIdByNetworkName(networkName) {
-  return NETWORKS[networkName];
+  console.log("inside getChainIdByNetworkName networkName = ", networkName);
+  if (!networkName) {
+    console.log("Network name is undefined or null");
+    return null;
+  }
+
+  const networkNameLower = networkName.toLowerCase();
+  console.log("Looking up chain ID for network:", networkNameLower);
+
+  switch (networkNameLower) {
+    case "ethereum":
+      return ETHEREUM_NETWORK_CHAIN_ID;
+    case "polygon":
+      return POLYGON_NETWORK_CHAIN_ID;
+    case "binance":
+      return BINANCE_NETWORK_CHAIN_ID;
+    case "somnia":
+      return SOMNIA_NETWORK_CHAIN_ID;
+    default:
+      console.log("No matching chain ID found for network:", networkName);
+      return null;
+  }
 }
 
 export function isValidNetwork(chainId) {
@@ -279,6 +348,19 @@ export function isValidNetwork(chainId) {
   return false;
 }
 
+export const getNetworkSymbol = (currentNetwork) => {
+  if (ETHEREUM_NETWORK_CHAIN_ID == currentNetwork) {
+    return "ETH";
+  } else if (POLYGON_NETWORK_CHAIN_ID == currentNetwork) {
+    return "MATIC";
+  } else if (BINANCE_NETWORK_CHAIN_ID == currentNetwork) {
+    return "BNB";
+  } else if (SOMNIA_NETWORK_CHAIN_ID == currentNetwork) {
+    return "STT";
+  }
+  return "ETH";
+};
+
 export function currenyOfCurrentNetwork(currentNetwork) {
   if (ETHEREUM_NETWORK_CHAIN_ID == currentNetwork) {
     return "ETH";
@@ -286,6 +368,8 @@ export function currenyOfCurrentNetwork(currentNetwork) {
     return "MATIC";
   } else if (BINANCE_NETWORK_CHAIN_ID == currentNetwork) {
     return "BNB";
+  } else if (SOMNIA_NETWORK_CHAIN_ID == currentNetwork) {
+    return "STT";
   }
   return "";
 }

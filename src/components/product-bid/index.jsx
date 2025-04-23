@@ -23,8 +23,10 @@ const ProductBid = ({ price, symbol, likeCount, network }) => (
       {network == "Ethereum" ?
         <img src="/images/connect/ethereum.png" alt="Icon" title="Ethereum" />
         : network == "Polygon" ?
-          <img src="/images/connect/polygon.png" alt="Icon" title="Polygon" /> :
-          <img src="/images/connect/binance.png" alt="Icon" title="Binance" />}
+          <img src="/images/connect/polygon.png" alt="Icon" title="Polygon" /> 
+          : network == "Somnia" ?
+            <img src="/images/connect/somnia.png" alt="Icon" title="Somnia" />
+            : <img src="/images/connect/binance.png" alt="Icon" title="Binance" />}
     </div>
   </div>
 );

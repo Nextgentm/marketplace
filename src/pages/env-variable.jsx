@@ -6,6 +6,7 @@ import {
   ETHEREUM_NETWORK_CHAIN_ID,
   POLYGON_NETWORK_CHAIN_ID,
   DEFAULT_NETWORK,
+  SOMNIA_NETWORK_CHAIN_ID,
   NETWORKS_CHAINS,
   BINANCE_NETWORK_CHAIN_ID
 } from "../lib/constants";
@@ -14,111 +15,139 @@ export async function getStaticProps() {
   return { props: { className: "template-color-1" } };
 }
 
-const Home = () => (
-  <Wrapper>
-    <SEO pageTitle="Upload Variants" />
-    <Header />
-    <main id="main-content">
-      <div className="container">
-        <table>
-          <tbody>
-            <tr>
-              <td colSpan={2}>DEFAULT_NETWORK</td>
-              <td>{DEFAULT_NETWORK}</td>
-            </tr>
-            <tr>
-              <td>ETHEREUM_NETWORK_CHAIN_ID</td>
-              <td>{ETHEREUM_NETWORK_CHAIN_ID}</td>
-              <td>{NETWORKS_CHAINS[ETHEREUM_NETWORK_CHAIN_ID].chainName}</td>
-            </tr>
-            <tr>
-              <td>POLYGON_NETWORK_CHAIN_ID</td>
-              <td>{POLYGON_NETWORK_CHAIN_ID}</td>
-              <td>{NETWORKS_CHAINS[POLYGON_NETWORK_CHAIN_ID].chainName}</td>
-            </tr>
-            <tr>
-              <td>BINANCE_NETWORK_CHAIN_ID</td>
-              <td>{BINANCE_NETWORK_CHAIN_ID}</td>
-              <td>{NETWORKS_CHAINS[BINANCE_NETWORK_CHAIN_ID].chainName}</td>
-            </tr>
+const Home = () => {
+  // Safely get network name or return empty string if not available
+  const getNetworkName = (chainId) => {
+    try {
+      return NETWORKS_CHAINS?.[chainId]?.chainName || "Not Available";
+    } catch (error) {
+      console.error("Error getting network name:", error);
+      return "Error";
+    }
+  };
 
-            <tr>
-              <td colSpan={3}><br /></td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS}</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS}</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS}</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS}</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_POLYGON_STAKING_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_POLYGON_STAKING_CONTRACT_ADDRESS}</td>
-            </tr>
+  return (
+    <Wrapper>
+      <SEO pageTitle="Upload Variants" />
+      <Header />
+      <main id="main-content">
+        <div className="container">
+          <table>
+            <tbody>
+              <tr>
+                <td colSpan={2}>DEFAULT_NETWORK</td>
+                <td>{DEFAULT_NETWORK}</td>
+              </tr>
+              <tr>
+                <td>ETHEREUM_NETWORK_CHAIN_ID</td>
+                <td>{ETHEREUM_NETWORK_CHAIN_ID}</td>
+                <td>{getNetworkName(ETHEREUM_NETWORK_CHAIN_ID)}</td>
+              </tr>
+              <tr>
+                <td>SOMNIA_NETWORK_CHAIN_ID</td>
+                <td>{SOMNIA_NETWORK_CHAIN_ID}</td>
+                <td>{getNetworkName(SOMNIA_NETWORK_CHAIN_ID)}</td>
+              </tr>
+              <tr>
+                <td>BINANCE_NETWORK_CHAIN_ID</td>
+                <td>{BINANCE_NETWORK_CHAIN_ID}</td>
+                <td>{getNetworkName(BINANCE_NETWORK_CHAIN_ID)}</td>
+              </tr>
 
-            <tr>
-              <td colSpan={3}><br /></td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_BINANCE_FACTORY721_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_BINANCE_FACTORY721_CONTRACT_ADDRESS}</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_BINANCE_FACTORY1155_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_BINANCE_FACTORY1155_CONTRACT_ADDRESS}</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_BINANCE_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_BINANCE_TRANSFER_PROXY_CONTRACT_ADDRESS}</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_BINANCE_TRADE_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_BINANCE_TRADE_CONTRACT_ADDRESS}</td>
-            </tr>
+              <tr>
+                <td colSpan={3}><br /></td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_POLYGON_FACTORY721_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_POLYGON_FACTORY1155_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_POLYGON_TRANSFER_PROXY_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_POLYGON_TRADE_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_POLYGON_STAKING_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_POLYGON_STAKING_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
 
-            <tr>
-              <td colSpan={3}><br /></td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS}</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS}</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS}</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS</td>
-              <td>{process.env.NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS}</td>
-            </tr>
+              <tr>
+                <td colSpan={3}><br /></td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_BINANCE_FACTORY721_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_BINANCE_FACTORY721_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_BINANCE_FACTORY1155_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_BINANCE_FACTORY1155_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_BINANCE_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_BINANCE_TRANSFER_PROXY_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_BINANCE_TRADE_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_BINANCE_TRADE_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
 
-            <tr>
-              <td colSpan={3}><br /></td>
-            </tr>
-            <tr>
-              <td colSpan={2}>NEXT_PUBLIC_SENTRY_ENV</td>
-              <td>{process.env.NEXT_PUBLIC_SENTRY_ENV}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </main>
-    <Footer />
-  </Wrapper>
-);
+              <tr>
+                <td colSpan={3}><br />Contracts is on gorli, so this contracts is not Sepolia Test Netwok</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_ETHEREUM_FACTORY721_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_ETHEREUM_FACTORY1155_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_ETHEREUM_TRANSFER_PROXY_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_ETHEREUM_TRADE_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+
+              <tr>
+                <td colSpan={3}><br /></td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_SOMNIA_FACTORY721_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_SOMNIA_FACTORY721_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_SOMNIA_FACTORY1155_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_SOMNIA_FACTORY1155_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_SOMNIA_TRANSFER_PROXY_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_SOMNIA_TRANSFER_PROXY_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_SOMNIA_TRADE_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_SOMNIA_TRADE_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+              <tr>
+                <td colSpan={2}>NEXT_PUBLIC_SOMNIA_STAKING_CONTRACT_ADDRESS</td>
+                <td>{process.env.NEXT_PUBLIC_SOMNIA_STAKING_CONTRACT_ADDRESS || "Not Set"}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+      <Footer />
+    </Wrapper>
+  );
+};
 
 export default Home;

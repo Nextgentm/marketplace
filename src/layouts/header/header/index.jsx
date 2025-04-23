@@ -41,7 +41,7 @@ const Header = ({ className, setAdmin }) => {
         if (setAdmin) setAdmin(validationValue);
       }).catch((error) => { console.log("Error while Checking User " + error) });
     } else {
-      if (setAdmin) setAdmin(false);
+      console.log("Wallet not connected, setting isAdminWallet to false");
       setIsAdminWallet(false);
     }
   }, [walletData]);

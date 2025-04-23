@@ -230,7 +230,11 @@ const AppDataContext = ({ children }) => {
       const accounts = await provider.send("eth_requestAccounts", []);
       const balance = await provider.getBalance(accounts[0]);
       const getEthBalance = ethers.utils.formatEther(balance);
-      const allContractData = getContractsData(_currentNetwork);
+      
+      // Get contract data for the current network
+      const networkToUse = _currentNetwork || "Somnia"; // Default to Somnia if not found
+      console.log("Using network for contract data:", networkToUse);
+      const allContractData = getContractsData(networkToUse);
       // console.log(signer);
       setWalletData({
         provider,
@@ -238,7 +242,7 @@ const AppDataContext = ({ children }) => {
         balance: getEthBalance,
         ethers,
         isConnected: true,
-        network: _currentNetwork,
+        network: networkToUse,
         chainId: _chainId,
         contractData: allContractData
       });
@@ -284,20 +288,23 @@ const AppDataContext = ({ children }) => {
           if (p.isMetaMask) provider = p;
         });
       }
+      console.log(" : change network :", provider.networkVersion, parseInt(provider.networkVersion, 2), parseInt(chainId, 2))
       if (parseInt(provider.networkVersion, 2) === parseInt(chainId, 2)) {
         console.log(`Network is already with chain id ${chainId}`);
         await directConnect();
         return true;
       }
       try {
-        const res = await provider.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId }]
-        });
-        // console.log(res);
+        console.log(" res is vefore:::::::::::::::::::::::::::;");
         await directConnect();
+        // const res = await provider.request({
+        //   method: "wallet_switchEthereumChain",
+        //   params: [{ chainId }]
+        // });
+        console.log(" res is :::::::::::::::::::::::::::;");
         return true;
       } catch (switchError) {
+        console.log(" switchError ", switchError)
         if (switchError.code === 4001) {
           console.log("Network change request closed");
         }
@@ -322,10 +329,16 @@ const AppDataContext = ({ children }) => {
   }
 
   const changeNetworkByNetworkType = async (networkType) => {
+    console.log("changeNetworkByNetworkType called with:", networkType);
     const chainId = getChainIdByNetworkName(networkType);
+    console.log("getChainIdByNetworkName returned chainId:", chainId);
     if (chainId) {
-      return await switchNetwork(chainId);
+      console.log("Attempting to switch network with chainId:", chainId);
+      const result = await switchNetwork(chainId);
+      console.log("switchNetwork result:", result);
+      return result;
     }
+    console.log("Failed to get chainId for networkType:", networkType);
     return null;
   }
 
@@ -391,11 +404,31 @@ const AppDataContext = ({ children }) => {
       }
       const { chainId } = await provider.getNetwork();
       let _chainId = "0x" + chainId.toString(16);
+      console.log(" chaim Id :::::: ", _chainId, chainId)
       const _currentNetwork = getNetworkNameByChainId(_chainId);
+      console.log("Current network name:", _currentNetwork);
+
+      // Check if the network is supported without early return
+      if (!_currentNetwork) {
+        console.log("Network name not found for chain ID:", _chainId);
+        // We'll still proceed to avoid breaking network switching
+      }
       const signer = provider.getSigner();
       const balance = await provider.getBalance(accounts[0]);
       const getEthBalance = ethers.utils.formatEther(balance);
-      const allContractData = getContractsData(_currentNetwork);
+      // Get contract data for the current network
+      // const networkToUse = _currentNetwork || "Somnia"; // Default to Somnia if not found
+      // console.log("Using network for contract data:", networkToUse);
+      const allContractData = getContractsData("Somnia");
+
+      // if (!allContractData) {
+      //   console.log("No contract data available for network:", networkToUse);
+      //   // Don't break the connection just because contract data is missing
+      // }
+
+      // console.log("Connected to network:", networkToUse);
+      console.log("Chain ID:", _chainId);
+      console.log("Contract data loaded:", !!allContractData);
       // console.log(signer);
       setWalletData({
         provider,
@@ -403,7 +436,7 @@ const AppDataContext = ({ children }) => {
         balance: getEthBalance,
         ethers,
         isConnected: true,
-        network: _currentNetwork,
+        network: "Somnia",
         chainId: _chainId,
         contractData: allContractData
       });

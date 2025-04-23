@@ -8,6 +8,20 @@ module.exports = {
       port: 8545,
       network_id: "*"
     },
+    somnia: {
+      provider: function () {
+        return new HDWalletProvider(
+          "325bfb57021e35ebf5a806c6c4c854dad4bed356a6ab93b1cef3069ee35374d6",
+          "https://rpc.ankr.com/somnia_testnet/4944aadf64955e934d28b7cc94862e884aa31a677eeb19fb056087b60370c80c"
+        );
+      },
+      network_id: 50312,
+      gas: 8000000, // Increase gas limit
+      gasPrice: 30000000000, // 30 Gwei
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    },
     maticmumbai: {
       provider: function () {
         return new HDWalletProvider(
