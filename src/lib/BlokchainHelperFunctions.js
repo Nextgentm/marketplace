@@ -5,7 +5,8 @@ import {
   BINANCE_NETWORK_CHAIN_ID,
   SOMNIA_NETWORK_CHAIN_ID,
   NETWORKS,
-  NETWORKS_CHAINS
+  NETWORKS_CHAINS,
+  NETWORKS_DETAILS
 } from "./constants";
 import { getContractsData } from "./contractData";
 
@@ -313,7 +314,13 @@ export async function switchNetwork(chainId) {
 // }
 
 export function getNetworkNameByChainId(chainId) {
-  return Object.keys(NETWORKS).find((key) => NETWORKS[key] === chainId);
+  console.log(
+    " :blockChain :",
+    chainId,
+    Object.keys(NETWORKS_DETAILS).find((key) => NETWORKS_DETAILS[key] === "0xc488")
+  );
+  // return Object.keys(NETWORKS_DETAILS).find((key) => NETWORKS[key] === chainId);
+  return Object.keys(NETWORKS_DETAILS).find((key) => NETWORKS_DETAILS[key] === "0xc488");
 }
 
 export function getChainIdByNetworkName(networkName) {

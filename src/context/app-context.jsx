@@ -296,11 +296,11 @@ const AppDataContext = ({ children }) => {
       }
       try {
         console.log(" res is vefore:::::::::::::::::::::::::::;");
+        const res = await provider.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId }]
+        });
         await directConnect();
-        // const res = await provider.request({
-        //   method: "wallet_switchEthereumChain",
-        //   params: [{ chainId }]
-        // });
         console.log(" res is :::::::::::::::::::::::::::;");
         return true;
       } catch (switchError) {

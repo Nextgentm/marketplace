@@ -13,6 +13,13 @@ export const POLYGON_NETWORK_CHAIN_ID = "0x89"; // mainnet chain Id's
 export const BINANCE_NETWORK_CHAIN_ID = "0x38"; // mainnet chain Id's
 export const SOMNIA_NETWORK_CHAIN_ID = "0xc488"; // Somnia testnet (50312 in hex)
 
+export const NETWORKS_DETAILS = {
+  "Polygon": POLYGON_NETWORK_CHAIN_ID,
+  "Ethereum": ETHEREUM_NETWORK_CHAIN_ID,
+  "Binance": BINANCE_NETWORK_CHAIN_ID,
+  "Somnia": SOMNIA_NETWORK_CHAIN_ID
+};
+
 // Single source of truth for network configurations
 export const NETWORKS = {
   [ETHEREUM_NETWORK_CHAIN_ID]: {
