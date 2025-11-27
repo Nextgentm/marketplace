@@ -90,95 +90,95 @@ const MyApp = ({ Component, pageProps }) => {
       return { data: [] };
     }
   }
-  useEffect(() => {
-    // Run only after user is logged in
-    let userDetails = window?.localStorage?.getItem("user")
-    console.log(" ------- userDetails --------- ", userDetails)
-    if (!userDetails) return;
+  // useEffect(() => {
+  //   // Run only after user is logged in
+  //   let userDetails = window?.localStorage?.getItem("user")
+  //   console.log(" ------- userDetails --------- ", userDetails)
+  //   if (!userDetails) return;
 
-    // console.log("Starting cookie watchdog...");
+  //   // console.log("Starting cookie watchdog...");
 
-    const interval = setInterval(() => {
-      if (userDetails) {
-        console.log(" ------- userDetails -interval-------- ", userDetails)
+  //   const interval = setInterval(() => {
+  //     if (userDetails) {
+  //       console.log(" ------- userDetails -interval-------- ", userDetails)
 
-        const cookies = document?.cookie?.split("; ").reduce((acc, curr) => {
-          const [name, value] = curr.split("=");
-          acc[name] = value;
-          return acc;
-        }, {});
+  //       const cookies = document?.cookie?.split("; ").reduce((acc, curr) => {
+  //         const [name, value] = curr.split("=");
+  //         acc[name] = value;
+  //         return acc;
+  //       }, {});
 
-        let token = cookies["lovable-auth"]; // <-- read cookie
-        if (!token) appData?.onSignout();
-      }
-    }, 5000); // every 5 seconds
+  //       let token = cookies["lovable-auth"]; // <-- read cookie
+  //       if (!token) appData?.onSignout();
+  //     }
+  //   }, 5000); // every 5 seconds
 
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
-  }, [userDetails]);
+  //   // Cleanup interval on component unmount
+  //   return () => clearInterval(interval);
+  // }, [userDetails]);
 
-  useEffect(() => {
-    console.log(" use effect run ")
-    let token = window?.localStorage?.getItem("token");
-    const cookies = document?.cookie?.split("; ").reduce((acc, curr) => {
-      const [name, value] = curr.split("=");
-      acc[name] = value;
-      return acc;
-    }, {});
+  // useEffect(() => {
+  //   console.log(" use effect run ")
+  //   let token = window?.localStorage?.getItem("token");
+  //   const cookies = document?.cookie?.split("; ").reduce((acc, curr) => {
+  //     const [name, value] = curr.split("=");
+  //     acc[name] = value;
+  //     return acc;
+  //   }, {});
 
-    if (!token) token = cookies["lovable-auth"]; // <-- read cookie
-    if (token && !strapi.user) {
-      strapi.setToken(token);
-      strapi
-        .request("GET", "/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then(async (userData) => {
-          let loginResponse = userData
-          console.log(" loginResponse is ", loginResponse, userData)
-          if (loginResponse?.id) {
-            // strapi.setToken(token);
-            // strapi.user = userData
-            // // setLoggingIn(false)
-            // setJwt(userData);
+  //   if (!token) token = cookies["lovable-auth"]; // <-- read cookie
+  //   if (token && !strapi.user) {
+  //     strapi.setToken(token);
+  //     strapi
+  //       .request("GET", "/users/me", {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       })
+  //       .then(async (userData) => {
+  //         let loginResponse = userData
+  //         console.log(" loginResponse is ", loginResponse, userData)
+  //         if (loginResponse?.id) {
+  //           // strapi.setToken(token);
+  //           // strapi.user = userData
+  //           // // setLoggingIn(false)
+  //           // setJwt(userData);
 
-            const cookiesDate = new Date();
-            cookiesDate.setTime(cookiesDate.getTime() + (120 * 60 * 1000));
-            setCookie("token", token, { expires: cookiesDate });
-            let likes = await getUserCollectibleLike(loginResponse?.id);
-            if (loginResponse) loginResponse.liked_nft = likes
-            console.log("loginResponse.user is ", loginResponse)
-            window?.localStorage?.setItem("user", JSON.stringify(loginResponse));
-            // toast.success("Logged In Successfully");
-            // const appData = useContext(AppData);   // <--- SAFE
-            // const interval = setInterval(async () => {
-            //   console.log("interval start", appData)
+  //           const cookiesDate = new Date();
+  //           cookiesDate.setTime(cookiesDate.getTime() + (120 * 60 * 1000));
+  //           setCookie("token", token, { expires: cookiesDate });
+  //           let likes = await getUserCollectibleLike(loginResponse?.id);
+  //           if (loginResponse) loginResponse.liked_nft = likes
+  //           console.log("loginResponse.user is ", loginResponse)
+  //           window?.localStorage?.setItem("user", JSON.stringify(loginResponse));
+  //           // toast.success("Logged In Successfully");
+  //           // const appData = useContext(AppData);   // <--- SAFE
+  //           // const interval = setInterval(async () => {
+  //           //   console.log("interval start", appData)
 
-            await appData?.loadUserData();
-            await appData?.setUserData(loginResponse)
-            console.log(" appData is ::::::: ", appData)
-            // if(!appData) window.location.reload();
-            // if (!window?.localStorage?.getItem("hasRefreshedAfterLogin")) {
-            //   window?.localStorage?.setItem("hasRefreshedAfterLogin", "true");
-            //   window.location.reload();
-            // }
-            // }, 2000); // every 5 seconds
-            return;
+  //           await appData?.loadUserData();
+  //           await appData?.setUserData(loginResponse)
+  //           console.log(" appData is ::::::: ", appData)
+  //           // if(!appData) window.location.reload();
+  //           // if (!window?.localStorage?.getItem("hasRefreshedAfterLogin")) {
+  //           //   window?.localStorage?.setItem("hasRefreshedAfterLogin", "true");
+  //           //   window.location.reload();
+  //           // }
+  //           // }, 2000); // every 5 seconds
+  //           return;
 
-            // getCurremtLocation().then(/* async */(res) => {
-            //   window.localStorage.setItem("lm_user_location", res?.country);
-            //   window.localStorage.setItem("lm_user_state", res?.state);
-            //             /* const updatedSession = await */strapi.request('PATCH', '/sessions/location',
-            //     { data: { state: res?.state, browserCountry: res?.country } }
-            //   )
-            // });
-          }
-          console.log(" game user Data is :::::: ", userData);
-        }).catch((err) => {
-          console.log(" game user Data err :::::: ", err);
-        })
-    }
-  }, []);
+  //           // getCurremtLocation().then(/* async */(res) => {
+  //           //   window.localStorage.setItem("lm_user_location", res?.country);
+  //           //   window.localStorage.setItem("lm_user_state", res?.state);
+  //           //             /* const updatedSession = await */strapi.request('PATCH', '/sessions/location',
+  //           //     { data: { state: res?.state, browserCountry: res?.country } }
+  //           //   )
+  //           // });
+  //         }
+  //         console.log(" game user Data is :::::: ", userData);
+  //       }).catch((err) => {
+  //         console.log(" game user Data err :::::: ", err);
+  //       })
+  //   }
+  // }, []);
 
 
   const handleRouteStart = async () => {
