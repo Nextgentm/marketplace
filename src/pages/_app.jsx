@@ -297,7 +297,7 @@ const MyApp = ({ Component, pageProps }) => {
         })
         .catch((err) => console.log("Auto login error", err));
     }
-  }, [appData]);
+  }, []);
 
   return <Component {...pageProps} />;
 }
