@@ -144,7 +144,7 @@ const MyApp = ({ Component, pageProps }) => {
             // toast.success("Logged In Successfully");
             // const appData = useContext(AppData);   // <--- SAFE
             const interval = setInterval(async () => {
-              console.log("interval start")
+              console.log("interval start", appData)
               await appData?.loadUserData();
               await appData?.setUserData(loginResponse)
 
