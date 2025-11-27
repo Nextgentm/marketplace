@@ -137,6 +137,7 @@ const MyApp = ({ Component, pageProps }) => {
             setCookie("token", loginResponse.jwt, { expires: cookiesDate });
             let likes = await getUserCollectibleLike(loginResponse.user?.id);
             if (loginResponse.user) loginResponse.user.liked_nft = likes
+            console.log("loginResponse.user is ", loginResponse.user)
             window?.localStorage?.setItem("user", JSON.stringify(loginResponse.user));
             toast.success("Logged In Successfully");
             await appData?.loadUserData();
