@@ -40,3 +40,37 @@ export const getClientCookie = async (name) => {
     return serializedValue;
   }
 };
+
+export const getCookieDomain = () => {
+  const envDomain = "lootmogul.com";
+
+  if (envDomain && envDomain !== "localhost") {
+    return envDomain.startsWith(".") ? envDomain : `.${envDomain}`;
+  }
+
+  const host = window.location.hostname;
+
+  if (!host || host === "localhost" || isIp(host)) return null;
+
+  const parts = host.split(".");
+  if (parts.length >= 2) {
+    return `.${parts.slice(-2).join(".")}`;
+  }
+
+  return null;
+};
+
+export const setAuthCookie = (token) => {
+  const domain = getCookieDomain();
+  const isSecure = window.location.protocol === "https:";
+  const sameSite = isSecure ? "None" : "Lax"; // None requires Secure
+
+  const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString(); // 30 days
+
+  let cookie = `lovable-auth=${encodeURIComponent(token)}; Path=/; Expires=${expires}; SameSite=${sameSite}`;
+
+  if (domain) cookie += `; Domain=${domain}`;
+  if (isSecure) cookie += `; Secure`;
+
+  document.cookie = cookie;
+};

@@ -11,7 +11,7 @@ import strapi from "@utils/strapi";
 import { toast } from "react-toastify";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import { useRouter } from "next/router";
-import { setCookie } from "@utils/cookies";
+import { setAuthCookie, setCookie } from "@utils/cookies";
 import { AppData } from "src/context/app-context";
 
 const LoginModel = ({ show, handleModal }) => {
@@ -63,6 +63,9 @@ const LoginModel = ({ show, handleModal }) => {
               signOut();
             } */
             await loadUserData();
+            try {
+                setAuthCookie(loginResponse.jwt);
+            }catch(err){}
         } catch ({ error }) {
             toast.error("Invalid login information");
             // signOut();
@@ -96,6 +99,9 @@ const LoginModel = ({ show, handleModal }) => {
                 localStorage.setItem("user", JSON.stringify(loginResponse.user));
                 toast.success("Logged In Successfully");
                 await loadUserData();
+                try {
+                setAuthCookie(loginResponse.jwt);
+            }catch(err){}
                 return;
             } catch ({ error }) {
                 toast.error("Invalid login information");

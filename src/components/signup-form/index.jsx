@@ -5,7 +5,7 @@ import ErrorText from "@ui/error-text";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import strapi from "@utils/strapi";
-import { setCookie } from "@utils/cookies";
+import { setAuthCookie, setCookie } from "@utils/cookies";
 import { toast } from "react-toastify";
 
 const SignupForm = ({ className, loading, setLoading }) => {
@@ -35,6 +35,9 @@ const SignupForm = ({ className, loading, setLoading }) => {
         localStorage.setItem("user", JSON.stringify(loginResponse.user));
         toast.success("Registration Successfully");
         router.push("/");
+        try {
+            setAuthCookie(loginResponse.jwt);
+        }catch(err){}
       } catch ({ error }) {
         toast.error(error.message);
         setLoading(false)
