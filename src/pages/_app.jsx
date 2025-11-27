@@ -9,7 +9,7 @@ import "../assets/css/modal-video.css";
 import "react-toastify/dist/ReactToastify.css";
 import "../assets/scss/style.scss";
 import "nprogress/nprogress.css";
-import AppDataContext from "src/context/app-context";
+import AppDataContext, { AppData } from "src/context/app-context";
 import { ApolloProvider } from "@apollo/client";
 import { loadNProgress } from "@utils/nprogress";
 import client from "@utils/apollo-client";
