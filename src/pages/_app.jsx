@@ -22,9 +22,9 @@ import { toast } from "react-toastify";
 const MyApp = ({ Component, pageProps }) => {
   const router = useRouter();
   // 🔥 RESET reload flag so infinite reload stops
-  if (typeof window !== "undefined") {
-    localStorage.removeItem("hasRefreshedAfterLogin");
-  }
+  // if (typeof window !== "undefined") {
+  //   localStorage.removeItem("hasRefreshedAfterLogin");
+  // }
   // const { loadUserData, onSignout } = useContext(AppData);
   const appData = useContext(AppData);   // <--- SAFE
   // const userDetails = JSON.parse(localStorage.getItem("user"));
