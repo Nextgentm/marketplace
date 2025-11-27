@@ -126,7 +126,7 @@ const MyApp = ({ Component, pageProps }) => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then(async (userData) => {
-          let loginResponse= userData
+          let loginResponse = userData
           console.log(" loginResponse is ", loginResponse, userData)
           if (loginResponse?.id) {
             // strapi.setToken(token);
@@ -142,7 +142,7 @@ const MyApp = ({ Component, pageProps }) => {
             console.log("loginResponse.user is ", loginResponse)
             window?.localStorage?.setItem("user", JSON.stringify(loginResponse));
             // toast.success("Logged In Successfully");
-            const interval = setInterval(async() => {
+            const interval = setInterval(async () => {
               console.log("interval start")
               const appData = useContext(AppData);   // <--- SAFE
               await appData?.loadUserData();
