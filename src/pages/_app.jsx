@@ -21,7 +21,8 @@ import { toast } from "react-toastify";
 
 const MyApp = ({ Component, pageProps }) => {
   const router = useRouter();
-  const { loadUserData, onSignout } = useContext(AppData);
+  // const { loadUserData, onSignout } = useContext(AppData);
+  const appData = useContext(AppData);   // <--- SAFE
   const userDetails = JSON.parse(localStorage.getItem("user"));
   useEffect(() => {
     sal({ threshold: 0.1, once: true });
@@ -96,7 +97,7 @@ const MyApp = ({ Component, pageProps }) => {
         }, {});
 
         let token = cookies["lovable-auth"]; // <-- read cookie
-        if (!token) onSignout();
+        if (!token) appData?.onSignout();
       }
     }, 5000); // every 5 seconds
 
@@ -134,7 +135,7 @@ const MyApp = ({ Component, pageProps }) => {
             if (loginResponse.user) loginResponse.user.liked_nft = likes
             localStorage.setItem("user", JSON.stringify(loginResponse.user));
             toast.success("Logged In Successfully");
-            await loadUserData();
+            await appData?.loadUserData();
             return;
 
             // getCurremtLocation().then(/* async */(res) => {
