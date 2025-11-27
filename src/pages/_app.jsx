@@ -21,6 +21,10 @@ import { toast } from "react-toastify";
 
 const MyApp = ({ Component, pageProps }) => {
   const router = useRouter();
+  // 🔥 RESET reload flag so infinite reload stops
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("hasRefreshedAfterLogin");
+  }
   // const { loadUserData, onSignout } = useContext(AppData);
   const appData = useContext(AppData);   // <--- SAFE
   // const userDetails = JSON.parse(localStorage.getItem("user"));
@@ -150,7 +154,10 @@ const MyApp = ({ Component, pageProps }) => {
             await appData?.setUserData(loginResponse)
             console.log(" appData is ::::::: ", appData)
             // if(!appData) window.location.reload();
-
+            if (!window?.localStorage?.getItem("hasRefreshedAfterLogin")) {
+              window?.localStorage?.setItem("hasRefreshedAfterLogin", "true");
+              window.location.reload();
+            }
             // }, 2000); // every 5 seconds
             return;
 
