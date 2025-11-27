@@ -62,10 +62,10 @@ const LoginModel = ({ show, handleModal }) => {
             /* if (provider == "google" && isSignedIn) {
               signOut();
             } */
-           try {
-            console.log(" set cookie auth")
-               setAuthCookie(loginResponse.jwt);
-           } catch (err) { }
+            try {
+                console.log(" set cookie auth")
+                setAuthCookie(loginResponse.jwt);
+            } catch (err) { }
             await loadUserData();
         } catch ({ error }) {
             toast.error("Invalid login information");
@@ -100,8 +100,9 @@ const LoginModel = ({ show, handleModal }) => {
                 localStorage.setItem("user", JSON.stringify(loginResponse.user));
                 toast.success("Logged In Successfully");
                 try {
+                    console.log(" ----------- login ")
                     setAuthCookie(loginResponse.jwt);
-                } catch (err) { }
+                } catch (err) { console.log(" -------- ", err) }
                 await loadUserData();
                 return;
             } catch ({ error }) {
