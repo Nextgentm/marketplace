@@ -142,8 +142,11 @@ const MyApp = ({ Component, pageProps }) => {
             console.log("loginResponse.user is ", loginResponse)
             window?.localStorage?.setItem("user", JSON.stringify(loginResponse));
             // toast.success("Logged In Successfully");
-            await appData?.loadUserData();
-            await appData?.setUserData(loginResponse)
+            const interval = setInterval(async() => {
+              await appData?.loadUserData();
+              await appData?.setUserData(loginResponse)
+
+            }, 2000); // every 5 seconds
             return;
 
             // getCurremtLocation().then(/* async */(res) => {
