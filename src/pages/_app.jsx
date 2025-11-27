@@ -142,7 +142,7 @@ const MyApp = ({ Component, pageProps }) => {
             console.log("loginResponse.user is ", loginResponse)
             window?.localStorage?.setItem("user", JSON.stringify(loginResponse));
             // toast.success("Logged In Successfully");
-            const appData = useContext(AppData);   // <--- SAFE
+            // const appData = useContext(AppData);   // <--- SAFE
             const interval = setInterval(async () => {
               console.log("interval start")
               await appData?.loadUserData();
