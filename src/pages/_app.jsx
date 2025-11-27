@@ -92,12 +92,16 @@ const MyApp = ({ Component, pageProps }) => {
   }
   useEffect(() => {
     // Run only after user is logged in
+    let userDetails = window?.localStorage?.getItem("user")
+    console.log(" ------- userDetails --------- ", userDetails)
     if (!userDetails) return;
 
     // console.log("Starting cookie watchdog...");
 
     const interval = setInterval(() => {
       if (userDetails) {
+        console.log(" ------- userDetails -interval-------- ", userDetails)
+
         const cookies = document?.cookie?.split("; ").reduce((acc, curr) => {
           const [name, value] = curr.split("=");
           acc[name] = value;
@@ -149,7 +153,7 @@ const MyApp = ({ Component, pageProps }) => {
             // const appData = useContext(AppData);   // <--- SAFE
             // const interval = setInterval(async () => {
             //   console.log("interval start", appData)
-            
+
             await appData?.loadUserData();
             await appData?.setUserData(loginResponse)
             console.log(" appData is ::::::: ", appData)
