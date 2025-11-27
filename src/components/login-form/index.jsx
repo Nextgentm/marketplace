@@ -4,7 +4,7 @@ import Button from "@ui/button";
 import ErrorText from "@ui/error-text";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { setCookie } from "@utils/cookies";
+import { setAuthCookie, setCookie } from "@utils/cookies";
 import strapi from "@utils/strapi";
 import { toast } from "react-toastify";
 
@@ -34,6 +34,11 @@ const LoginForm = ({ className, loading, setLoading }) => {
         cookiesDate.setTime(cookiesDate.getTime() + (120 * 60 * 1000));
         setCookie("token", loginResponse.jwt, { expires: cookiesDate });
         localStorage.setItem("user", JSON.stringify(loginResponse.user));
+        try {
+          console.log(" ----------- login ")
+          setAuthCookie(loginResponse.jwt);
+        } catch (err) { console.log(" -------- ", err) }
+
         toast.success("Logged In Successfully");
         router.push("/");
       } catch ({ error }) {
