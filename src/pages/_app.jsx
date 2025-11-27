@@ -143,12 +143,14 @@ const MyApp = ({ Component, pageProps }) => {
             window?.localStorage?.setItem("user", JSON.stringify(loginResponse));
             // toast.success("Logged In Successfully");
             // const appData = useContext(AppData);   // <--- SAFE
-            const interval = setInterval(async () => {
-              console.log("interval start", appData)
-              await appData?.loadUserData();
-              await appData?.setUserData(loginResponse)
+            // const interval = setInterval(async () => {
+            //   console.log("interval start", appData)
+            
+            await appData?.loadUserData();
+            await appData?.setUserData(loginResponse)
+            window.location.reload();
 
-            }, 2000); // every 5 seconds
+            // }, 2000); // every 5 seconds
             return;
 
             // getCurremtLocation().then(/* async */(res) => {
