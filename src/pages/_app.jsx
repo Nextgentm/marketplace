@@ -158,10 +158,10 @@ const MyApp = ({ Component, pageProps }) => {
             await appData?.setUserData(loginResponse)
             console.log(" appData is ::::::: ", appData)
             // if(!appData) window.location.reload();
-            if (!window?.localStorage?.getItem("hasRefreshedAfterLogin")) {
-              window?.localStorage?.setItem("hasRefreshedAfterLogin", "true");
-              window.location.reload();
-            }
+            // if (!window?.localStorage?.getItem("hasRefreshedAfterLogin")) {
+            //   window?.localStorage?.setItem("hasRefreshedAfterLogin", "true");
+            //   window.location.reload();
+            // }
             // }, 2000); // every 5 seconds
             return;
 
