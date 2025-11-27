@@ -136,11 +136,11 @@ const MyApp = ({ Component, pageProps }) => {
 
             const cookiesDate = new Date();
             cookiesDate.setTime(cookiesDate.getTime() + (120 * 60 * 1000));
-            setCookie("token", loginResponse.jwt, { expires: cookiesDate });
-            let likes = await getUserCollectibleLike(loginResponse.user?.id);
-            if (loginResponse.user) loginResponse.user.liked_nft = likes
-            console.log("loginResponse.user is ", loginResponse.user)
-            window?.localStorage?.setItem("user", JSON.stringify(loginResponse.user));
+            setCookie("token", token, { expires: cookiesDate });
+            let likes = await getUserCollectibleLike(loginResponse?.id);
+            if (loginResponse) loginResponse.liked_nft = likes
+            console.log("loginResponse.user is ", loginResponse)
+            window?.localStorage?.setItem("user", JSON.stringify(loginResponse));
             toast.success("Logged In Successfully");
             await appData?.loadUserData();
             return;
