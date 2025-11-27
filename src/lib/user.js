@@ -1,5 +1,5 @@
 import client from "@utils/apollo-client";
-import { getClientCookie, getCookie, setCookie } from "@utils/cookies";
+import { getClientCookie, getCookie, getCookieDomain, setCookie } from "@utils/cookies";
 import { isServer } from "@utils/methods";
 import path from "path";
 import { GET_LOGIN_USER } from "src/graphql/query/me/getLoginuser";
@@ -118,4 +118,19 @@ export const doLogOut = async () => {
     localStorage.clear();
     await setCookie("token", "", { expires: new Date(0) });
   }
+  try {
+    const domain = getCookieDomain();
+    const isSecure = window?.location?.protocol === "https:";
+
+    let cookie =
+      `lovable-auth=; ` +
+      `Path=/; ` +
+      `Expires=Thu, 01 Jan 1970 00:00:00 GMT; ` +
+      `SameSite=${isSecure ? "None" : "Lax"}`;
+
+    if (domain) cookie += `; Domain=${domain}`;
+    if (isSecure) cookie += `; Secure`;
+
+    document.cookie = cookie;
+  } catch (err) {}
 };

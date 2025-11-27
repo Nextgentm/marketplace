@@ -115,7 +115,7 @@ const CollectionArea = ({ className, space, id, data }) => {
   };
 
   // const getCollectionPaginationRecord = (page) => {
-  //   getCollection({
+  //   getCollection({ 
   //     variables: {
   //       filters: {
   //         collectibles: {

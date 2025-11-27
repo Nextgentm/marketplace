@@ -15,9 +15,14 @@ import { loadNProgress } from "@utils/nprogress";
 import client from "@utils/apollo-client";
 /*import Snowfall from "react-snowfall"*/
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import strapi from "@utils/strapi";
+import { setCookie } from "@utils/cookies";
+import { toast } from "react-toastify";
 
 const MyApp = ({ Component, pageProps }) => {
   const router = useRouter();
+  const { loadUserData, onSignout } = useContext(AppData);
+  const userDetails = JSON.parse(localStorage.getItem("user"));
   useEffect(() => {
     sal({ threshold: 0.1, once: true });
     router.events.on("routeChangeStart", handleRouteStart);
@@ -55,6 +60,98 @@ const MyApp = ({ Component, pageProps }) => {
     sal();
     document.body.className = `${pageProps.className}`;
   }, [pageProps]);
+
+  const getUserCollectibleLike = async (userId) => {
+    try {
+      let response = await strapi.find("collectible-user-likes", {
+        filters: {
+          user: userId,
+        },
+        populate: {
+          user: {
+            fields: ["id"],
+          },
+          collectible: {
+            fields: ["id"],
+          },
+        }
+      });
+      return response;
+    } catch (error) {
+      return { data: [] };
+    }
+  }
+  useEffect(() => {
+    // Run only after user is logged in
+    if (!userDetails) return;
+
+    // console.log("Starting cookie watchdog...");
+
+    const interval = setInterval(() => {
+      if (user) {
+        const cookies = document?.cookie?.split("; ").reduce((acc, curr) => {
+          const [name, value] = curr.split("=");
+          acc[name] = value;
+          return acc;
+        }, {});
+
+        let token = cookies["lovable-auth"]; // <-- read cookie
+        if (!token) onSignout();
+      }
+    }, 5000); // every 5 seconds
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, [userDetails]);
+
+  useEffect(() => {
+    console.log(" use effect run ")
+    let token = window?.localStorage?.getItem("token");
+    const cookies = document?.cookie?.split("; ").reduce((acc, curr) => {
+      const [name, value] = curr.split("=");
+      acc[name] = value;
+      return acc;
+    }, {});
+
+    if (!token) token = cookies["lovable-auth"]; // <-- read cookie
+    if (token && !strapi.user) {
+      strapi.setToken(token);
+      strapi
+        .request("GET", "/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then(async (loginResponse) => {
+          if (loginResponse?.id) {
+            // strapi.setToken(token);
+            // strapi.user = userData
+            // // setLoggingIn(false)
+            // setJwt(userData);
+
+            const cookiesDate = new Date();
+            cookiesDate.setTime(cookiesDate.getTime() + (120 * 60 * 1000));
+            setCookie("token", loginResponse.jwt, { expires: cookiesDate });
+            let likes = await getUserCollectibleLike(loginResponse.user?.id);
+            if (loginResponse.user) loginResponse.user.liked_nft = likes
+            localStorage.setItem("user", JSON.stringify(loginResponse.user));
+            toast.success("Logged In Successfully");
+            await loadUserData();
+            return;
+
+            // getCurremtLocation().then(/* async */(res) => {
+            //   window.localStorage.setItem("lm_user_location", res?.country);
+            //   window.localStorage.setItem("lm_user_state", res?.state);
+            //             /* const updatedSession = await */strapi.request('PATCH', '/sessions/location',
+            //     { data: { state: res?.state, browserCountry: res?.country } }
+            //   )
+            // });
+          }
+          console.log(" game user Data is :::::: ", userData);
+        }).catch((err) => {
+          console.log(" game user Data err :::::: ", err);
+        })
+    }
+  }, []);
+
 
   const handleRouteStart = async () => {
     const NProgress = await loadNProgress();
