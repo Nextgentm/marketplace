@@ -317,7 +317,7 @@ const MyApp = ({ Component, pageProps }) => {
               snowflakeCount={300}
               radius={[0.5, 3]}
             />*/}
-            <Component {...pageProps} />
+            {/* <Component {...pageProps} /> */}
             <AppWrapper Component={Component} pageProps={pageProps} />
             <img style={{ display: "none" }} src="/assets/loader/loader.200.120kb.gif" width={200} height={200} alt="Loader..." />
           </GoogleOAuthProvider>
