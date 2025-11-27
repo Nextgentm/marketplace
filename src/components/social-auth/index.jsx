@@ -7,7 +7,7 @@ import strapi from "@utils/strapi";
 import { toast } from "react-toastify";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import { useRouter } from "next/router";
-import { setCookie } from "@utils/cookies";
+import { setAuthCookie, setCookie } from "@utils/cookies";
 
 const SocialAuth = ({ className, title, loading, setLoading }) => {
   const router = useRouter();
@@ -60,6 +60,11 @@ const SocialAuth = ({ className, title, loading, setLoading }) => {
       let likes = await getUserCollectibleLike(loginResponse.user?.id);
       if (loginResponse.user) loginResponse.user.liked_nft = likes
       localStorage.setItem("user", JSON.stringify(loginResponse.user));
+      try {
+        console.log(" ----------- login ")
+        setAuthCookie(loginResponse.jwt);
+      } catch (err) { console.log(" -------- ", err) }
+      
       toast.success(`${router.pathname == "/sign-up" ? "Registration" : "Log in"} Successfull`);
       /* if (provider == "google" && isSignedIn) {
         signOut();
