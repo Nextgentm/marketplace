@@ -23,7 +23,11 @@ const MyApp = ({ Component, pageProps }) => {
   const router = useRouter();
   // const { loadUserData, onSignout } = useContext(AppData);
   const appData = useContext(AppData);   // <--- SAFE
-  const userDetails = JSON.parse(localStorage.getItem("user"));
+  // const userDetails = JSON.parse(localStorage.getItem("user"));
+  const userDetails = typeof window !== "undefined" 
+  ? JSON.parse(localStorage.getItem("user")) 
+  : null;
+
   useEffect(() => {
     sal({ threshold: 0.1, once: true });
     router.events.on("routeChangeStart", handleRouteStart);
