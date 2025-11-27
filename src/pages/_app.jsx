@@ -24,9 +24,9 @@ const MyApp = ({ Component, pageProps }) => {
   // const { loadUserData, onSignout } = useContext(AppData);
   const appData = useContext(AppData);   // <--- SAFE
   // const userDetails = JSON.parse(localStorage.getItem("user"));
-  const userDetails = typeof window !== "undefined" 
-  ? JSON.parse(localStorage.getItem("user")) 
-  : null;
+  const userDetails = typeof window !== "undefined"
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
 
   useEffect(() => {
     sal({ threshold: 0.1, once: true });
@@ -143,6 +143,8 @@ const MyApp = ({ Component, pageProps }) => {
             window?.localStorage?.setItem("user", JSON.stringify(loginResponse));
             // toast.success("Logged In Successfully");
             const interval = setInterval(async() => {
+              console.log("interval start")
+              const appData = useContext(AppData);   // <--- SAFE
               await appData?.loadUserData();
               await appData?.setUserData(loginResponse)
 
