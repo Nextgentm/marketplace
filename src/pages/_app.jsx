@@ -127,6 +127,7 @@ const MyApp = ({ Component, pageProps }) => {
         })
         .then(async (userData) => {
           let loginResponse= userData
+          console.log(" loginResponse is ", loginResponse)
           if (loginResponse?.id) {
             // strapi.setToken(token);
             // strapi.user = userData
