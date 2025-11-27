@@ -141,8 +141,9 @@ const MyApp = ({ Component, pageProps }) => {
             if (loginResponse) loginResponse.liked_nft = likes
             console.log("loginResponse.user is ", loginResponse)
             window?.localStorage?.setItem("user", JSON.stringify(loginResponse));
-            toast.success("Logged In Successfully");
+            // toast.success("Logged In Successfully");
             await appData?.loadUserData();
+            await appData?.setUserData(loginResponse)
             return;
 
             // getCurremtLocation().then(/* async */(res) => {
