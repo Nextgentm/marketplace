@@ -62,10 +62,11 @@ const LoginModel = ({ show, handleModal }) => {
             /* if (provider == "google" && isSignedIn) {
               signOut();
             } */
+           try {
+            console.log(" set cookie auth")
+               setAuthCookie(loginResponse.jwt);
+           } catch (err) { }
             await loadUserData();
-            try {
-                setAuthCookie(loginResponse.jwt);
-            }catch(err){}
         } catch ({ error }) {
             toast.error("Invalid login information");
             // signOut();
@@ -98,10 +99,10 @@ const LoginModel = ({ show, handleModal }) => {
                 if (loginResponse.user) loginResponse.user.liked_nft = likes
                 localStorage.setItem("user", JSON.stringify(loginResponse.user));
                 toast.success("Logged In Successfully");
-                await loadUserData();
                 try {
-                setAuthCookie(loginResponse.jwt);
-            }catch(err){}
+                    setAuthCookie(loginResponse.jwt);
+                } catch (err) { }
+                await loadUserData();
                 return;
             } catch ({ error }) {
                 toast.error("Invalid login information");

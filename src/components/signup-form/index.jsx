@@ -34,10 +34,10 @@ const SignupForm = ({ className, loading, setLoading }) => {
         setCookie("token", loginResponse.jwt);
         localStorage.setItem("user", JSON.stringify(loginResponse.user));
         toast.success("Registration Successfully");
-        router.push("/");
         try {
             setAuthCookie(loginResponse.jwt);
         }catch(err){}
+        router.push("/");
       } catch ({ error }) {
         toast.error(error.message);
         setLoading(false)

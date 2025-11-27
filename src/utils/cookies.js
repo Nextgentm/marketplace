@@ -61,6 +61,7 @@ export const getCookieDomain = () => {
 };
 
 export const setAuthCookie = (token) => {
+  console.log(" cookie set function");
   const domain = getCookieDomain();
   const isSecure = window.location.protocol === "https:";
   const sameSite = isSecure ? "None" : "Lax"; // None requires Secure
