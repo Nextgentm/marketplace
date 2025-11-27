@@ -125,7 +125,8 @@ const MyApp = ({ Component, pageProps }) => {
         .request("GET", "/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         })
-        .then(async (loginResponse) => {
+        .then(async (userData) => {
+          let loginResponse= userData
           if (loginResponse?.id) {
             // strapi.setToken(token);
             // strapi.user = userData
