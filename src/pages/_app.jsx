@@ -93,7 +93,7 @@ const MyApp = ({ Component, pageProps }) => {
     // console.log("Starting cookie watchdog...");
 
     const interval = setInterval(() => {
-      if (user) {
+      if (userDetails) {
         const cookies = document?.cookie?.split("; ").reduce((acc, curr) => {
           const [name, value] = curr.split("=");
           acc[name] = value;
