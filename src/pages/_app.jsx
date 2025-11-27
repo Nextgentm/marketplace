@@ -196,6 +196,20 @@ const MyApp = ({ Component, pageProps }) => {
       NProgress && NProgress.done();
     }, 20);
   };
+  function AppWrapper({ Component, pageProps }) {
+  const router = useRouter();
+  const appData = useContext(AppData);  // <-- NOW VALID (inside provider)
+  const userDetails =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("user"))
+      : null;
+
+  // 👉 Paste ALL your useEffects and login logic here
+  // (everything except the return block)
+
+  return <Component {...pageProps} />;
+}
+
   return (
     <ApolloProvider client={client}>
       <AppDataContext>
@@ -211,6 +225,7 @@ const MyApp = ({ Component, pageProps }) => {
               radius={[0.5, 3]}
             />*/}
             <Component {...pageProps} />
+            <AppWrapper Component={Component} pageProps={pageProps} />
             <img style={{ display: "none" }} src="/assets/loader/loader.200.120kb.gif" width={200} height={200} alt="Loader..." />
           </GoogleOAuthProvider>
         </ThemeProvider>
