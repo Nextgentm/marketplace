@@ -274,6 +274,10 @@ const AppDataContext = ({ children }) => {
     await doLogOut();
     await loadUserData();
     router.push("/");
+      // 🔥 RESET reload flag so infinite reload stops
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("hasRefreshedAfterLogin");
+  }
   };
 
   const switchNetwork = async (chainId) => {
