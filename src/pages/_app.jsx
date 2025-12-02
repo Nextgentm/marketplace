@@ -222,82 +222,82 @@ const MyApp = ({ Component, pageProps }) => {
   };
 
   // 🧩 1) Watchdog: logout if cookie removed
-  // useEffect(() => {
-  //   if (!userDetails) return;
+  useEffect(() => {
+    if (!userDetails) return;
 
-  //   const interval = setInterval(() => {
-  //     const cookies = Object.fromEntries(
-  //       document.cookie.split("; ").map(c => c.split("="))
-  //     );
+    const interval = setInterval(() => {
+      const cookies = Object.fromEntries(
+        document.cookie.split("; ").map(c => c.split("="))
+      );
 
-  //     let token = cookies["lovable-auth"];
-  //     if (!token) appData?.onSignout();
-  //   }, 5000);
+      let token = cookies["lovable-auth"];
+      if (!token) appData?.onSignout();
+    }, 5000);
 
-  //   return () => clearInterval(interval);
-  // }, [userDetails, appData]);
+    return () => clearInterval(interval);
+  }, [userDetails, appData]);
 
-  // // 🧩 2) Auto login using cookie/localStorage
-  // useEffect(() => {
-  //   let token = localStorage.getItem("token");
+  // 🧩 2) Auto login using cookie/localStorage
+  useEffect(() => {
+    let token = localStorage.getItem("token");
 
-  //   const cookies = Object.fromEntries(
-  //     document.cookie.split("; ").map(c => c.split("="))
-  //   );
-  //   if (!token) token = cookies["lovable-auth"];
+    const cookies = Object.fromEntries(
+      document.cookie.split("; ").map(c => c.split("="))
+    );
+    if (!token) token = cookies["lovable-auth"];
 
-  //   if (token && !strapi.user) {
-  //     strapi.setToken(token);
+    if (token && !strapi.user) {
+      strapi.setToken(token);
 
-  //     strapi
-  //       .request("GET", "/users/me", { headers: { Authorization: `Bearer ${token}` } })
-  //       .then(async (userData) => {
-  //         let loginResponse = userData
-  //         console.log(" loginResponse is ", loginResponse, userData)
-  //         if (loginResponse?.id) {
-  //           // strapi.setToken(token);
-  //           // strapi.user = userData
-  //           // // setLoggingIn(false)
-  //           // setJwt(userData);
+      strapi
+        .request("GET", "/users/me", { headers: { Authorization: `Bearer ${token}` } })
+        .then(async (userData) => {
+          let loginResponse = userData
+          // console.log(" loginResponse is ", loginResponse, userData)
+          if (loginResponse?.id) {
+            // strapi.setToken(token);
+            // strapi.user = userData
+            // // setLoggingIn(false)
+            // setJwt(userData);
 
-  //           const cookiesDate = new Date();
-  //           cookiesDate.setTime(cookiesDate.getTime() + (120 * 60 * 1000));
-  //           setCookie("token", token, { expires: cookiesDate });
-  //           let likes = await getUserCollectibleLike(loginResponse?.id);
-  //           if (loginResponse) loginResponse.liked_nft = likes
-  //           console.log("loginResponse.user is ", loginResponse)
-  //           window?.localStorage?.setItem("user", JSON.stringify(loginResponse));
-  //           // toast.success("Logged In Successfully");
-  //           // const appData = useContext(AppData);   // <--- SAFE
-  //           // const interval = setInterval(async () => {
-  //           //   console.log("interval start", appData)
+            const cookiesDate = new Date();
+            cookiesDate.setTime(cookiesDate.getTime() + (120 * 60 * 1000));
+            setCookie("token", token, { expires: cookiesDate });
+            let likes = await getUserCollectibleLike(loginResponse?.id);
+            if (loginResponse) loginResponse.liked_nft = likes
+            // console.log("loginResponse.user is ", loginResponse)
+            window?.localStorage?.setItem("user", JSON.stringify(loginResponse));
+            // toast.success("Logged In Successfully");
+            // const appData = useContext(AppData);   // <--- SAFE
+            // const interval = setInterval(async () => {
+            //   console.log("interval start", appData)
 
-  //           await appData?.loadUserData();
-  //           await appData?.setUserData(loginResponse)
-  //           console.log(" appData is ::::::: ", appData)
-  //           // if(!appData) window.location.reload();
-  //           // if (!window?.localStorage?.getItem("hasRefreshedAfterLogin")) {
-  //           //   window?.localStorage?.setItem("hasRefreshedAfterLogin", "true");
-  //           //   window.location.reload();
-  //           // }
-  //           // }, 2000); // every 5 seconds
-  //           return;
+            await appData?.loadUserData();
+            await appData?.setUserData(loginResponse)
+            // console.log(" appData is ::::::: ", appData)
+            // if(!appData) window.location.reload();
+            // if (!window?.localStorage?.getItem("hasRefreshedAfterLogin")) {
+            //   window?.localStorage?.setItem("hasRefreshedAfterLogin", "true");
+            //   window.location.reload();
+            // }
+            // }, 2000); // every 5 seconds
+            return;
 
-  //           // getCurremtLocation().then(/* async */(res) => {
-  //           //   window.localStorage.setItem("lm_user_location", res?.country);
-  //           //   window.localStorage.setItem("lm_user_state", res?.state);
-  //           //             /* const updatedSession = await */strapi.request('PATCH', '/sessions/location',
-  //           //     { data: { state: res?.state, browserCountry: res?.country } }
-  //           //   )
-  //           // });
-  //         }
-  //         console.log(" game user Data is :::::: ", userData);
-  //       }).catch((err) => {
-  //         console.log(" game user Data err :::::: ", err);
-  //       })
-  //       .catch((err) => console.log("Auto login error", err));
-  //   }
-  // }, []);
+            // getCurremtLocation().then(/* async */(res) => {
+            //   window.localStorage.setItem("lm_user_location", res?.country);
+            //   window.localStorage.setItem("lm_user_state", res?.state);
+            //             /* const updatedSession = await */strapi.request('PATCH', '/sessions/location',
+            //     { data: { state: res?.state, browserCountry: res?.country } }
+            //   )
+            // });
+          }
+          // console.log(" game user Data is :::::: ", userData);
+        }).catch((err) => {
+          console.log(" user Data err :::::: ", err);
+        })
+        .catch((err) => console.log("Auto login error", err));
+    }
+  }, []);
 
   return <Component {...pageProps} />;
 }
