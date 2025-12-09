@@ -319,10 +319,6 @@ const CreateCollectionArea = ({ collection }) => {
   }
 
   async function StoreData(data) {
-    console.log("::: images is :::",logoImagePath, coverImagePath, featureImagePath);
-    console.log("::: coverImagePath is :::", coverImagePath);
-    console.log("::: featureImagePath is :::",featureImagePath);
-    console.log("::: data is :::",data);
     try {
       const logoImagePathObject = JSON.parse(logoImagePath);
       const coverImagePathObject = JSON.parse(coverImagePath);
