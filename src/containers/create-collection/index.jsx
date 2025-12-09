@@ -320,6 +320,8 @@ const CreateCollectionArea = ({ collection }) => {
 
   async function StoreData(data) {
     console.log("::: images is :::",logoImagePath, coverImagePath, featureImagePath);
+    console.log("::: coverImagePath is :::", coverImagePath);
+    console.log("::: featureImagePath is :::",featureImagePath);
     console.log("::: data is :::",data);
     try {
       const logoImagePathObject = JSON.parse(logoImagePath);
@@ -421,7 +423,7 @@ const CreateCollectionArea = ({ collection }) => {
       // deployed contract instance
       console.log(router.query.type); // type of NFT collection
       const salt = walletData.ethers.utils.formatBytes32String(walletData.account.slice(-31));
-      console.log(salt);
+      console.log("salt is :::::::::",salt);
       if (router.query.type === "single") {
         // Pull the deployed contract instance
         const contract721 = await getERC721FactoryContract(walletData);
@@ -436,8 +438,13 @@ const CreateCollectionArea = ({ collection }) => {
       if (router.query.type === "multiple") {
         // Pull the deployed contract instance
         const contract1155 = await getERC1155FactoryContract(walletData);
+
+        // ensure values are correctly set and typed
+        console.log(" toke data is :: ",salt, "name ", name, "symbol ", symbol, "token is", tokenURIPrefix );
         const transaction = await contract1155.deploy(salt, name, symbol, tokenURIPrefix);
+        console.log(" after transaction ");
         const receipt = await transaction.wait();
+        console.log(" receipt transaction ");
         // console.log(receipt);
         const correctEvent = receipt.events.find((event) => event.event === "Deployed");
         console.log("contractAddress", correctEvent.args.contractAddress);
