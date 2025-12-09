@@ -434,11 +434,10 @@ const CreateCollectionArea = ({ collection }) => {
       if (router.query.type === "multiple") {
         // Pull the deployed contract instance
         const contract1155 = await getERC1155FactoryContract(walletData);
-        // console.log(" contract is :::::::: ", contract1155)
+        console.log(" contract is :::::::: ", contract1155)
 
         // Get deploy ABI entry
-        const deployAbi = walletData?.contractData?.Factory1155Contract?.abi
-        .find(x => x?.type === 'function' && x?.name === 'deploy');
+        const deployAbi = walletData?.contractData?.Factory1155Contract?.abi?.find(x => x?.type === "function" && x?.name === "deploy");
         console.log(" abi is :::::::::::::::::: ", deployAbi)
         // ensure values are correctly set and typed
         console.log(" toke data is :: ",salt, "name ", name, "symbol ", symbol, "token is", tokenURIPrefix );
