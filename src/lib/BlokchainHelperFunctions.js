@@ -37,6 +37,10 @@ export async function getERC721FactoryContract(walletData) {
 
 export async function getERC1155FactoryContract(walletData) {
   // Pull the deployed contract instance
+  console.log("walletData in getERC1155FactoryContract", walletData);
+  console.log("walletData in address", walletData.contractData.Factory1155Contract.address);
+  console.log("walletData in abi", walletData.contractData.Factory1155Contract.abi);
+  console.log("walletData in signer", signer);
   if (walletData.contractData) {
     const signer = walletData.provider.getSigner();
     const factoryContract1155 = new walletData.ethers.Contract(
