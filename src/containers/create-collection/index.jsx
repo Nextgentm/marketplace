@@ -15,6 +15,7 @@ import { ETHEREUM_NETWORK_CHAIN_ID, POLYGON_NETWORK_CHAIN_ID, BINANCE_NETWORK_CH
 import { getERC721FactoryContract, getERC1155FactoryContract, addressIsAdmin } from "src/lib/BlokchainHelperFunctions";
 import strapi from "@utils/strapi";
 import { Messages } from "@utils/constants";
+import { ethers } from "ethers";
 
 const categoryOptionsList = [
   {
@@ -441,7 +442,17 @@ const CreateCollectionArea = ({ collection }) => {
         console.log(" abi is :::::::::::::::::: ", deployAbi)
         // ensure values are correctly set and typed
         console.log(" toke data is :: ",salt, "name ", name, "symbol ", symbol, "token is", tokenURIPrefix );
-        const transaction = await contract1155.deploy(salt, name, symbol, tokenURIPrefix);
+
+        // ---------- SAFE COERCION / DEFAULTS ----------
+        // Ensure salt is bytes32 hex
+        let saltSafe = salt;
+        if (!saltSafe || !/^0x[0-9a-fA-F]{64}$/.test(String(saltSafe))) {
+          // fallback to deterministic id if original salt isn't a proper 32-byte hex
+          saltSafe = ethers.utils.id(String(saltSafe ?? walletData.account ?? ""));
+          console.log("salt was not valid bytes32, using saltSafe:", saltSafe);
+        }
+
+        const transaction = await contract1155.deploy(saltSafe, name, symbol, tokenURIPrefix);
         console.log(" after transaction ");
         const receipt = await transaction.wait();
         console.log(" receipt transaction ");
