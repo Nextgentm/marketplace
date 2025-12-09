@@ -319,12 +319,13 @@ const CreateCollectionArea = ({ collection }) => {
   }
 
   async function StoreData(data) {
-    // console.log(data);
+    console.log("::: images is :::",logoImagePath, coverImagePath, featureImagePath);
+    console.log("::: data is :::",data);
     try {
       const logoImagePathObject = JSON.parse(logoImagePath);
       const coverImagePathObject = JSON.parse(coverImagePath);
       const featureImagePathObject = JSON.parse(featureImagePath);
-
+      console.log("::: data true :::");
       /* deploy smartcontract call */
       const deployedContractAddress = await blockchainCall(data.title, data.symbol, data.url);
       if (!deployedContractAddress) {
