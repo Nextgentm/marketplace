@@ -331,6 +331,8 @@ const CreateCollectionArea = ({ collection }) => {
       if (!deployedContractAddress) {
         return;
       }
+      console.log("::: deployedContractAddress data true :::");
+
       const deployed721ContractAddress = deployedContractAddress[0];
       const deployed1155ContractAddress = deployedContractAddress[1];
       // console.log(
@@ -338,10 +340,36 @@ const CreateCollectionArea = ({ collection }) => {
       //     deployed1155ContractAddress
       // );
 
+      console.log(" selectedPaymentTokens is ::::::", selectedPaymentTokens);
       const selectedPaymentTokensList = Array.from(selectedPaymentTokens).map(({ value }) => value);
-      // console.log(selectedPaymentTokens);
-
+      console.log("::: selectedPaymentTokensList data true :::",selectedPaymentTokensList);
       const slug = data.title ? data.title.toLowerCase().split(" ").join("-") : null;
+      console.log(" slug is ::::::::::: ", slug)
+      console.log("::: slug data true :::",{
+        name: data.title ? data.title : null,
+        logo: logoImagePathObject || "Null",
+        logoID: Number(logoImageId),
+        cover: coverImagePathObject || "Null",
+        coverID: Number(coverImageId),
+        featured: featureImagePathObject || "Null",
+        featuredID: Number(featureImageId),
+        symbol: data.symbol,
+        url: data.url ? data.url : null,
+        description: data.description ? data.description : null,
+        category,
+        slug,
+        // creatorEarning: data.earning
+        //     ? Number(data.earning)
+        //     : null,
+        networkType: blockchainNetwork,
+        paymentTokens: selectedPaymentTokensList,
+        contractAddress: deployed721ContractAddress, // may be null
+        contractAddress1155: deployed1155ContractAddress, // may be null
+        ownerAddress: walletData.account,
+        collectionType: router.query.type.charAt(0).toUpperCase() + router.query.type.slice(1), // convert "single" to "Single"
+        payoutWalletAddress: data.wallet ? data.wallet : null,
+        explicitAndSensitiveContent: data.themeSwitch
+      });
       const resp = await strapi.create("collections", {
         name: data.title ? data.title : null,
         logo: logoImagePathObject || "Null",
