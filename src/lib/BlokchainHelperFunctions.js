@@ -37,12 +37,8 @@ export async function getERC721FactoryContract(walletData) {
 
 export async function getERC1155FactoryContract(walletData) {
   // Pull the deployed contract instance
-  console.log("walletData in getERC1155FactoryContract", walletData);
-  console.log("walletData in address", walletData.contractData.Factory1155Contract.address);
-  console.log("walletData in abi", walletData.contractData.Factory1155Contract.abi);
   if (walletData.contractData) {
     const signer = walletData.provider.getSigner();
-    console.log("walletData in signer", signer);
     const factoryContract1155 = new walletData.ethers.Contract(
       walletData.contractData.Factory1155Contract.address,
       walletData.contractData.Factory1155Contract.abi,
@@ -157,9 +153,10 @@ export async function getERC1155Balance(walletData, walletAddress, contractAddre
 export async function addressIsAdmin(walletData) {
   if (!walletData.isConnected && !walletData.account) return false;
   const factoryContract721 = await getERC721FactoryContract(walletData);
-  // console.log(factoryContract721);
+  console.log(" factoryContract721 validationValue ::: ", factoryContract721);
   if (factoryContract721) {
     const validationValue = await factoryContract721.hasRole(ADMIN_ROLE, walletData.account);
+    console.log(" validationValue is :::::::: ", validationValue);
     return validationValue;
   }
   return false;
