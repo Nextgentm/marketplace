@@ -21,6 +21,18 @@ export async function getERC721FactoryContract(walletData) {
       walletData.contractData.Factory721Contract.abi,
       signer
     );
+
+    // 2. Get signer (current MetaMask wallet)
+    const signerAddress = await signer.getAddress();
+    const roleHash = await factoryContract721Factory.MINTER_ROLE();
+
+    // 5. Grant role
+    const tx = await factoryContract721Factory.grantRole(roleHash, signerAddress);
+
+    // 6. Wait for transaction confirmation
+    await tx.wait();
+
+    console.log("Role granted successfully");
     return factoryContract721Factory;
     // } else if(walletData.network){ // incase if contractData is not loaded
     //   const contractData = getContractsData(walletData.network);
@@ -152,6 +164,7 @@ export async function getERC1155Balance(walletData, walletAddress, contractAddre
 
 export async function addressIsAdmin(walletData) {
   if (!walletData.isConnected && !walletData.account) return false;
+  // if(userda)
   const factoryContract721 = await getERC721FactoryContract(walletData);
   console.log(" factoryContract721 validationValue ::: ", factoryContract721);
   if (factoryContract721) {
