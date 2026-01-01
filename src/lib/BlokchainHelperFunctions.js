@@ -29,7 +29,10 @@ export async function getERC721FactoryContract(walletData) {
     // ✅ Correct 32-byte role hash
     const MINTER_ROLE = walletData.ethers.utils.keccak256(walletData.ethers.utils.toUtf8Bytes("MINTER_ROLE"));
     // 5. Grant role
-    const tx = await factoryContract721Factory.grantRole(MINTER_ROLE, signerAddress);
+    const tx = await factoryContract721Factory.grantRole(
+      "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
+      signerAddress
+    );
 
     // 6. Wait for transaction confirmation
     await tx.wait();
