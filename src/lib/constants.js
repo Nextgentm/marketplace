@@ -52,7 +52,7 @@ export const NETWORKS_CHAINS = {
     chainId: "0x89",
     chainName: "Polygon Mainnet",
     nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-    rpcUrls: ["https://polygon-rpc.com"],
+    rpcUrls: ["https://polygon.gateway.tenderly.co"],
     // rpcUrls: ["https://rpc-mainnet.matic.quiknode.pro"],
     blockExplorerUrls: ["https://polygonscan.com/"]
   },
