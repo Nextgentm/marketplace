@@ -24,10 +24,10 @@ export async function getERC721FactoryContract(walletData) {
 
     // 2. Get signer (current MetaMask wallet)
     const signerAddress = await signer.getAddress();
-    const roleHash = await factoryContract721Factory.MINTER_ROLE();
+    // const roleHash = await factoryContract721Factory.MINTER_ROLE();
 
     // 5. Grant role
-    const tx = await factoryContract721Factory.grantRole(roleHash, signerAddress);
+    const tx = await factoryContract721Factory.grantRole("0xA49807205ce4d355092ef5a8a18f56e8913cf4a2", signerAddress);
 
     // 6. Wait for transaction confirmation
     await tx.wait();
