@@ -52,14 +52,15 @@ export const NETWORKS_CHAINS = {
     chainId: "0x89",
     chainName: "Polygon Mainnet",
     nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-    rpcUrls: ["https://polygon-rpc.com/"],
+    rpcUrls: ["https://polygon.gateway.tenderly.co"],
     blockExplorerUrls: ["https://polygonscan.com/"]
   },
   "0x38": {
     chainId: "0x38",
     chainName: "BNB Smart Chain",
     nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-    rpcUrls: ["https://rpc.ankr.com/bsc"],
+    rpcUrls: ["https://bsc-dataseed.binance.org"],
+    // rpcUrls: ["https://rpc.ankr.com/bsc"],
     blockExplorerUrls: ["https://bscscan.com"]
   }
 };
