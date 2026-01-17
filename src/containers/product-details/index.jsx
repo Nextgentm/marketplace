@@ -27,7 +27,7 @@ import strapi from "@utils/strapi";
 import ConfirmModal from "@components/modals/confirm-modal";
 import StakingTabContent from "@components/product-details/staking-tab/staking-tab-content";
 import AuctionsTabContent from "@components/product-details/bid-tab/auctions-tab-content";
-import { Messages } from "@utils/constants";
+import { Messages, NETWORK_NAMES } from "@utils/constants";
 
 // Demo Image
 
@@ -122,7 +122,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           filters: {
             collectible: product.id,
             walletAddress: walletData.account,
-            isClaimed: false
+            isClaimed: false,
+            blockchain: { $ne: NETWORK_NAMES.NETWORK }, // Added blockchain filter
           }
         });
         // console.log(_stakingData);
@@ -297,7 +298,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
         paymentToken: data.paymentToken,
         quantity: data.quantity ? data.quantity : 1,
         remainingQuantity: data.quantity ? data.quantity : 1,
-        signature: sellerOrderSignature
+        signature: sellerOrderSignature,
+        blockchain: ""
       });
       // console.log(res);
       const data1 = await strapi.update("collectibles", product.id, {
@@ -597,7 +599,8 @@ const ProductDetailsArea = ({ space, className, product, bids }) => {
           restakingCount: 0,
           rewardType: "Crypto",
           isClaimed: false,
-          index: index
+          index: index,
+          blockchain: "", // Added blockchain filter
         });
         // console.log(res);
 
