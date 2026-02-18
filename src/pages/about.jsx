@@ -91,9 +91,9 @@ const About = ({ posts }) => {
                           <li style={{ fontSize: "18px", color: "#fff" }}>Community – <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://www.instagram.com/lootmogul">
                             https://www.instagram.com/lootmogul
                           </Anchor></li>
-                          <li style={{ fontSize: "18px", color: "#fff" }}>Press Releases – <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://metaverse.lootmogul.com/press-releases">
+                          {/* <li style={{ fontSize: "18px", color: "#fff" }}>Press Releases – <Anchor style={{ color: "#e90a63" }} target="_blank" path="https://metaverse.lootmogul.com/press-releases">
                             https://metaverse.lootmogul.com/press-releases
-                          </Anchor></li>
+                          </Anchor></li> */}
                         </ul>
                       </div>
                     </div>
