@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 const MainMenu = ({ menu, isAdmin }) => {
   const router = useRouter();
   const isActiveLink = (path, queryPath) => {
-    return path.split("/")[2] != "app.lootmogul.com" && path.split("/")[1] == router.pathname.split("/")[1];
+    return path.split("/")[2] != "lootmogul.com" && path.split("/")[1] == router.pathname.split("/")[1];
   };
   return (
     <ul className="mainmenu">
